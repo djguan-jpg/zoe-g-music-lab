@@ -1,0 +1,15 @@
+{
+  "suite": "ZOE. G Music Lab",
+  "version": "0.1.0",
+  "created_on": "2026-10-01",
+  "founder": {"display_name": "ZOE. G", "github_username": "djguan-jpg"},
+  "ai_collaboration": "Codex assisted with scope, original skill text, implementation and validation",
+  "publication": "local_only",
+  "platform_claim": "not_submitted",
+  "projects": [
+    {"id": "zoe-music-production", "title": "ZOE Music Production", "entry": "projects/zoe-music-production/SKILL.md", "cli": "music", "scope": "AI creative workflow and deterministic task packaging"},
+    {"id": "zoe-mv-storyboard", "title": "ZOE MV Storyboard", "entry": "projects/zoe-mv-storyboard/SKILL.md", "cli": "storyboard", "scope": "AI storytelling guidance and timed shot list export"},
+    {"id": "zoe-lyrics-sync", "title": "ZOE Lyrics Sync", "entry": "projects/zoe-lyrics-sync/README.md", "cli": "lyrics", "scope": "manual lyric timing, playback preview and subtitle export"},
+    {"id": "zoe-audio-delivery", "title": "ZOE Audio Delivery", "entry": "projects/zoe-audio-delivery/README.md", "cli": "audio", "scope": "PCM WAV technical checks; no loudness certification"}
+  ]
+}

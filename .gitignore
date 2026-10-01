@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+outputs/
+.pytest_cache/
+*.wav
+*.mp3
+*.flac
+*.mp4
+*.webm
+.env*
+.dev.vars*

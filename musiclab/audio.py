@@ -1,0 +1,104 @@
+import hashlib
+import math
+import wave
+from pathlib import Path
+from .common import json_text
+
+PROFILES = {
+    "distribution": {"rates": [44100, 48000], "bits": [16, 24], "channels": [1, 2]},
+    "video": {"rates": [48000], "bits": [16, 24], "channels": [1, 2]},
+}
+
+
+def dbfs(amplitude):
+    return round(20 * math.log10(amplitude), 3) if amplitude > 0 else None
+
+
+def analyze_wav(path, profile="distribution", rates=None, bits=None, channels=None):
+    path = Path(path)
+    limits = {key: list(value) for key, value in PROFILES[profile].items()}
+    for key, values in (("rates", rates), ("bits", bits), ("channels", channels)):
+        if values is not None:
+            if not values or any(value <= 0 for value in values):
+                raise ValueError(f"{key} 接受條件需為正整數")
+            limits[key] = values
+    sha = hashlib.sha256()
+    with path.open("rb") as raw:
+        for chunk in iter(lambda: raw.read(1024 * 1024), b""):
+            sha.update(chunk)
+    try:
+        with wave.open(str(path), "rb") as wav:
+            if wav.getcomptype() != "NONE":
+                raise ValueError("本版只分析未壓縮 PCM WAV")
+            count, width, rate, declared_frames = wav.getnchannels(), wav.getsampwidth(), wav.getframerate(), wav.getnframes()
+            if width not in (1, 2, 3, 4) or not 1 <= count <= 32 or rate <= 0:
+                raise ValueError("WAV 位元深度、聲道或取樣率不支援")
+            scale = 2 ** (width * 8 - 1)
+            stats = [{"peak": 0.0, "sum": 0.0, "squares": 0.0, "full_scale_samples": 0} for _ in range(count)]
+            frames = 0
+            while True:
+                block = wav.readframes(8192)
+                if not block:
+                    break
+                if len(block) % (width * count):
+                    raise ValueError("WAV 資料不是完整音訊幀")
+                frames += len(block) // (width * count)
+                for index in range(0, len(block), width):
+                    channel = (index // width) % count
+                    sample = block[index] - 128 if width == 1 else int.from_bytes(block[index:index + width], "little", signed=True)
+                    normalized = sample / scale
+                    state = stats[channel]
+                    state["peak"] = max(state["peak"], abs(normalized))
+                    state["sum"] += normalized
+                    state["squares"] += normalized ** 2
+                    if sample in (-scale, scale - 1):
+                        state["full_scale_samples"] += 1
+            if frames == 0:
+                raise ValueError("音檔沒有音訊幀")
+            if frames != declared_frames:
+                raise ValueError("WAV 內容截斷，實際幀數與標頭不同")
+    except (wave.Error, EOFError) as error:
+        raise ValueError(f"無法分析為 PCM WAV：{error}") from None
+    per_channel = []
+    for index, state in enumerate(stats, 1):
+        rms = math.sqrt(state["squares"] / frames)
+        per_channel.append({"channel": index, "peak_dbfs": dbfs(state["peak"]), "rms_dbfs": dbfs(rms),
+                            "dc_offset": round(state["sum"] / frames, 8),
+                            "full_scale_samples": state["full_scale_samples"]})
+    checks = {"sample_rate": rate in limits["rates"], "bit_depth": width * 8 in limits["bits"],
+              "channels": count in limits["channels"]}
+    warnings = []
+    for label, passed in checks.items():
+        if not passed:
+            warnings.append(f"{label} 未符合本次接受條件")
+    full_scale = sum(state["full_scale_samples"] for state in stats)
+    if full_scale:
+        warnings.append(f"發現 {full_scale} 個滿刻度樣本，請聆聽確認可能削波")
+    if all(state["peak"] == 0 for state in stats):
+        warnings.append("所有聲道為數位靜音")
+    if any(abs(state["sum"] / frames) > 0.01 for state in stats):
+        warnings.append("DC offset 絕對值超過 0.01，請確認來源")
+    return {"tool": "ZOE Audio Delivery", "version": "0.1.0", "file": path.name, "sha256": sha.hexdigest(),
+            "profile": profile, "acceptance": limits, "sample_rate": rate, "bit_depth": width * 8,
+            "channels": count, "frames": frames, "duration_seconds": round(frames / rate, 6),
+            "per_channel": per_channel, "checks": checks, "warnings": warnings,
+            "status": "needs_review" if warnings else "technical_checks_passed",
+            "limitations": ["PCM WAV only", "RMS is not LUFS", "sample peak is not true peak",
+                            "full-scale samples indicate possible clipping; listening is required"]}
+
+
+def audio_bundle(report):
+    lines = [f"# {report['file']}：音檔交付檢查\n", f"結果：{report['status']}\n",
+             f"{report['sample_rate']} Hz · {report['bit_depth']}-bit · {report['channels']} 聲道 · {report['duration_seconds']:g} 秒\n",
+             "\n| 聲道 | Sample peak dBFS | RMS dBFS | DC offset | 滿刻度樣本 |\n|---|---|---|---|---|\n"]
+    for state in report["per_channel"]:
+        peak = "-∞（靜音）" if state["peak_dbfs"] is None else state["peak_dbfs"]
+        rms = "-∞（靜音）" if state["rms_dbfs"] is None else state["rms_dbfs"]
+        lines.append(f"| {state['channel']} | {peak} | {rms} | {state['dc_offset']} | {state['full_scale_samples']} |\n")
+    lines.append("\n## 需確認項目\n\n")
+    lines.extend(f"- {item}\n" for item in report["warnings"])
+    if not report["warnings"]:
+        lines.append("本次技術條件沒有提醒項目。\n")
+    lines.append("\n本工具預設不是平台通用交付標準。RMS 不是 LUFS，sample peak 不是 true peak。滿刻度樣本需聆聽確認；沒有評估音樂品質或授權。\n")
+    lines.append(f"\n來源 SHA-256：`{report['sha256']}`\n")
+    return {"report.json": json_text(report), "report.md": "".join(lines)}

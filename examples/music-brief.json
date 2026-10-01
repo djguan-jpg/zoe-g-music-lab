@@ -1,0 +1,14 @@
+{
+  "example_type": "synthetic_original_demo",
+  "title": "雨後折返",
+  "language": "繁體中文",
+  "audience": "喜歡敘事流行歌曲的聽眾",
+  "theme": "一個人離開熟悉的街道，決定回去把未說出口的話說完",
+  "style": "中速電子流行，乾淨鋼琴、低音與逐步增加的鼓組",
+  "vocal": "清晰自然的女聲，克制到釋放的情緒變化",
+  "duration_seconds": 180,
+  "structure": ["主歌", "預副歌", "副歌", "第二主歌", "橋段", "最後副歌"],
+  "avoid": ["模仿特定歌手的聲音", "空泛的勵志口號"],
+  "existing_lyrics": "",
+  "deliverables": ["歌詞初稿", "曲風與編曲提示", "兩種副歌方案", "需聆聽驗證的項目"]
+}

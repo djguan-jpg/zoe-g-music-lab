@@ -1,0 +1,17 @@
+{
+  "example_type": "synthetic_original_demo",
+  "title": "雨後折返：片段分鏡",
+  "duration_seconds": 60,
+  "fps": 24,
+  "aspect_ratio": "16:9",
+  "visual_style": "雨停後的城市，深藍街景與少量暖色窗光",
+  "character_anchor": "成年女性，深色短髮、灰色外套、紅色信封；保持服裝與道具一致",
+  "shots": [
+    {"start": 0, "end": 10, "section": "前奏", "purpose": "建立她即將離開的選擇", "visual": "車站遠景。她背對鏡頭走向月台，右手握著紅色信封。", "camera": "固定遠景，讓她逐步進入畫面", "transition": "切到手部細節"},
+    {"start": 10, "end": 20, "section": "主歌", "purpose": "讓猶豫以動作出現", "visual": "她握緊又鬆開信封，水滴從外套袖口落下。", "camera": "手部特寫，保留右手與信封位置", "transition": "抬頭接視線"},
+    {"start": 20, "end": 30, "section": "主歌", "purpose": "呈現回憶的觸發點", "visual": "她抬頭看見街角亮著的暖色窗戶，腳步停住。", "camera": "側面中景，視線朝畫面左側", "transition": "切到窗戶視線鏡頭"},
+    {"start": 30, "end": 40, "section": "預副歌", "purpose": "把抽象念頭變成決定", "visual": "窗內的光在雨後地面倒映。她轉身離開月台入口。", "camera": "先低角度倒影，再以同方向運動接轉身", "transition": "動作接剪"},
+    {"start": 40, "end": 50, "section": "副歌", "purpose": "推動故事前進", "visual": "她朝街角小跑，信封仍在右手，外套衣擺帶動水珠。", "camera": "側面跟拍中景，保持行進方向", "transition": "在放慢脚步時切近景"},
+    {"start": 50, "end": 60, "section": "副歌", "purpose": "結束於可辨認的改變", "visual": "她站在暖色門燈下，舉起信封後敲門，停在等待回應的表情。", "camera": "緩慢推進半身近景，信封與臉同時可見", "transition": "保持尾鏡，可接下一段"}
+  ]
+}
