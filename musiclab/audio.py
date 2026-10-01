@@ -1,8 +1,10 @@
+# SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 import hashlib
 import math
 import wave
 from pathlib import Path
 from .common import json_text
+from . import __version__
 
 PROFILES = {
     "distribution": {"rates": [44100, 48000], "bits": [16, 24], "channels": [1, 2]},
@@ -109,7 +111,7 @@ def analyze_wav(path, profile="distribution", rates=None, bits=None, channels=No
         warnings.append("頭尾低於 -60 dBFS 的安靜段超過 2 秒；請確認是否刻意保留")
     if correlation is not None and correlation < -0.5:
         warnings.append("立體聲相關性低於 -0.5；請聆聽確認轉單聲道時的相消")
-    return {"tool": "ZOE Audio Delivery", "version": "0.2.0", "file": path.name, "sha256": sha.hexdigest(),
+    return {"tool": "ZOE Audio Delivery", "version": __version__, "file": path.name, "sha256": sha.hexdigest(),
             "profile": profile, "acceptance": limits, "sample_rate": rate, "bit_depth": width * 8,
             "channels": count, "frames": frames, "duration_seconds": round(frames / rate, 6),
             "per_channel": per_channel, "checks": checks, "warnings": warnings,

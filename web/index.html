@@ -1,11 +1,13 @@
 <!doctype html>
+<!-- SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0 -->
 <html lang="zh-Hant">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ZOE. G Music Lab · 創作工作台</title><link rel="stylesheet" href="/style.css"><script src="/app.js" defer></script></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ZOE. G Music Lab · 創作工作台</title><link rel="stylesheet" href="/style.css"><script src="/editor-state.js" defer></script><script src="/app.js" defer></script></head>
 <body>
 <aside class="rail"><a href="/" class="brand">ZOE. G<span>Music Lab</span></a><p class="rail-note">一首歌，四個工作台。</p>
 <nav aria-label="工作台"><button class="nav-item active" data-tab="music" aria-current="page"><span>01</span>歌曲設計</button><button class="nav-item" data-tab="storyboard"><span>02</span>母題分鏡</button><button class="nav-item" data-tab="lyrics"><span>03</span>波形校時</button><button class="nav-item" data-tab="audio"><span>04</span>交付檢查</button></nav>
-<div class="rail-footer">創辦 ZOE. G<br><span>GitHub · djguan-jpg</span><p>本機 v0.2<br>原創構思與人工決策</p></div></aside>
+<div class="rail-footer">創辦 ZOE. G<br><span>GitHub · djguan-jpg</span><p>本機 v0.3<br>原創構思與人工決策</p></div></aside>
 <main><header class="page-header"><div><h1>從想法，到可檢查的交付。</h1><p>先把創作說清楚，再把時間與證據對齊。</p></div><span class="local-note">素材留在本機</span></header>
+<section class="project-bar" aria-label="專案草稿"><div><strong>保存這一輪的構思</strong><p>草稿可重新載入，包含三個創作工作台及交付條件；音檔需另行選擇。</p></div><div class="project-actions"><form id="draft-export" method="post" action="/api/export"><input type="hidden" name="name" value="music-lab-draft.json"><input type="hidden" name="content" id="draft-content"><button id="draft-save" class="subtle">下載專案草稿</button></form><label class="draft-open">載入專案草稿<input id="draft-open" type="file" accept=".json"></label><button id="draft-undo" class="subtle" disabled>撤回草稿載入</button></div></section>
 <div class="workspace">
 <div class="editor">
 <section id="music" class="panel" aria-labelledby="music-heading"><header class="section-header"><div><h2 id="music-heading">歌曲設計</h2><p>讓同一個記憶點，在前後段落有不同的意義。</p></div><button id="music-example" class="subtle">載入原創範例</button></header>
@@ -33,4 +35,4 @@
 <p class="hint">這是可選的示範條件，請依實際收件需求核對。最多 64 MiB；完整保留原音檔。</p><button id="audio-build" class="primary">分析並建立交付報告</button><div id="audio-visual" class="result-visual" hidden></div><p class="hint">RMS 與 sample peak 是本版測量值；尚未測量 LUFS 與 true peak。</p></section>
 </div>
 <aside class="output" aria-label="本輪成果"><h2>本輪成果</h2><p id="output-note">從左側建立一個工作包，成果會出現在這裡。</p><div id="status" role="status" aria-live="polite">準備開始</div><label>成果檔案<select id="output-file" disabled><option>尚無檔案</option></select></label><label>內容預覽<textarea id="output-content" rows="18" readonly placeholder="這裡會顯示實際產生的內容"></textarea></label><form id="export-form" method="post" action="/api/export"><input type="hidden" name="name" id="export-name"><input type="hidden" name="content" id="export-content"><button id="download" class="secondary" disabled>下載目前檔案</button></form><p class="hint">檔案在本機下載。切換工作台會保留本輪成果；關閉頁面前請保存。</p></aside>
-</div><footer class="page-footer">四個原創方向，共同保留你的創作判斷。合成範例可修改；沒有使用你的既有作品。</footer></main></body></html>
+</div><footer class="page-footer">四個原創方向，共同保留你的創作判斷。合成範例可修改；沒有使用你的既有作品。 <a href="/license" target="_blank" rel="noopener">非商用授權條文</a> · <a href="/notice" target="_blank" rel="noopener">來源通知</a></footer></main></body></html>

@@ -1,16 +1,16 @@
+# SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 """CLI for four original ZOE. G projects. Python standard library only."""
 import argparse
 import sys
 from pathlib import Path
 from musiclab.common import read_json, write_bundle
-from musiclab.creative import music_bundle, storyboard_bundle
-from musiclab.lyrics import read_cues, edits, lyrics_bundle
-from musiclab.audio import analyze_wav, audio_bundle
-from musiclab.design import music_plan_bundle, motif_bundle
+from musiclab.lyrics import read_cues, edits
+from musiclab.application import build
+from musiclab import __version__
 
 
 def main(argv=None):
-    parser = argparse.ArgumentParser(description="ZOE. G Music Lab · 本機 v0.2")
+    parser = argparse.ArgumentParser(description=f"ZOE. G Music Lab · 本機 v{__version__}")
     commands = parser.add_subparsers(dest="command", required=True)
     for name in ("music", "storyboard", "lyrics", "audio"):
         sub = commands.add_parser(name)
@@ -33,21 +33,18 @@ def main(argv=None):
     args = parser.parse_args(argv)
     status = 0
     try:
-        if args.command == "music":
-            brief = read_json(args.brief)
-            bundle = music_plan_bundle(brief) if "arrangement" in brief else music_bundle(brief)
-        elif args.command == "storyboard":
-            brief = read_json(args.brief)
-            bundle = motif_bundle(brief) if "motifs" in brief else storyboard_bundle(brief)
+        if args.command in ("music", "storyboard"):
+            bundle = build(args.command, read_json(args.brief)).files
         elif args.command == "lyrics":
             path = Path(args.input)
             data = read_cues(path.read_text(encoding="utf-8-sig"), path.suffix)
             cues = edits(data, args.shift, args.set, args.text)
-            bundle = lyrics_bundle(cues, args.title, args.duration)
+            bundle = build("lyrics", {"cues": cues, "title": args.title, "duration": args.duration}).files
         else:
-            report = analyze_wav(args.input, args.profile, args.rates, args.bits, args.channels)
-            bundle = audio_bundle(report)
-            status = 2 if report["warnings"] else 0
+            options = {name: getattr(args, name) for name in ("profile", "rates", "bits", "channels")}
+            result = build("audio", options, audio_source=args.input)
+            bundle = result.files
+            status = 2 if result.needs_review else 0
         paths = write_bundle(args.out, bundle, args.overwrite)
     except (ValueError, OSError, TypeError, KeyError) as error:
         print(f"錯誤：{error}", file=sys.stderr)

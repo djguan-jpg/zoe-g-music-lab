@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 """Generate synthetic QA audio and run all four examples locally."""
 import math
 import struct

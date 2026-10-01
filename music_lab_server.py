@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 """Loopback-only workbench; stdlib, allowlisted assets, no user path access."""
 import argparse
 import json
@@ -7,15 +8,15 @@ import urllib.parse
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from musiclab.common import json_text
-from musiclab.design import music_plan_bundle, motif_bundle
-from musiclab.lyrics import read_cues, lyrics_bundle
-from musiclab.audio import analyze_wav, audio_bundle
+from musiclab.application import build, capabilities, load_request, MAX_REQUEST_BYTES
 
 ROOT = Path(__file__).resolve().parent
 MAX_AUDIO = 64 * 1024 * 1024
-MAX_TEXT = 2 * 1024 * 1024
+MAX_TEXT = MAX_REQUEST_BYTES
 ASSETS = {"/": ("web/index.html", "text/html"), "/app.js": ("web/app.js", "text/javascript"),
-          "/style.css": ("web/style.css", "text/css")}
+          "/style.css": ("web/style.css", "text/css"),
+          "/editor-state.js": ("web/editor-state.js", "text/javascript"),
+          "/license": ("LICENSE", "text/plain"), "/notice": ("NOTICE", "text/plain")}
 
 
 class WorkbenchHandler(BaseHTTPRequestHandler):
@@ -52,6 +53,8 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
         if path in ASSETS:
             file, kind = ASSETS[path]
             return self.reply(200, (ROOT / file).read_bytes(), kind)
+        if path == "/api/capabilities":
+            return self.reply(200, json_text(capabilities()))
         if path == "/api/examples":
             data = {"music": json.loads((ROOT / "examples/first-light-music.json").read_text(encoding="utf-8")),
                     "storyboard": json.loads((ROOT / "examples/first-light-mv.json").read_text(encoding="utf-8"))}
@@ -87,26 +90,16 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
                 with tempfile.TemporaryDirectory(prefix="zoe-audio-") as folder:
                     path = Path(folder) / "selected.wav"
                     path.write_bytes(raw)
-                    report = analyze_wav(path, profile)
-                original_name = query.get("name", ["selected.wav"])[0].replace("\\", "/").rsplit("/", 1)[-1]
-                report["file"] = original_name[:200] or "selected.wav"
-                return self.reply(200, json_text({"files": audio_bundle(report), "data": report}))
-            data = json.loads(raw.decode("utf-8"))
+                    result = build("audio", {"profile": profile, "display_name": query.get("name", ["selected.wav"])[0]},
+                                   audio_source=path)
+                return self.reply(200, json_text(result.wire()))
+            data = load_request(raw.decode("utf-8"))
             if not isinstance(data, dict):
                 raise ValueError("輸入需為物件")
-            if route.path == "/api/music":
-                files = music_plan_bundle(data)
-                result = json.loads(files["music-plan.json"])
-            elif route.path == "/api/storyboard":
-                files = motif_bundle(data)
-                result = json.loads(files["storyboard.json"])
-            elif route.path == "/api/lyrics":
-                cues = data.get("cues") if "cues" in data else read_cues(data.get("content", ""), data.get("suffix", ".lrc"))
-                files = lyrics_bundle(cues, data.get("title", "歌詞"), data.get("duration"))
-                result = json.loads(files["lyrics.json"])
-            else:
+            operations = {"/api/music": "music", "/api/storyboard": "storyboard", "/api/lyrics": "lyrics"}
+            if route.path not in operations:
                 return self.reply(404, '{"error":"找不到此操作"}')
-            return self.reply(200, json_text({"files": files, "data": result}))
+            return self.reply(200, json_text(build(operations[route.path], data).wire()))
         except (ValueError, TypeError, KeyError, AttributeError, UnicodeError) as error:
             return self.reply(400, json_text({"error": str(error)}))
         except OSError:

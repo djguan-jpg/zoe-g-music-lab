@@ -1,6 +1,7 @@
 ---
 name: zoe-music-production
 description: 將歌曲需求發展為歌詞、曲風與編曲提示、修改策略和製作交接；適用於 AI 音樂文字創作及製作規劃。
+license: PolyForm-Noncommercial-1.0.0
 ---
 
 # ZOE Music Production
