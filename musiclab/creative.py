@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 import csv
 import io
 from .common import json_text, number, text

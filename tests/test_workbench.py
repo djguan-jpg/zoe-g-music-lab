@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 import copy
 import http.client
 import json
@@ -137,6 +138,21 @@ class WorkbenchHTTPTests(unittest.TestCase):
         self.assertIn("default-src 'self'", headers["Content-Security-Policy"])
         for path in ("/README.md", "/../README.md", "/does-not-exist"):
             self.assertEqual(self.request("GET", path)[0], 404)
+
+    def test_license_notice_and_agent_discovery_are_served(self):
+        status, headers, raw = self.request("GET", "/license")
+        self.assertEqual(status, 200)
+        self.assertEqual(raw, (ROOT / "LICENSE").read_bytes())
+        self.assertIn("nosniff", headers["X-Content-Type-Options"])
+        status, _, raw = self.request("GET", "/notice")
+        self.assertEqual(status, 200)
+        self.assertIn("Required Notice: ZOE. G", raw.decode())
+        status, _, raw = self.request("GET", "/api/capabilities")
+        self.assertEqual(status, 200)
+        data = json.loads(raw)
+        self.assertEqual(data["license"], "PolyForm-Noncommercial-1.0.0")
+        self.assertEqual(data["protocol_version"], 1)
+        self.assertEqual(len(data["operations"]), 4)
 
     def test_external_host_and_origin_are_rejected(self):
         self.assertEqual(self.request("GET", "/", headers={"Host": "example.com"})[0], 403)

@@ -1,6 +1,7 @@
 ---
 name: zoe-audio-delivery
 description: Analyze a selected PCM WAV against explicit delivery conditions and preserve measurable evidence. Use for sample-rate, bit-depth, peak, RMS, quiet-edge or stereo-correlation checks before audio delivery.
+license: PolyForm-Noncommercial-1.0.0
 ---
 
 # ZOE Audio Delivery

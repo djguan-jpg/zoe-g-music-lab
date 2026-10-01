@@ -1,6 +1,7 @@
 ---
 name: zoe-mv-storyboard
 description: 根據歌曲、歌詞或故事需求設計 MV 敘事、時間分鏡與生成提示，並檢查鏡頭連續性與交付規格。
+license: PolyForm-Noncommercial-1.0.0
 ---
 
 # ZOE MV Storyboard

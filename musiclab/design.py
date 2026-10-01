@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 """Original planning models: musical memory and visual motif continuity."""
 import json
 import re

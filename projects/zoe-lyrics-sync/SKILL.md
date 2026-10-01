@@ -1,6 +1,7 @@
 ---
 name: zoe-lyrics-sync
 description: Manually refine lyric timing with local audio and export validated LRC, SRT or JSON. Use for lyric subtitles, waveform timing or format conversion when source audio and text are available.
+license: PolyForm-Noncommercial-1.0.0
 ---
 
 # ZOE Lyrics Sync

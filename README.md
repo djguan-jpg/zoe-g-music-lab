@@ -2,7 +2,9 @@
 
 由 **ZOE. G** 發起的四個原創專案。GitHub 帳號為 **djguan-jpg**；品牌署名與帳號可以不同。
 
-第一版可交付版本 v0.2 提供四個工作台與原創 Skill。Python 3.10 以上即可使用，沒有第三方依賴。此輪只讀本次新建工作區，不參考使用者的其他本機或 GitHub 專案。公開第三方 README 僅用於需求比較，來源及自行設計的差異記在 [構思紀錄](CONCEPT.md)。
+目前版本 v0.3 提供四個工作台與原創 Skill。Python 3.10 以上即可使用，沒有第三方依賴。只讀本次新建工作區，不參考使用者的其他本機或 GitHub 專案。公開第三方 README 僅用於需求比較，來源及自行設計的差異記在 [構思紀錄](CONCEPT.md)。
+
+授權為 **PolyForm Noncommercial 1.0.0**，商業使用沒有由本版授權。可查看、修改及分發的範圍以 [LICENSE](LICENSE) 為準，保留 [NOTICE](NOTICE)。這是非商用原始碼授權；不標成 AGPL。使用者匯入的素材授權各自保留，詳見 [授權說明](LICENSING.md)。
 
 | 專案 | 已提供的第一版 | 入口 |
 |---|---|---|
@@ -23,7 +25,9 @@ python music_lab_server.py
 
 初始「樓梯間的回聲」是本次原創合成案例，可以直接改寫。歌曲與分鏡成果為設計資料；選擇 AI 後再創作／生成媒體。歌詞音檔由瀏覽器本機播放；交付檢查只把選定 WAV 傳入同一台電腦的分析器（最多 64 MiB），臨時分析檔於完成後清除，原音檔保留。
 
-成果不會自動存到磁碟或跨重載保留。請下載需要的檔案；切換工作台只保留本輪已建立的成果。修改輸入後會停用舊成果下載，重新建立／驗證後才恢復。數值計算及資料檢查不能代替實唱、實聽與實際畫面審查。
+成果不會自動存到磁碟或跨重載保留。請下載需要的檔案；切換工作台只保留本輪已建立的成果。上方「下載專案草稿」保存三個創作工作台的表單／列資料及交付條件，可回讀與撤回最近一次載入；草稿不含音檔或成果。回讀後需重新選擇音檔並建立成果。草稿上限 1 MiB，未知 schema 不替換目前內容。
+
+修改輸入後會停用舊成果下載，重新建立／驗證後才恢復。歌詞播放預覽即時使用目前表格內容；數值計算及資料檢查不能代替實唱、實聽與實際畫面審查。
 
 命令列同樣可用：
 
@@ -49,15 +53,25 @@ python music_lab.py audio --input '自己的歌曲.wav' --profile distribution -
 - [本輪進度](PROGRESS.md)：實跑驗證與後續工作。
 - [第一版說明](RELEASE-v0.2.0.md)：已提供功能、驗證與限制。
 - [四個專案的投稿資料](SUBMISSION-PACKET.md)：來源連結、用途、使用方式與作者關係。
+- [分層與分支架構](docs/ARCHITECTURE.md)、[Agent JSON 接口](docs/AGENT.md)、[迭代說明](CHANGELOG.md)、[本輪交接](HANDOFF.md)。
 
 GitHub 儲存庫為 [djguan-jpg/zoe-g-music-lab](https://github.com/djguan-jpg/zoe-g-music-lab)，目前 private。四個專案共用此儲存庫，各有獨立 ID 與 Skill 入口；創辦／發起署名皆為 ZOE. G，AI 協作如實揭露。這是專案的發起紀錄，平台尚未核實作者或創始人身分。
 
-自由工坊「手動登錄作品」要求公開 GitHub 網址。目前未公開、未送出投稿，也未授權平台 App 存取此 Repo。尚未選定開源授權。程式未部署為公開網站。
+自由工坊「手動登錄作品」要求公開 GitHub 網址。目前未公開、未送出投稿，也未授權平台 App 存取此 Repo。自 v0.3.0 採用 PolyForm Noncommercial 1.0.0 非商用授權。程式未部署為公開網站。
 
 ## 驗證
 
 ```powershell
 python -m unittest discover -s tests -v
 node --check web/app.js
+node --test tests/test_editor_state.js
 git diff --check
 ```
+
+開發／封裝驗證需要 Node.js；一般使用工作台與 CLI 只需要 Python。從指定 Git 版本建立可驗證的原始碼 ZIP：
+
+```powershell
+python scripts/package_release.py --ref v0.3.0
+```
+
+封裝保存 commit、SHA-256、每檔摘要及檢查結果；解壓後重跑 Python／JavaScript 測試與 Agent 能力查詢。輸出留在忽略的 outputs/releases，重複封裝同一提交會拒絕覆寫。
