@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ZOE. G Music Lab · 創作工作台</title><link rel="stylesheet" href="/style.css"><script src="/app.js" defer></script></head>
+<body>
+<aside class="rail"><a href="/" class="brand">ZOE. G<span>Music Lab</span></a><p class="rail-note">一首歌，四個工作台。</p>
+<nav aria-label="工作台"><button class="nav-item active" data-tab="music" aria-current="page"><span>01</span>歌曲設計</button><button class="nav-item" data-tab="storyboard"><span>02</span>母題分鏡</button><button class="nav-item" data-tab="lyrics"><span>03</span>波形校時</button><button class="nav-item" data-tab="audio"><span>04</span>交付檢查</button></nav>
+<div class="rail-footer">創辦 ZOE. G<br><span>GitHub · djguan-jpg</span><p>本機 v0.2<br>原創構思與人工決策</p></div></aside>
+<main><header class="page-header"><div><h1>從想法，到可檢查的交付。</h1><p>先把創作說清楚，再把時間與證據對齊。</p></div><span class="local-note">素材留在本機</span></header>
+<div class="workspace">
+<div class="editor">
+<section id="music" class="panel" aria-labelledby="music-heading"><header class="section-header"><div><h2 id="music-heading">歌曲設計</h2><p>讓同一個記憶點，在前後段落有不同的意義。</p></div><button id="music-example" class="subtle">載入原創範例</button></header>
+<form id="music-form"><div class="fields"><label>歌名<input id="music-title" required maxlength="200"></label><label>記憶點<input id="music-hook" required maxlength="200" placeholder="聽完想留下的那一句"></label></div>
+<label>故事核心<textarea id="music-theme" required rows="3"></textarea></label><div class="fields"><label>曲風與聲音<input id="music-style" required></label><label>人聲表現<input id="music-vocal" required></label></div>
+<div class="fields three"><label>BPM<input id="music-bpm" type="number" min="20" max="300" step="0.001" value="120" required></label><label>每小節拍數<input id="music-beats" type="number" min="1" max="12" value="4" required></label><label>聽眾<input id="music-audience" required></label></div>
+<div class="section-row"><h3>段落與能量</h3><button id="section-add" type="button" class="subtle">新增段落</button></div><p class="hint">能量 1 最克制、5 最飽滿。段落時長以固定速度計算。</p><div class="table-wrap"><table aria-label="歌曲段落"><thead><tr><th>名稱</th><th>小節</th><th>能量</th><th>敘事任務</th><th>聲音配置</th><th></th></tr></thead><tbody id="arrangement"></tbody></table></div>
+<label>已有歌詞草稿<textarea id="music-lyrics" rows="5" placeholder="可留空，或每行一句"></textarea></label><button type="submit" class="primary">建立歌曲設計包</button><p class="hint">產生段落計畫與可交給 AI 的創作任務；音樂另行製作。</p></form><div id="music-visual" class="result-visual" hidden></div></section>
+
+<section id="storyboard" class="panel" aria-labelledby="mv-heading" hidden><header class="section-header"><div><h2 id="mv-heading">母題分鏡</h2><p>每次回到同一個物件，觀眾看見什麼改變？</p></div><button id="mv-example" class="subtle">載入原創範例</button></header>
+<div class="fields"><label>片名<input id="mv-title" required></label><label>總時長（秒）<input id="mv-duration" type="number" min="0.001" step="0.001" required></label></div>
+<div class="fields"><label>FPS<input id="mv-fps" type="number" min="1" max="120" value="24"></label><label>畫幅<select id="mv-ratio"><option>16:9</option><option>9:16</option><option>1:1</option><option>4:3</option></select></label></div>
+<label>視覺基調<input id="mv-style"></label><label>人物與服裝固定設定<textarea id="mv-anchor" rows="2"></textarea></label>
+<div class="fields"><label>主要母題<input id="mv-motif"></label><label>初始意義<input id="mv-meaning"></label></div>
+<div class="section-row"><h3>鏡頭與變化</h3><button id="shot-add" class="subtle">新增鏡頭</button></div><div id="shots"></div><button id="mv-build" class="primary">檢查並建立分鏡包</button><p class="hint">檢查時間覆蓋及資料連戲，實際畫面仍由你決定。</p><div id="mv-visual" class="result-visual" hidden></div></section>
+
+<section id="lyrics" class="panel" aria-labelledby="lyrics-heading" hidden><header class="section-header"><div><h2 id="lyrics-heading">波形校時</h2><p>聽見那句話，記下它真正開始的位置。</p></div></header>
+<div class="fields"><label>作品名稱<input id="lyrics-title" value="未命名歌詞"></label><label>匯入歌詞<input id="lyrics-file" type="file" accept=".lrc,.srt,.json"></label></div>
+<label>歌詞原文<textarea id="lyrics-source" rows="5" placeholder="[00:00.000]第一句&#10;[00:05.000]第二句"></textarea></label><div class="fields"><label>格式<select id="lyrics-format"><option value=".lrc">LRC</option><option value=".srt">SRT</option><option value=".json">JSON</option></select></label><label>歌曲時長（秒，未載音檔可留空）<input id="lyrics-duration" type="number" min="0.001" step="0.001"></label></div><button id="lyrics-import" class="secondary">讀取歌詞</button>
+<div class="audio-area"><label>載入校時音檔<input id="lyrics-audio" type="file" accept="audio/*"></label><audio id="lyrics-player" controls hidden></audio><canvas id="waveform" width="900" height="130" tabindex="0" role="slider" aria-label="音檔波形定位" aria-valuemin="0" aria-valuemax="0" aria-valuenow="0"></canvas><p id="wave-note" class="hint">載入後可點擊波形定位，左右方向鍵微調 0.5 秒。</p><div id="current-lyric" class="current-lyric">等待歌詞與音檔</div></div>
+<div class="section-row"><h3>逐句精修</h3><button id="cue-add" class="subtle">新增一句</button></div><div class="table-wrap"><table aria-label="逐句精修"><thead><tr><th>句</th><th>開始</th><th>結束</th><th>歌詞</th><th>操作</th></tr></thead><tbody id="cues"></tbody></table></div><button id="lyrics-build" class="primary">驗證並建立歌詞包</button><p class="hint">目前採人工校時。SRT 多行轉成單行，LRC 匯出只保留開始時間。</p></section>
+
+<section id="audio" class="panel" aria-labelledby="audio-heading" hidden><header class="section-header"><div><h2 id="audio-heading">交付檢查</h2><p>把「應該沒問題」變成可以回頭核對的證據。</p></div></header>
+<label>選擇 PCM WAV<input id="audio-file" type="file" accept=".wav,audio/wav"></label><label>接受條件<select id="audio-profile"><option value="distribution">音樂交付示範：44.1 / 48 kHz，16 / 24 bit</option><option value="video">影片交付示範：48 kHz，16 / 24 bit</option></select></label>
+<p class="hint">這是可選的示範條件，請依實際收件需求核對。最多 64 MiB；完整保留原音檔。</p><button id="audio-build" class="primary">分析並建立交付報告</button><div id="audio-visual" class="result-visual" hidden></div><p class="hint">RMS 與 sample peak 是本版測量值；尚未測量 LUFS 與 true peak。</p></section>
+</div>
+<aside class="output" aria-label="本輪成果"><h2>本輪成果</h2><p id="output-note">從左側建立一個工作包，成果會出現在這裡。</p><div id="status" role="status" aria-live="polite">準備開始</div><label>成果檔案<select id="output-file" disabled><option>尚無檔案</option></select></label><label>內容預覽<textarea id="output-content" rows="18" readonly placeholder="這裡會顯示實際產生的內容"></textarea></label><form id="export-form" method="post" action="/api/export"><input type="hidden" name="name" id="export-name"><input type="hidden" name="content" id="export-content"><button id="download" class="secondary" disabled>下載目前檔案</button></form><p class="hint">檔案在本機下載。切換工作台會保留本輪成果；關閉頁面前請保存。</p></aside>
+</div><footer class="page-footer">四個原創方向，共同保留你的創作判斷。合成範例可修改；沒有使用你的既有作品。</footer></main></body></html>

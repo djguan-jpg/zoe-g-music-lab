@@ -1,6 +1,6 @@
 # ZOE Lyrics Sync
 
-創辦：ZOE. G · GitHub：djguan-jpg · v0.1
+創辦：ZOE. G · GitHub：djguan-jpg · v0.2
 
 離線歌詞時間編修與匯出。可讀 LRC、SRT 和 JSON；LRC 多重時間標籤、offset 與小數時間會轉成逐句時間軸。純文字檔尚不會自動辨識歌曲咬字。
 
@@ -15,4 +15,6 @@ python music_lab.py lyrics --input examples/lyrics.lrc --shift 1.25 --set '2=14.
 
 開啟 `preview.html`，選自己的本機音檔，播放並修改表格。按「使用播放位置」記下某句開始時間；按「套用編修」後才更新播放預覽與匯出內容。瀏覽器讀取音檔不會上傳。匯出 LRC 時只保留開始時間；SRT／JSON 保留開始和結束。
 
-下一階段可加入更細的逐字時間、波形與拖曳、音訊辨識。這些尚未實作。
+v0.2 工作台：在專案根目錄執行 `python music_lab_server.py`，開啟本機介面的「波形校時」。可匯入歌詞、載入本機音檔、查看第一聲道波形、點擊定位或左右鍵微調 0.5 秒，再按「記下時間」填入某句。修改後驗證，成果在右側預覽並下載。
+
+波形解碼上限 64 MiB，超過時保留播放功能、略過波形；音訊格式以瀏覽器支援為準。較細的逐字時間、拖曳及音訊辨識尚未實作。工作台的 HTTP 下載已驗證實際 JSON 檔案；舊獨立 preview.html 的 Blob 下載本輪未重新確認。

@@ -6,10 +6,11 @@ from musiclab.common import read_json, write_bundle
 from musiclab.creative import music_bundle, storyboard_bundle
 from musiclab.lyrics import read_cues, edits, lyrics_bundle
 from musiclab.audio import analyze_wav, audio_bundle
+from musiclab.design import music_plan_bundle, motif_bundle
 
 
 def main(argv=None):
-    parser = argparse.ArgumentParser(description="ZOE. G Music Lab · 本機 v0.1")
+    parser = argparse.ArgumentParser(description="ZOE. G Music Lab · 本機 v0.2")
     commands = parser.add_subparsers(dest="command", required=True)
     for name in ("music", "storyboard", "lyrics", "audio"):
         sub = commands.add_parser(name)
@@ -33,9 +34,11 @@ def main(argv=None):
     status = 0
     try:
         if args.command == "music":
-            bundle = music_bundle(read_json(args.brief))
+            brief = read_json(args.brief)
+            bundle = music_plan_bundle(brief) if "arrangement" in brief else music_bundle(brief)
         elif args.command == "storyboard":
-            bundle = storyboard_bundle(read_json(args.brief))
+            brief = read_json(args.brief)
+            bundle = motif_bundle(brief) if "motifs" in brief else storyboard_bundle(brief)
         elif args.command == "lyrics":
             path = Path(args.input)
             data = read_cues(path.read_text(encoding="utf-8-sig"), path.suffix)

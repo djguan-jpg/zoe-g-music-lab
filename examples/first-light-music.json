@@ -1,0 +1,23 @@
+{
+  "example_type": "synthetic_original_demo",
+  "title": "樓梯間的回聲",
+  "language": "繁體中文",
+  "audience": "在生活轉折點尋找方向的成年人",
+  "theme": "搬離舊公寓前，主角在樓梯間試著把一句話說完整，回聲從別人的評價變成自己的回答",
+  "style": "中速室內流行，木質打擊與短延遲合成器",
+  "vocal": "清晰自然的聲音；由低聲試探到穩定地說完",
+  "bpm": 120,
+  "beats_per_bar": 4,
+  "memory_hook": "這次換我回答",
+  "existing_lyrics": "空房剩一圈淡色的牆\n紙箱裡裝不下那句話\n我把聲音留在樓梯上\n這次換我回答",
+  "avoid": ["用口號取代具體動作", "模仿特定歌手"],
+  "deliverables": ["完整歌詞", "兩種副歌方案", "分段編曲指令", "實唱待驗證清單"],
+  "arrangement": [
+    {"name": "前奏", "bars": 4, "energy": 1, "focus": "用空間聲響引出回聲", "texture": "木質敲擊，短延遲"},
+    {"name": "主歌", "bars": 16, "energy": 2, "focus": "以搬家動作呈現不敢回答", "texture": "近距離人聲，單音低音"},
+    {"name": "預副歌", "bars": 8, "energy": 3, "focus": "她在樓梯上停下，不再往下走", "texture": "漸進脈衝，保留人聲空間"},
+    {"name": "副歌", "bars": 16, "energy": 4, "focus": "第一次完整說出記憶點", "texture": "開放和弦，完整鼓組"},
+    {"name": "橋段", "bars": 8, "energy": 2, "focus": "回聲消失後仍願意說話", "texture": "抽掉鼓組，只留聲音與呼吸"},
+    {"name": "末副歌", "bars": 16, "energy": 5, "focus": "同一句話從請求變成選擇", "texture": "鼓組回歸，增加自己的和聲"}
+  ]
+}

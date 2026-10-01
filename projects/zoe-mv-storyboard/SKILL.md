@@ -5,7 +5,7 @@ description: 根據歌曲、歌詞或故事需求設計 MV 敘事、時間分鏡
 
 # ZOE MV Storyboard
 
-創辦／發起：ZOE. G（GitHub：djguan-jpg）。本技能在此專案新撰寫，AI 協作详見根目錄 FOUNDER-RECORD.md。
+創辦／發起：ZOE. G（GitHub：djguan-jpg）。本技能在此專案新撰寫，AI 協作詳見根目錄 FOUNDER-RECORD.md。
 
 ## 敘事決策
 
@@ -17,7 +17,7 @@ description: 根據歌曲、歌詞或故事需求設計 MV 敘事、時間分鏡
 
 每鏡列開始、結束、歌曲段落、敘事用途及視覺描述。相鄰鏡頭的姿勢、方向、物件和光線應可接續；畫面要讓重要動作有時間完成。全片或指定片段的鏡頭時間需覆蓋需求範圍，未知／刻意留白要明確標示。
 
-生成提示保留角色与場景一致性線索，区分參考資產、提示文字與實際產出。按選定模型的官方能力決定單鏡時長、參考方式和參數；不虛構模型支援。
+生成提示保留角色與場景一致性線索，區分參考資產、提示文字與實際產出。按選定模型的官方能力決定單鏡時長、參考方式和參數；不虛構模型支援。
 
 ## 交付與驗證
 
@@ -28,9 +28,11 @@ description: 根據歌曲、歌詞或故事需求設計 MV 敘事、時間分鏡
 在專案根目錄使用：
 
 ```powershell
-python music_lab.py storyboard --brief examples/mv-brief.json --out outputs/mv
+python music_lab.py storyboard --brief examples/first-light-mv.json --out outputs/mv-run
 ```
 
-`mv-brief.json` 由 AI 或人填入實際鏡頭內容。工具驗證順序、時間範圍與覆蓋，輸出 `storyboard.csv`、`storyboard.json` 和 `prompts.md`；没有生成或渲染影片。
+需求含 motifs 時，各鏡填入母題狀態、人物狀態、左右方向與變化理由。工具輸出鏡頭 CSV／JSON、提示、`continuity.md` 及可重新讀入的 `mv-brief.json`。沒有理由的人物狀態或直接左右反轉、未使用母題、母題只有一種狀態，列待審查。這是資料檢查，不是審查實際影片的替代品。
+
+時間需從 0 開始連續覆蓋需求範圍。未填 motifs 的 v0.1 格式仍可用。本機 UI「母題分鏡」可編修主要母題及鏡頭；更複雜的多母題使用 CLI。工具沒有生成或渲染影片。
 
 共同開發可補充節奏處理、鏡頭語法與不同工具的實測範例；案例應說明輸入、改動及觀察結果。
