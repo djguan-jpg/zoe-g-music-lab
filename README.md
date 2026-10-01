@@ -2,7 +2,7 @@
 
 由 **ZOE. G** 發起的四個原創專案。GitHub 帳號為 **djguan-jpg**；品牌署名與帳號可以不同。
 
-本機 v0.2 提供四個工作台與原創 Skill。Python 3.10 以上即可使用，沒有第三方依賴。此輪只讀本次新建工作區，不參考你的其他本機或 GitHub 專案。公開第三方 README 僅用於需求比較，來源及自行設計的差異記在 [構思紀錄](CONCEPT.md)。
+第一版可交付版本 v0.2 提供四個工作台與原創 Skill。Python 3.10 以上即可使用，沒有第三方依賴。此輪只讀本次新建工作區，不參考使用者的其他本機或 GitHub 專案。公開第三方 README 僅用於需求比較，來源及自行設計的差異記在 [構思紀錄](CONCEPT.md)。
 
 | 專案 | 已提供的第一版 | 入口 |
 |---|---|---|
@@ -47,8 +47,12 @@ python music_lab.py audio --input '自己的歌曲.wav' --profile distribution -
 - [創辦與協作紀錄](FOUNDER-RECORD.md)：ZOE. G 發起方向；Codex 協助規格、文字、程式與驗證。
 - [專案清單](projects.json)：四個獨立 ID、版本與功能範圍。
 - [本輪進度](PROGRESS.md)：實跑驗證與後續工作。
+- [第一版說明](RELEASE-v0.2.0.md)：已提供功能、驗證與限制。
+- [四個專案的投稿資料](SUBMISSION-PACKET.md)：來源連結、用途、使用方式與作者關係。
 
-目前保留在本機 Git 工作區，沒有對外建立 Repo、發佈網站或送出自由工坊認領。平台認領、GitHub 權限與授權條款由後續發佈決策另行處理。
+GitHub 儲存庫為 [djguan-jpg/zoe-g-music-lab](https://github.com/djguan-jpg/zoe-g-music-lab)，目前 private。四個專案共用此儲存庫，各有獨立 ID 與 Skill 入口；創辦／發起署名皆為 ZOE. G，AI 協作如實揭露。這是專案的發起紀錄，平台尚未核實作者或創始人身分。
+
+自由工坊「手動登錄作品」要求公開 GitHub 網址。目前未公開、未送出投稿，也未授權平台 App 存取此 Repo。尚未選定開源授權。程式未部署為公開網站。
 
 ## 驗證
 

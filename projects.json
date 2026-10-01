@@ -7,7 +7,9 @@
     "github_username": "djguan-jpg"
   },
   "ai_collaboration": "Codex assisted with scope, original skill text, implementation and validation",
-  "publication": "local_only",
+  "publication": "github_private",
+  "repository": "https://github.com/djguan-jpg/zoe-g-music-lab",
+  "release_version": "v0.2.0",
   "platform_claim": "not_submitted",
   "projects": [
     {
