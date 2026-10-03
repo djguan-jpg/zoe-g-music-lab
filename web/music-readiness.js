@@ -35,11 +35,33 @@
     return {totalSections:panel.sections.length,filledSections:panel.sections.length-blocked.size,issueCount,issues,truncated:issueCount>issues.length};
   }
   function inspect(panel){return inspectSource(source(panel));}
+  const notes=['只檢查歌曲必填欄位、數值範圍與需求清單；仍須完整建立驗證總時長與資料。','原字串、順序與留白保留；沒有補寫創作或呼叫模型，實唱／實聽及素材授權另行核對。'];
+  function report(panel){
+    const selected=source(panel),data=inspectSource(selected);
+    return {format:'zoe-music-review',schema_version:1,status:data.issueCount?'needs_correction':'fields_checked',source:selected,
+      total_sections:data.totalSections,filled_sections:data.filledSections,issue_count:data.issueCount,issues:data.issues,details_truncated:data.truncated,review_notes:[...notes]};
+  }
+  function markdown(data){
+    const lines=['# 歌曲欄位檢查','',`共${data.total_sections}段；段落欄位已填${data.filled_sections}段；待辦${data.issue_count}項。`,''];
+    for(const issue of data.issues){const prefix={sections:'段落',avoid:'避免事項',deliverables:'交付項目'}[issue.scope];lines.push(`- ${prefix?`${prefix} ${issue.row} · `:''}${labels[issue.field]}：${issue.message}`);}
+    if(data.details_truncated)lines.push('- 明細僅列前200項；全部欄位已檢查，修正後請重查。');
+    if(!data.issue_count)lines.push('目前欄位沒有待辦；仍須完整建立與實唱／實聽驗證。');
+    return [...lines,'',...data.review_notes,''].join('\n');
+  }
+  const canonical=v=>Array.isArray(v)?v.map(canonical):v&&typeof v==='object'?Object.fromEntries(Object.keys(v).sort().map(k=>[k,canonical(v[k])])):v;
+  const equal=(a,b)=>JSON.stringify(canonical(a))===JSON.stringify(canonical(b));
+  function checkedResult(panel,reply){
+    const expected=report(panel);
+    if(!exact(reply,['files','data','meta'])||!exact(reply.meta,['version','protocol_version','needs_review'])||typeof reply.meta.version!=='string'||!reply.meta.version||reply.meta.protocol_version!==1||reply.meta.needs_review!==true||
+      !equal(reply.data,expected)||!exact(reply.files,['music-review.json','music-review.md'])||!equal(J.parse(reply.files['music-review.json'],{maxBytes:8*1024*1024,label:'歌曲待辦報告'}),expected)||reply.files['music-review.md']!==markdown(expected))
+      throw Error('歌曲待辦報告與本次來源或版本不一致；目前成果與編修保留');
+    return structuredClone(reply);
+  }
   function createController({capture,captureIds=null,onState=()=>{}}){
     return Checkpoint.createController({capture:()=>({panel:capture(),ids:captureIds?captureIds():null}),
       source:value=>{const panel=source(value.panel),ids=value.ids;
         if(captureIds&&(!Array.isArray(ids)||ids.length!==panel.sections.length||ids.some(id=>typeof id!=='string'||!id)||new Set(ids).size!==ids.length))throw Error('歌曲段落識別不完整；目前內容保留');
         return {panel,ids:ids?[...ids]:null};},inspect:value=>inspectSource(value.panel),onState});
   }
-  const api={inspect,createController,labels};if(node)module.exports=api;else root.MusicReadiness=api;
+  const api={inspect,report,markdown,checkedResult,createController,labels};if(node)module.exports=api;else root.MusicReadiness=api;
 })(typeof globalThis==='object'?globalThis:this);

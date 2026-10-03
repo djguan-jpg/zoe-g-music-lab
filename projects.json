@@ -1,6 +1,6 @@
 {
   "suite": "ZOE. G Music Lab",
-  "version": "0.30.0",
+  "version": "0.31.0",
   "created_on": "2026-10-01",
   "founder": {
     "display_name": "ZOE. G",
@@ -9,7 +9,7 @@
   "ai_collaboration": "Codex assisted with scope, original skill text, implementation and validation",
   "publication": "github_private",
   "repository": "https://github.com/djguan-jpg/zoe-g-music-lab",
-  "release_version": "v0.30.0",
+  "release_version": "v0.31.0",
   "platform_claim": "not_submitted",
   "projects": [
     {
@@ -17,7 +17,7 @@
       "title": "ZOE Music Production",
       "entry": "projects/zoe-music-production/SKILL.md",
       "cli": "music",
-      "scope": "musical memory hook, bar timing, energy plan and AI task packaging"
+      "scope": "musical memory hook, bar timing, energy plan, raw draft field diagnostics and AI task packaging"
     },
     {
       "id": "zoe-mv-storyboard",

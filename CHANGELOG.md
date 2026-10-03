@@ -1,5 +1,13 @@
 # 迭代說明
 
+## v0.31.0 — 2026-10-04
+
+- 基線真Agent無music_review、IAB歌曲待辦沒有可交付報告。新增唯讀歌曲原欄位診斷與獨立zoe-music-review schema1，JSON／Markdown；原字串／留白／原列保持，不補創作，零待辦仍須完整歌曲建立。
+- music_review.py純形狀／範圍／必填及report，application供HTTP、CLI、JSON-lines、MCP；discovery精確原panel／允許空字串與空列。CLI --input／--draft互斥、modern草稿不遷移、0／2／1狀態與預設不覆寫。8基本／啟庫13工具，舊schema／protocol保持。
+- music-readiness重用純模型重算source／完整data／JSON／Markdown及protocol／schema；app明確報告動作、revision／late guard與busy，核對後才替換成果／隱藏舊設計。錯誤、來源不符／未知版本／晚回應保留原成果及後續文字；其他panel／音檔／另存狀態保持。
+- 258Python／391JS／四Skill／29語法、9新Python／9新JS、75真Node↔Python報告／Markdown及18IAB，兩native／四adapter、實draft3→CLI及Agent、390px Enter／雙控制／4秒晚回應通過。前版v0.30 ZIP249／382解壓還原；restore-v0.30.0-before-v0.31.0保留main起點。
+- 產品0.31.0，無新依賴／模型／auth／production／路徑權限。ZOE. G／PolyForm Noncommercial1.0.0／private保持；指定commit封裝／privatePR合併／Release／遠端bytes、最新三版SHA與確定PID／outputs盤點依收據。完整視覺／正式媒體／Host／FreeTWAI／原生file仍待，rolling active。
+
 ## v0.30.0 — 2026-10-04
 
 - 基線 IAB 重現空白段落只顯示泛用錯誤、有效 BPM120.0004 被 HTML 步長攔下。新增歌曲欄位待辦及建立／歌曲分鏡起稿前原欄位定位；BPM step=any，完整數值範圍與 domain 保持。

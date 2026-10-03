@@ -72,6 +72,11 @@ def seed_schema():
 
 
 def payload_schema(operation):
+    if operation == 'music_review':
+        from .draft_contract import draft_schema
+        panel = draft_schema()['properties']['panels']['properties']['music']
+        panel['description'] = 'Raw draft3 music panel; all fields remain strings, including blank or malformed numeric strings; no paths or full-plan claim'
+        return object_schema({'panel': panel}, ('panel',), additionalProperties=False)
     if operation == 'lyrics_review':
         clock={'type':['number','string','null','boolean'],'description':'Raw clock field; empty or malformed scalar is reported, never guessed'}
         cue=object_schema({'start':clock,'end':clock,'text':{'type':'string','maxLength':2000}},('start','end','text'),additionalProperties=False)

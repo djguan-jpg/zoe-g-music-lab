@@ -1,5 +1,9 @@
 # 本機 Agent 接口 v1
 
+## v0.31 歌曲原欄位診斷
+
+新增唯讀music_review operation／MCP tool，payload只含panel（modern草稿panels.music），允許未完成原字串與空列；報告zoe-music-review schema1、JSON／Markdown保留source／原位置，不補創作。CLI music-review可明確--input或--draft；0為欄位零、2為已輸出待修正、1為失敗。meta.needs_review始終true，完整歌曲與媒體仍須驗證。預設8工具、明確啟庫13，需重新discovery；Agent1／MCP2025-11-25／draft3及舊schema保持。沒有Host／路徑／模型／自動寫檔權限新增。見MUSIC-REVIEW.md；既有v0.25–v0.30章節的7／12為歷史清單。
+
 ## v0.30 歌曲欄位待辦
 
 工作台歌曲必填／範圍待辦只存在本頁，建立歌曲及從目前歌曲起稿分鏡先定位原缺漏。完整 music／storyboard_seed 仍由共用 application／domain 接受，零待辦不代表總長或媒體通過。BPM120.0004保留精度；純有限十進位與文字空白規則由 planning-values 重用。檔案 Agent 起稿獨立核對／預覽再明確套用，保留目前歌曲及音檔。真17鏡檔及限定撤回通過；產品0.30，各schema／protocol及七／十二tools保持，不新增operation／待辦wire／模型。見 MUSIC-READINESS.md。
