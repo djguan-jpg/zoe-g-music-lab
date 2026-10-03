@@ -6,7 +6,7 @@
 
 ## 驗收與範圍
 
-267Python／413JS／4Skill／32語法／diff通過；24IAB項目、原生草稿四panel逐值相等、12數值與畫幅／8特殊欄位、排序及三工作台刪除還原、明確編修、兩原值report／四adapter、390px Enter／原音檔／晚回應及來源不同保護、修正後三完整成果建立。詳見[QA](docs/QA-v0.33.0.md)與[分層](docs/RAW-FIELDS.md)。沒有宣稱完整視覺／實聽。
+267Python／413JS／4Skill／32語法／diff通過；24IAB項目、原生草稿四panel逐值相等、12數值與畫幅／8特殊欄位、排序及三工作台刪除還原、明確編修、兩原值report／四adapter、390px Enter／原音檔／晚回應及來源不同保護、修正後三完整成果建立。詳見[QA](QA-v0.33.0.md)與[分層](RAW-FIELDS.md)。沒有宣稱完整視覺／實聽。
 
 ## Git、封裝與還原
 

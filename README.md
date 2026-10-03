@@ -1,6 +1,6 @@
 # ZOE. G Music Lab
 
-目前版本 **v0.32.0**：分鏡待辦可交接為原鏡號／母題引用JSON／Markdown，CLI、HTTP、Agent／MCP共用原欄位診斷。歌曲與分鏡共用純回覆核對層；來源不同、未知版本與晚回應保留編修／成果／音檔／另存確認。預設9／明確啟庫14工具，protocol與舊schema保持；零待辦仍須完整時間／影格／連戲及實際音畫驗證。見[使用與分層](docs/STORYBOARD-REVIEW.md)、[本輪驗證](docs/QA-v0.32.0.md)、[還原與交接](docs/HANDOFF-v0.32.0.md)。
+目前版本 **v0.33.0**：未填完的數值與未知畫幅可原樣保存草稿；換行等特殊字元以可見符號提示，未編修時另存仍保留原字串。排序、刪除還原、待辦報告及 Agent 交接使用同一份原值，完整建立仍檢查範圍、時間與影格。純原值控制器、DOM adapter 與原有 domain 分層；9／14工具、protocol1／draft3及各report1保持。見[使用與分層](docs/RAW-FIELDS.md)、[本輪驗證](docs/QA-v0.33.0.md)、[還原與交接](docs/HANDOFF-v0.33.0.md)。
 
 ## 歌曲跨工具報告（v0.31）
 
@@ -273,7 +273,7 @@ git diff --check
 開發／封裝驗證需要 Node.js；一般使用工作台與 CLI 只需要 Python。從指定 Git 版本建立可驗證的原始碼 ZIP：
 
 ```powershell
-python scripts/package_release.py --ref v0.32.0
+python scripts/package_release.py --ref v0.33.0
 ```
 
 封裝保存 commit、SHA-256、每檔摘要及檢查結果；解壓後重跑 Python／JavaScript 測試、Agent 能力查詢與 MCP 握手。輸出留在忽略的 outputs/releases，重複封裝同一提交會拒絕覆寫。

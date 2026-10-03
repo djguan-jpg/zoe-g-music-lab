@@ -1,5 +1,13 @@
 # 迭代說明
 
+## v0.33.0 — 2026-10-04
+
+- 修正合法 draft3 的原字串被 number／select／單行控制項清空或改寫：12 個數值／畫幅重現值與 8 個特殊欄位經真實瀏覽器下載，四個 panel 與載入來源相等。
+- 新增純 raw-fields 控制器與 raw-fields-dom adapter；數值文字欄位保留未完成值，未知畫幅有「原值需核對」選項，特殊字元以可見符號與描述提示。明確編修使用新文字，不自動解碼或轉換。
+- 草稿、排序／刪除還原、時長撤回與歌曲／分鏡待辦共用原值；完整分鏡保留時間字串交給 domain，歌詞及鏡頭摘要／新增／刪除壓縮不再將十六進位當十進位。
+- 267 Python／413 JS／四 Skill／32 語法與 diff；24 IAB 項目、原生草稿與兩份報告、四 adapter、390px Enter、4 秒晚回應、來源不符保護、原音檔及確認保存；修正後歌曲136秒／分鏡576影格／歌詞6秒完整建立。前版v0.32 ZIP267／400解壓還原通過。
+- 指定commit封裝、SHA、private PR／Release與遠端bytes、restore tag及限定維護依HANDOFF與本輪收據。PolyForm非商用、署名、9／14工具及各schema保持；FreeTWAI尚未提交或核准。
+
 ## v0.32.0 — 2026-10-04
 
 - 分鏡原欄位診斷／JSON與Markdown報告接通CLI、HTTP、JSON-lines及MCP；原鏡號／母題ID與引用保持，明確--draft只取modern草稿分鏡工作台。

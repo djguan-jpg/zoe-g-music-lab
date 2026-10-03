@@ -4,6 +4,8 @@
 (function(root) {
   const contract=typeof module!=='undefined'&&module.exports?require('../contracts/draft-v3.json'):root.MusicDraftContract;
   if(!contract||contract.version!==3)throw Error('草稿契約未載入或版本不支援');
+  const Values=typeof module==='object'&&module.exports?require('./planning-values.js'):root.MusicPlanningValues;
+  const clock=value=>{try{return Values.number(value,'鏡頭時間');}catch{return NaN;}};
   const draftFields=contract.fields,draftRows=contract.rows;
   function exactKeys(value, keys) {
     return value && typeof value==='object' && !Array.isArray(value) &&
@@ -81,10 +83,10 @@
     return `motif-${index}`;
   }
   function compactShotTimes(shots) {
-    if(shots.some(s=>!s.start.trim()||!s.end.trim()||!Number.isFinite(Number(s.start))||
-        !Number.isFinite(Number(s.end))||Number(s.end)<=Number(s.start)))return null;
+    if(shots.some(s=>!s.start.trim()||!s.end.trim()||!Number.isFinite(clock(s.start))||
+        !Number.isFinite(clock(s.end))||clock(s.end)<=clock(s.start)))return null;
     let cursor=0;
-    return shots.map(s=>{const duration=Number(s.end)-Number(s.start),start=cursor;
+    return shots.map(s=>{const duration=clock(s.end)-clock(s.start),start=cursor;
       cursor=Math.round((cursor+duration)*1000)/1000;
       return {...s,start:String(start),end:String(cursor)};});
   }
@@ -95,7 +97,7 @@
   function shotOverview(shots,motifs) {
     const names=new Map(motifs.map(m=>[m.id,m.name]));
     return shots.map((shot,index)=>{
-      const start=Number(shot.start),end=Number(shot.end);
+      const start=clock(shot.start),end=clock(shot.end);
       const valid=Boolean(String(shot.start).trim()&&String(shot.end).trim()&&Number.isFinite(start)&&
         Number.isFinite(end)&&start>=0&&end>start);
       const time=valid?`${start}–${end} 秒`:'時間未完成';

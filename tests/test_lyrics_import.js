@@ -152,7 +152,7 @@ test('scoped actual-after undo restores old lyric table but retains unrelated ed
 function appAdapter(){
   const source=fs.readFileSync(path.join(root,'web/app.js'),'utf8'),a=source.indexOf("$('lyrics-file').onchange="),b=source.indexOf("$('cue-add').onclick=",a);
   assert.ok(a>=0&&b>a);const h=harness(async(op,payload)=>domain(op,payload)),nodes={'lyrics-file':{value:'selected'},'lyrics-import':{}},notices=[];
-  const context={$:id=>nodes[id],state:{tab:'lyrics',busy:false},lyricsSeedController:{cancel:()=>{}},lyricsImportController:h.c,
+  const context={readValue:control=>control.value,$:id=>nodes[id],state:{tab:'lyrics',busy:false},lyricsSeedController:{cancel:()=>{}},lyricsImportController:h.c,
     say:m=>notices.push(m),run:async(_button,task)=>task(()=>true)};vm.runInNewContext(source.slice(a,b),context);
   return {...h,nodes,context,notices,choose:f=>nodes['lyrics-file'].onchange({target:{files:[f],value:'selected'}})};
 }
