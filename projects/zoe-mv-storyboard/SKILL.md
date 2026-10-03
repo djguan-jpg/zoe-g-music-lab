@@ -65,3 +65,7 @@ storyboard.json 的 frame_timeline 為獨立 schema1，CSV／提示稿及工作�
 ## v0.27 總長與鏡尾
 
 新增／刪除鏡頭保留作品宣告；核對全部秒數及影格覆蓋後，明確採用最後鏡尾，或手動更改總長。接續／撤回只改總長，後續創作與音檔保持；時間／列ID／FPS或實際after不同拒絕撤回。Agent／CLI仍明確提供總長，未完成創作不能冒充完整分鏡；暫態不進draft3／wire。見docs/STORYBOARD-DURATION.md。
+
+## v0.28 創作待辦接續
+
+時間起稿套用後先檢查工作台創作待辦，點選定位原欄位，人工補寫畫面、運鏡、轉場及狀態。變化理由可留白，依既有連戲提醒審查。待辦補齊不是完整時間／影格或成片接受；原文字與媒體保留，建立仍走完整application。工作台待辦不進draft3／Agent wire，七／十二tools與schema保持。

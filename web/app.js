@@ -4,7 +4,7 @@ const $ = id => document.getElementById(id);
 const state = {tab:'music', examples:null, files:{}, bundles:{}, revisions:{}, music:[], shots:[], cues:[], audioUrl:null, audioContext:null, waveform:null, busy:false};
 const draftUndo=MusicDraftUndo.createUndo();
 const draftRetention=MusicDraftRetention.createGuard({capture:captureDraft,capturePanel,events:window,onState:renderRetention});
-let seedController=null,lyricsSeedController=null,lyricsImportController=null,storyboardDurationController=null;
+let seedController=null,lyricsSeedController=null,lyricsImportController=null,storyboardDurationController=null,storyboardReadyController=null;
 let timingController=null,timingReading=false,timingReady=false,timingCanUndo=false;
 let lyricsMediaController=null,lyricsReviewController=null,lyricsReviewData=null,lyricsReviewStale=false;
 const deletionHistory=MusicHistory.createHistory(20);
@@ -100,7 +100,7 @@ async function run(button,task,scope=state.tab){
   finally{if(!current()){markDirty(scope);say('處理期間輸入有修改，請重新建立成果');}state.busy=false;button.disabled=false;timingControls();}
 }
 function setFiles(files,note,dirty=false,inputIndependent=false){state.files=files;state.bundles[state.tab]={files,note,dirty,inputIndependent};const select=$('output-file');select.replaceChildren();Object.keys(files).forEach(name=>{const option=document.createElement('option');option.value=name;option.textContent=name;select.append(option);});select.disabled=false;$('download').disabled=dirty;$('output-note').textContent=note+(dirty?'（有修改尚未重新驗證）':'');previewOutput();}
-function markDirty(tab){draftRetention.refresh(tab);if(tab==='storyboard')storyboardDurationController?.refresh();if(['music','storyboard'].includes(tab))stalePlanningReview(tab);if(tab==='audio')staleAudioReview();if(tab==='lyrics'){staleLyricsReview();lyricsReviewController?.invalidate();lyricsMediaController?.refresh();const pending=timingReading||timingReady;timingController?.invalidate();if(pending)timingSay('歌詞有修改，請重新預覽整批校時。');}state.revisions[tab]=(state.revisions[tab]||0)+1;const saved=state.bundles[tab];if(!saved||saved.inputIndependent)return;saved.dirty=true;if(state.tab===tab){$('download').disabled=true;$('output-note').textContent=saved.note+'（有修改尚未重新驗證）';}}
+function markDirty(tab){draftRetention.refresh(tab);if(tab==='storyboard'){storyboardDurationController?.refresh();storyboardReadyController?.refresh();}if(['music','storyboard'].includes(tab))stalePlanningReview(tab);if(tab==='audio')staleAudioReview();if(tab==='lyrics'){staleLyricsReview();lyricsReviewController?.invalidate();lyricsMediaController?.refresh();const pending=timingReading||timingReady;timingController?.invalidate();if(pending)timingSay('歌詞有修改，請重新預覽整批校時。');}state.revisions[tab]=(state.revisions[tab]||0)+1;const saved=state.bundles[tab];if(!saved||saved.inputIndependent)return;saved.dirty=true;if(state.tab===tab){$('download').disabled=true;$('output-note').textContent=saved.note+'（有修改尚未重新驗證）';}}
 document.querySelector('.editor').addEventListener('input',event=>{
   if(event.target.dataset.viewControl||event.target.id==='lyrics-file')return;
   const panel=event.target.closest('.panel');if(!panel)return;
@@ -228,6 +228,7 @@ function refreshShotOverview(){
   $('shot-count').textContent=`${overview.length} 鏡${incomplete?' · '+incomplete+' 鏡時間未完成':''}`;
   [...$('shots').children].forEach((article,i)=>article.querySelector('[data-shot-caption]').textContent=overview[i].label);
   storyboardDurationController?.refresh();
+  storyboardReadyController?.refresh();
 }
 function focusShot(index,key){
   const article=$('shots').children[index];if(!article)return;
@@ -268,6 +269,7 @@ for(const action of ['adopt','undo'])$('mv-duration-'+action).onclick=()=>{
 };
 function loadMv(){
   storyboardDurationController?.clear();
+  storyboardReadyController?.clear();
   clearDeletionHistory('storyboard');
   const brief=structuredClone(state.examples.storyboard);
   [['mv-title',brief.title],['mv-duration',brief.duration_seconds],['mv-fps',brief.fps],['mv-ratio',brief.aspect_ratio],['mv-style',brief.visual_style],['mv-anchor',brief.character_anchor]].forEach(([id,value])=>$(id).value=value);
@@ -277,9 +279,41 @@ function loadMv(){
 $('mv-example').onclick=()=>{loadMv();markDirty('storyboard');say('已載入本次原創合成分鏡');};
 $('shot-add').onclick=()=>{if(state.busy){say('目前操作尚未完成，請稍候');return;}const shots=rawShots(),openStates=shotOpenStates(),ids=entriesFor('shots').map(e=>e.id),last=shots.at(-1),start=last?.end?.trim()?Number(last.end):0;if(shots.length>=collections.shots.limit){say('鏡頭最多 1000 列',true);return;}if(!Number.isFinite(start)){say('最後一鏡結束時間需為數字',true);return;}shots.push({start:String(start),end:String(start+6),section:'',purpose:'',visual:'',camera:'',transition:'',motif_id:'',motif_state:'',character_state:last?.character_state||'',change_reason:'',screen_direction:'neutral'});openStates.push(true);ids.push(`row-${++rowSequence}`);renderShots(shots,openStates,ids);markDirty('storyboard');focusShot(shots.length-1,'motif_id');say('已新增鏡頭，作品總長保留；請選擇母題、填入創作，再核對鏡尾。');};
 $('mv-build').onclick=()=>run($('mv-build'),isCurrent=>{
+  const view=storyboardReadyController.check();
+  if(view.report.issueCount){locateStoryboardIssue(0);throw Error('分鏡創作有待辦；已定位第一個欄位，目前內容保留。');}
   const brief=MusicPlanning.planningBrief(captureDraft(),'storyboard');brief.shots=getShots();
   return MusicPlanReview.inspect({operation:'storyboard',brief,isCurrent,request:(operation,selected)=>api('/api/'+operation,selected),onResult:applyPlanningResult});
 });
+function storyboardIssueTarget(issue){
+  if(issue.scope==='fields')return $(issue.field==='motifs'?'motif-add':issue.field==='shots'?'shot-add':issue.field);
+  if(issue.scope==='motifs')return $('motifs').children[issue.row-1]?.querySelector(`[data-motif="${issue.field}"]`);
+  return $('shots').children[issue.row-1]?.querySelector(`[data-key="${issue.field}"]`);
+}
+function clearStoryboardIssueMarks(){
+  document.querySelectorAll('[data-storyboard-ready-invalid]').forEach(e=>{e.removeAttribute('aria-invalid');e.removeAttribute('data-storyboard-ready-invalid');});
+}
+function locateStoryboardIssue(index){
+  const issue=storyboardReadyController.locate(index);if(!issue){say('內容已有修改，請重新檢查創作待辦；目前內容保留。');return;}
+  const target=storyboardIssueTarget(issue);if(!target)return;
+  if(issue.scope==='shots')focusShot(issue.row-1,issue.field);
+  else{target.scrollIntoView({block:'nearest'});target.focus({preventScroll:true});}
+}
+function renderStoryboardReady({report,stale}){
+  clearStoryboardIssueMarks();const box=$('mv-ready-box'),list=$('mv-ready-issues'),stats=$('mv-ready-stats');
+  box.classList.toggle('stale',stale);list.replaceChildren();stats.replaceChildren();stats.hidden=!report;
+  $('mv-ready-status').textContent=!report?'時間起稿或留白鏡頭也能檢查；不補寫創作，不修改表單。':stale?'內容已有修改；下方是上一份待辦，請重新檢查目前分鏡。':report.issueCount?`共${report.issueCount}項創作待辦；補齊後再建立分鏡包。`:'欄位待辦已補齊；請建立分鏡包，繼續檢查時間、影格與連戲。';
+  if(!report)return;
+  for(const label of [`共${report.totalShots}鏡`,`單鏡待辦已補齊${report.filledShots}鏡`,`共${report.totalMotifs}個母題`]){const p=document.createElement('p');p.textContent=label;stats.append(p);}
+  if(!stale)for(const issue of report.issues){const target=storyboardIssueTarget(issue);if(target){target.setAttribute('aria-invalid','true');target.setAttribute('data-storyboard-ready-invalid','true');}}
+  report.issues.slice(0,20).forEach((issue,index)=>{
+    const li=document.createElement('li'),button=document.createElement('button');button.type='button';button.className='subtle';button.disabled=stale||state.busy;
+    button.textContent=(issue.scope==='shots'?`鏡頭 ${issue.row} · `:issue.scope==='motifs'?`母題 ${issue.row} · `:'')+MusicStoryboardReadiness.labels[issue.field]+'：'+issue.message+(issue.relatedRow?`（母題 ${issue.relatedRow}）`:'');
+    button.onclick=()=>locateStoryboardIssue(index);li.append(button);list.append(li);
+  });
+  if(report.issueCount>20){const li=document.createElement('li');li.textContent=`此處列前20項；全部${report.totalShots}鏡與${report.totalMotifs}個母題已檢查。修正後重查；待辦明細最多保留200項。`;list.append(li);}
+}
+storyboardReadyController=MusicStoryboardReadiness.createController({capture:()=>capturePanel('storyboard'),onState:renderStoryboardReady});
+$('mv-ready-check').onclick=()=>{if(state.busy){say('目前操作尚未完成，請稍候');return;}try{const view=storyboardReadyController.check();say(view.report.issueCount?`已列出${view.report.issueCount}項創作待辦；點選可定位欄位。`:'欄位待辦已補齊；仍須完整建立驗證。');}catch(e){say(e.message,true);}};
 function lyricsReviewPayload(){return {title:$('lyrics-title').value,duration:$('lyrics-duration').value,cues:entriesFor('cues').map(e=>e.value)};}
 function clearLyricsIssueMarks(){document.querySelectorAll('#cues input,#lyrics-duration').forEach(e=>e.removeAttribute('aria-invalid'));}
 function staleLyricsReview(){
@@ -339,6 +373,8 @@ $('lyrics-review-check').onclick=()=>run($('lyrics-review-check'),()=>lyricsRevi
 function timingSay(message,error=false){$('timing-status').textContent=message;$('timing-status').classList.toggle('error',error);}
 function timingControls(){
   storyboardDurationController?.refresh();
+  storyboardReadyController?.refresh();
+  $('mv-ready-check').disabled=state.busy;
   $('timing-preview').disabled=state.busy||timingReading||!state.cues.length;
   $('timing-apply').disabled=state.busy||timingReading||!timingReady;
   $('timing-undo').disabled=state.busy||timingReading||!timingCanUndo;
@@ -486,10 +522,11 @@ function capturePanel(panel){
 }
 function captureDraft(){
   const panels=Object.fromEntries(Object.keys(MusicEditor.draftFields).map(panel=>[panel,capturePanel(panel)]));
-  return {format:'zoe-music-lab-draft',schema_version:3,tool_version:'0.27.0',saved_at:new Date().toISOString(),tab:state.tab,panels};
+  return {format:'zoe-music-lab-draft',schema_version:3,tool_version:'0.28.0',saved_at:new Date().toISOString(),tab:state.tab,panels};
 }
 function applyDraft(draft){
   storyboardDurationController?.clear();
+  storyboardReadyController?.clear();
   if(seedController)seedController.cancel();
   lyricsSeedController?.cancel();
   lyricsImportController?.cancel();
@@ -562,7 +599,7 @@ function applyPlanningPanel(draft,operation){
   lyricsImportController?.cancel();
   const checked=MusicEditor.validateDraft(draft),panel=checked.panels[operation];
   if(!['music','storyboard','lyrics'].includes(operation))throw Error('只支援歌曲、分鏡或歌詞工作台');
-  if(operation==='storyboard')storyboardDurationController?.clear();
+  if(operation==='storyboard'){storyboardDurationController?.clear();storyboardReadyController?.clear();}
   clearDeletionHistory(operation);
   Object.entries(panel.fields).forEach(([id,value])=>$(id).value=value);
   if(operation==='music'){renderSections(panel.sections);renderRequirements('music-avoid',panel.avoid,'避免事項');

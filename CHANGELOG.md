@@ -1,5 +1,12 @@
 # 迭代說明
 
+## v0.28.0 — 2026-10-04
+
+- 真IAB重現未選母題先停在泛用錯誤、焦點留建立。新分鏡創作待辦列必填與母題引用，建立先定位第一項，留白與原創作保持。
+- storyboard-readiness純模型／注入快照controller／DOM分層，1000鏡／30母題／8MiB、200明細／前20UI，定位前重查、修改後停舊位置、載入清暫態；其他panel／音檔保留，optional理由不改必填，待辦零仍須完整時間／影格／連戲驗證。
+- 244Python／353JS／四Skill／25JS語法、3新Python／17新JS、59真Node／Python與27IAB、四adapter／五native下載／真draft3、Agent17鏡102待辦／390px Enter與晚回應保護通過。前版v0.27 ZIP241／336還原，restore-v0.27.0-before-v0.28.0保留起點；精確commit封裝／privatePR／Release／遠端bytes依收據。
+- 產品0.28，protocol／schema及七／十二工具保持，無新operation／依賴／模型／production／auth。非商用／private／ZOE. G保持；最新三版與確定PID／outputs盤點，合格舊產物才清理。正式媒體／完整視覺／Host／FreeTWAI及原生file仍待，rolling active。
+
 ## v0.27.0 — 2026-10-04
 
 - 真IAB重現60秒宣告新增鏡頭後被改30秒；新增／刪除鏡頭保留宣告，原有有效時間收合與刪除還原保持。
