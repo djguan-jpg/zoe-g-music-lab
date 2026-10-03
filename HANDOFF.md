@@ -1,31 +1,33 @@
-# v0.18.0 本輪交接
+# v0.19.0 本輪交接
 
-2026-10-03 · ZOE. G 發起 · djguan-jpg/zoe-g-music-lab（private）。前輪保存於docs/HANDOFF-v0.17.0.md。
+2026-10-03 · ZOE. G發起 · djguan-jpg/zoe-g-music-lab（private）。前輪保存於docs/HANDOFF-v0.18.0.md。
 
-## 還原與提交
+## 還原與封裝
 
-分支codex/iteration-v0.18.0，自main 1ac2cf6f0140d48d1b2a60421d256410bbab5d6f開始；restore-v0.17.0-before-v0.18.0指向起點。前版v0.17 ZIP394097bytes、SHA256 08b98926c7dee67110f2814dd217115903a8a427ea48a8d187e7b3401bc2c0c2，安全entries／CRC／解壓原版156Python／168JS通過。
+分支codex/iteration-v0.19.0自main e051042b36e744830c1e0940cbf6529c4aa52c01開始；restore-v0.18.0-before-v0.19.0指向起點。前版v0.18 ZIP411169bytes／SHA058127e3574ccceb2f78905a7ffb31ae2524a5d28fc4e5b45d3e2d9b707c956b，safe entries／CRC／解壓156Python／189JS通過。
 
-本版指定commit封裝後private PR合併、v0.18.0 tag／Release；source／tree／ZIP SHA及真正遠端下載以manifest與outputs/v18-qa/release-remote-evidence.json為準。先保存未提交改動，再git switch -c codex/restore-v0.17.0 restore-v0.17.0-before-v0.18.0，或git archive到新目錄；main回寫以revert／PR，不reset／強推。程式與資料還原分開；草稿／備份／媒體不回退覆寫或自動遷移。
+本版指定commit封裝後private PR合併、v0.19.0 tag／Release；source／tree／ZIP SHA與真正遠端下載以manifest及outputs/v19-qa/release-remote-evidence.json為準。先保存未提交變更，再git switch -c codex/restore-v0.18.0 restore-v0.18.0-before-v0.19.0，或git archive到新目錄。main回寫用revert／PR，不reset／強推。程式與使用者草稿／備份／媒體分開，不覆寫或自動遷移資料。
 
 ## 功能與分層
 
-基線生產File.text adapter慢讀取覆蓋手動新原文，IAB按Read立即替換cue、無本次undo；TXT拒絕。新增web/lyrics-import.js純request／reply／draft提案與controller分層，原生arrayBuffer嚴格UTF-8、單BOM、byte界限，選檔前target snapshot與最新序列。讀取後及HTTP後先核對target，舊成功／錯誤／取消不提交；回應meta／cue／timing／JSON成果核對，無效資料拒絕。
+基線application與真CLI完整包回讀丟title／10秒總長，未知schema仍抽cues接受。lyrics_package純decode／validate／files／review、application互斥cues／content／package及CLI有界讀取；lyrics-package.js同源JSON掃描／validate／legacy／revise／notice供工作台與offlineHTML。重複鍵含跳脫同名、非有限數字、未知／extra／精度／矛盾來源拒絕，不靜默修正。
 
-選檔或手動Read先顯示完整原文／句數／前六句，明確Apply／Cancel。預覽不改原文／表格／成果；applyPlanningPanel限定lyrics，保留duration／audio／其他工作台。draft-undo記錄實際after，後續時間／文字編修拒絕整份撤回，其他panel編修保持。app以textContent顯示字面文字、readonly原文與Enter焦點；移除舊內部createLyricsFileImport adapter，26新測試取代五舊測試並擴充。
+完整包保持title、duration、句尾／推估／shift／review_notes。未改cue下載不重算來源，確認音檔total仍提示曾補句尾，人工編修加實聽說明。provided時長衝突拒絕、空白才接續；estimated不填。legacy明確按轉換或CLI --legacy-json／Agent allow_legacy，不改原檔。普通cue JSON與字幕仍使用目前表單生成。
 
-TXT接既有lyrics_seed1，原文／重複／行號／空白保留，時間留白，存在draft3原有lyrics-source .json；SRT多行合單行但原文保留，LRC補結束與缺音檔時長估計明示。帶時間JSON依目前title／duration驗證，起稿JSON名稱保持；來源檔不改寫。HTTP只新增靜態模組，application／CLI／JSON-lines／MCP原操作沿用，沒有新依賴／protocol／持久欄位。
+lyrics-import沿用選檔前target snapshot／latest序列／讀取與HTTP後核對，回應metadata與JSON成果一致；app管理DOM／apply／限定undo。canonical來源存在draft3既有lyrics-source，沒有新持久欄位／音檔嵌入／模型／網路呼叫。
 
-產品0.18.0，Agent1／MCP2025-11-25／draft3／lyrics seed1／storyboard seed1／library1／backup1保持，六／十一工具。沒有Host安裝／全域設定、模型／外網呼叫。LICENSE／NOTICE／LICENSING／FOUNDER-RECORD保持，PolyForm Noncommercial 1.0.0不另授AGPL或商用，ZOE. G及Codex協作如實記錄。Repo private；FreeTWAI未投稿／未核實創始人。
+產品0.19.0、lyrics_package schema1；Agent1／MCP2025-11-25／draft3／兩seed1／library1／backup1與六／十一工具保持。LICENSE／NOTICE／LICENSING／FOUNDER-RECORD Git blobs保持，PolyForm Noncommercial1.0.0不另授AGPL或商用。Repo private；ZOE. G／djguan-jpg及Codex協作照實，FreeTWAI未投稿或核實創始人。
 
 ## 驗證與限制
 
-156Python／189JS、四Skill／十六JS語法／diff通過。28個IAB情境含TXT／字幕／真正CLI／JSON-lines／MCP產物接續、預覽／取消／明確套用／限定撤回、同一音檔保持、4秒晚成功／500保留、取消／最新檔、未知版本／無效UTF8、未校時拒絕、推測時長不寫入欄位、三格式與draft實檔／讀回、390×844 DOM及Enter，詳見docs/QA-v0.18.0.md。
+168Python／206JS、四Skill／十七JS語法與diff通過；真正四adapter、另一cwd／BOM／覆寫拒絕、JSON-lines壞後好及MCP握手／call／EOF。26項IAB含preview／cancel／apply／undo、同一音檔、時長衝突／未知schema、兩筆4秒晚成功／500、新提示／重複欄位、實檔JSON／draft3回讀與390px／Enter。七份原生下載與SHA見downloads-evidence，詳見docs/QA-v0.19.0.md。
 
-下載seed815bytes、draft7025、JSON396、SRT101、LRC53，SHA見downloads-evidence.json。Windows CRLF與Python LF bytes不同，JSON語義與換行正規化文字相符；TXT原CRLF保留於seed source_text及draft3內來源，合成輸入未改。精確commit封裝另跑全套與Agent／MCPmetadata。沒有截圖／完整視覺、其他OS／瀏覽器、正式作品實聽、ASR／媒體生成、LUFS／true peak或特定host證據；滾動目標active。
+offline Blob事件超時但精確已知檔名／時間／bytes核實，沒有重送；JSON語義與CLI一致，Windows CRLF不宣稱和Python LF原bytes相同。browser viewport未改桌面1280，tab23 CDP實際390×844檢查，override已清除。沒有截圖／完整視覺、正式作品實聽、其他OS、ASR／生成媒體或特定Host證據。
+
+backup競爭測試初次暫態.write-lock bytes不穩，僅排除此協調檔，完整版本／manifest／重用／資料一致性保持，生產鎖未改。精確封裝另跑全套與Agent／MCPmetadata。滾動目標active；正式作品、完整視覺、使用者Host選擇與FreeTWAI投稿仍待完成。
 
 ## 產物與程序
 
-outputs/v18-qa存本輪合成原檔、真實下載、檢查／還原／封裝／發布與遠端收據，不進Git。草稿／備份／媒體不是Git可重建清除候選。最新三封裝v18／v17／v16保留，更舊未滿七天仍保留；只有超過七天且tag／已驗遠端可重建的本專案產物可清除。本輪沒有符合條件的刪除。
+outputs/v19-qa記錄合成來源、真正下載、測試／還原／封裝／發布／遠端收據，不進Git。草稿／備份／原始媒體不是Git可重建候選。最新三封裝v19／v18／v17保留，更舊未滿七天也保留；無符合條件的刪除／0。
 
-基線HTTP exec81698/PID292508、新版exec19218/PID302248均QA stop正常exit0／server_closed；tab20關閉、viewport reset。最終8875／確認PID及封裝／發布終態、outputs盤點記inventory-final。只處理本輪確認程序，沒有持久服務／監控。只讀本次新工作區與通用指引，不參考其他使用者專案／記憶／GitHub。
+QA HTTP exec76753／PID303484經qa-stop正常exit0／server_closed；tab21/22/23關閉，viewport與CDP清除。只處理本輪已確認PID／process ID，沒有持久服務或監控；封裝／發布終態、8875與outputs完整盤點在inventory-final。只讀本次新工作區及通用指引，不參考其他使用者專案／記憶／GitHub。

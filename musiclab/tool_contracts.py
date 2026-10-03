@@ -35,6 +35,22 @@ def array_schema(items, minimum=0, maximum=None):
     return schema
 
 
+def lyrics_package_schema(legacy=False):
+    def exact(properties): return object_schema(properties, properties.keys(), additionalProperties=False)
+    moment = {'type': 'number', 'minimum': 0}
+    timing = {'duration_source': {'enum': ['provided', 'last_cue_end', 'last_start_plus_three']},
+              'inferred_end_count': {'type': 'integer', 'minimum': 0, 'maximum': 10000},
+              'tail_end_inferred': {'type': 'boolean'}, 'applied_shift_seconds': {'type': 'number'}}
+    fields = {'title': {'type': 'string', 'minLength': 1, 'maxLength': 200},
+              'duration': {'type': 'number', 'exclusiveMinimum': 0}, 'duration_estimated': {'type': 'boolean'},
+              'cues': array_schema(exact({'start': moment, 'end': moment, 'text': {'type': 'string'}}), 1, 10000),
+              'timing': object_schema(timing, ['duration_source', 'inferred_end_count', 'tail_end_inferred'], additionalProperties=False)}
+    if not legacy:
+        fields.update(format={'const': 'zoe-lyrics-package'}, schema_version={'type': 'integer', 'const': 1},
+                      review_notes=array_schema({'type': 'string', 'minLength': 1, 'maxLength': 400}, 0, 20))
+    return exact(fields)
+
+
 def seed_schema():
     def exact(properties): return object_schema(properties, properties.keys(), additionalProperties=False)
     def value(low, high, integer=False):
@@ -146,9 +162,14 @@ def payload_schema(operation):
                               "duration": {"anyOf": [numeric("Confirmed total seconds, optional", 0, positive=True), {"type": "null"}]},
                               "shift_seconds": numeric("Optional global offset in seconds; positive delays, negative advances. Round to milliseconds; shift explicit ends too; never clip."),
                               "time_changes": {"type":"array","items":{"type":"string"},"description":"Optional 1-based sorted original cue edits, e.g. 2=14.5; after global shift, explicit end keeps its length."},
-                              "text_changes": {"type":"array","items":{"type":"string"},"description":"Optional 1-based sorted original cue text edits, e.g. 2=新歌詞; after global shift."}},
-                             oneOf=[{"required": ["cues"], "not": {"anyOf": [{"required": ["content"]}, {"required": ["suffix"]}]}},
-                                    {"required": ["content"], "not": {"required": ["cues"]}}])
+                              "text_changes": {"type":"array","items":{"type":"string"},"description":"Optional 1-based sorted original cue text edits, e.g. 2=新歌詞; after global shift."},
+                              "package": {'anyOf': [lyrics_package_schema(), lyrics_package_schema(legacy=True)]},
+                              "allow_legacy": {'type': 'boolean', 'description': 'Explicit conversion of the complete old unversioned package; inspection preserves all timing metadata.'}},
+                             additionalProperties=False,
+                             oneOf=[{"required": ["cues"], "not": {"anyOf": [{"required": [key]} for key in ('content', 'suffix', 'package', 'allow_legacy')]}},
+                                    {"required": ["content"], "not": {"anyOf": [{"required": [key]} for key in ('cues', 'package', 'allow_legacy')]}},
+                                    object_schema({'package': {'anyOf': [lyrics_package_schema(), lyrics_package_schema(legacy=True)]},
+                                                   'allow_legacy': {'type': 'boolean'}}, ['package'], additionalProperties=False)])
     if operation == "audio":
         limits = {"anyOf": [array_schema({"type": "integer", "minimum": 1}, 1), {"type": "null"}],
                   "description": "Accepted positive integers; null uses the profile default. Booleans are rejected."}

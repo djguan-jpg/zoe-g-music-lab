@@ -1,5 +1,13 @@
 # 迭代說明
 
+## v0.19.0 — 2026-10-03
+
+- 修正完整歌詞 JSON 回讀丟失名稱、總長及推估來源；兩秒歌詞後的十秒音樂尾奏保持，未知包版本不再被抽取 cues 後默默接受。
+- 新增純 Python lyrics_package 與共用原生 lyrics-package.js；schema 1、嚴格 UTF-8／重複欄位／有限數字／毫秒／來源一致性／2 MiB。application 與 CLI／HTTP／JSON-lines／MCP 使用同一檢查；完整包、一般字幕與 cues 互斥。
+- 工作台及離線預覽共享明確編修提案，保留未改動的推估／校時來源，音檔更新總長後仍提示曾補齊的結束；編修加待核對說明。舊完整包須明確轉換，時長衝突拒絕，估計值不寫入時長欄。
+- 168 Python／206 JavaScript、四 Skill／十七 JS 語法及 diff；26 項 IAB 操作、真正四 adapter、實檔 JSON／草稿回讀、4秒晚成功／500、390px DOM／Enter。測試的備份競爭斷言僅排除暫態 .write-lock bytes，版本與完整資料核對保持，生產鎖未修改。
+- 前版 v0.18 精確 ZIP 安全還原156／189；restore-v0.18.0-before-v0.19.0保留main起點。產品0.19.0／歌詞包1獨立，Agent1／MCP2025-11-25／draft3／兩seed1／library1／backup1與六／十一工具保持。沒有新依賴或host安裝，ZOE. G／非商用／private保持。
+
 ## v0.18.0 — 2026-10-03
 
 - 修正歌詞檔慢讀取完成後覆蓋手動原文；帶時間歌詞不再一按讀取就替換表格。TXT／LRC／SRT／JSON統一先檢查／預覽，再明確套用／取消與限定撤回。

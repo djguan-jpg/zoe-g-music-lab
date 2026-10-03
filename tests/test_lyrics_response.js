@@ -3,6 +3,7 @@
 const test=require('node:test'),assert=require('node:assert/strict');
 const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const MusicTiming=require('../web/lyrics-timing.js');
+const MusicLyricsPackage=require('../musiclab/assets/lyrics-package.js');
 
 // Execute the actual run and lyric event adapters with a controlled API reply.
 function adapter(){
@@ -17,7 +18,7 @@ function adapter(){
   const context={state,$:id=>nodes[id],say:m=>notices.push(m),markDirty:scope=>state.revisions[scope]=(state.revisions[scope]||0)+1,
     api:(_url,value)=>{payload=value;return new Promise(resolve=>reply=resolve);},lyricDuration:()=>null,cueValues:()=>structuredClone(rows),
     renderCues:(value,ids)=>{rows=structuredClone(value);renderedIds=ids;rendered++;},clearDeletionHistory:()=>cleared++,setFiles:()=>files++,
-    lyricsSeedController:{cancel:()=>{}},lyricsImportController:{inspectCurrent:()=>{throw Error('Import has its own guarded preview tests');}},structuredClone,MusicTiming,timingControls:()=>{},timingController:{invalidate:()=>{}},
+    lyricsSeedController:{cancel:()=>{}},lyricsImportController:{inspectCurrent:()=>{throw Error('Import has its own guarded preview tests');}},structuredClone,MusicTiming,MusicLyricsPackage,timingControls:()=>{},timingController:{invalidate:()=>{}},
     entriesFor:()=>rows.map((value,i)=>({id:`row-${i}`,value})),tick:()=>{},MusicEditor:{lyricsImportNotice:()=> '已匯入'}};
   vm.runInNewContext(source.slice(start,end),context);
   vm.runInNewContext(source.slice(handlers,handlersEnd),context);

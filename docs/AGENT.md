@@ -1,5 +1,15 @@
 # 本機 Agent 接口 v1
 
+## v0.19 完整歌詞包檢查
+
+沿用JSON-lines operation lyrics、MCP tool lyrics_validate、HTTP POST /api/lyrics。生成cues或content／suffix，檢查用 `{"package": 完整版本1資料}`；三者互斥，檢查不可附title／duration／shift／time_changes／text_changes。直接content JSON完整包也會嚴格辨認；舊五欄包須package模式明確 `allow_legacy:true`，CLI則 --legacy-json。未知／額外欄位或來源矛盾拒絕，不接受路徑。
+
+新data／lyrics.json含format=zoe-lyrics-package、schema_version1、title、duration、duration_estimated、cues、timing、review_notes。包最大2MiB、10000句，時間為有限數字且已排序／毫秒；total需涵蓋全部句尾。timing含duration_source／inferred_end_count／tail_end_inferred及可選applied_shift_seconds。meta.needs_review反映推估、曾補結束、shift或待確認說明；false不證明聲音或權利已核實。
+
+input_schemas／tools/list新增互斥package與明確legacy資料形狀，capabilities提供獨立lyrics_package版本與容量。先重新discovery再使用新模式。files仍文字，檢查不寫檔；CLI --out明確保存且拒絕覆寫。真正CLI／HTTP／JSON-lines壞後好／MCP握手與call／EOF及瀏覽器接續已驗證；特定Host尚未安裝。
+
+歌詞包1與Agent1／MCP2025-11-25／draft3／兩seed1／library1／backup1獨立；預設六工具、啟庫十一工具保持。以下v0.18完整JSON名稱與總長限制由此版本修正。
+
 ## v0.18 匯入資料先預覽
 
 Agent與CLI產物可在校時工作台直接選lyrics.json或lyrics-seed.json，即檢查／預覽，按「套用這份歌詞」才替換；直接TXT也走既有lyrics_seed操作。取消／目標編修／晚回應保護，保留音檔與目前時長。帶時間JSON的title／duration仍依目前校時欄位，起稿JSON的title保持；原檔保留。

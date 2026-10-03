@@ -134,7 +134,8 @@ class LyricTimingTests(unittest.TestCase):
         result=build('lyrics',{'cues':[{'start':1,'end':2,'text':'</script><img src=x onerror=alert(1)>'}],'title':'<script>危險文字</script>','shift_seconds':0.5})
         preview=result.files['preview.html']
         self.assertIn((ROOT/'musiclab/assets/lyric-time.js').read_text(encoding='utf-8'),preview)
-        self.assertNotIn('__TIMING_JS__',preview);self.assertIn('LyricTime.normalizeCues(collect(),duration)',preview)
+        self.assertNotIn('__TIMING_JS__',preview);self.assertNotIn('__PACKAGE_JS__',preview)
+        self.assertIn('MusicLyricsPackage.revise(data,collect(),duration)',preview)
         self.assertNotIn('</script><img',preview);self.assertIn('\\u003c/script>',preview)
         self.assertNotIn('未提供實際歌曲時長時，最後一句結束為估計',preview)
         marker='__TITLE__ __DATA__ __TIMING_JS__'

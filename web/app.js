@@ -284,7 +284,9 @@ $('lyrics-import').onclick=()=>run($('lyrics-import'),async isCurrent=>{
   lyricsSeedController?.cancel();await lyricsImportController.inspectCurrent(isCurrent);
 });
 $('cue-add').onclick=()=>{try{const entries=entriesFor('cues');if(entries.length>=10000)throw Error('歌詞最多 10000 列');const last=entries.at(-1)?.value,end=last?.end?.trim(),start=end?Number(end):0;if(!Number.isFinite(start))throw Error('最後一句結束時間需為數字');entries.push({id:`row-${++rowSequence}`,value:{start:String(start),end:String(start+3),text:''}});writeEntries('cues',entries);markDirty('lyrics');}catch(e){say(e.message,true);}};
-$('lyrics-build').onclick=()=>run($('lyrics-build'),async isCurrent=>{const sorted=MusicTiming.orderedEntries(entriesFor('cues'));const result=await api('/api/lyrics',{title:$('lyrics-title').value,cues:sorted.map(e=>({start:Number(e.value.start),end:Number(e.value.end),text:e.value.text})),duration:lyricDuration()});if(!isCurrent())return;timingController.invalidate();renderCues(result.data.cues,sorted.map(e=>e.id));setFiles(result.files,`已驗證歌詞 · ${result.data.cues.length} 句`);say('歌詞時間驗證通過，LRC／SRT／JSON 已建立');tick();});
+$('lyrics-build').onclick=()=>run($('lyrics-build'),async isCurrent=>{const sorted=MusicTiming.orderedEntries(entriesFor('cues'));
+  const payload=MusicLyricsPackage.buildRequest({title:$('lyrics-title').value,cues:sorted.map(e=>({start:Number(e.value.start),end:Number(e.value.end),text:e.value.text})),duration:lyricDuration(),content:$('lyrics-source').value,suffix:$('lyrics-format').value});
+  const result=await api('/api/lyrics',payload);if(!isCurrent())return;timingController.invalidate();renderCues(result.data.cues,sorted.map(e=>e.id));setFiles(result.files,`已驗證歌詞 · ${result.data.cues.length} 句`);say('歌詞時間驗證通過，LRC／SRT／JSON 已建立；時間來源與待確認說明保留');tick();});
 function timingSay(message,error=false){$('timing-status').textContent=message;$('timing-status').classList.toggle('error',error);}
 function timingControls(){
   $('timing-preview').disabled=state.busy||timingReading||!state.cues.length;
@@ -402,7 +404,7 @@ function captureDraft(){
   panels.lyrics.cues=[...$('cues').children].map(row=>Object.fromEntries(
     MusicEditor.draftRows.lyrics.columns.map((key,i)=>[key,row.querySelectorAll('input')[i].value])));
   panels.music.avoid=requirementValues('music-avoid');panels.music.deliverables=requirementValues('music-deliverables');
-  return {format:'zoe-music-lab-draft',schema_version:3,tool_version:'0.18.0',saved_at:new Date().toISOString(),tab:state.tab,panels};
+  return {format:'zoe-music-lab-draft',schema_version:3,tool_version:'0.19.0',saved_at:new Date().toISOString(),tab:state.tab,panels};
 }
 function applyDraft(draft){
   if(seedController)seedController.cancel();
@@ -580,7 +582,7 @@ $('lyrics-seed-apply').onclick=()=>{
 };
 lyricsImportController=MusicLyricsImport.createImport({
   capture:captureDraft,request:(operation,payload)=>api('/api/'+operation.replace('_','-'),payload),
-  onClear:()=>{$('lyrics-import-review').hidden=true;$('lyrics-import-source').value='';$('lyrics-import-rows').replaceChildren();},
+  onClear:()=>{$('lyrics-import-review').hidden=true;$('lyrics-import-source').value='';$('lyrics-import-rows').replaceChildren();$('lyrics-import-apply').textContent='套用這份歌詞';},
   onState:({reading,ready})=>{
     $('lyrics-import-apply').disabled=reading||!ready;
     if(reading){$('lyrics-import-review').hidden=false;$('lyrics-import-note').textContent='正在讀取與檢查歌詞；目前原文、表格與音檔保留，可取消。';}
@@ -588,7 +590,8 @@ lyricsImportController=MusicLyricsImport.createImport({
   },
   onError:error=>say(error.message,true),
   onReady:view=>{
-    $('lyrics-import-note').textContent=`${view.name} · 「${view.title}」共${view.count}句。${view.notice} 套用會替換校時名稱、原文／格式及全部句子；保留目前時長、音檔與其他工作台。${view.convertedText?'純文字轉存為保留原文的起稿JSON，時間留白。':''}${view.multilineSrt?' SRT多行將以 / 合為單行，原文仍保留。':''}`;
+    $('lyrics-import-note').textContent=`${view.name} · 「${view.title}」共${view.count}句。${view.notice} ${view.packageImport?'歌詞包總長'+view.durationText+'；名稱與時間來源保留。'+(view.durationEstimated?'估計值不填入時長欄，目前時長保留。':'未填時長會接續來源的宣告值。'):'目前時長保留。'} 套用會替換校時名稱、原文／格式及全部句子；音檔與其他工作台保留。${view.convertedText?'純文字轉存為保留原文的起稿JSON，時間留白。':''}${view.multilineSrt?' SRT多行將以 / 合為單行，原文仍保留。':''}${view.legacyTimed?'這是舊格式完整歌詞包；明確轉換後另存版本1 JSON，原檔保留。':''}${view.reviewNotes.length?' 待確認：'+view.reviewNotes.join('；'):''}`;
+    $('lyrics-import-apply').textContent=view.legacyTimed?'轉換舊歌詞包並套用':'套用這份歌詞';
     $('lyrics-import-source').value=view.source;$('lyrics-import-count').textContent=`預覽前${view.rows.length}句，共${view.count}句；其餘內容保留，套用不截短。`;
     const body=$('lyrics-import-rows');body.replaceChildren();
     view.rows.forEach(cue=>{const row=document.createElement('tr');[cue.start||'尚未標記',cue.end||'尚未標記',cue.text].forEach(value=>{const cell=document.createElement('td');cell.textContent=value;row.append(cell);});body.append(row);});

@@ -5,7 +5,6 @@ import json
 import sys
 from pathlib import Path
 from musiclab.common import read_json, write_bundle
-from musiclab.lyrics import read_cues
 from musiclab.application import build, export_library_backup
 from musiclab.backup_files import write_backup
 from musiclab import __version__
@@ -33,9 +32,10 @@ def main(argv=None):
         else:
             sub.add_argument("--input", required=True)
         if name == "lyrics":
-            sub.add_argument("--title", default="歌詞")
+            sub.add_argument("--title", help="逐句來源名稱；完整歌詞包保留原名稱")
             sub.add_argument("--duration", type=float)
-            sub.add_argument("--shift", type=float, default=0)
+            sub.add_argument("--shift", type=float)
+            sub.add_argument("--legacy-json", action="store_true", help="明確轉換完整舊版無版本歌詞包")
             sub.add_argument("--set", action="append", default=[])
             sub.add_argument("--text", action="append", default=[])
         if name == "audio":
@@ -107,9 +107,27 @@ def main(argv=None):
             bundle = build(args.command, read_json(args.brief)).files
         elif args.command == "lyrics":
             path = Path(args.input)
-            data = read_cues(path.read_text(encoding="utf-8-sig"), path.suffix)
-            bundle = build("lyrics", {"cues": data, "title": args.title, "duration": args.duration,
-                "shift_seconds": args.shift, "time_changes": args.set, "text_changes": args.text}).files
+            from musiclab.lyrics_package import decode_document, is_legacy, MAX_PACKAGE_BYTES
+            if path.stat().st_size > MAX_PACKAGE_BYTES + 3:
+                raise ValueError('歌詞檔最多2 MiB')
+            content = path.read_bytes().decode('utf-8-sig')
+            parsed = decode_document(content) if path.suffix.lower() == '.json' else None
+            package_input = isinstance(parsed, dict) and (is_legacy(parsed) or {'format', 'schema_version'} & set(parsed))
+            if package_input:
+                if args.title is not None or args.duration is not None or args.shift is not None or args.set or args.text:
+                    raise ValueError('完整歌詞包檢查不可使用 --title／--duration／--shift／--set／--text 覆蓋')
+                payload = {'package': parsed}
+                if args.legacy_json:
+                    if not is_legacy(parsed): raise ValueError('--legacy-json 只用於完整舊歌詞包')
+                    payload['allow_legacy'] = True
+            else:
+                if args.legacy_json: raise ValueError('--legacy-json 只用於完整舊歌詞包')
+                payload = {'content': content, 'suffix': path.suffix}
+                for key, value in (('title', args.title), ('duration', args.duration), ('shift_seconds', args.shift)):
+                    if value is not None: payload[key] = value
+                if args.set: payload['time_changes'] = args.set
+                if args.text: payload['text_changes'] = args.text
+            bundle = build('lyrics', payload).files
         else:
             options = {name: getattr(args, name) for name in ("profile", "rates", "bits", "channels")}
             result = build("audio", options, audio_source=args.input)
