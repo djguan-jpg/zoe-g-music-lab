@@ -207,6 +207,12 @@ class WorkbenchHTTPTests(unittest.TestCase):
         self.assertEqual(self.request("POST", "/api/music", b"invalid")[0], 400)
         self.assertEqual(self.post_json("/api/music", [])[0], 400)
 
+    def test_deep_json_is_rejected_with_a_response_and_server_recovers(self):
+        status, _, raw = self.request("POST", "/api/music", b"[" * 2000 + b"]" * 2000)
+        self.assertEqual(status, 400)
+        self.assertIn("error", json.loads(raw))
+        self.assertEqual(self.post_json("/api/music", example("first-light-music.json"))[0], 200)
+
 
 if __name__ == "__main__":
     unittest.main()

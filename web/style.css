@@ -6,3 +6,5 @@
 .project-actions{display:flex;gap:9px;flex-wrap:wrap;align-items:center;flex-shrink:0}.project-actions form{margin:0}.draft-open{margin:0;display:flex;align-items:center;gap:8px;font-size:12px;font-weight:400;flex-wrap:wrap}.draft-open input{width:170px;margin:0;font-size:11px}
 @media(max-width:1300px){.project-bar{flex-direction:column;align-items:flex-start}.project-actions{flex-shrink:1}}
 @media(max-width:720px){.project-bar{padding:16px}.project-actions{gap:12px}.draft-open{width:100%}.draft-open input{width:100%}}
+
+.motif{padding:16px;margin:12px 0;border:1px solid var(--line,#d7decf);border-radius:12px;background:#f4f6ed}.motif h3{margin:0}.conversion-box{border:1px solid #bd8c4e;background:#fff5e4;padding:16px;border-radius:12px;margin-bottom:20px}.conversion-box p{margin-top:0}

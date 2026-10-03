@@ -100,6 +100,8 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
             if route.path not in operations:
                 return self.reply(404, '{"error":"找不到此操作"}')
             return self.reply(200, json_text(build(operations[route.path], data).wire()))
+        except RecursionError:
+            return self.reply(400, '{"error":"JSON 巢狀過深，請減少層數"}')
         except (ValueError, TypeError, KeyError, AttributeError, UnicodeError) as error:
             return self.reply(400, json_text({"error": str(error)}))
         except OSError:
