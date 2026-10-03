@@ -1,6 +1,10 @@
 # ZOE. G Music Lab
 
-目前版本 **v0.34.0**：分鏡新增原時間待辦，留白、無效 FPS／秒數、秒數與影格缺口／重疊、短於一幀及尾端不符都可定位原鏡號。獨立時間 JSON／Markdown 可交給 CLI、Agent、MCP；原創作與媒體保留，零待辦仍須完整建立及音畫驗證。純診斷／版本報告／共用 application／adapter／DOM 分層，總長接續重用同一時間檢查。基本10／明確啟庫15工具，Agent1／draft3及舊report保持，新時間report1獨立。見[使用與分層](docs/STORYBOARD-TIMING-REVIEW.md)、[驗證](docs/QA-v0.34.0.md)、[交接與還原](docs/HANDOFF-v0.34.0.md)。
+目前版本 **v0.35.0**：新增獨立的迭代封裝／程序稽核工具，預設唯讀，保留最新三版及未超過七天封裝；exact preview token、Git 重建 SHA 與 recovery journal 支援清除／還原。受管理工作以 PID、啟動時間與 image 核對，避免誤認 PID 重用；四工作台、基本10／啟庫15工具及 Agent1／draft3 保持。見[操作與分層](docs/ITERATION-MAINTENANCE.md)、[驗證](docs/QA-v0.35.0.md)、[交接與還原](docs/HANDOFF-v0.35.0.md)。
+
+## 分鏡時間待辦（v0.34）
+
+v0.34.0：分鏡新增原時間待辦，留白、無效 FPS／秒數、秒數與影格缺口／重疊、短於一幀及尾端不符都可定位原鏡號。獨立時間 JSON／Markdown 可交給 CLI、Agent、MCP；原創作與媒體保留，零待辦仍須完整建立及音畫驗證。純診斷／版本報告／共用 application／adapter／DOM 分層，總長接續重用同一時間檢查。基本10／明確啟庫15工具，Agent1／draft3及舊report保持，新時間report1獨立。見[使用與分層](docs/STORYBOARD-TIMING-REVIEW.md)、[驗證](docs/QA-v0.34.0.md)、[交接與還原](docs/HANDOFF-v0.34.0.md)。
 
 ## 歌曲跨工具報告（v0.31）
 
@@ -72,7 +76,7 @@ CLI、HTTP、JSON-lines、MCP 共用同一次分析副本。Python 標準函式�
 
 由 **ZOE. G** 發起的四個原創專案。GitHub 帳號為 **djguan-jpg**；品牌署名與帳號可以不同。
 
-目前版本 v0.31 提供四個工作台、原創 Skill、本機草稿庫及可預覽的 ZIP 備份／恢復、整批歌詞校時及來源一致的音檔檢查報告，以及保留原文的未校時歌詞起稿。Python 3.10 以上即可使用，沒有第三方依賴。只讀本次新建工作區，不參考使用者的其他本機或 GitHub 專案。公開第三方 README 僅用於需求比較，來源及自行設計的差異記在 [構思紀錄](CONCEPT.md)。
+目前版本 v0.35 提供四個工作台、原創 Skill、本機草稿庫及可預覽的 ZIP 備份／恢復、整批歌詞校時及來源一致的音檔檢查報告，以及保留原文的未校時歌詞起稿。Python 3.10 以上即可使用，沒有第三方依賴。只讀本次新建工作區，不參考使用者的其他本機或 GitHub 專案。公開第三方 README 僅用於需求比較，來源及自行設計的差異記在 [構思紀錄](CONCEPT.md)。
 
 授權為 **PolyForm Noncommercial 1.0.0**，商業使用沒有由本版授權。可查看、修改及分發的範圍以 [LICENSE](LICENSE) 為準，保留 [NOTICE](NOTICE)。這是非商用原始碼授權；不標成 AGPL。使用者匯入的素材授權各自保留，詳見 [授權說明](LICENSING.md)。
 
@@ -253,7 +257,7 @@ python music_lab.py draft restore --library outputs/restored-drafts --input '構
 - [創辦與協作紀錄](FOUNDER-RECORD.md)：ZOE. G 發起方向；Codex 協助規格、文字、程式與驗證。
 - [專案清單](projects.json)：四個獨立 ID、版本與功能範圍。
 - [本輪進度](PROGRESS.md)：實跑驗證與後續工作。
-- [本版說明](docs/RELEASE-v0.34.0.md)：功能、版本契約、驗證與限制。
+- [本版說明](docs/RELEASE-v0.35.0.md)：功能、版本契約、驗證與限制。
 - [四個專案的投稿資料](SUBMISSION-PACKET.md)：來源連結、用途、使用方式與作者關係。
 - [分層與分支架構](docs/ARCHITECTURE.md)、[Agent 與 MCP 接口](docs/AGENT.md)、[迭代說明](CHANGELOG.md)、[本輪交接](HANDOFF.md)。
 
@@ -273,7 +277,7 @@ git diff --check
 開發／封裝驗證需要 Node.js；一般使用工作台與 CLI 只需要 Python。從指定 Git 版本建立可驗證的原始碼 ZIP：
 
 ```powershell
-python scripts/package_release.py --ref v0.34.0
+python scripts/package_release.py --ref v0.35.0
 ```
 
 封裝保存 commit、SHA-256、每檔摘要及檢查結果；解壓後重跑 Python／JavaScript 測試、Agent 能力查詢與 MCP 握手。輸出留在忽略的 outputs/releases，重複封裝同一提交會拒絕覆寫。
