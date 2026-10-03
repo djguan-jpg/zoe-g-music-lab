@@ -136,6 +136,10 @@ class WorkbenchHTTPTests(unittest.TestCase):
         self.assertEqual(status, 200)
         self.assertIn("ZOE. G Music Lab", raw.decode())
         self.assertIn("default-src 'self'", headers["Content-Security-Policy"])
+        status, headers, raw = self.request("GET", "/deletion-history.js")
+        self.assertEqual(status, 200)
+        self.assertIn("text/javascript", headers["Content-Type"])
+        self.assertEqual(raw, (ROOT / "web/deletion-history.js").read_bytes())
         for path in ("/README.md", "/../README.md", "/does-not-exist"):
             self.assertEqual(self.request("GET", path)[0], 404)
 
