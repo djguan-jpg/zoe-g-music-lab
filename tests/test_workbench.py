@@ -141,7 +141,7 @@ class WorkbenchHTTPTests(unittest.TestCase):
         status, result = self.post_json('/api/storyboard-seed', {'music': brief, 'bars_per_shot': 0})
         self.assertEqual(status, 400)
         self.assertIn('小節', result['error'])
-        for asset in ('/storyboard-seed.js', '/draft-undo.js'):
+        for asset in ('/storyboard-seed.js', '/draft-undo.js', '/replacement-preview.js'):
             status, _, raw = self.request('GET', asset)
             self.assertEqual(status, 200)
             self.assertEqual(raw, (ROOT / 'web' / asset[1:]).read_bytes())

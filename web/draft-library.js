@@ -7,7 +7,7 @@
       Object.fromEntries(Object.keys(x).sort().map(key=>[key,stable(x[key])])):x;
     return JSON.stringify(stable(value.panels));
   }
-  function createLibraryController({request,capture,validate,newId,onSaved,onList,onReady,onError,onPending}){
+  function createLibraryController({request,capture,validate,newId,onSaved,onList,onReady,onError,onPending,preview=null}){
     let pending=null,saving=false,listToken=0,readToken=0;
     async function send(){
       if(saving||!pending)return false;
@@ -40,12 +40,16 @@
       async list(cursor=null){const token=++listToken;
         try{const result=await request('list',{limit:20,cursor});if(token!==listToken)return false;onList(result,cursor!==null);return true;}
         catch(error){if(token===listToken)onError(error,{retryable:false});return false;}},
-      async read(id){const token=++readToken;
-        try{const result=await request('read',{id});if(token!==readToken)return false;
-          const draft=validate(result.draft);onReady({entry:clone(result.entry),draft});return true;}
-        catch(error){if(token===readToken)onError(error,{retryable:false});return false;}},
-      cancelRead:()=>++readToken,
-      cancel(){readToken++;listToken++;},
+      async read(id){const token=++readToken;let selected;
+        try{selected=preview?.begin();const result=await request('read',{id});if(token!==readToken)return false;
+          const draft=validate(result.draft),ready={entry:clone(result.entry),draft};
+          if(preview&&!preview.accept(selected,ready))return false;onReady(ready);return true;}
+        catch(error){if(token===readToken){
+          if(preview&&selected!==undefined){try{if(!preview.check(selected))return false;}catch(changed){error=changed;}}
+          onError(error,{retryable:false});
+        }return false;}},
+      cancelRead(){readToken++;preview?.cancel();},
+      cancel(){readToken++;listToken++;preview?.cancel();},
       pending:()=>pending?clone(pending.payload):null
     };
   }
