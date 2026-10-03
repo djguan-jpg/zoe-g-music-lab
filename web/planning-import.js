@@ -3,6 +3,7 @@
 (function(root){
   const Editor=typeof module!=='undefined'&&module.exports?require('./editor-state.js'):root.MusicEditor;
   const J=typeof module==='object'&&module.exports?require('../musiclab/assets/json-document.js'):root.MusicJsonDocument;
+  const Values=typeof module==='object'&&module.exports?require('./planning-values.js'):root.MusicPlanningValues;
   const musicSources={
     'music-title':'title','music-hook':'memory_hook','music-theme':'theme','music-style':'style',
     'music-vocal':'vocal','music-audience':'audience','music-bpm':'bpm','music-beats':'beats_per_bar',
@@ -81,7 +82,7 @@
   function requirementIssue(panel){
     if(!panel.deliverables.length)return {key:'deliverables',index:null,message:'至少需要一個交付項目'};
     for(const [key,label] of [['avoid','避免事項'],['deliverables','交付項目']]){
-      const index=panel[key].findIndex(item=>!item.trim());
+      const index=panel[key].findIndex(item=>!Values.trim(item));
       if(index>=0)return {key,index,message:`${label} ${index+1} 不可空白`};
     }
     return null;

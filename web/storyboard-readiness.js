@@ -4,9 +4,11 @@
   const node=typeof module==='object'&&module.exports;
   const Editor=node?require('./editor-state.js'):root.MusicEditor;
   const J=node?require('../musiclab/assets/json-document.js'):root.MusicJsonDocument;
+  const Values=node?require('./planning-values.js'):root.MusicPlanningValues;
+  const Checkpoint=node?require('./readiness-state.js'):root.MusicReadinessState;
   const fields=Editor.draftFields.storyboard,columns=Editor.draftRows.storyboard.columns;
   const labels={'mv-title':'片名','mv-duration':'作品總長','mv-fps':'FPS','mv-ratio':'畫幅','mv-style':'視覺基調','mv-anchor':'人物一致性',name:'母題名稱',meaning:'初始意義',start:'開始',end:'結束',section:'歌曲段落',purpose:'敘事用途',visual:'畫面動作',camera:'鏡頭運動',transition:'尾鏡與轉場',motif_id:'使用母題',motif_state:'母題狀態',character_state:'人物狀態',screen_direction:'畫面方向',motifs:'母題清單',shots:'鏡頭清單'};
-  const trim=value=>value.replace(/^[\t\n\v\f\r \u001c-\u001f\u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]+|[\t\n\v\f\r \u001c-\u001f\u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]+$/gu,'');
+  const trim=Values.trim;
   const exact=(v,keys)=>v&&typeof v==='object'&&!Array.isArray(v)&&Object.keys(v).length===keys.length&&keys.every(k=>Object.hasOwn(v,k));
   const strings=(v,keys)=>exact(v,keys)&&keys.every(k=>typeof v[k]==='string');
   function source(panel){
@@ -47,18 +49,7 @@
     return {totalShots:panel.shots.length,filledShots:panel.shots.length-blocked.size,totalMotifs:panel.motifs.length,issueCount,issues,truncated:issueCount>issues.length};
   }
   function inspect(panel){return inspectSource(source(panel));}
-  function createController({capture,onState=()=>{}}){
-    let report=null,before=null,stale=false;
-    const publish=()=>{const view={report:report?structuredClone(report):null,stale};onState(structuredClone(view));return view;};
-    const current=()=>{try{return before===JSON.stringify(source(capture()));}catch{return false;}};
-    return {
-      check(){const selected=source(capture());report=inspectSource(selected);before=JSON.stringify(selected);stale=false;return publish();},
-      refresh(){if(report){stale=!current();}return publish();},
-      locate(index){if(!report||!Number.isInteger(index)||index<0||index>=report.issues.length)return null;
-        if(!current()){stale=true;publish();return null;}stale=false;return structuredClone(report.issues[index]);},
-      clear(){report=null;before=null;stale=false;return publish();}
-    };
-  }
+  function createController({capture,onState=()=>{}}){return Checkpoint.createController({capture,source,inspect:inspectSource,onState});}
   const api={inspect,createController,labels};
   if(node)module.exports=api;else root.MusicStoryboardReadiness=api;
 })(typeof window==='object'?window:{});

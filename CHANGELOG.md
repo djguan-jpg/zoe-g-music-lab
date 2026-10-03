@@ -1,5 +1,13 @@
 # 迭代說明
 
+## v0.30.0 — 2026-10-04
+
+- 基線 IAB 重現空白段落只顯示泛用錯誤、有效 BPM120.0004 被 HTML 步長攔下。新增歌曲欄位待辦及建立／歌曲分鏡起稿前原欄位定位；BPM step=any，完整數值範圍與 domain 保持。
+- planning-values 提取本專案既有文字／有限十進位規則，需求清單與 planning-source／兩種待辦重用。music-readiness 純診斷、readiness-state 注入快照控制器由歌曲／分鏡共用、app 只呈現／聚焦／busy。40 段、每種清單100、8 MiB、全部計數／200明細／前20UI。
+- 原始全部歌曲與穩定列 ID 快照，修改／排序／刪除停舊定位、定位前重查、歌曲載入清暫態；其他工作台／音檔保持。待辦零仍可能總長超限，完整歌曲／起稿驗證及來源核對照常執行；Agent檔案起稿獨立。
+- 249 Python／382 JS／四 Skill／29 JS 語法、3新Python／15新JS、69歌曲欄位及29數值跨語言、26 IAB通過。四adapter／四native／實draft3、真17鏡Agent接續／撤回、390px Enter、4秒晚回應及CLI預設不覆寫通過；前版v0.29 ZIP246／367還原，restore-v0.29.0-before-v0.30.0保留起點。
+- 產品0.30.0，各protocol／schema及七／十二工具保持，無新operation／依賴／模型／auth／production。非商用／private／ZOE. G保持。指定提交封裝／privatePR／Release／遠端bytes與最新三版SHA／確定PID盤點依收據；正式媒體／完整視覺／Host／FreeTWAI及原生file仍待，rolling active。
+
 ## v0.29.0 — 2026-10-04
 
 - 真IAB確認段落只能新增／刪除。新增歌曲段落前移／後移，同名、五原字串及穩定列識別保持；控制在橫向表格外，新增選取並聚焦新列。

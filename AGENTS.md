@@ -62,3 +62,8 @@
 
 - music-arrangement純order／注入controller與DOM分層；五原字串、最多40列，穩定ID只存在本頁。同名不可合併；限定撤回只還原最近順序並保留後續欄位編修。
 - 列或順序變更停舊撤回，歌曲載入清暫態。排序後歌曲及時間起稿重建同序，既有分鏡／其他panel／音檔保持；完整domain仍驗證，暫態不進draft3／wire。
+
+## v0.30 歌曲欄位待辦
+
+- planning-values 重用本專案 Python 文字空白／有限十進位文法，不使用空字串轉零；music-readiness 純欄位／範圍模型、共享 readiness-state 快照 controller、DOM 分層。保留原字串與 optional 歌詞，BPM step=any 仍完整驗證。
+- 歌曲全部來源與列ID參與暫態定位；即使同文字列換序也停舊位置，定位前重查。歌曲載入清暫態；其他panel／媒體保持。40段／100清單／8MiB、全部計數／200明細／前20UI，零待辦及filled不是總長或作品接受。schema／wire／七及十二tools保持。

@@ -1,5 +1,9 @@
 # 本機 Agent 接口 v1
 
+## v0.30 歌曲欄位待辦
+
+工作台歌曲必填／範圍待辦只存在本頁，建立歌曲及從目前歌曲起稿分鏡先定位原缺漏。完整 music／storyboard_seed 仍由共用 application／domain 接受，零待辦不代表總長或媒體通過。BPM120.0004保留精度；純有限十進位與文字空白規則由 planning-values 重用。檔案 Agent 起稿獨立核對／預覽再明確套用，保留目前歌曲及音檔。真17鏡檔及限定撤回通過；產品0.30，各schema／protocol及七／十二tools保持，不新增operation／待辦wire／模型。見 MUSIC-READINESS.md。
+
 ## v0.29 歌曲段落順序
 
 工作台排序後重建歌曲包與storyboard_seed，兩者沿用同一arrangement順序。Agent／CLI契約不新增ID／移動紀錄；Agent起稿檔先核對預覽再明確限定套用，歌曲與原音檔保持。歌曲brief明確替換或撤回替換時，清本頁暫態排序紀錄；沒有自動遷移或模型。產品0.29，各protocol／schema及七／十二tools保持。見MUSIC-ARRANGEMENT.md。
