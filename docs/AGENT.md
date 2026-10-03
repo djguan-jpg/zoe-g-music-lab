@@ -1,5 +1,9 @@
 # 本機 Agent 接口 v1
 
+## v0.22 響度量測
+
+沿用operation audio／tool audio_report與啟動時明確選定的--audio；request不得指定來源路徑。data與report.json新增獨立loudness schema1，--describe／HTTP capabilities提供audio_loudness版本、單聲道／立體聲與8000–192000Hz範圍。響度不可測保留null／status，不把它當技術接受失敗或通過。四adapter同源，既有needs_review、退出碼及六／十一工具保持；未知量測schema拒絕顯示。方法、欄位與限制見[量測契約](LOUDNESS.md)。沒有FFmpeg依賴、模型、Host設定或自動正規化。
+
 ## v0.21 保存快照與瀏覽器另存提示
 
 Agent／MCP 的 draft_save 共用既有不可覆寫保存層；工具、路徑選擇及schema不變。瀏覽器只在收到成功回應時確認當時送出的draft，保存期間新增的編修仍需另存。未知結果應保留原ID及內容重試／draft_read確認；放棄重試不表示已保存或刪除版本。

@@ -1,5 +1,14 @@
 # 迭代說明
 
+## v0.22.0 — 2026-10-03
+
+- 交付檢查新增獨立LUFS整合響度。純loudness.py負責K-weighting、400ms／100ms nearest-sample幀與−70 LUFS／−10 LU gate；loudness_blocks.py有界64KiB後轉暫存，成功／失敗均關閉。audio.py在同一音檔副本的一次PCM掃描整合，無FFmpeg執行或新依賴。
+- mono／stereo、8000–192000Hz、至少400ms；反相聲道能量相加。短檔／門檻下／未知layout／範圍外rate為null及明確status，不改PCM技術接受／警告／退出碼。
+- report與discovery新增獨立audio_loudness schema1，產品0.22.0；既有protocol／草稿／保存schema與六／十一工具保持。純JS核對未知版本、數值、來源幀／時長／聲道權重／區塊／尾幀／門檻，舊無量測報告明示未提供。DOM分開RMS／peak／LUFS，保持late File／profile保護與keyboard。
+- 200Python／247JS、四Skill／19JS語法及diff通過；18新Python／10新JS，舊HTTP retention版本斷言改比對實際產品。四adapter一致、ledger溢存／close、來源替換／gate／邊界／奇數rate測試通過。
+- 20組合成WAV與既有FFmpeg7.1校對最大0.009464 LU（容差0.02）；26真報告JS模型，30秒stereo實際5.607秒。24項IAB含不可測、反相、四秒晚成功／500、schema999、有效復原、實檔JSON／MD、390px與Enter。有限校對不宣稱完整ITU／EBU認證或正式實聽。
+- 前版v0.21 ZIP182／237還原通過，restore-v0.21.0-before-v0.22.0保留起點。指定提交封裝／private PR／Release與遠端bytes以manifest／收據確認；授權／署名／private與使用者素材保持。
+
 ## v0.21.0 — 2026-10-03
 
 - 真瀏覽器重現重新整理直接丟失歌名編修。新增上方另存狀態及有未另存草稿時才註冊的 beforeunload；原生點擊後實際觸發提醒／closed(false)，編修保留。沒有互動時 IAB 省略提醒並重新整理，明確列為瀏覽器限制。

@@ -1,5 +1,11 @@
 # ZOE. G Music Lab
 
+## 音檔整合響度（v0.22）
+
+交付檢查新增獨立 LUFS 整合響度，與每聲道 RMS、sample peak 分開。支援整數 PCM 單聲道／立體聲、8000–192000 Hz；至少需要一個完整 400 ms 區塊。太短、低於絕對門檻或聲道位置未知時顯示不可測，JSON 保留 null，不用零或 −70 冒充讀值，也不改變原本格式接受結果。
+
+CLI、HTTP、JSON-lines、MCP 共用同一次分析副本。Python 標準函式庫即可執行，沒有調整音量、平台通用目標或 true peak。20 組原創合成音檔與既有 FFmpeg 校對最大差異 0.009464 LU；尚非完整規範認證或正式作品實聽。見[量測契約](docs/LOUDNESS.md)與[本輪 QA](docs/QA-v0.22.0.md)。
+
 ## 草稿另存狀態與離頁提醒（v0.21）
 
 編修後，頁面上方會標示「目前編修尚未另存」。重新整理或離開時，瀏覽器可顯示原生提醒；取消後保留內容。提醒核對四個工作台的實際草稿值，不因切換頁面、收合、保存名稱、音檔選擇或產生成果就認定草稿已另存。
@@ -20,7 +26,7 @@
 
 由 **ZOE. G** 發起的四個原創專案。GitHub 帳號為 **djguan-jpg**；品牌署名與帳號可以不同。
 
-目前版本 v0.21 提供四個工作台、原創 Skill、本機草稿庫及可預覽的 ZIP 備份／恢復、整批歌詞校時及來源一致的音檔檢查報告，以及保留原文的未校時歌詞起稿。Python 3.10 以上即可使用，沒有第三方依賴。只讀本次新建工作區，不參考使用者的其他本機或 GitHub 專案。公開第三方 README 僅用於需求比較，來源及自行設計的差異記在 [構思紀錄](CONCEPT.md)。
+目前版本 v0.22 提供四個工作台、原創 Skill、本機草稿庫及可預覽的 ZIP 備份／恢復、整批歌詞校時及來源一致的音檔檢查報告，以及保留原文的未校時歌詞起稿。Python 3.10 以上即可使用，沒有第三方依賴。只讀本次新建工作區，不參考使用者的其他本機或 GitHub 專案。公開第三方 README 僅用於需求比較，來源及自行設計的差異記在 [構思紀錄](CONCEPT.md)。
 
 授權為 **PolyForm Noncommercial 1.0.0**，商業使用沒有由本版授權。可查看、修改及分發的範圍以 [LICENSE](LICENSE) 為準，保留 [NOTICE](NOTICE)。這是非商用原始碼授權；不標成 AGPL。使用者匯入的素材授權各自保留，詳見 [授權說明](LICENSING.md)。
 
@@ -29,7 +35,7 @@
 | ZOE Music Production | 記憶點設計、BPM／小節時間計算、段落能量、AI 任務包 | [技能](projects/zoe-music-production/SKILL.md) |
 | ZOE MV Storyboard | 多母題與逐鏡選擇、人物／方向變化理由、分鏡時間、CSV 與鏡頭提示 | [技能](projects/zoe-mv-storyboard/SKILL.md) |
 | ZOE Lyrics Sync | LRC／SRT／JSON、TXT／字幕選檔預覽、波形定位、人工校時、編修與匯出 | [工具](projects/zoe-lyrics-sync/README.md) |
-| ZOE Audio Delivery | PCM WAV 標頭檢查、接受條件、峰值／RMS／DC、頭尾安靜段及同一分析副本 SHA-256 | [工具](projects/zoe-audio-delivery/README.md) |
+| ZOE Audio Delivery | PCM WAV 標頭檢查、接受條件、LUFS／峰值／RMS／DC、頭尾安靜段及同一分析副本 SHA-256 | [工具](projects/zoe-audio-delivery/README.md) |
 
 ## 歌詞包回讀保留名稱、總長與待確認來源（v0.19）
 

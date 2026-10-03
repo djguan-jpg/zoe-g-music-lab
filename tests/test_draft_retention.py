@@ -1,10 +1,12 @@
 # SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 """Real HTTP assets and native attachment responses used by retention-aware downloads."""
 import http.client
+import json
 import threading
 import unittest
 import urllib.parse
 from music_lab_server import WorkbenchServer, WorkbenchHandler
+from musiclab import __version__
 
 
 class RetentionHttpTests(unittest.TestCase):
@@ -51,7 +53,7 @@ class RetentionHttpTests(unittest.TestCase):
         self.connection.request('GET', '/api/capabilities')
         reply = self.connection.getresponse()
         self.assertEqual(reply.status, 200)
-        self.assertIn(b'0.21.0', reply.read())
+        self.assertEqual(json.loads(reply.read())['version'], __version__)
 
 
 if __name__ == '__main__':

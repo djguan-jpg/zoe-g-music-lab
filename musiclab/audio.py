@@ -5,6 +5,8 @@ from pathlib import Path
 from .common import json_text
 from . import __version__
 from .audio_source import copied_audio
+from .loudness import EnergyMeter, measurement, MIN_RATE, MAX_RATE
+from .loudness_blocks import EnergyBlocks
 
 PROFILES = {
     "distribution": {"rates": [44100, 48000], "bits": [16, 24], "channels": [1, 2]},
@@ -30,7 +32,7 @@ def analyze_wav(path, profile="distribution", rates=None, bits=None, channels=No
             # JSON Schema integers include 1.0; normalize exact integer values.
             limits[key] = [int(value) for value in values]
     try:
-        with copied_audio(path) as (selected, digest, source_evidence), wave.open(selected, "rb") as wav:
+        with copied_audio(path) as (selected, digest, source_evidence), wave.open(selected, "rb") as wav, EnergyBlocks() as energies:
             if wav.getcomptype() != "NONE":
                 raise ValueError("本版只分析未壓縮 PCM WAV")
             count, width, rate, declared_frames = wav.getnchannels(), wav.getsampwidth(), wav.getframerate(), wav.getnframes()
@@ -41,6 +43,7 @@ def analyze_wav(path, profile="distribution", rates=None, bits=None, channels=No
             frames = 0
             first_active, last_active, quiet_frames, stereo_product = None, None, 0, 0.0
             quiet_threshold = 10 ** (-60 / 20)
+            meter = EnergyMeter(rate, count) if count in (1, 2) and MIN_RATE <= rate <= MAX_RATE else None
             while True:
                 block = wav.readframes(8192)
                 if not block:
@@ -70,12 +73,17 @@ def analyze_wav(path, profile="distribution", rates=None, bits=None, channels=No
                             quiet_frames += 1
                         if count == 2:
                             stereo_product += frame_values[0] * frame_values[1]
+                        if meter is not None:
+                            energy = meter.push(frame_values)
+                            if energy is not None:
+                                energies.append(energy)
                         frame_values.clear()
                 frames += block_frames
             if frames == 0:
                 raise ValueError("音檔沒有音訊幀")
             if frames != declared_frames:
                 raise ValueError("WAV 內容截斷，實際幀數與標頭不同")
+            loudness = measurement(rate, count, frames, lambda: iter(energies))
     except (wave.Error, EOFError) as error:
         raise ValueError(f"無法分析為 PCM WAV：{error}") from None
     per_channel = []
@@ -119,7 +127,7 @@ def analyze_wav(path, profile="distribution", rates=None, bits=None, channels=No
             "profile": profile, "acceptance": limits, "sample_rate": rate, "bit_depth": width * 8,
             "channels": count, "frames": frames, "duration_seconds": round(frames / rate, 6),
             "per_channel": per_channel, "checks": checks, "warnings": warnings,
-            "quiet_regions": quiet, "stereo_correlation": correlation,
+            "quiet_regions": quiet, "stereo_correlation": correlation, "loudness": loudness,
             "status": "needs_review" if warnings else "technical_checks_passed",
             "limitations": ["PCM WAV only", "RMS is not LUFS", "sample peak is not true peak",
                             "full-scale samples indicate possible clipping; listening is required"]}
@@ -133,6 +141,18 @@ def audio_bundle(report):
         peak = "-∞（靜音）" if state["peak_dbfs"] is None else state["peak_dbfs"]
         rms = "-∞（靜音）" if state["rms_dbfs"] is None else state["rms_dbfs"]
         lines.append(f"| {state['channel']} | {peak} | {rms} | {state['dc_offset']} | {state['full_scale_samples']} |\n")
+    loudness = report['loudness']
+    reasons = {'below_gate': '沒有高於 -70 LUFS 絕對門檻的完整區塊',
+               'insufficient_duration': '音檔不足 400 ms，沒有完整量測區塊',
+               'unsupported_channels': '聲道位置未知；只支援單聲道與立體聲',
+               'unsupported_sample_rate': '響度取樣率範圍為 8000–192000 Hz'}
+    value = f"{loudness['integrated_lufs']} LUFS" if loudness['status'] == 'measured' else f"不可測：{reasons[loudness['status']]}"
+    lines.append(f"\n## 整合響度\n\n{value}。\n")
+    lines.append(f"\n400 ms 區塊／100 ms 步進；完整區塊 {loudness['complete_block_count']}，"
+                 f"絕對門檻後 {loudness['absolute_gate_block_count']}，相對門檻後 {loudness['gated_block_count']}。"
+                 f"相對門檻 {loudness['relative_gate_lufs']} LUFS（不可測為 null）；末尾 {loudness['tail_frames']} 幀未形成下一完整區塊。\n")
+    lines.append("\n獨立實作 ITU-R BS.1770-5 Annex 1 K-weighting 與 -70 LUFS／-10 LU 門檻；"
+                 "未指定平台響度目標、未正規化、未量測 true peak，尚非完整規範認證。響度不可測不更改既有技術接受結果。\n")
     lines.append("\n## 本次接受條件\n\n| 項目 | 實際值 | 接受值 | 結果 |\n|---|---|---|---|\n")
     for key, observed, unit in (("sample_rate", report['sample_rate'], 'Hz'),
                                 ("bit_depth", report['bit_depth'], 'bit'),

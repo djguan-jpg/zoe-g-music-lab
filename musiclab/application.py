@@ -11,6 +11,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from . import __version__
 from .audio import analyze_wav, audio_bundle
+from .loudness import descriptor as loudness_descriptor
 from .creative import music_bundle, storyboard_bundle
 from .design import music_plan_bundle, motif_bundle
 from .storyboard_seed import storyboard_seed_bundle, SEED_SCHEMA_VERSION, MAX_SLOTS
@@ -30,7 +31,7 @@ OPERATIONS = {
     "music": "Song planning and AI task packaging; no model invocation",
     "storyboard": "Shot timing and motif continuity; no media rendering",
     "lyrics": "Manual cue validation and LRC/SRT/JSON exports; no ASR",
-    "audio": "Selected integer PCM WAV evidence; source is preserved",
+    "audio": "Selected integer PCM WAV evidence and gated mono/stereo integrated loudness; source is preserved; no normalization or true peak",
     "storyboard_seed": "Create from a modern song brief or inspect an existing bar-aligned timing seed; incomplete visuals require manual writing; no model or media",
     "lyrics_seed": "Create or inspect untimed lyric lines; preserves source and duplicates; no guessed times, ASR or model",
 }
@@ -78,6 +79,7 @@ def capabilities(draft_library=None, backup_source=None):
                             "max_lines": MAX_LINES, "status": "untimed", "media_generated": False},
             "lyrics_package": {"schema_version": PACKAGE_SCHEMA_VERSION, "max_bytes": MAX_PACKAGE_BYTES,
                                "legacy_conversion": "explicit allow_legacy only", "media_generated": False},
+            "audio_loudness": loudness_descriptor(),
             "input_schemas": {operation: payload_schema(operation) for operation in operations},
             "output_schema": output_schema(),
             "audio_source": "Only --audio chosen at process launch; JSON cannot select paths",

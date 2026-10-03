@@ -1,6 +1,6 @@
 ---
 name: zoe-audio-delivery
-description: Analyze a selected PCM WAV against explicit delivery conditions and preserve measurable evidence. Use for sample-rate, bit-depth, peak, RMS, quiet-edge or stereo-correlation checks before audio delivery.
+description: Analyze a selected PCM WAV against explicit delivery conditions and preserve measurable evidence. Use for sample-rate, bit-depth, peak, RMS, integrated-loudness, quiet-edge or stereo-correlation checks before audio delivery.
 license: PolyForm-Noncommercial-1.0.0
 ---
 
@@ -10,11 +10,11 @@ ZOE. G 發起的原創交付檢查工具。接受格式與數值定義見 [工�
 
 先取得收件方的實際接受條件。工具內的 distribution／video 是示範設定，不代表所有平台的標準。可用 CLI 的 rates／bits／channels 覆寫本次接受條件。
 
-僅分析使用者選定的 PCM WAV，保留原音檔。回報規格、每聲道 sample peak、RMS、DC、滿刻度樣本、頭尾安靜段、整段立體聲相關性與 SHA-256。
+僅分析使用者選定的 PCM WAV，保留原音檔。回報規格、每聲道 sample peak、RMS、DC、滿刻度樣本、頭尾安靜段、整段立體聲相關性、獨立 LUFS 整合響度與 SHA-256。
 
 技術條件通過不等於音樂品質、授權或法律審核通過。滿刻度樣本、負相關性或安靜段只提供聆聽線索；不擅自裁切、正規化或改寫。數位靜音等情況的不可測相關性以 null 表示。
 
-RMS 不當作 LUFS；sample peak 不當作 true peak。需要這些測量時，說明本版未提供，不用近似值冒充。
+RMS 不當作 LUFS；本版獨立量測 LUFS（單聲道／立體聲、8000–192000 Hz、至少400 ms）。太短、低於門檻或未知聲道位置保留 null／不可測，不以零或 −70 冒充結果。sample peak 不當作 true peak；true peak 尚未提供。沒有響度平台合格線，不擅自正規化。
 
 CLI 範例：
 
