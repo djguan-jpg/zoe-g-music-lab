@@ -1,5 +1,14 @@
 # 迭代說明
 
+## v0.12.0 — 2026-10-03
+
+- 開檔一次的自有音檔副本，SHA-256 與量測使用同份 bytes；新增 source_evidence，所有出口關閉暫存。不代表外部改檔原子快照。
+- 拒絕不一致 PCM fmt／截斷標頭，多聲道不解讀位置並列提醒。Markdown 補接受條件／副本範圍。
+- 純 audio-review 模型與非同步選擇保護，晚到成功／錯誤不覆蓋；上一份報告與停用下載清楚呈現。補來源、逐項條件、尾安靜段／DC／−∞及不可測。
+- 產品 0.12.0；Agent 1／MCP 2025-11-25／draft 3／library 1／backup 1 保持。沒有新依賴／工具／模型／host；署名及 PolyForm Noncommercial 1.0.0 保留。
+- 124 Python／80 JavaScript／四 Skill／九 JS 語法與 diff、真正 CLI／三 transport、IAB 正常／錯誤／晚回應／實檔下載／桌面與390px DOM／鍵盤通過；v0.11 ZIP 解壓112／69通過。詳見 docs/QA-v0.12.0.md。
+- restore-v0.11.0-before-v0.12.0、指定提交封裝與 private PR／Release 見 HANDOFF／manifest；前輪交接存 docs/HANDOFF-v0.11.0.md。完整視覺／實聽／特定 host／平台創始人未驗證。
+
 ## v0.11.0 — 2026-10-03
 
 - 加入整批歌詞校時的預覽／明確套用／一次撤回；只改 start／end，音檔、後續文字與刪除歷史保留。其他時間改動／增刪句子阻止整份撤回；過期候選／晚回應不寫入。
