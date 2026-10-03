@@ -119,7 +119,7 @@ test('unknown JSON format seed version or malformed JSON never falls back to gue
   }
 });
 test('timed reply title duration metadata cues timing JSON file or required artifacts contradictions refuse',async()=>{
-  for(const mutate of [r=>r.data.title='wrong',r=>r.data.duration=11,r=>r.data.duration_estimated=true,r=>r.meta.needs_review=true,r=>r.meta.protocol_version=2,
+  for(const mutate of [r=>r.data.title='wrong',r=>r.data.duration=11,r=>r.data.duration_estimated=true,r=>r.meta.needs_review=false,r=>r.meta.protocol_version=2,
     r=>r.data.cues[0].start='0',r=>r.data.cues[0].end=0,r=>r.data.cues.reverse(),r=>r.data.timing.inferred_end_count=-1,
     r=>r.data.timing.duration_source='last_cue_end',r=>r.files['lyrics.json']='{}',r=>delete r.files['preview.html']]){
     const h=harness(),work=h.c.inspectCurrent(),reply=structuredClone(timed);mutate(reply);h.resolve(reply);assert.equal(await work,false);assert.equal(h.ready.length,0);assert.equal(h.value.panels.lyrics.cues[0].text,'目前編修');

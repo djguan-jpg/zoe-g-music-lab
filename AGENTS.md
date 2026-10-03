@@ -37,3 +37,6 @@
 - cue-stamp純位置提案重用lyric-time毫秒規則，start／end分開、move保留句長及拒絕超音檔；部分有效cue只用於播放顯示，完整匯出仍拒絕空白時間。預覽／撤回暫態不進draft3，來源起稿JSON可保存於既有lyrics-source。
 
 - 歌詞檔匯入由lyrics-import純request／reply／draft提案與controller分層，原生arrayBuffer嚴格UTF-8；讀取前snapshot、讀取後及HTTP後target scope與最新token檢查。TXT走既有lyrics_seed1／draft3，字幕走lyrics；選檔與Read均先預覽，不直接改原文／cue。apply／cancel與實際after限定undo保留其他panel／audio／duration；未知或晚回應不靜默取代。
+
+- lyrics_package為獨立schema1，完整包root／timing／review_notes嚴格核對，未知版本／重複JSON欄位／矛盾來源拒絕。application三種lyrics輸入互斥，完整包檢查不可覆蓋名稱／時長／編修；legacy須明確轉換、原檔保持。
+- 純lyrics-package.js與Python契約共用工作台／離線預覽，未改cue保留來源、確認總長仍提示曾補齊結束；人工編修加待實聽說明。provided時長衝突拒絕、空白才接續，estimated不填；source可保存於draft3既有欄位，不靜默遷移。

@@ -1,6 +1,15 @@
 # ZOE Lyrics Sync
 
-創辦：ZOE. G · GitHub：djguan-jpg · v0.18
+v0.19完整歌詞包回讀保留作品名稱、宣告總長、明確句尾與推得時間來源。歌詞兩秒結束但歌曲十秒，回讀仍保持十秒；離線預覽確認音檔總長也保留曾推估句尾的提示。工作台時長衝突拒絕，估計值不自動填入時長欄；未知包版本、重複JSON欄位與矛盾資料拒絕。舊完整JSON須明確「轉換舊歌詞包並套用」或CLI --legacy-json，另存schema1原檔保持。
+
+```powershell
+python music_lab.py lyrics --input outputs/lyrics/lyrics.json --out outputs/checked-package
+python music_lab.py lyrics --input old-lyrics.json --legacy-json --out outputs/converted-package
+```
+
+完整包檢查不可混入CLI覆蓋選項；一般cue JSON／LRC／SRT編修保持。未改cue下載保留來源，編修後另附待實聽說明；合成adapter與瀏覽器證據見[QA](../../docs/QA-v0.19.0.md)。以下歷史版本功能仍適用，完整JSON契約以上述v0.19為準。
+
+創辦：ZOE. G · GitHub：djguan-jpg · v0.19
 
 v0.18：TXT／LRC／SRT／JSON選檔先檢查、顯示完整原文與前六句，再明確套用／取消。TXT嚴格UTF-8、64KiB／1000非空白行，時間留白；字幕最多2MiB，無效編碼與未知JSON拒絕。慢讀取／晚回應／預覽後編修不覆蓋新內容，音檔／時長／其他工作台保持；最近一次未編修套用可撤回。直接修改原文後按讀取也先預覽；SRT多行轉單行與LRC推測結束需實聽核對。詳細證據見[QA](../../docs/QA-v0.18.0.md)。
 

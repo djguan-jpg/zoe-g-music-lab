@@ -1,9 +1,8 @@
 # SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
-import json
 import re
-from .common import json_text, number
+from .common import number
 from .lyric_timing import milliseconds, normalized_seconds, seconds_from_milliseconds
-from .lyric_preview import render_preview
+from .lyrics_package import (PACKAGE_FORMAT, PACKAGE_SCHEMA_VERSION, decode_document, package_files)
 
 TIMESTAMP = re.compile(r"\[(\d+):(\d{2})(?:\.(\d{1,3}))?\]")
 
@@ -93,7 +92,9 @@ def read_cues(content, suffix):
     if suffix.lower() == ".srt":
         return parse_srt(content)
     if suffix.lower() == ".json":
-        data = json.loads(content)
+        data = decode_document(content)
+        if isinstance(data, dict) and set(data) != {'cues'}:
+            raise ValueError('完整歌詞 JSON 請使用歌詞包檢查；不可忽略名稱、總長或版本')
         return data.get("cues") if isinstance(data, dict) else data
     raise ValueError("歌詞僅支援 .lrc、.srt、.json")
 
@@ -151,7 +152,7 @@ def srt_text(cues):
                        for i, c in enumerate(cues, 1)) + "\n"
 
 
-def lyrics_bundle(cues, title="歌詞", duration=None, *, applied_shift=None):
+def lyrics_bundle(cues, title="歌詞", duration=None, *, applied_shift=None, review_notes=()):
     cleaned, duration, inferred = validate_cues(cues, duration)
     tail = max(cues, key=lambda cue: number(cue.get('start'), '歌詞開始時間'))
     timing = {"duration_source": ("provided" if not inferred else
@@ -161,6 +162,7 @@ def lyrics_bundle(cues, title="歌詞", duration=None, *, applied_shift=None):
     if applied_shift is not None:
         timing['applied_shift_seconds'] = normalized_seconds(applied_shift, '整批調整秒數')
     cues = cleaned
-    data = {"title": title, "duration": duration, "duration_estimated": inferred, "cues": cues, "timing": timing}
-    preview = render_preview(data, title)
-    return {"lyrics.json": json_text(data), "lyrics.lrc": lrc_text(cues), "lyrics.srt": srt_text(cues), "preview.html": preview}
+    data = {"format": PACKAGE_FORMAT, "schema_version": PACKAGE_SCHEMA_VERSION, "title": title,
+            "duration": duration, "duration_estimated": inferred, "cues": cues, "timing": timing,
+            "review_notes": list(review_notes)}
+    return package_files(data)

@@ -15,6 +15,8 @@ from .design import music_plan_bundle, motif_bundle
 from .storyboard_seed import storyboard_seed_bundle, SEED_SCHEMA_VERSION, MAX_SLOTS
 from .lyrics_seed import lyrics_seed_bundle, LYRICS_SEED_SCHEMA_VERSION, MAX_SOURCE_BYTES, MAX_LINES
 from .lyrics import read_cues, lyrics_bundle, edits
+from .lyrics_package import (PACKAGE_SCHEMA_VERSION, MAX_PACKAGE_BYTES, validate_package,
+                             package_files, decode_document, is_legacy, needs_review as package_needs_review)
 from .tool_contracts import payload_schema, output_schema
 from .draft_contract import MAX_DRAFT_BYTES
 from .draft_library import LIBRARY_SCHEMA_VERSION, MAX_ENTRIES
@@ -71,6 +73,8 @@ def capabilities(draft_library=None, backup_source=None):
                                 "status": "timing_seed_incomplete", "media_generated": False},
             "lyrics_seed": {"schema_version": LYRICS_SEED_SCHEMA_VERSION, "max_source_bytes": MAX_SOURCE_BYTES,
                             "max_lines": MAX_LINES, "status": "untimed", "media_generated": False},
+            "lyrics_package": {"schema_version": PACKAGE_SCHEMA_VERSION, "max_bytes": MAX_PACKAGE_BYTES,
+                               "legacy_conversion": "explicit allow_legacy only", "media_generated": False},
             "input_schemas": {operation: payload_schema(operation) for operation in operations},
             "output_schema": output_schema(),
             "audio_source": "Only --audio chosen at process launch; JSON cannot select paths",
@@ -122,13 +126,33 @@ def build(operation, payload, *, audio_source=None, draft_library=None, backup_s
         files = motif_bundle(payload) if "motifs" in payload else storyboard_bundle(payload)
         data = json.loads(files["storyboard.json"])
     elif operation == "lyrics":
-        if "cues" in payload and ("content" in payload or "suffix" in payload):
-            raise ValueError("歌詞需選擇 cues 或 content 其中一種；逐句 cues 不使用原文 suffix")
-        cues = payload.get("cues") if "cues" in payload else read_cues(
-            payload.get("content", ""), payload.get("suffix", ".lrc"))
-        if any(key in payload for key in ('shift_seconds', 'time_changes', 'text_changes')):
-            cues = edits(cues, payload.get('shift_seconds', 0), payload.get('time_changes', ()), payload.get('text_changes', ()))
-        files = lyrics_bundle(cues, payload.get("title", "歌詞"), payload.get("duration"), applied_shift=payload.get('shift_seconds'))
+        document = payload.get('package')
+        inspecting = 'package' in payload
+        if inspecting:
+            if set(payload) - {'package', 'allow_legacy'}:
+                raise ValueError('歌詞包檢查不能覆蓋名稱、總長或編修；請在工作台明確編修後另存')
+        elif 'content' in payload and str(payload.get('suffix', '.lrc')).lower() == '.json':
+            parsed = decode_document(payload['content'])
+            if isinstance(parsed, dict) and (is_legacy(parsed) or {'format', 'schema_version'} & set(parsed)):
+                if set(payload) - {'content', 'suffix'}:
+                    raise ValueError('完整歌詞包檢查不能覆蓋名稱或總長；請使用 package 模式')
+                document, inspecting = parsed, True
+        if inspecting:
+            files = package_files(validate_package(document, allow_legacy=payload.get('allow_legacy', False)))
+        else:
+            if set(payload) - {'cues', 'content', 'suffix', 'title', 'duration', 'shift_seconds', 'time_changes', 'text_changes'}:
+                raise ValueError('歌詞操作含不支援的欄位')
+            if 'allow_legacy' in payload:
+                raise ValueError('allow_legacy 只用於完整舊歌詞包的明確轉換')
+            if "cues" in payload and ("content" in payload or "suffix" in payload):
+                raise ValueError("歌詞需選擇 cues 或 content 其中一種；逐句 cues 不使用原文 suffix")
+            cues = payload.get("cues") if "cues" in payload else read_cues(
+                payload.get("content", ""), payload.get("suffix", ".lrc"))
+            if any(key in payload for key in ('shift_seconds', 'time_changes', 'text_changes')):
+                cues = edits(cues, payload.get('shift_seconds', 0), payload.get('time_changes', ()), payload.get('text_changes', ()))
+            notes = ['逐句時間或文字已編修；資料驗證不能替代實聽核對。'] if payload.get('time_changes') or payload.get('text_changes') else []
+            files = lyrics_bundle(cues, payload.get("title", "歌詞"), payload.get("duration"),
+                                  applied_shift=payload.get('shift_seconds'), review_notes=notes)
         data = json.loads(files["lyrics.json"])
     else:
         if audio_source is None:
@@ -144,6 +168,8 @@ def build(operation, payload, *, audio_source=None, draft_library=None, backup_s
             data["file"] = Path(name.replace("\\", "/")).name[:200] or "selected.wav"
         files = audio_bundle(data)
     review = bool(data.get("review_notes") or data.get("warnings") or data.get("duration_estimated"))
+    if operation == 'lyrics':
+        review = package_needs_review(data)
     if operation == 'lyrics' and (data['timing'].get('applied_shift_seconds', 0) != 0 or payload.get('time_changes') or payload.get('text_changes')):
         review = True  # Data checks do not verify a changed cue against the performance.
     return Result(files, data, review)

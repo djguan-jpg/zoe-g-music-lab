@@ -2,7 +2,7 @@
 
 由 **ZOE. G** 發起的四個原創專案。GitHub 帳號為 **djguan-jpg**；品牌署名與帳號可以不同。
 
-目前版本 v0.18 提供四個工作台、原創 Skill、本機草稿庫及可預覽的 ZIP 備份／恢復、整批歌詞校時及來源一致的音檔檢查報告，以及保留原文的未校時歌詞起稿。Python 3.10 以上即可使用，沒有第三方依賴。只讀本次新建工作區，不參考使用者的其他本機或 GitHub 專案。公開第三方 README 僅用於需求比較，來源及自行設計的差異記在 [構思紀錄](CONCEPT.md)。
+目前版本 v0.19 提供四個工作台、原創 Skill、本機草稿庫及可預覽的 ZIP 備份／恢復、整批歌詞校時及來源一致的音檔檢查報告，以及保留原文的未校時歌詞起稿。Python 3.10 以上即可使用，沒有第三方依賴。只讀本次新建工作區，不參考使用者的其他本機或 GitHub 專案。公開第三方 README 僅用於需求比較，來源及自行設計的差異記在 [構思紀錄](CONCEPT.md)。
 
 授權為 **PolyForm Noncommercial 1.0.0**，商業使用沒有由本版授權。可查看、修改及分發的範圍以 [LICENSE](LICENSE) 為準，保留 [NOTICE](NOTICE)。這是非商用原始碼授權；不標成 AGPL。使用者匯入的素材授權各自保留，詳見 [授權說明](LICENSING.md)。
 
@@ -13,11 +13,26 @@
 | ZOE Lyrics Sync | LRC／SRT／JSON、TXT／字幕選檔預覽、波形定位、人工校時、編修與匯出 | [工具](projects/zoe-lyrics-sync/README.md) |
 | ZOE Audio Delivery | PCM WAV 標頭檢查、接受條件、峰值／RMS／DC、頭尾安靜段及同一分析副本 SHA-256 | [工具](projects/zoe-audio-delivery/README.md) |
 
-## 選檔先預覽，再套用（v0.18）
+## 歌詞包回讀保留名稱、總長與待確認來源（v0.19）
+
+帶時間的完整 JSON 現在使用獨立 `zoe-lyrics-package` schema 1。由 CLI、Agent、MCP、工作台或離線預覽產生的歌詞包，回讀會保留作品名稱、宣告總長、逐句結束、推得時間及待確認說明；例如歌詞兩秒結束、音樂十秒結束，總長仍是十秒。未知版本、重複 JSON 欄位或矛盾來源拒絕。
+
+波形校時先預覽再套用：已有時長與來源宣告不同時拒絕，保留音檔與編修；時長留空才接續已宣告值。估計值不自動填入時長欄，下載後仍保留推估提示。未修改表格時保留原時間來源；編修後加上待實聽核對說明。離線預覽接上音檔會更新總長，但不抹去曾補齊的句尾。
+
+v0.18 以前的完整 JSON 須明確按「轉換舊歌詞包並套用」，或 CLI 加 `--legacy-json`；原檔不改寫。單純 cue 陣列與 `{"cues":[...]}` 仍按目前作品名稱／時長建立新包，與完整包分開。見[本輪驗證](docs/QA-v0.19.0.md)。
+
+```powershell
+python music_lab.py lyrics --input outputs/lyrics/lyrics.json --out outputs/checked-lyrics
+python music_lab.py lyrics --input old-lyrics.json --legacy-json --out outputs/converted-lyrics
+```
+
+完整包檢查不可同時用 title／duration／shift／set／text 覆蓋。要編修完整包，先在工作台或離線預覽明確修改並另存；CLI 的一般字幕編修入口保持。歌詞包 schema 與產品、草稿、Agent protocol 分別管理；沒有 ASR 或模型呼叫。
+
+## 選檔先預覽，再套用（v0.18，完整 JSON 以 v0.19 規則為準）
 
 在波形校時選 UTF-8 TXT／LRC／SRT／JSON，先看完整原文、句數與前六句的時間。確認後按「套用這份歌詞」，取消不改目前表格。直接編修原文後按「讀取歌詞」也採同一流程；預覽沒有下載成果，套用後才建立成果。慢讀取、晚回應及預覽後編修皆檢查目標，拒絕覆蓋新內容；重新選檔後可再預覽。
 
-TXT轉成保留原文的未校時起稿JSON，開始／結束留白，之後依音檔人工標記。LRC補齊的結束時間會說明，SRT多行以「 / 」合為單行，原始字幕原文仍保留。帶時間JSON只接續cue時間與文字，作品名稱與時長以目前校時欄位驗證；起稿JSON則保留起稿名稱。全部套用保留目前時長、音檔與其他工作台，未編修的最近一次套用可「撤回載入」。預覽／撤回不進持久草稿；沒有ASR或模型呼叫。見[本輪驗證](docs/QA-v0.18.0.md)。
+TXT轉成保留原文的未校時起稿JSON，開始／結束留白，之後依音檔人工標記。LRC補齊的結束時間會說明，SRT多行以「 / 」合為單行，原始字幕原文仍保留。普通cue JSON以目前校時欄位驗證；完整版本化歌詞包接續名稱與來源，舊完整包須明確轉換。起稿JSON則保留起稿名稱。套用保留音檔與其他工作台，已填時長保留，未編修的最近一次套用可「撤回載入」。預覽／撤回不進持久草稿；沒有ASR或模型呼叫。見[本輪驗證](docs/QA-v0.18.0.md)。
 
 ## 從已有歌詞開始校時（v0.17）
 
@@ -197,7 +212,7 @@ python scripts/package_release.py --ref v0.16.0
 
 歌曲清單的空白項目會顯示欄位旁提示並取得焦點，修正或重新載入後清除舊標示；交付清單全空時定位到新增按鈕。標示不是驗證成果，修改後仍需重建。
 
-MCP tools/list 與本機 capabilities 提供完整輸入欄位及 files/data/meta 成果 schema。現代與舊版歌曲／分鏡都有明確條件。schema 描述資料形狀，領域層檢查時間、數字文字、連戲與 PCM；沒有新增 schema engine 或模型呼叫。歌詞請求的 cues 與 content／suffix 不可同時提供，以免原文被忽略。音檔接受條件需為正整數清單，拒絕布林值與小數；1.0 這類整數值會正規化為 1。詳見 [Agent 契約](docs/AGENT.md)。
+MCP tools/list 與本機 capabilities 提供完整輸入欄位及 files/data/meta 成果 schema。現代與舊版歌曲／分鏡都有明確條件。schema 描述資料形狀，領域層檢查時間、數字文字、連戲與 PCM；沒有新增 schema engine 或模型呼叫。歌詞請求的 cues、content／suffix 與 package 三種模式互斥，package 不可混入覆蓋欄位，以免原文被忽略。音檔接受條件需為正整數清單，拒絕布林值與小數；1.0 這類整數值會正規化為 1。詳見 [Agent 契約](docs/AGENT.md)。
 
 
 ## v0.8 的刪除還原

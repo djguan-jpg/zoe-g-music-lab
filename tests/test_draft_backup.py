@@ -199,7 +199,10 @@ class BackupTests(unittest.TestCase):
             counts=[]
             for child in children:
                 out,err=child.communicate(timeout=20);self.assertEqual(child.returncode,0,err[-500:]);result=json.loads(out)['data'];counts.append((result['added_count'],result['reused_count']))
-            self.assertEqual(sorted(counts),[(0,2),(0,2),(2,0)]);self.assertEqual(contents(target),contents(source.root))
+            self.assertEqual(sorted(counts),[(0,2),(0,2),(2,0)])
+            # The lock file coordinates live processes; its initialization bytes are not backed-up revisions.
+            self.assertEqual({k:v for k,v in contents(target).items() if k!='.write-lock'},
+                             {k:v for k,v in contents(source.root).items() if k!='.write-lock'})
 
     def test_zip_paths_duplicates_unlisted_files_and_directories_are_rejected(self):
         with tempfile.TemporaryDirectory() as folder:
