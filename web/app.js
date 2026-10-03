@@ -164,9 +164,10 @@ function renderPlanningReview(d){
   const stale=planText('p','這是上一份設計，輸入已修改；重新建立後才能代表目前內容。','plan-stale-note');stale.dataset.planStale='true';stale.hidden=true;stale.setAttribute('role','status');box.append(stale);
   box.append(planText('p',d.title,'plan-title'));
   const facts=document.createElement('div');facts.className='facts';
-  const values=d.operation==='music'?[[d.duration+' 秒','估計總長'],[d.bars+' 小節',d.bpm+' BPM · 每小節 '+d.beats+' 拍']]:[[d.duration+' 秒','規劃總長'],[d.shots.length+' 鏡',d.fps+' FPS · '+d.ratio]];
+  const values=d.operation==='music'?[[d.duration+' 秒','估計總長'],[d.bars+' 小節',d.bpm+' BPM · 每小節 '+d.beats+' 拍']]:[[d.duration+' 秒','規劃總長'],[d.shots.length+' 鏡',d.fps+' FPS · '+d.ratio],[d.frames.totalFrames+' 幀','完整覆蓋；結束影格不含']];
   for(const [value,label] of values){const fact=document.createElement('div');fact.className='fact';fact.append(planText('strong',value),planText('span',label));facts.append(fact);}box.append(facts);
   box.append(planText('p',d.operation==='music'?'記憶點：'+d.hook:'時間與資料已檢查；尚未渲染畫面。','plan-context'));
+  if(d.operation==='storyboard')box.append(planText('p',`影格範圍 [0, ${d.frames.totalFrames})。最近整數影格，正好半幀取偶數；秒數保持輸入，須以實際音檔與畫面核對。${d.frames.declared?'':'舊報告未宣告影格版本；依秒數與 FPS 核對。'}`,'hint plan-frame-note'));
   box.append(planText('h4','待人工審查'));
   box.append(planText('p',d.notes.length?d.notes.length+' 項設計提醒；可以保留為有意識的創作選擇。':'本次沒有資料提醒；仍需'+(d.operation==='music'?'實唱與實聽。':'審查實際畫面。'),'hint'));
   appendNotes(box,d.notes);
@@ -181,6 +182,7 @@ function renderPlanningReview(d){
       const fill=document.createElement('div');fill.className='energy-fill';fill.style.width=(item.energy*20)+'%';track.append(fill);li.append(track);
       li.append(planText('p','敘事任務：'+item.focus),planText('p','聲音配置：'+item.texture));
     }else{
+      li.append(planText('p',`影格 [${item.start_frame}, ${item.end_frame_exclusive}) · ${item.end_frame_exclusive-item.start_frame} 幀；結束不含。`,'plan-frame-range'));
       li.append(planText('p','母題：'+item.motif+' · '+item.motif_state),planText('p','敘事用途：'+item.purpose));
       const notes=d.notes.filter(n=>n.shot===item.shot);if(notes.length)appendNotes(li,notes);
     }
@@ -419,7 +421,7 @@ function capturePanel(panel){
 }
 function captureDraft(){
   const panels=Object.fromEntries(Object.keys(MusicEditor.draftFields).map(panel=>[panel,capturePanel(panel)]));
-  return {format:'zoe-music-lab-draft',schema_version:3,tool_version:'0.21.0',saved_at:new Date().toISOString(),tab:state.tab,panels};
+  return {format:'zoe-music-lab-draft',schema_version:3,tool_version:'0.23.0',saved_at:new Date().toISOString(),tab:state.tab,panels};
 }
 function applyDraft(draft){
   if(seedController)seedController.cancel();
