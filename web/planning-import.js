@@ -72,16 +72,21 @@
       }catch(error){if(task.isCurrent(token))onError(error);return false;}
     }};
   }
+  function requirementIssue(panel){
+    if(!panel.deliverables.length)return {key:'deliverables',index:null,message:'至少需要一個交付項目'};
+    for(const [key,label] of [['avoid','避免事項'],['deliverables','交付項目']]){
+      const index=panel[key].findIndex(item=>!item.trim());
+      if(index>=0)return {key,index,message:`${label} ${index+1} 不可空白`};
+    }
+    return null;
+  }
   function planningBrief(current,operation){
     const draft=Editor.validateDraft(current),panel=draft.panels[operation];
     if(!['music','storyboard'].includes(operation))throw Error('只支援歌曲或分鏡需求');
     const sources=operation==='music'?musicSources:mvSources;
     const brief=Object.fromEntries(Object.entries(sources).map(([field,key])=>[key,panel.fields[field]]));
     if(operation==='music'){
-      if(!panel.deliverables.length)throw Error('至少需要一個交付項目');
-      for(const [key,label] of [['avoid','避免事項'],['deliverables','交付項目']]){
-        const blank=panel[key].findIndex(item=>!item.trim());if(blank>=0)throw Error(`${label} ${blank+1} 不可空白`);
-      }
+      const issue=requirementIssue(panel);if(issue)throw Error(issue.message);
       return {...brief,arrangement:structuredClone(panel.sections),avoid:[...panel.avoid],deliverables:[...panel.deliverables]};
     }
     const names=new Map(panel.motifs.map(m=>[m.id,m.name]));
@@ -90,6 +95,6 @@
       return {...shot,motif:names.get(motif_id)};
     })};
   }
-  const api={planningDraft,planningBrief,createBriefImport};
+  const api={planningDraft,planningBrief,createBriefImport,requirementIssue};
   if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.MusicPlanning=api;
 })(typeof window==='undefined'?{}:window);

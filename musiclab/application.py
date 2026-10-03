@@ -12,6 +12,7 @@ from .audio import analyze_wav, audio_bundle
 from .creative import music_bundle, storyboard_bundle
 from .design import music_plan_bundle, motif_bundle
 from .lyrics import read_cues, lyrics_bundle
+from .tool_contracts import payload_schema, output_schema
 
 PROTOCOL_VERSION = 1
 MAX_REQUEST_BYTES = 2 * 1024 * 1024
@@ -40,6 +41,8 @@ def capabilities():
             "license": "PolyForm-Noncommercial-1.0.0",
             "transport": "local_stdio_json_lines", "max_request_bytes": MAX_REQUEST_BYTES,
             "operations": OPERATIONS, "media_generated": False,
+            "input_schemas": {operation: payload_schema(operation) for operation in OPERATIONS},
+            "output_schema": output_schema(),
             "audio_source": "Only --audio chosen at process launch; JSON cannot select paths",
             "output": "JSON results and file contents on stdout; agent adapter writes no files"}
 
@@ -56,6 +59,8 @@ def build(operation, payload, *, audio_source=None):
         files = motif_bundle(payload) if "motifs" in payload else storyboard_bundle(payload)
         data = json.loads(files["storyboard.json"])
     elif operation == "lyrics":
+        if "cues" in payload and ("content" in payload or "suffix" in payload):
+            raise ValueError("歌詞需選擇 cues 或 content 其中一種；逐句 cues 不使用原文 suffix")
         cues = payload.get("cues") if "cues" in payload else read_cues(
             payload.get("content", ""), payload.get("suffix", ".lrc"))
         files = lyrics_bundle(cues, payload.get("title", "歌詞"), payload.get("duration"))

@@ -11,28 +11,19 @@ from pathlib import Path
 
 from musiclab import __version__
 from musiclab.application import MAX_REQUEST_BYTES, OPERATIONS, build, load_request
+from musiclab.tool_contracts import input_schema, output_schema
 
 MCP_VERSION = "2025-11-25"
 TOOLS = {"music_plan": "music", "storyboard_plan": "storyboard",
          "lyrics_validate": "lyrics", "audio_report": "audio"}
-PAYLOAD_HELP = {
-    "music": "Song brief: title, memory_hook, theme, style, vocal, audience, bpm, beats_per_bar, "
-             "arrangement [{name,bars,energy,focus,texture}], optional existing_lyrics. Legacy brief also accepted.",
-    "storyboard": "MV brief: title, duration_seconds, fps, aspect_ratio, visual_style, character_anchor, "
-                  "motifs [{name,meaning}], shots [{start,end,section,purpose,visual,camera,transition,motif,"
-                  "motif_state,character_state,screen_direction,change_reason}]. Legacy brief also accepted.",
-    "lyrics": "title and either cues [{start,end,text}] or content with suffix (.lrc/.srt/.json); "
-              "optional duration in seconds. Manual timing only.",
-    "audio": "Optional profile (distribution/video), rates, bits, channels, display_name. "
-             "Only the WAV selected using --audio is read; JSON paths are rejected.",
-}
+
 
 
 def tool_list():
     return [{"name": name, "description": OPERATIONS[operation],
-             "inputSchema": {"type": "object", "properties": {
-                 "payload": {"type": "object", "description": PAYLOAD_HELP[operation]}},
-                 "required": ["payload"], "additionalProperties": False},
+             "title": name.replace("_", " ").title(),
+             "inputSchema": input_schema(operation), "outputSchema": output_schema(),
+             "execution": {"taskSupport": "forbidden"},
              "annotations": {"readOnlyHint": True, "destructiveHint": False,
                              "idempotentHint": True, "openWorldHint": False}}
             for name, operation in TOOLS.items()]
@@ -106,6 +97,8 @@ class Session:
             name, arguments = params.get("name"), params.get("arguments")
             if not isinstance(name, str) or name not in TOOLS:
                 return rpc_error(request_id, -32602, "Unknown tool")
+            if "arguments" in params and not isinstance(arguments, dict):
+                return rpc_error(request_id, -32602, "arguments must be an object")
             if not isinstance(arguments, dict) or set(arguments) != {"payload"} or not isinstance(arguments["payload"], dict):
                 result = tool_error("arguments must contain exactly one object: payload")
             else:

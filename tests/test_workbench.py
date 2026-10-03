@@ -176,6 +176,19 @@ class WorkbenchHTTPTests(unittest.TestCase):
         self.assertEqual(status, 400)
         self.assertIn("重疊", result["error"])
 
+    def test_ambiguous_lyrics_return_http_error_without_breaking_next_operation(self):
+        cues = [{"start": 0, "end": 2, "text": "保留逐句"}]
+        status, result = self.post_json("/api/lyrics", {"cues": cues, "content": "另一份原文"})
+        self.assertEqual(status, 400)
+        self.assertIn("cues 或 content", result["error"])
+        status, result = self.post_json("/api/lyrics", {"cues": cues, "duration": 2})
+        self.assertEqual(status, 200)
+        self.assertEqual(result["data"]["cues"], cues)
+        status, _, raw = self.request("GET", "/api/capabilities")
+        self.assertEqual(status, 200)
+        schema = json.loads(raw)["input_schemas"]["music"]
+        self.assertIn("language", schema["properties"])
+
     def test_wav_upload_is_analyzed_and_named_without_path_access(self):
         import io
         stream = io.BytesIO()

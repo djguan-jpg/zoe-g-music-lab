@@ -83,3 +83,17 @@ music_plan／JSON-lines music 的 `result.files["brief.json"]`、storyboard_plan
 本輪以實際 MCP 子程序呼叫兩工具，將回傳 brief 檔載入瀏覽器、人工確認、重建、真正下載；歌曲 brief 與來源完全一致，分鏡共用領域輸出一致。另有 Python → 生產 JS 轉換層 → Python 的實跑往返測試。這證明 artifact 交接，沒有宣稱任何特定 Agent host 已安裝或呼叫模型。
 
 lyrics 結果的 timing metadata 區分總時長來源與逐句結束補齊；duration_estimated 保留舊語義，不能直接解讀為 SRT 尾句被估計。音檔分析入口與授權不變。
+
+## v0.7：可探索的工具契約
+
+musiclab/tool_contracts.py 集中宣告四工具的 JSON Schema 2020-12 資料形狀；MCP inputSchema 包含 payload，JSON-lines --describe 與 HTTP /api/capabilities 的 input_schemas 直接描述 payload。兩者共用同一份契約，output_schema／outputSchema 描述成功回應的 files/data/meta。files 是文字內容，不代表已寫入磁碟；data 隨操作而異，meta.protocol_version 仍為 1。
+
+歌曲列出 language／avoid／deliverables、BPM／小節／能量／記憶點及現代／舊版條件；分鏡列出母題、鏡頭欄位與方向；歌詞明確選 cues 或 content 原文，cues 不搭 suffix；音訊列出接受條件與啟動選定媒體的限制。未知額外註記仍按原領域流程處理，不把工具 schema 當 UI 能完整回讀所有第三方格式的承諾。
+
+schema 不執行計算，也沒有新增 runtime validator。application／domain 仍驗證有限數字、時間覆蓋、母題引用與 PCM；跨 adapter 的來源衝突由 application 拒絕，音訊正整數條件由 audio 層在開檔前檢查。JSON 的 1.0 等整數值會轉為 1，true 不會當 1。
+
+tools/call 明確提供非物件 arguments（包括 null）時回 -32602；payload 的內容或領域錯誤仍回 isError=true。缺少 payload 的物件仍是可修正的工具輸入錯誤。回應後可繼續呼叫；同步執行與 EOF 退出不變，execution.taskSupport=forbidden。
+
+來源核對：[MCP 2025-11-25 Tools](https://modelcontextprotocol.io/specification/2025-11-25/server/tools) 定義 inputSchema、outputSchema 與兩種錯誤；[Lifecycle](https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle) 定義初始化／退出。本專案依既有規則拒絕未知 transport 版本，不把此行為宣稱為完整官方 conformance；仍僅支援 2025-11-25。
+
+本輪使用已安裝 jsonschema 4.26.0 作開發核對，沒有安裝或新增依賴：八份 schema 通過 meta-schema 檢查；七次真實 stdio 呼叫涵蓋四工具與兩種舊版企劃，成功輸入／成果皆符合 schema 並與共用 application 一致，錯誤範例被 schema 拒絕。這不是特定 Agent host 接入或模型執行證明。
