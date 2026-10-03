@@ -91,11 +91,11 @@ class MusicReadinessTests(unittest.TestCase):
         thread=threading.Thread(target=server.serve_forever);thread.start()
         try:
             c=http.client.HTTPConnection('127.0.0.1',server.server_port,timeout=5)
-            for name in ('planning-values.js','readiness-state.js','music-readiness.js'):
+            for name in ('planning-values.js','readiness-state.js','music-readiness.js','raw-fields.js','raw-fields-dom.js'):
                 c.request('GET','/'+name);response=c.getresponse();self.assertEqual(response.status,200);self.assertEqual(response.read(),(ROOT/'web'/name).read_bytes())
             c.request('GET','/');response=c.getresponse();html=response.read().decode('utf-8')
             self.assertLess(html.index('/planning-values.js'),html.index('/planning-import.js'))
             self.assertLess(html.index('/readiness-state.js'),html.index('/storyboard-readiness.js'))
             self.assertLess(html.index('/music-readiness.js'),html.index('/app.js'))
-            self.assertIn('<form id="music-form" novalidate>',html);self.assertIn('max="300" step="any"',html);c.close();self.assertEqual(len(available_operations()),9)
+            self.assertIn('<form id="music-form" novalidate>',html);self.assertIn('id="music-bpm" type="text" inputmode="decimal"',html);self.assertLess(html.index('/raw-fields.js'),html.index('/raw-fields-dom.js'));self.assertLess(html.index('/raw-fields-dom.js'),html.index('/app.js'));c.close();self.assertEqual(len(available_operations()),9)
         finally:server.shutdown();thread.join(5);server.server_close();self.assertFalse(thread.is_alive())

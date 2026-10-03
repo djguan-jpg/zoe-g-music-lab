@@ -49,6 +49,8 @@ ASSETS = {"/": ("web/index.html", "text/html"), "/app.js": ("web/app.js", "text/
           "/planning-review.js": ("web/planning-review.js", "text/javascript"),
           "/planning-source.js": ("web/planning-source.js", "text/javascript"),
           "/storyboard-duration.js": ("web/storyboard-duration.js", "text/javascript"),
+          "/raw-fields.js": ("web/raw-fields.js", "text/javascript"),
+          "/raw-fields-dom.js": ("web/raw-fields-dom.js", "text/javascript"),
           "/planning-values.js": ("web/planning-values.js", "text/javascript"),
           "/readiness-state.js": ("web/readiness-state.js", "text/javascript"),
           "/readiness-report.js": ("web/readiness-report.js", "text/javascript"),

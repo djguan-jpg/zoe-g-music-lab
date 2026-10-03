@@ -62,3 +62,6 @@
 
 /* v0.30: song field locations use the same bounded checklist presentation. */
 [data-music-ready-invalid]{border-color:#a34935;background:#fff3ed;outline-offset:3px}
+
+/* Raw draft values remain readable without browser numeric coercion. */
+td input[data-raw-number]{width:63px}.raw-value-note{display:block;font-size:.78rem;line-height:1.45;font-weight:400;color:var(--muted);margin-top:.3rem;overflow-wrap:anywhere}
