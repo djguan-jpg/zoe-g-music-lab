@@ -45,3 +45,5 @@ python music_lab.py storyboard --brief examples/first-light-mv.json --out output
 ### 起稿檔交接（v0.15）
 
 Agent／CLI產生的storyboard-seed.json可在歌曲工作台選「接續Agent／CLI起稿」讀回，先核對並預覽，明確套用才替換分鏡；目前歌曲、其他工作台與音檔保留。CLI可用`storyboard-seed --seed 起稿.json --out 新目錄`核對，不帶FPS／小節覆蓋。未知版本／欄位／矛盾來源拒絕，若已加入畫面內容則保留原檔並另交完整mv-brief；不把時間起稿當完成分鏡。
+
+外部JSON接續採共用嚴格UTF-8／JSON decoder，CLI最多2MiB、最大64層；重複欄位含跳脫同名、無效Unicode與非有限數字拒絕，不能默默取最後一個版本／值。保留原檔，協助另存有效UTF-8後重新預覽；不要把傳輸檢查當創作／媒體驗證。

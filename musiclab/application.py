@@ -6,6 +6,7 @@ An explicitly injected draft library owns immutable local revision writes.
 Audio sources are selected by an adapter, never by request JSON.
 """
 import json
+from .json_document import decode_json, MAX_JSON_DEPTH, MAX_JSON_BYTES
 from dataclasses import dataclass
 from pathlib import Path
 from . import __version__
@@ -24,7 +25,7 @@ from .draft_backup import (BACKUP_SCHEMA_VERSION, MAX_BACKUP_BYTES, MAX_EXPANDED
                            export_backup, inspect_backup, restore_backup)
 
 PROTOCOL_VERSION = 1
-MAX_REQUEST_BYTES = 2 * 1024 * 1024
+MAX_REQUEST_BYTES = MAX_JSON_BYTES
 OPERATIONS = {
     "music": "Song planning and AI task packaging; no model invocation",
     "storyboard": "Shot timing and motif continuity; no media rendering",
@@ -63,6 +64,8 @@ def capabilities(draft_library=None, backup_source=None):
     return {"protocol_version": PROTOCOL_VERSION, "version": __version__,
             "license": "PolyForm-Noncommercial-1.0.0",
             "transport": "local_stdio_json_lines", "max_request_bytes": MAX_REQUEST_BYTES,
+            "json_document": {"encoding": "UTF-8", "max_depth": MAX_JSON_DEPTH,
+                              "duplicate_keys": "reject", "nonfinite_numbers": "reject"},
             "operations": operations, "media_generated": False,
             "draft_library_enabled": draft_library is not None,
             "draft_library": {"enabled": draft_library is not None, "library_schema_version": LIBRARY_SCHEMA_VERSION,
@@ -176,9 +179,7 @@ def build(operation, payload, *, audio_source=None, draft_library=None, backup_s
 
 
 def load_request(raw):
-    def nonfinite(_):
-        raise ValueError("JSON 不接受 NaN 或 Infinity")
-    return json.loads(raw, parse_constant=nonfinite)
+    return decode_json(raw, max_bytes=MAX_REQUEST_BYTES)
 
 
 def validate_request(request, draft_library=None):

@@ -1,9 +1,8 @@
 # SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 """Versioned timed lyrics and declared timing provenance; never infer on inspect."""
 import copy
-import json
-import math
 from .common import json_text
+from .json_document import decode_json
 from .lyric_timing import normalized_seconds, milliseconds
 
 PACKAGE_FORMAT = 'zoe-lyrics-package'
@@ -15,23 +14,7 @@ PACKAGE_KEYS = LEGACY_KEYS | {'format', 'schema_version', 'review_notes'}
 
 
 def decode_document(content):
-    if not isinstance(content, str) or len(content.encode('utf-8')) > MAX_PACKAGE_BYTES:
-        raise ValueError('歌詞 JSON 需為 UTF-8 文字，最多2 MiB')
-    def pairs(items):
-        result = {}
-        for key, value in items:
-            if key in result:
-                raise ValueError('歌詞 JSON 含重複欄位')
-            result[key] = value
-        return result
-    def constant(_):
-        raise ValueError('歌詞 JSON 不接受 NaN 或 Infinity')
-    def floating(value):
-        result = float(value)
-        if not math.isfinite(result):
-            raise ValueError('歌詞 JSON 不接受非有限數字')
-        return result
-    return json.loads(content, object_pairs_hook=pairs, parse_constant=constant, parse_float=floating)
+    return decode_json(content, max_bytes=MAX_PACKAGE_BYTES, label='歌詞 JSON')
 
 
 def is_legacy(document):

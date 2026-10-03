@@ -35,3 +35,5 @@ python music_lab.py music --brief examples/first-light-music.json --out outputs/
 沒有 arrangement 的 v0.1 需求仍只產生任務與 brief。命令不呼叫模型或生成音樂；本機 UI「歌曲設計」提供同樣的可編修流程。
 
 新案例採用自己創作且願意分享的文字，附需求、實際版本差異及回饋。案例範圍和來源應能追溯，不以工具訂閱推定所有素材的使用權。
+
+外部JSON接續採共用嚴格UTF-8／JSON decoder，CLI最多2MiB、最大64層；重複欄位含跳脫同名、無效Unicode與非有限數字拒絕，不能默默取最後一個版本／值。保留原檔，協助另存有效UTF-8後重新預覽；不要把傳輸檢查當創作／媒體驗證。

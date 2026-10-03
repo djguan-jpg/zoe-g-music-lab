@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 'use strict';
+const jsonFile=(name,content)=>new File([content],name);
+const jsonBytes=value=>new TextEncoder().encode(value).buffer;
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const Editor=require('../web/editor-state.js'),Replacement=require('../web/replacement-preview.js');
 const {createBriefImport,planningDraft}=require('../web/planning-import.js');
@@ -14,7 +16,7 @@ function draft(){
 const later=()=>{let resolve,reject;const promise=new Promise((a,b)=>{resolve=a;reject=b;});return {promise,resolve,reject};};
 function harness(){const current={draft:draft(),media:[null,null]};return {current,preview:Replacement.createPreview({capture:()=>current})};}
 function music(){return JSON.parse(fs.readFileSync(path.join(__dirname,'../examples/first-light-music.json'),'utf8'));}
-const file=brief=>({name:'brief.json',size:100,text:async()=>JSON.stringify(brief)});
+const file=brief=>jsonFile('brief.json',JSON.stringify(brief));
 
 test('accepted payload and proposals cannot mutate the captured replacement',()=>{
   const h=harness(),token=h.preview.begin('music'),payload={brief:music()};assert.equal(h.preview.proposal(),null);
@@ -69,7 +71,7 @@ test('real brief read rejects late target success and keeps later edit',async()=
   assert.equal(h.ready.length,0);assert.match(h.errors.at(-1),/目標/);assert.equal(h.current.draft.panels.music.fields['music-title'],'晚回應前新歌名');
 });
 test('target change while file text is pending avoids submitting an obsolete brief',async()=>{
-  const wait=later();let calls=0;const h=briefHarness(async()=>{calls++;return {};});const work=h.reader.read({name:'old.json',size:12,text:()=>wait.promise},'music');
+  const wait=later();let calls=0;const h=briefHarness(async()=>{calls++;return {};});const work=h.reader.read({name:'old.json',size:12,arrayBuffer:()=>wait.promise.then(jsonBytes)},'music');
   h.current.draft.panels.music.fields['music-hook']='後續修改';wait.resolve(JSON.stringify(music()));assert.equal(await work,false);assert.equal(calls,0);
 });
 test('obsolete brief transport error reports preservation rather than the old failure',async()=>{
@@ -106,13 +108,25 @@ test('cancelRead keeps old library results and errors out of a newer guarded pre
 });
 function appHarness(){
   const h=harness(),elements=new Map(),messages=[],loaded=[];const element=id=>{if(!elements.has(id))elements.set(id,{value:'',hidden:true,textContent:''});return elements.get(id);};
-  const context={structuredClone,Number,JSON,Error,state:{busy:false},$:element,MusicEditor:Editor,draftPreview:h.preview,
+  const context={structuredClone,Number,JSON,Error,state:{busy:false},$:element,MusicEditor:Editor,MusicJsonDocument:require('../musiclab/assets/json-document.js'),draftPreview:h.preview,
     draftTask:Editor.createLatestTask(),clearConversion:()=>{h.preview.cancel();element('draft-conversion').hidden=true;},
     briefImporter:{cancel:()=>{}},clearBriefReview:()=>{},clearLibraryReview:()=>{},say:m=>messages.push(m),loadDraft:d=>loaded.push(structuredClone(d))};
   vm.createContext(context);const source=fs.readFileSync(path.join(__dirname,'../web/app.js'),'utf8');const start=source.indexOf("$('draft-open').onchange="),end=source.indexOf("$('draft-undo').onclick=",start);
   vm.runInContext(source.slice(start,end),context);return {...h,element,messages,loaded};
 }
-const draftFile=d=>({name:'draft.json',size:100,text:async()=>JSON.stringify(d)});
+const draftFile=d=>jsonFile('draft.json',JSON.stringify(d));
+test('actual draft handler refuses invalid UTF8 before preview and preserves current draft',async()=>{
+  const h=appHarness(),before=structuredClone(h.current.draft);
+  await chooseDraft(h,new File([new Uint8Array([0xff]),JSON.stringify(draft())],'broken.json'));
+  assert.equal(h.element('draft-conversion').hidden,true);assert.deepEqual(h.current.draft,before);
+  assert.match(h.messages.at(-1),/UTF-8/);
+});
+test('actual draft handler refuses duplicate unknown schema instead of taking last version',async()=>{
+  const h=appHarness(),before=structuredClone(h.current.draft);
+  await chooseDraft(h,jsonFile('ambiguous.json','{"schema_version":999,'+JSON.stringify(draft()).slice(1)));
+  assert.equal(h.element('draft-conversion').hidden,true);assert.deepEqual(h.current.draft,before);
+  assert.match(h.messages.at(-1),/重複/);
+});
 const chooseDraft=(h,f)=>h.element('draft-open').onchange({target:{files:[f],value:'selected'}});
 test('actual draft handler previews modern data, applies explicitly and cancels without writing',async()=>{
   const h=appHarness();await chooseDraft(h,draftFile(draft()));assert.equal(h.loaded.length,0);assert.equal(h.element('draft-conversion').hidden,false);assert.equal(h.element('draft-convert').textContent,'載入這份草稿');
@@ -120,7 +134,7 @@ test('actual draft handler previews modern data, applies explicitly and cancels 
   await chooseDraft(h,draftFile(draft()));h.element('draft-convert').onclick();assert.equal(h.loaded.length,1);
 });
 test('actual modern-draft read keeps edits made during asynchronous file reading',async()=>{
-  const wait=later(),h=appHarness(),work=chooseDraft(h,{name:'draft.json',size:100,text:()=>wait.promise});h.current.draft.panels.music.fields['music-title']='讀取期間修改';wait.resolve(JSON.stringify(draft()));await work;
+  const wait=later(),h=appHarness(),work=chooseDraft(h,{name:'draft.json',size:100,arrayBuffer:()=>wait.promise.then(jsonBytes)});h.current.draft.panels.music.fields['music-title']='讀取期間修改';wait.resolve(JSON.stringify(draft()));await work;
   assert.equal(h.loaded.length,0);assert.equal(h.element('draft-conversion').hidden,true);assert.match(h.messages.at(-1),/目前內容保留/);
 });
 test('actual draft apply refuses a new media source or a later lyric edit',async()=>{
@@ -129,11 +143,11 @@ test('actual draft apply refuses a new media source or a later lyric edit',async
   }
 });
 test('actual draft handler accepts BOM and refuses unknown schema without replacing current content',async()=>{
-  const h=appHarness();await chooseDraft(h,{name:'draft.json',size:100,text:async()=> '\uFEFF'+JSON.stringify(draft())});assert.equal(h.element('draft-conversion').hidden,false);
+  const h=appHarness();await chooseDraft(h,jsonFile('draft.json','\uFEFF'+JSON.stringify(draft())));assert.equal(h.element('draft-conversion').hidden,false);
   const unknown=draft();unknown.schema_version=999;await chooseDraft(h,draftFile(unknown));assert.equal(h.loaded.length,0);assert.equal(h.element('draft-conversion').hidden,true);
 });
 test('actual draft cancellation suppresses late read completion',async()=>{
-  const wait=later(),h=appHarness(),work=chooseDraft(h,{name:'draft.json',size:100,text:()=>wait.promise});h.element('draft-cancel').onclick();wait.resolve(JSON.stringify(draft()));await work;
+  const wait=later(),h=appHarness(),work=chooseDraft(h,{name:'draft.json',size:100,arrayBuffer:()=>wait.promise.then(jsonBytes)});h.element('draft-cancel').onclick();wait.resolve(JSON.stringify(draft()));await work;
   assert.equal(h.loaded.length,0);assert.equal(h.element('draft-conversion').hidden,true);
 });
 test('actual legacy draft preview keeps explicit conversion, refuses later edits and retains original file',async()=>{

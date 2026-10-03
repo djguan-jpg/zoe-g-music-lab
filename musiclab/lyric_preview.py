@@ -9,8 +9,9 @@ from pathlib import Path
 def render_preview(data, title):
     encoded = json.dumps(data, ensure_ascii=False).replace('<', '\\u003c').replace('\u2028', '\\u2028').replace('\u2029', '\\u2029')
     timing = (Path(__file__).parent / 'assets/lyric-time.js').read_text(encoding='utf-8')
+    document = (Path(__file__).parent / 'assets/json-document.js').read_text(encoding='utf-8')
     package = (Path(__file__).parent / 'assets/lyrics-package.js').read_text(encoding='utf-8')
-    parts = {'TITLE': html.escape(title), 'DATA': encoded, 'TIMING_JS': timing, 'PACKAGE_JS': package}
+    parts = {'TITLE': html.escape(title), 'DATA': encoded, 'TIMING_JS': timing, 'PACKAGE_JS': document + '\n' + package}
     # Substitute template markers once; user text containing a marker stays text.
     return re.sub(r'__(TITLE|DATA|TIMING_JS|PACKAGE_JS)__', lambda match: parts[match[1]], PREVIEW)
 

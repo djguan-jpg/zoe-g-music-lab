@@ -2,6 +2,7 @@
 import json
 import math
 from pathlib import Path
+from .json_document import decode_json, MAX_JSON_BYTES
 
 
 def number(value, label):
@@ -23,7 +24,9 @@ def text(value, label):
 
 
 def read_json(path):
-    return json.loads(Path(path).read_text(encoding="utf-8-sig"))
+    with Path(path).open('rb') as source:
+        raw = source.read(MAX_JSON_BYTES + 1)
+    return decode_json(raw, allow_bom=True)
 
 
 def json_text(data):

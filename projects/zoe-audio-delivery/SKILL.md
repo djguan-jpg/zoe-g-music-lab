@@ -23,3 +23,5 @@ python music_lab.py audio --input selected.wav --profile video --rates 48000 --b
 ```
 
 交回實際 JSON／Markdown 報告及仍需聆聽確認的項目。Exit code 2 表示報告已產生且有提醒；不是程式崩潰。
+
+外部JSON接續採共用嚴格UTF-8／JSON decoder，CLI最多2MiB、最大64層；重複欄位含跳脫同名、無效Unicode與非有限數字拒絕，不能默默取最後一個版本／值。保留原檔，協助另存有效UTF-8後重新預覽；不要把傳輸檢查當創作／媒體驗證。

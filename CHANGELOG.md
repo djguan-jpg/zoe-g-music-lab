@@ -1,5 +1,13 @@
 # 迭代說明
 
+## v0.20.0 — 2026-10-03
+
+- 重現需求無效UTF-8被File.text替換「�」後仍接受，以及Agent／CLI／草稿重複版本或title被默默採用最後一個值。改為嚴格UTF-8與重複JSON欄位拒絕，原檔與工作台保持。
+- 新增純json_document.py與原生json-document.js。統一重複鍵、跳脫同名、非有限數字、Unicode、bytes與64層；Python iterator traversal額外記憶體只隨深度增加，沒有第三方依賴。
+- 外部CLI／HTTP／JSON-lines／MCP、草稿庫／備份、歌詞包共用Python decoder；需求／分鏡起稿／草稿選檔改原生arrayBuffer、核對File.size，保留讀取前snapshot／latest／晚回應與明確預覽。工作台與離線歌詞共用同一JS模組，discovery提供JSON讀取限制。
+- 180Python／220JS、四Skill／十八JS語法及diff；12新Python／14新JS測試包含跨語言語料、原生File、真CLI另一cwd／BOM／覆寫拒絕、真HTTP與stdio壞後好。31項IAB含真正Agent／MCP／CLI產物、音檔保持、損壞資料拒絕、4秒成功／500、下載／讀回與390px／Enter。
+- 前版v0.19 ZIP安全還原168／206；restore-v0.19.0-before-v0.20.0保留main起點。產品0.20.0，Agent1／MCP2025-11-25／draft3／兩seed1／lyrics_package1／library1／backup1及六／十一工具保持。ZOE. G／非商用／private保持。
+
 ## v0.19.0 — 2026-10-03
 
 - 修正完整歌詞 JSON 回讀丟失名稱、總長及推估來源；兩秒歌詞後的十秒音樂尾奏保持，未知包版本不再被抽取 cues 後默默接受。

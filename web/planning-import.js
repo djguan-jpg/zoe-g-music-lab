@@ -2,6 +2,7 @@
 'use strict';
 (function(root){
   const Editor=typeof module!=='undefined'&&module.exports?require('./editor-state.js'):root.MusicEditor;
+  const J=typeof module==='object'&&module.exports?require('../musiclab/assets/json-document.js'):root.MusicJsonDocument;
   const musicSources={
     'music-title':'title','music-hook':'memory_hook','music-theme':'theme','music-style':'style',
     'music-vocal':'vocal','music-audience':'audience','music-bpm':'bpm','music-beats':'beats_per_bar',
@@ -66,8 +67,8 @@
         selected=preview?.begin(operation);
         if(!Number.isSafeInteger(file.size)||file.size<1||file.size>1024*1024)throw Error('需求檔需介於 1 byte 與 1 MiB');
         if(!file.name.toLowerCase().endsWith('.json'))throw Error('請選擇需求 JSON');
-        const content=await file.text();if(!task.isCurrent(token)||preview&&!preview.check(selected))return false;
-        const brief=JSON.parse(content.replace(/^\uFEFF/,''));object(brief,'需求');
+        const content=await file.arrayBuffer();if(!task.isCurrent(token)||preview&&!preview.check(selected))return false;
+        const brief=J.decode(content,{size:file.size,maxBytes:1024*1024,label:'需求 JSON'});object(brief,'需求');
         const checked=await validate(operation,brief);if(!task.isCurrent(token))return false;
         const ready={operation,result:checked};if(preview&&!preview.accept(selected,ready))return false;
         onReady(ready);return true;
