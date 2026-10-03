@@ -1,5 +1,9 @@
 # 本機 Agent 接口 v1
 
+## v0.26 設計需求接續
+
+四 adapter 的 planning domain 保持。Agent／CLI 回傳 brief.json、mv-brief.json 由工作台核對本次檔案與主要 JSON 後才預覽，還需明確載入。產品0.26、七／啟庫十二工具，各協定與 schema 不變，沒有新增安裝或模型。CLI 返回正常來源包，瀏覽器 sourceChecked 是暫態，沒有要求 Agent 傳入此旗標。詳見 PLANNING-SOURCE.md。
+
 ## v0.25 唯讀校時待辦
 
 新增operation／MCP tool lyrics_review、HTTP /api/lyrics-review、CLI lyrics-review。輸入cues原始start／end／text和可選title／duration，可包含時間留白；只作診斷，不補值／裁切／排序來源。來源最多10000列，明細前200項／完整計數，row為原順序1起、global0。報告schema1與lyrics_package1分開，不將檢查報告當字幕。詳細輸入、budget、固定code與CLI0／2／1語義見LYRICS-REVIEW.md。

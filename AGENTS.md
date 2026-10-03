@@ -51,3 +51,5 @@
 - lyrics-media 共用純時長比較與注入 controller；選音檔保留已有作品宣告，原本空白且讀取期間未編修才接續首次有效時長。明確採用／撤回只寫 duration、同來源／實際 after 核對，保留後續 cue／原文／媒體。未知媒體與過期事件不能改內容；不裁切句子。比較／撤回不進 draft3／Agent，獨立 Apply 不直接用 player.duration，保留來源歷史提示。
 
 - lyrics_review獨立schema1為唯讀未完成表格診斷；Python純layer與共用JS／注入controller／DOM分層。原列1起、global0，全部計數／有限200明細／前20UI，局部timed不表示全表通過。原始空白、文字與順序保持；不補時間／裁切，最終lyrics仍完整驗證。未知report／source不符／晚回應拒絕，報告與focus不進draft3；新tool唯讀、無路徑權限，預設七／啟庫十二tools。
+
+- planning-source 純核對本次完整需求與主要 JSON，planning-review checkedResult／checkedBrief 共用於建立與需求檔回讀；先 isCurrent，再檢查，最後提交 DOM。音樂標題依 Python 已清理 brief；數字與文字空白規則分開，母題提醒保留輸入順序。單份 JSON8MiB、重複鍵拒絕；不逐字重建 CSV／Markdown，sourceChecked 暫態不進草稿／wire。

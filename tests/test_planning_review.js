@@ -8,6 +8,7 @@ const root=path.join(__dirname,'..');
 const fixtures=JSON.parse(execFileSync(process.platform==='win32'?'python':'python3',['-X','utf8','-c',
   "import json;from pathlib import Path;from musiclab.application import build;print(json.dumps({op:build(op,json.loads((Path('examples')/name).read_text(encoding='utf-8'))).wire() for op,name in [('music','first-light-music.json'),('storyboard','first-light-mv.json')]},ensure_ascii=False))"],{cwd:root,encoding:'utf8',timeout:10000}));
 const response=op=>structuredClone(fixtures[op]);
+const sourceBrief=op=>JSON.parse(response(op).files[op==='music'?'brief.json':'mv-brief.json']);
 test('real application music maps source title, memory hook, bars, timing and design energy without mutation',()=>{
   const r=response('music'),before=structuredClone(r),model=Review.buildReview('music',r);
   assert.deepEqual(r,before);assert.equal(model.title,r.data.title);assert.equal(model.bars,68);
@@ -40,19 +41,19 @@ test('scoped and general storyboard reminders retain references and design-only 
   assert.equal(m.status,'設計資料已建立');
 });
 function pending(op){
-  let resolve,current=true;const results=[],brief={title:fixtures[op].data.title,context:{keep:'original'}};
-  const task=Review.inspect({operation:op,brief,isCurrent:()=>current,request:(_operation,selected)=>{assert.equal(selected.context.keep,'original');return new Promise(r=>resolve=r);},onResult:(result,review)=>results.push(review)});
+  let resolve,current=true;const results=[],brief=sourceBrief(op),nested=op==='music'?brief.arrangement[0].focus:brief.shots[0].visual;
+  const task=Review.inspect({operation:op,brief,isCurrent:()=>current,request:(_operation,selected)=>{assert.equal(op==='music'?selected.arrangement[0].focus:selected.shots[0].visual,nested);return new Promise(r=>resolve=r);},onResult:(result,review)=>results.push(review)});
   return {task,brief,results,invalidate:()=>current=false,resolve:(r=response(op))=>resolve(r)};
 }
 test('current planning result commits once and source request is copied before asynchronous work',async()=>{
-  const p=pending('music');p.brief.title='later';p.brief.context.keep='modified';p.resolve();assert.equal(await p.task,true);
+  const p=pending('music');p.brief.title='later';p.brief.arrangement[0].focus='modified';p.resolve();assert.equal(await p.task,true);
   assert.equal(p.results.length,1);assert.equal(p.results[0].title,fixtures.music.data.title);
 });
 test('late music and storyboard responses are discarded before validation or any output write',async()=>{
   for(const op of ['music','storyboard']){const p=pending(op);p.invalidate();p.resolve({garbage:true});assert.equal(await p.task,false);assert.equal(p.results.length,0);}
 });
 test('wrong source title or malformed current result never commits output',async()=>{
-  for(const op of ['music','storyboard']){const p=pending(op),r=response(op);r.data.title='other request';p.resolve(r);await assert.rejects(p.task,/這次需求/);assert.equal(p.results.length,0);}
+  for(const op of ['music','storyboard']){const p=pending(op),r=response(op);r.data.title='other request';p.resolve(r);await assert.rejects(p.task,/不一致/);assert.equal(p.results.length,0);}
   const p=pending('music');p.resolve({});await assert.rejects(p.task,/不完整/);assert.equal(p.results.length,0);
 });
 function runAdapter(scope){
@@ -62,7 +63,7 @@ function runAdapter(scope){
   const context={state,say:m=>notices.push(m),timingControls:()=>{},markDirty:()=>dirty++};vm.runInNewContext(source.slice(a,b),context);
   return {state,button,notices,resolve,reject,counts:()=>({commits,dirty}),
     start:()=>context.run(button,async isCurrent=>{await work;if(isCurrent())commits++;}),
-    edit:()=>state.revisions[scope]++,retry:()=>context.run(button,async()=>{commits++;}),guarded:()=>context.run(button,isCurrent=>Review.inspect({operation:scope,brief:{title:fixtures[scope].data.title},isCurrent,request:()=>work,onResult:()=>commits++}))};
+    edit:()=>state.revisions[scope]++,retry:()=>context.run(button,async()=>{commits++;}),guarded:()=>context.run(button,isCurrent=>Review.inspect({operation:scope,brief:sourceBrief(scope),isCurrent,request:()=>work,onResult:()=>commits++}))};
 }
 test('actual common run discards late errors for every workbench and restores busy controls',async()=>{
   for(const scope of ['music','storyboard','lyrics','audio']){const a=runAdapter(scope),work=a.start();a.edit();a.reject(Error('old failure'));await work;

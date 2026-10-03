@@ -155,6 +155,7 @@ $('music-form').onsubmit=event=>{event.preventDefault();if(state.busy)return;
 function stalePlanningReview(scope){
   const box=$(scope==='music'?'music-visual':'mv-visual'),note=box.querySelector('[data-plan-stale]');if(!note||box.hidden)return;
   note.hidden=false;box.classList.add('stale');box.querySelector('[data-plan-status]').textContent='上一份設計';
+  const source=box.querySelector('.plan-source-note');if(source)source.textContent='已核對上一份需求；本次編修尚未核對。';
 }
 function planText(tag,text,className){const node=document.createElement(tag);node.textContent=text;if(className)node.className=className;return node;}
 function renderPlanningReview(d){
@@ -164,6 +165,7 @@ function renderPlanningReview(d){
   const status=planText('span',d.status,'plan-outcome');status.dataset.planStatus='true';heading.append(status);box.append(heading);
   const stale=planText('p','這是上一份設計，輸入已修改；重新建立後才能代表目前內容。','plan-stale-note');stale.dataset.planStale='true';stale.hidden=true;stale.setAttribute('role','status');box.append(stale);
   box.append(planText('p',d.title,'plan-title'));
+  if(d.sourceChecked)box.append(planText('p','已核對本次需求；成果仍需人工審查。','hint plan-source-note'));
   const facts=document.createElement('div');facts.className='facts';
   const values=d.operation==='music'?[[d.duration+' 秒','估計總長'],[d.bars+' 小節',d.bpm+' BPM · 每小節 '+d.beats+' 拍']]:[[d.duration+' 秒','規劃總長'],[d.shots.length+' 鏡',d.fps+' FPS · '+d.ratio],[d.frames.totalFrames+' 幀','完整覆蓋；結束影格不含']];
   for(const [value,label] of values){const fact=document.createElement('div');fact.className='fact';fact.append(planText('strong',value),planText('span',label));facts.append(fact);}box.append(facts);
@@ -466,7 +468,7 @@ function capturePanel(panel){
 }
 function captureDraft(){
   const panels=Object.fromEntries(Object.keys(MusicEditor.draftFields).map(panel=>[panel,capturePanel(panel)]));
-  return {format:'zoe-music-lab-draft',schema_version:3,tool_version:'0.25.0',saved_at:new Date().toISOString(),tab:state.tab,panels};
+  return {format:'zoe-music-lab-draft',schema_version:3,tool_version:'0.26.0',saved_at:new Date().toISOString(),tab:state.tab,panels};
 }
 function applyDraft(draft){
   if(seedController)seedController.cancel();
@@ -555,7 +557,7 @@ const briefImporter=MusicPlanning.createBriefImport({
   validate:async(operation,brief)=>{
     MusicPlanning.planningDraft(captureDraft(),operation,brief);
     const result=await api('/api/'+operation,brief);
-    return {brief:JSON.parse(result.files[operation==='music'?'brief.json':'mv-brief.json']),notes:result.data.review_notes||[]};
+    return MusicPlanReview.checkedBrief(operation,brief,result);
   },
   onReady:({operation,result})=>{
     const proposal={operation,brief:result.brief};

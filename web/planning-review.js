@@ -2,6 +2,8 @@
 'use strict';
 (function(root){
   const Frames=typeof module==='object'&&module.exports?require('./storyboard-frames.js'):root.MusicStoryboardFrames;
+  const Source=typeof module==='object'&&module.exports?require('./planning-source.js'):root.MusicPlanningSource;
+  const J=typeof module==='object'&&module.exports?require('../musiclab/assets/json-document.js'):root.MusicJsonDocument;
   const object=value=>value&&typeof value==='object'&&!Array.isArray(value);
   const text=value=>typeof value==='string'&&Boolean(value.trim());
   const finite=value=>typeof value==='number'&&Number.isFinite(value);
@@ -57,14 +59,23 @@
     return {...base,fps:d.fps,ratio:d.aspect_ratio,shots,frames,
       motifs:Object.entries(d.motifs).map(([name,meaning])=>({name,meaning,shots:shots.filter(s=>s.motif===name).map(s=>s.shot)}))};
   }
+  function checkedResult(operation,brief,result){
+    const review=buildReview(operation,result);
+    Source.inspect(operation,brief,result);review.sourceChecked=true;
+    return review;
+  }
+  function checkedBrief(operation,brief,result){
+    const review=checkedResult(operation,brief,result);
+    return {brief:J.parse(result.files[operation==='music'?'brief.json':'mv-brief.json'],
+      {maxBytes:Source.maxJsonBytes,label:'設計需求 JSON'}),notes:structuredClone(review.notes)};
+  }
   async function inspect({operation,brief,isCurrent,request,onResult}){
     const selected=structuredClone(brief);
     const result=await request(operation,selected);
     if(!isCurrent())return false;
-    const review=buildReview(operation,result);
-    if(review.title!==selected.title.trim())throw Error('設計回應與這次需求不一致，目前成果未替換');
+    const review=checkedResult(operation,selected,result);
     onResult(result,review);return true;
   }
-  const api={buildReview,inspect};
+  const api={buildReview,checkedResult,checkedBrief,inspect};
   if(typeof module==='object'&&module.exports)module.exports=api;else root.MusicPlanReview=api;
 })(typeof globalThis==='object'?globalThis:this);
