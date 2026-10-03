@@ -1,5 +1,13 @@
 # 本機 Agent 接口 v1
 
+## v0.20 外部 request 的 JSON 邊界
+
+HTTP／JSON-lines／MCP在領域操作前共用json_document decoder：重複欄位（含跳脫同名）、非有限數字／溢位、無效Unicode與超64層拒絕。不能用兩個protocol_version／method／schema_version覆蓋較早值。JSON-lines回invalid_request，MCP回-32700，HTTP回400；同一stdio串流下一筆有效request仍可正常執行。
+
+capabilities／--describe新增json_document encoding UTF-8、max_depth64、duplicate_keys reject、nonfinite_numbers reject，max_request_bytes2MiB保持。Agent已有單BOM處理，HTTP維持不接BOM；CLI／原生選檔允許一個開頭BOM，不修剪字串內內容。CLI外部JSON同樣上限2MiB，領域工具仍另驗schema與限制；沒有新工具／protocol或路徑權限。
+
+真CLI另一cwd／BOM／覆寫拒絕、HTTP壞後好、JSON-lines重複版本後有效request、MCP重複method後握手／六tools／call／EOF已驗證。原生需求／起稿／草稿也使用同規則、先預覽再明確套用；特定Host尚未安裝，沒有模型執行。
+
 ## v0.19 完整歌詞包檢查
 
 沿用JSON-lines operation lyrics、MCP tool lyrics_validate、HTTP POST /api/lyrics。生成cues或content／suffix，檢查用 `{"package": 完整版本1資料}`；三者互斥，檢查不可附title／duration／shift／time_changes／text_changes。直接content JSON完整包也會嚴格辨認；舊五欄包須package模式明確 `allow_legacy:true`，CLI則 --legacy-json。未知／額外欄位或來源矛盾拒絕，不接受路徑。

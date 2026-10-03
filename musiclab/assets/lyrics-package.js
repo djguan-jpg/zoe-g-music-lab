@@ -2,6 +2,7 @@
 'use strict';
 (function(root){
   const T=typeof module==='object'&&module.exports?require('./lyric-time.js'):root.LyricTime;
+  const J=typeof module==='object'&&module.exports?require('./json-document.js'):root.MusicJsonDocument;
   const format='zoe-lyrics-package',schemaVersion=1,maxBytes=2*1024*1024;
   const base=['title','duration','duration_estimated','cues','timing'],keys=[...base,'format','schema_version','review_notes'];
   const exact=(v,names)=>v&&typeof v==='object'&&!Array.isArray(v)&&Object.keys(v).length===names.length&&names.every(k=>Object.hasOwn(v,k));
@@ -9,29 +10,7 @@
   const sameCues=(a,b)=>a.length===b.length&&a.every((c,i)=>['start','end','text'].every(k=>c[k]===b[i][k]));
   const fail=()=>{throw Error('歌詞包不完整、時間來源矛盾或版本不支援；目前內容保留');};
   const isLegacy=v=>exact(v,base);
-  function parseDocument(content){
-    if(typeof content!=='string'||new TextEncoder().encode(content).length>maxBytes)throw Error('歌詞JSON最多2 MiB');
-    let position=0;
-    const space=()=>{while(/[ \t\r\n]/.test(content[position]||'x'))position++;};
-    const syntax=()=>{throw Error('歌詞 JSON 格式錯誤');};
-    function string(){
-      const start=position++;while(position<content.length){const char=content[position++];if(char==='\\'){position++;continue;}if(char==='"')return JSON.parse(content.slice(start,position));}syntax();
-    }
-    function value(depth){
-      if(depth>64)throw Error('歌詞JSON結構過深');space();const char=content[position];
-      if(char==='{'||char==='['){
-        const object=char==='{',end=object?'}':']',seen=new Set();position++;space();if(content[position]===end){position++;return;}
-        while(position<content.length){
-          if(object){if(content[position]!=='"')syntax();const key=string();if(seen.has(key))throw Error('歌詞 JSON 含重複欄位');seen.add(key);space();if(content[position++]!==':')syntax();}
-          value(depth+1);space();if(content[position]===end){position++;return;}if(content[position++]!==',')syntax();space();
-        }syntax();
-      }
-      if(char==='"'){string();return;}
-      const start=position;while(position<content.length&&!/[ \t\r\n,\]}]/.test(content[position]))position++;
-      if(position===start)syntax();const scalar=JSON.parse(content.slice(start,position));if(typeof scalar==='number'&&!Number.isFinite(scalar))throw Error('歌詞JSON不接受非有限數字');
-    }
-    value(0);space();if(position!==content.length)syntax();return JSON.parse(content);
-  }
+  const parseDocument=content=>J.parse(content,{maxBytes,label:'歌詞 JSON'});
   function validate(document){
     if(!exact(document,keys)||document.format!==format||document.schema_version!==schemaVersion||
         typeof document.title!=='string'||blank(document.title)||Array.from(document.title).length>200||

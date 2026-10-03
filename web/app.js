@@ -404,7 +404,7 @@ function captureDraft(){
   panels.lyrics.cues=[...$('cues').children].map(row=>Object.fromEntries(
     MusicEditor.draftRows.lyrics.columns.map((key,i)=>[key,row.querySelectorAll('input')[i].value])));
   panels.music.avoid=requirementValues('music-avoid');panels.music.deliverables=requirementValues('music-deliverables');
-  return {format:'zoe-music-lab-draft',schema_version:3,tool_version:'0.19.0',saved_at:new Date().toISOString(),tab:state.tab,panels};
+  return {format:'zoe-music-lab-draft',schema_version:3,tool_version:'0.20.0',saved_at:new Date().toISOString(),tab:state.tab,panels};
 }
 function applyDraft(draft){
   if(seedController)seedController.cancel();
@@ -441,8 +441,8 @@ $('draft-open').onchange=async event=>{
     if(!Number.isSafeInteger(file.size)||file.size<1||file.size>1024*1024)throw Error('草稿需介於1 byte與1 MiB');
     if(!file.name.toLowerCase().endsWith('.json'))throw Error('請選擇草稿 JSON');
     say('正在讀取草稿，完成後會先預覽；目前內容與音檔保留。');
-    const text=await file.text();if(!draftTask.isCurrent(token)||!draftPreview.check(selected))return;
-    const inspected=MusicEditor.inspectDraft(JSON.parse(text.replace(/^\uFEFF/,'')));
+    const text=await file.arrayBuffer();if(!draftTask.isCurrent(token)||!draftPreview.check(selected))return;
+    const inspected=MusicEditor.inspectDraft(MusicJsonDocument.decode(text,{size:file.size,maxBytes:1024*1024,label:'草稿 JSON'}));
     if(state.busy)throw Error('目前操作尚未完成，請稍候再載入');
     const draft=inspected.legacy?MusicEditor.convertLegacyDraft(inspected.draft):inspected.draft;
     const ready={draft,legacy:inspected.legacy};if(!draftPreview.accept(selected,ready))return;

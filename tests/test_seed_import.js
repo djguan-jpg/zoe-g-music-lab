@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 'use strict';
+const jsonFile=(name,content)=>new File([content],name);
+const jsonBytes=value=>new TextEncoder().encode(value).buffer;
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const {execFileSync}=require('node:child_process');
 const E=require('../web/editor-state.js'),S=require('../web/storyboard-seed.js');
@@ -14,7 +16,7 @@ function draft(){
   panels.lyrics.fields['lyrics-format']='.lrc';panels.audio.fields['audio-profile']='video';
   return {format:'zoe-music-lab-draft',schema_version:3,tool_version:'0.15.0',saved_at:'2026-10-03',tab:'music',panels};
 }
-const file=(content=JSON.stringify(result.data),name='storyboard-seed.json')=>({size:Buffer.byteLength(content),name,text:async()=>content});
+const file=(content=JSON.stringify(result.data),name='storyboard-seed.json')=>jsonFile(name,content);
 function harness(){
   const value={draft:draft(),fps:'24',bars_per_shot:'4'},requests=[],ready=[],jobs=[];
   const c=S.createPreview({capture:()=>value,request:p=>{requests.push(p);return new Promise((resolve,reject)=>jobs.push({resolve,reject}));},onClear:()=>{},onReady:(seed,files,source)=>ready.push({seed,files,source})});
@@ -38,11 +40,11 @@ test('target edits after preview block apply and preserve them',async()=>{
   const h=harness(),{work}=await requested(h);h.jobs[0].resolve(structuredClone(result));await work;h.value.draft.panels.storyboard.fields['mv-title']='later target';assert.throws(()=>h.c.proposal(),/分鏡已有修改/);assert.equal(h.value.draft.panels.storyboard.fields['mv-title'],'later target');
 });
 test('file read that finishes after a target change makes no request',async()=>{
-  const h=harness();let resolve;const f={size:2,name:'late.json',text:()=>new Promise(r=>resolve=r)},work=h.c.read(f);
+  const h=harness();let resolve;const f={size:2,name:'late.json',arrayBuffer:()=>new Promise(r=>resolve=value=>r(jsonBytes(value)))},work=h.c.read(f);
   h.value.draft.panels.storyboard.fields['mv-title']='later';resolve('{}');assert.equal(await work,false);assert.equal(h.requests.length,0);
 });
 test('new file selection cancels old file read and only the latest may preview',async()=>{
-  const h=harness();let resolve;const first=h.c.read({size:2,name:'old.json',text:()=>new Promise(r=>resolve=r)}),second=h.c.read(file());
+  const h=harness();let resolve;const first=h.c.read({size:2,name:'old.json',arrayBuffer:()=>new Promise(r=>resolve=value=>r(jsonBytes(value)))}),second=h.c.read(file());
   await new Promise(setImmediate);resolve('malformed');assert.equal(await first,false);h.jobs[0].resolve(structuredClone(result));assert.equal(await second,true);assert.equal(h.ready.length,1);
 });
 test('file constraints, malformed JSON, version and extension refuse before transport',async()=>{

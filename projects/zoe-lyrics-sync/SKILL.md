@@ -35,3 +35,5 @@ python music_lab.py lyrics-seed --text lyrics.txt --title '作品名稱' --out o
 校時工作台選TXT／LRC／SRT／JSON即檢查與預覽，不立即改原文或cue。先確認原文／句數／時間，再明確套用；取消保留音檔與編修。TXT嚴格UTF-8／64KiB／1000行，沿用lyrics_seed1，開始結束留白。帶時間檔最多2MiB，SRT多行合單行／LRC補結束由預覽告知；Agent／CLI JSON沿用同一操作。目標變更或舊回應拒絕替換；未編修的最近套用可撤回。沒有ASR／模型。
 
 完整版本化歌詞包使用zoe-lyrics-package schema1。檢查／回讀保留名稱、總長、句尾及推得來源；不要抽取cues丟掉metadata。未知版本／重複欄位／矛盾來源拒絕。舊完整包只可明確轉換並另存，CLI需--legacy-json；不混入覆蓋欄位。工作台宣告總長與目前時長衝突先請使用者確認，估計值不當已確認。音檔確認總長不能抹去曾補齊句尾的待實聽提示。一般cue JSON仍是建立新包的輸入。
+
+外部JSON接續採共用嚴格UTF-8／JSON decoder，CLI最多2MiB、最大64層；重複欄位含跳脫同名、無效Unicode與非有限數字拒絕，不能默默取最後一個版本／值。保留原檔，協助另存有效UTF-8後重新預覽；不要把傳輸檢查當創作／媒體驗證。

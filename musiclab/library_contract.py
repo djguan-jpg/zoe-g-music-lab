@@ -1,9 +1,9 @@
 # SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 """Pure immutable revision contract shared by disk reads and portable backups."""
 import hashlib
-import json
 import re
 from datetime import datetime, timezone
+from .json_document import decode_json
 from .draft_contract import MAX_DRAFT_BYTES, validate_draft
 
 ID_PATTERN = r'draft-[0-9a-f]{32}'
@@ -13,16 +13,7 @@ MAX_METADATA_BYTES = 16 * 1024
 
 
 def strict_json(raw):
-    def pairs(values):
-        result = {}
-        for key, value in values:
-            if key in result:
-                raise ValueError('JSON 含重複欄位')
-            result[key] = value
-        return result
-    def nonfinite(_):
-        raise ValueError('JSON 不接受 NaN 或 Infinity')
-    return json.loads(raw.decode('utf-8'), object_pairs_hook=pairs, parse_constant=nonfinite)
+    return decode_json(raw)
 
 
 def validate_record(record, identifier):

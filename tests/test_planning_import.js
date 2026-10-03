@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 'use strict';
+const jsonFile=(name,content)=>new File([content],name);
+const jsonBytes=value=>new TextEncoder().encode(value).buffer;
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 const Editor=require('../web/editor-state.js');
 const {planningDraft,planningBrief,createBriefImport}=require('../web/planning-import.js');
@@ -55,9 +57,9 @@ test('new file selection suppresses stale validation results and late errors',as
   const oldValidation=new Promise((_,reject)=>{failOld=reject;});
   const reader=createBriefImport({validate:async(_,brief)=>brief.title==='old'?oldValidation:brief,
     onReady:result=>visible=result,onError:error=>errors.push(error.message)});
-  const old=reader.read({name:'old.json',size:10,text:async()=>' {"title":"old"}'},'music');
+  const old=reader.read(jsonFile('old.json',' {"title":"old"}'),'music');
   await Promise.resolve();await Promise.resolve();
-  await reader.read({name:'new.json',size:10,text:async()=>' {"title":"new"}'},'music');
+  await reader.read(jsonFile('new.json',' {"title":"new"}'),'music');
   failOld(Error('late failure'));await old;
   assert.equal(visible.result.title,'new');assert.deepEqual(errors,[]);
 });
@@ -65,19 +67,19 @@ test('late successful validation cannot replace the newest ready preview',async(
   let finish;const oldValidation=new Promise(resolve=>finish=resolve);let visible;
   const reader=createBriefImport({validate:async(_,brief)=>brief.title==='old'?oldValidation:brief,
     onReady:result=>visible=result,onError:error=>{throw error;}});
-  const old=reader.read({name:'old.json',size:10,text:async()=>'{"title":"old"}'},'music');
+  const old=reader.read(jsonFile('old.json','{"title":"old"}'),'music');
   await Promise.resolve();await Promise.resolve();
-  await reader.read({name:'new.json',size:10,text:async()=>'{"title":"new"}'},'music');
+  await reader.read(jsonFile('new.json','{"title":"new"}'),'music');
   finish({title:'old'});assert.equal(await old,false);assert.equal(visible.result.title,'new');
 });
 test('explicit cancel and invalid file selection discard pending handoff',async()=>{
   let finish;const delayed=new Promise(resolve=>finish=resolve);let count=0;const errors=[];
   const reader=createBriefImport({validate:async(_,brief)=>brief,onReady:()=>count++,onError:error=>errors.push(error.message)});
-  const pending=reader.read({name:'old.json',size:10,text:()=>delayed},'music');reader.cancel();finish('{"title":"old"}');
+  const pending=reader.read({name:'old.json',size:10,arrayBuffer:()=>delayed.then(jsonBytes)},'music');reader.cancel();finish('{"title":"old"}');
   assert.equal(await pending,false);assert.equal(count,0);
-  assert.equal(await reader.read({name:'too-large.json',size:1024*1024+1,text:async()=>''},'music'),false);
+  assert.equal(await reader.read({name:'too-large.json',size:1024*1024+1,arrayBuffer:async()=>new ArrayBuffer(0)},'music'),false);
   assert.match(errors[0],/1 MiB/);
-  assert.equal(await reader.read({name:'wrong.txt',size:4,text:async()=>''},'music'),false);
-  assert.equal(await reader.read({name:'bad.json',size:4,text:async()=>'[]'},'music'),false);
+  assert.equal(await reader.read(jsonFile('wrong.txt',''),'music'),false);
+  assert.equal(await reader.read(jsonFile('bad.json','[]'),'music'),false);
   assert.equal(count,0);
 });

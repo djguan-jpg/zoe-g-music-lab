@@ -5,6 +5,7 @@
   const Editor=node?require('./editor-state.js'):root.MusicEditor;
   const Planning=node?require('./planning-import.js'):root.MusicPlanning;
   const Undo=node?require('./draft-undo.js'):root.MusicDraftUndo;
+  const J=node?require('../musiclab/assets/json-document.js'):root.MusicJsonDocument;
   const fail=()=>{throw Error('分鏡起稿回應不完整或版本不支援；目前分鏡保留');};
   const finite=(n,low,high)=>typeof n==='number'&&Number.isFinite(n)&&n>=low&&n<=high;
   const text=s=>typeof s==='string'&&s.trim().length>0;
@@ -72,8 +73,8 @@
         if(origin==='file'){
           if(!file||!Number.isSafeInteger(file.size)||file.size<1||file.size>1024*1024)throw Error('起稿檔需介於1 byte與1 MiB');
           if(!file.name.toLowerCase().endsWith('.json'))throw Error('請選擇起稿 JSON');
-          const content=await file.text();if(!current())return false;
-          let parsed;try{parsed=JSON.parse(content.replace(/^\uFEFF/,''));}catch{throw Error('起稿 JSON 無法解析；原檔與目前分鏡保留，請檢查檔案。');}
+          const content=await file.arrayBuffer();if(!current())return false;
+          const parsed=J.decode(content,{size:file.size,maxBytes:1024*1024,label:'起稿 JSON'});
           payload={seed:validateSeed(parsed)};
         }else payload={music:Planning.planningBrief(selected.draft,'music'),fps:selected.fps,bars_per_shot:selected.bars_per_shot};
         const result=await request(structuredClone(payload));

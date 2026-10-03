@@ -40,3 +40,5 @@
 
 - lyrics_package為獨立schema1，完整包root／timing／review_notes嚴格核對，未知版本／重複JSON欄位／矛盾來源拒絕。application三種lyrics輸入互斥，完整包檢查不可覆蓋名稱／時長／編修；legacy須明確轉換、原檔保持。
 - 純lyrics-package.js與Python契約共用工作台／離線預覽，未改cue保留來源、確認總長仍提示曾補齊結束；人工編修加待實聽說明。provided時長衝突拒絕、空白才接續，estimated不填；source可保存於draft3既有欄位，不靜默遷移。
+
+- 外部JSON共用json_document.py與json-document.js；嚴格UTF-8／重複鍵含跳脫同名／非有限數字／無效Unicode／64層，有界bytes。原生需求／起稿／草稿使用arrayBuffer及File.size核對，保留latest／target／預覽／proposal。可信生成結果與外部輸入分開，領域schema照常驗證，不做自動修補或版本遷移。
