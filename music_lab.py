@@ -15,11 +15,16 @@ from musiclab.draft_library import DraftLibrary, revision_id
 def main(argv=None):
     parser = argparse.ArgumentParser(description=f"ZOE. G Music Lab · 本機 v{__version__}")
     commands = parser.add_subparsers(dest="command", required=True)
-    for name in ("music", "storyboard", "lyrics", "audio", "storyboard-seed"):
+    for name in ("music", "storyboard", "lyrics", "audio", "storyboard-seed", "lyrics-seed"):
         sub = commands.add_parser(name)
         sub.add_argument("--out", required=True, help="指定本輪輸出資料夾")
         sub.add_argument("--overwrite", action="store_true", help="明確替換此輸出目錄的同名成果")
-        if name == "storyboard-seed":
+        if name == 'lyrics-seed':
+            source_group = sub.add_mutually_exclusive_group(required=True)
+            source_group.add_argument('--text', help='明確選定UTF-8純文字檔，不猜測時間')
+            source_group.add_argument('--seed', help='未校時歌詞起稿JSON，核對後輸出')
+            sub.add_argument('--title', help='--text需要作品名稱；--seed不可覆蓋名稱')
+        elif name == "storyboard-seed":
             source_group = sub.add_mutually_exclusive_group(required=True)
             source_group.add_argument("--brief")
             source_group.add_argument("--seed", help="已產生的起稿 JSON，先核對再輸出")
@@ -80,7 +85,16 @@ def main(argv=None):
                 result = build("draft_" + args.draft_action, payload, draft_library=library).wire()
             print(json.dumps(result, ensure_ascii=False, allow_nan=False))
             return 0
-        if args.command == 'storyboard-seed':
+        if args.command == 'lyrics-seed':
+            if args.seed:
+                if args.title is not None: raise ValueError('--seed 不接受 --title 覆蓋')
+                payload = {'seed':read_json(args.seed)}
+            else:
+                path=Path(args.text)
+                if path.stat().st_size>64*1024+3: raise ValueError('純歌詞文字最多64 KiB')
+                payload = {'title':args.title,'text':path.read_bytes().decode('utf-8-sig')}
+            bundle=build('lyrics_seed',payload).files
+        elif args.command == 'storyboard-seed':
             if args.seed:
                 if args.fps is not None or args.bars_per_shot is not None:
                     raise ValueError('--seed 不接受 --fps／--bars-per-shot 覆蓋；請保留原起稿設定')
@@ -108,6 +122,8 @@ def main(argv=None):
     print(f"{args.command} 完成，輸出 {len(paths)} 個檔案：{Path(args.out).resolve()}")
     if args.command == 'storyboard-seed':
         print('時間起稿尚未完成分鏡；請依實際音檔校準，並人工編寫畫面、運鏡、轉場與人物狀態。')
+    if args.command == 'lyrics-seed':
+        print('未校時歌詞起稿已建立；沒有猜測時間，請依實際音檔標記開始與結束。')
     if status == 2:
         print("已完成分析，有需確認項目；詳見 report.md。")
     return status

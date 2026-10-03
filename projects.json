@@ -1,6 +1,6 @@
 {
   "suite": "ZOE. G Music Lab",
-  "version": "0.16.0",
+  "version": "0.17.0",
   "created_on": "2026-10-01",
   "founder": {
     "display_name": "ZOE. G",
@@ -9,7 +9,7 @@
   "ai_collaboration": "Codex assisted with scope, original skill text, implementation and validation",
   "publication": "github_private",
   "repository": "https://github.com/djguan-jpg/zoe-g-music-lab",
-  "release_version": "v0.16.0",
+  "release_version": "v0.17.0",
   "platform_claim": "not_submitted",
   "projects": [
     {
@@ -31,7 +31,7 @@
       "title": "ZOE Lyrics Sync",
       "entry": "projects/zoe-lyrics-sync/SKILL.md",
       "cli": "lyrics",
-      "scope": "waveform-assisted manual lyric timing and validated exports"
+      "scope": "untimed source-preserving lyric seeds, waveform-assisted manual timing and validated exports"
     },
     {
       "id": "zoe-audio-delivery",
@@ -47,5 +47,6 @@
   "draft_library_schema_version": 1,
   "mcp_protocol_version": "2025-11-25",
   "draft_backup_schema_version": 1,
-  "storyboard_seed_schema_version": 1
+  "storyboard_seed_schema_version": 1,
+  "lyrics_seed_schema_version": 1
 }

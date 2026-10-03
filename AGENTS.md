@@ -25,10 +25,13 @@
 - 歌曲／分鏡成功回應經planning-review純模型與isCurrent才提交DOM／成果；共用run只顯示當前錯誤，過期成功／錯誤保留後續編修。dirty標示上一份設計並停用下載，收合不進草稿。設計能量不是實測音量，資料完成不是媒體生成。
 - 寬桌面成果面板維持有界高度及局部捲動／鍵盤可達，窄視窗static流；修正後以實際滑鼠／鍵盤與下載驗證，不把DOM幾何當完整視覺驗收。
 
-- storyboard_seed 為獨立 schema1 時間起稿，共用歌曲驗證與 application／四 adapter；預設五工具／啟庫十工具。source 的固定速度假設保留；未完成創作欄位留空，不能冒充分鏡／成片。每鏡最多整小節，保留段落邊界，超1000鏡／不足一影格拒絕。
+- storyboard_seed 為獨立 schema1 時間起稿，共用歌曲驗證與 application／四 adapter；預設六工具／啟庫十一工具。source 的固定速度假設保留；未完成創作欄位留空，不能冒充分鏡／成片。每鏡最多整小節，保留段落邊界，超1000鏡／不足一影格拒絕。
 - 起稿 preview／proposal 核對來源、目標與設定，晚回應不提交；局部套用保留其他 panel／音檔。draft-undo 核對實際 after 的限定／全部 panels，後續編修拒絕整份撤回，不覆蓋或丟棄 record；預覽／撤回不進草稿。
 
 - 起稿檔回讀共用timing_slots／validate_seed／seed_files，seed1未知欄位或矛盾時間拒絕；storyboard_seed的music／seed互斥，匯入不能覆蓋FPS／bars設定。保留原檔，無靜默修正／丟棄創作欄位。
 - file preview只核對target storyboard與檔案語義，music／settings編修保留；run可指定revision scope。checked file成果inputIndependent保留於頁面切換，生成成果dirty規則保持；上述暫態旗標不進草稿。
 
 - replacement-preview純層共用需求／草稿／保存版本的讀取前與套用前snapshot，scope只核對目標，完整替換核對所有panels及原生File身份；未知／晚回應不覆蓋編修。原生媒體參照與preview payload不進持久草稿／Git／Agent。現代草稿也須明確預覽再載入，legacy維持明確轉換。
+
+- lyrics_seed獨立schema1，純來源／行號／原文檢查共用application及四adapter；64KiB／1000非空白行，不猜時間、不去重／修剪原文。lyrics preview scope保留音檔／目前時長／其他panels，生成核對music來源、檔案核對目標；未知欄位／晚回應不替換，限定套用與實際after undo分層。
+- cue-stamp純位置提案重用lyric-time毫秒規則，start／end分開、move保留句長及拒絕超音檔；部分有效cue只用於播放顯示，完整匯出仍拒絕空白時間。預覽／撤回暫態不進draft3，來源起稿JSON可保存於既有lyrics-source。

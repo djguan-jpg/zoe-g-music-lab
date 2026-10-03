@@ -11,7 +11,7 @@
     let record=null;
     return {
       record(before,after,scope=null){
-        if(scope!==null&&!['music','storyboard'].includes(scope))throw Error('撤回工作台不支援');
+        if(scope!==null&&!['music','storyboard','lyrics'].includes(scope))throw Error('撤回工作台不支援');
         record={before:Editor.validateDraft(before),after:Editor.validateDraft(after),scope};
       },
       proposal(current){
