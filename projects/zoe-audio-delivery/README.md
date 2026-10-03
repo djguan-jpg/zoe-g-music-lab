@@ -1,8 +1,12 @@
 # ZOE Audio Delivery
 
+## 整合響度（v0.22）
+
+新增獨立 LUFS 量測，單聲道／立體聲、8000–192000 Hz、至少400 ms。K-weighting與400 ms／100 ms步進，先−70 LUFS絕對門檻、再−10 LU相對門檻。太短、太安靜或未知聲道位置為null／不可測，保持原本技術接受結果。與RMS／sample peak分開，不調整音量或提供通用平台目標；true peak尚未提供。JSON／Markdown和四adapter同源，區塊暫存有界記憶體且關閉。方法、獨立schema1、校對與限制見[量測契約](../../docs/LOUDNESS.md)。
+
 v0.20接續外部JSON共用嚴格UTF-8與重複欄位檢查；損壞編碼／重複版本拒絕，不修補後替換目前內容。CLI外部JSON最多2MiB，工作台需求／分鏡起稿／草稿仍1MiB、歌詞JSON2MiB；單BOM規則與領域schema分開。見[本輪QA](../../docs/QA-v0.20.0.md)。
 
-創辦：ZOE. G · GitHub：djguan-jpg · v0.12.0 · PolyForm Noncommercial 1.0.0
+創辦：ZOE. G · GitHub：djguan-jpg · v0.22.0 · PolyForm Noncommercial 1.0.0
 
 Python 標準函式庫檢查 RIFF/WAVE 整數 PCM format tag 1，支援 8／16／24／32 bit、1–32 聲道樣本。分析取樣率、位元深度、聲道、時長、每聲道 sample peak／RMS／DC offset／滿刻度樣本、頭尾安靜段與整段立體聲相關性。原音檔保留；不一致的 block align、byte rate 或位元深度拒絕，不靜默猜測格式。
 

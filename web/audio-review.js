@@ -1,6 +1,51 @@
 // SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 'use strict';
 (function(root){
+  function buildLoudness(report){
+    const invalid=()=>{throw Error('響度報告不完整或版本不支援，沒有替換目前結果');};
+    const m=report.loudness,finite=v=>typeof v==='number'&&Number.isFinite(v);
+    if(m===undefined){
+      const version=typeof report.version==='string'?report.version.split('.').map(Number):[];
+      if(version.length===3&&version.every(Number.isSafeInteger)&&(version[0]>0||version[1]>=22))invalid();
+      return {status:'legacy_unavailable',value:'未提供',note:'這份舊報告未量測整合響度；請重新分析音檔。',blocks:null};
+    }
+    if(!m||m.format!=='zoe-loudness-measurement'||m.schema_version!==1||
+      m.algorithm!=='ITU-R BS.1770-5 Annex 1 integrated loudness'||m.unit!=='LUFS'||
+      m.absolute_gate_lufs!==-70||m.relative_gate_lu!==-10||m.block_ms!==400||m.hop_ms!==100||
+      !Number.isSafeInteger(report.frames)||report.frames<=0||
+      report.frames>Math.floor(report.source_evidence.bytes/report.source_evidence.block_align)||
+      Math.abs(report.frames/report.sample_rate-report.duration_seconds)>.00000051||
+      !Array.isArray(m.channel_weights))invalid();
+    const fields=['complete_block_count','absolute_gate_block_count','gated_block_count','tail_frames'];
+    if(fields.some(k=>!Number.isSafeInteger(m[k])||m[k]<0)||
+      m.gated_block_count>m.absolute_gate_block_count||m.absolute_gate_block_count>m.complete_block_count)invalid();
+    const unsupported=report.channels>2?'unsupported_channels':report.sample_rate<8000||report.sample_rate>192000?'unsupported_sample_rate':null;
+    const reasons={unsupported_channels:'聲道位置未知；只支援單聲道與立體聲。',
+      unsupported_sample_rate:'響度取樣率範圍為 8000–192000 Hz。',
+      insufficient_duration:'音檔不足 400 ms，沒有完整量測區塊。',below_gate:'沒有高於 −70 LUFS 絕對門檻的完整區塊。'};
+    if(unsupported){
+      if(m.status!==unsupported||m.integrated_lufs!==null||m.relative_gate_lufs!==null||m.window_frames!==null||
+        m.channel_weights.length||m.complete_block_count||m.absolute_gate_block_count||m.gated_block_count||m.tail_frames!==report.frames)invalid();
+      return {status:m.status,value:'不可測',note:reasons[m.status],blocks:null};
+    }
+    const window=Math.floor((4*report.sample_rate+5)/10),difference=report.frames-window;
+    if(!Number.isSafeInteger(10*difference+4))invalid();
+    const count=difference<0?0:Math.floor((10*difference+4)/report.sample_rate)+1;
+    const tail=count?report.frames-window-Math.floor(((count-1)*report.sample_rate+5)/10):report.frames;
+    if(m.window_frames!==window||m.complete_block_count!==count||m.tail_frames!==tail||
+      m.channel_weights.length!==report.channels||m.channel_weights.some(v=>v!==1))invalid();
+    if(count===0){
+      if(m.status!=='insufficient_duration'||m.integrated_lufs!==null||m.relative_gate_lufs!==null||m.absolute_gate_block_count||m.gated_block_count)invalid();
+    }else if(m.absolute_gate_block_count===0){
+      if(m.status!=='below_gate'||m.integrated_lufs!==null||m.relative_gate_lufs!==null||m.gated_block_count)invalid();
+    }else if(m.status!=='measured'||!finite(m.integrated_lufs)||!finite(m.relative_gate_lufs)||
+      m.relative_gate_lufs< -80-.000001||m.integrated_lufs< -70-.000001||
+      m.integrated_lufs+.000001<m.relative_gate_lufs+10||m.gated_block_count<1)invalid();
+    return {status:m.status,value:m.status==='measured'?`${m.integrated_lufs.toFixed(3)} LUFS`:'不可測',
+      note:m.status==='measured'?'依完整區塊與門檻量測；請另行核對收件方的響度要求。':reasons[m.status],
+      blocks:`完整 ${count} · 絕對門檻後 ${m.absolute_gate_block_count} · 相對門檻後 ${m.gated_block_count}`,
+      relative:m.relative_gate_lufs===null?'不可測':`${m.relative_gate_lufs.toFixed(3)} LUFS`,tailFrames:tail};
+  }
   function buildReview(report){
     const invalid=()=>{throw Error('音檔報告不完整，沒有替換目前結果');};
     const finite=value=>typeof value==='number'&&Number.isFinite(value);
@@ -42,7 +87,7 @@
       specifications,channels,warnings:structuredClone(report.warnings),duration:report.duration_seconds,
       leading:quiet.leading_seconds,trailing:quiet.trailing_seconds,quietRatio:quiet.quiet_frame_ratio,
       correlation:report.stereo_correlation===null?'不可測':String(report.stereo_correlation),
-      blockAlign:source.block_align,byteRate:source.average_bytes_per_second};
+      blockAlign:source.block_align,byteRate:source.average_bytes_per_second,loudness:buildLoudness(report)};
   }
   async function inspect({selected,isCurrent,request,onResult}){
     const selection=selected(),file=selection.file,profile=selection.profile;
@@ -57,6 +102,6 @@
       onResult(result,review);return true;
     }catch(error){if(current())throw error;return false;}
   }
-  const api={buildReview,inspect};
+  const api={buildReview,buildLoudness,inspect};
   if(typeof module==='object'&&module.exports)module.exports=api;else root.MusicAudio=api;
 })(typeof globalThis==='object'?globalThis:this);

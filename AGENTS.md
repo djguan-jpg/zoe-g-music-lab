@@ -44,3 +44,5 @@
 - 外部JSON共用json_document.py與json-document.js；嚴格UTF-8／重複鍵含跳脫同名／非有限數字／無效Unicode／64層，有界bytes。原生需求／起稿／草稿使用arrayBuffer及File.size核對，保留latest／target／預覽／proposal。可信生成結果與外部輸入分開，領域schema照常驗證，不做自動修補或版本遷移。
 
 - draft-retention 純完整panel checkpoint／注入事件controller與DOM分層；markDirty只capture目標，離頁重查全部。原始範例與file／library／download各最近一筆完整確認可比較，metadata／File／成果／預覽不進草稿狀態。保存只確認click-time隔離快照，未知保存／放棄／送出下載不解警示；下載須明確核對後確認。現代檔／庫版本明確載入才留點，legacy轉換需另存；範例晚到保留編修。beforeunload受瀏覽器互動／生命週期限制，不宣稱自動保存／無資料遺失。
+
+- audio_loudness獨立schema1；純loudness.py與有界自有loudness_blocks ledger分層，從同一音檔副本一次PCM掃描量測。單聲道／立體聲能量相加，nearest-sample 400ms／100ms；短檔／門檻下／未知layout／響度rate範圍外以null與status表達，不改既有技術接受。未知量測schema拒絕，舊無欄位報告明示未提供；RMS與LUFS／sample peak與true peak分開。FFmpeg僅外部校對，不引入執行或測試依賴，不宣稱完整規範認證、正規化或實聽。
