@@ -1,5 +1,14 @@
 # 迭代說明
 
+## v0.24.0 — 2026-10-03
+
+- 真IAB重現已有10秒歌詞包選4秒WAV後被metadata覆寫；修正為兩時長分開顯示，明確採用／撤回只改宣告，原本空白且未編修才接續首次有效時長。
+- 共用lyrics-media純compare／mediaTime與注入controller；原native來源、修訂與actual after核對，換來源或後續時長編修拒絕不安全撤回，後續歌詞文字保持。
+- 獨立HTML嵌入同模組，Apply只取明確欄位或沿用來源、不直接用player.duration；較短總長不裁切cue，review_notes歷史保持。媒體與undo不進draft3／Agent。
+- 初次nativeUI發現defer模組遺漏，修正實際script與HTTP順序回歸後全新tab20項驗證。221Python／289JS／四Skill／21JS語法與diff通過；真正四adapter與實檔、current500／晚成功／晚500、草稿回讀、390px／Enter通過。
+- v0.23 ZIP217／263還原通過；restore-v0.23.0-before-v0.24.0保留起點，指定提交封裝／privatePR／Release與遠端下載以manifest收據確認。產品0.24、protocol／schema／六與十一工具保持。
+- file:離線原生驗證被browser工具安全政策拒絕，只有source受控VM，本輪離線播放／下載與完整視覺未驗證；無繞過／新依賴。非商用／署名／private與使用者來源保持，滾動目標active。
+
 ## v0.23.0 — 2026-10-03
 
 - 重現1 ms內秒數容差跨半幀而接受重疊、空缺、尾端不符；完成分鏡在輸出前核對由0到總長的精確排他影格覆蓋，不改原秒數或FPS。
