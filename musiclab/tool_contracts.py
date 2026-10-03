@@ -36,6 +36,12 @@ def array_schema(items, minimum=0, maximum=None):
 
 
 def payload_schema(operation):
+    if operation == "draft_backup_inspect":
+        return object_schema({}, (), additionalProperties=False)
+    if operation == "draft_backup_restore":
+        return object_schema({"backup_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$",
+            "description": "SHA-256 from preview of the backup selected at process launch"}},
+            ("backup_sha256",), additionalProperties=False)
     if operation in ("draft_save", "draft_list", "draft_read"):
         from .draft_contract import draft_schema
         from .draft_library import ID_PATTERN

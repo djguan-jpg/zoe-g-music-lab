@@ -257,7 +257,7 @@ $('lyrics-audio').onchange=async event=>{
   }catch(error){if(waveTask.isCurrent(token))$('wave-note').textContent='波形未完成：'+error.message;}
   finally{if(context&&context.state!=='closed')await context.close().catch(()=>{});if(state.audioContext===context)state.audioContext=null;}
 };
-window.addEventListener('pagehide',()=>{libraryController.cancel();briefImporter.cancel();lyricFileImport.cancel();draftTask.begin();waveTask.begin();if(state.audioUrl)URL.revokeObjectURL(state.audioUrl);if(state.audioContext)state.audioContext.close().catch(()=>{});});
+window.addEventListener('pagehide',()=>{libraryController.cancel();backupController.cancel();briefImporter.cancel();lyricFileImport.cancel();draftTask.begin();waveTask.begin();if(state.audioUrl)URL.revokeObjectURL(state.audioUrl);if(state.audioContext)state.audioContext.close().catch(()=>{});});
 $('lyrics-player').onloadedmetadata=()=>{if(!Number.isFinite($('lyrics-player').duration))return;$('lyrics-duration').value=$('lyrics-player').duration.toFixed(3);markDirty('lyrics');tick();};$('lyrics-player').ontimeupdate=tick;$('lyrics-player').onseeked=tick;$('lyrics-player').onerror=()=>say('此音檔無法在瀏覽器播放，請改用支援的格式',true);
 function seek(seconds){const p=$('lyrics-player');if(!Number.isFinite(p.duration))return;p.currentTime=Math.max(0,Math.min(p.duration,seconds));tick();}
 $('waveform').onclick=event=>{const r=event.currentTarget.getBoundingClientRect();seek((event.clientX-r.left)/r.width*$('lyrics-player').duration);};$('waveform').onkeydown=event=>{if(['ArrowLeft','ArrowRight','Home','End'].includes(event.key)){event.preventDefault();seek(event.key==='Home'?0:event.key==='End'?$('lyrics-player').duration:$('lyrics-player').currentTime+(event.key==='ArrowRight'?.5:-.5));}};
@@ -279,7 +279,7 @@ function captureDraft(){
   panels.lyrics.cues=[...$('cues').children].map(row=>Object.fromEntries(
     MusicEditor.draftRows.lyrics.columns.map((key,i)=>[key,row.querySelectorAll('input')[i].value])));
   panels.music.avoid=requirementValues('music-avoid');panels.music.deliverables=requirementValues('music-deliverables');
-  return {format:'zoe-music-lab-draft',schema_version:3,tool_version:'0.9.0',saved_at:new Date().toISOString(),tab:state.tab,panels};
+  return {format:'zoe-music-lab-draft',schema_version:3,tool_version:'0.10.0',saved_at:new Date().toISOString(),tab:state.tab,panels};
 }
 function applyDraft(draft){
   clearLibraryReview();
@@ -377,6 +377,7 @@ let libraryEnabled=false,libraryListJobs=0,libraryReadingId=null,libraryPending=
 let libraryRecords=[],libraryCursor=null,pendingLibraryReview=null,libraryPreferredId=null;
 function librarySay(message,error=false){$('library-status').textContent=message;$('library-status').classList.toggle('error',error);}
 function libraryControls(){
+  backupControls();
   $('library-save').disabled=!libraryEnabled||libraryPending||librarySaving;
   $('library-refresh').disabled=!libraryEnabled||libraryListJobs>0;
   $('library-more').hidden=!libraryCursor;$('library-more').disabled=libraryListJobs>0;
@@ -442,9 +443,53 @@ $('library-apply').onclick=()=>{
 };
 $('library-cancel').onclick=()=>{clearLibraryReview();librarySay('已取消版本預覽，目前工作台保留。');};
 $('library-export').onsubmit=event=>{if(!pendingLibraryReview){event.preventDefault();return;}librarySay('已送出保存版本的 JSON 下載；原版本保留。');};
+let backupReading=false,backupRestoring=false,backupReady=false,backupCanRestore=false,backupMaximum=32*1024*1024,backupDownloading=false;
+function backupSay(message,error=false){$('backup-status').textContent=message;$('backup-status').classList.toggle('error',error);}
+function backupControls(){
+  $('backup-save').disabled=!libraryEnabled||backupRestoring||backupDownloading;
+  $('backup-open').disabled=!libraryEnabled||backupRestoring||backupDownloading;
+  $('backup-restore').disabled=!libraryEnabled||backupReading||backupRestoring||backupDownloading||!backupReady||!backupCanRestore;
+  $('backup-cancel').disabled=backupRestoring;
+}
+async function backupRequest(operation,file,sha){
+  const response=await fetch('/api/drafts/backup/'+operation+(sha?'?sha256='+encodeURIComponent(sha):''),{method:'POST',body:file});
+  const result=await response.json();
+  if(!response.ok){const error=Error(result.error||'本機備份操作未完成');error.status=response.status;throw error;}
+  return result.data;
+}
+const backupController=MusicBackup.createBackupController({request:backupRequest,maximum:()=>backupMaximum,
+  onState:({reading,restoring,ready,canRestore})=>{backupReading=reading;backupRestoring=restoring;backupReady=ready;backupCanRestore=canRestore;
+    if(!ready)$('backup-review').hidden=true;backupControls();},
+  onPreview:(plan,name)=>{
+    $('backup-review-note').textContent=`「${name}」已核對：${plan.entry_count} 版，新增 ${plan.new_count}、相同 ${plan.reused_count}、衝突 ${plan.conflicts.length}。${plan.capacity_ok?'容量允許':'目前草稿庫容量不足'}。SHA-256：${plan.backup_sha256}`;
+    $('backup-review-content').value=plan.entries.slice(0,20).map(e=>`${e.label} · ${e.stored_at}`).join('\n')+(plan.entries.length>20?'\n… 預覽前 20 版，備份內所有版本已檢查。':'');
+    $('backup-review').hidden=false;
+    backupSay(plan.can_restore?'備份已預覽，尚未加入草稿庫；目前工作台與音檔保留。':'備份含 ID 衝突或容量不足；請另選草稿庫或處理後重新預覽。',!plan.can_restore);
+  },
+  onRestored:result=>{backupSay(`恢復完成：加入 ${result.added_count} 版，原有相同 ${result.reused_count} 版保留。工作台與音檔保留，預覽保存版本後才會載入。`);refreshLibrary(false);},
+  onError:(error,{retryable})=>backupSay(error.message+(retryable?'；結果尚未確認，保留同一備份再次按下恢復，會略過已恢復的相同版本。':''),true)
+});
+$('backup-open').onchange=()=>{
+  const file=$('backup-open').files[0];$('backup-open').value='';
+  if(!file||!libraryAllowed())return;backupSay('正在檢查備份，尚未加入任何版本。');backupController.inspect(file);
+};
+$('backup-restore').onclick=()=>{if(libraryAllowed())backupController.restore();};
+$('backup-cancel').onclick=()=>{if(backupController.cancel())backupSay('已取消恢復預覽；草稿庫與工作台保留。');};
+$('backup-download').onsubmit=async event=>{
+  event.preventDefault();if(!libraryAllowed()||backupDownloading)return;
+  backupDownloading=true;backupControls();backupSay('正在核對保存版本並建立 ZIP；工作台保留。');
+  try{
+    const response=await fetch('/api/drafts/backup/prepare',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});
+    const data=await response.json();if(!response.ok)throw Error(data.error||'備份未完成');
+    if(!/^\/api\/drafts\/backup\/download\/[0-9a-f]{32}$/.test(data.download_url)||data.bytes>backupMaximum)throw Error('下載回應不完整');
+    $('backup-download').action=data.download_url;$('backup-download').submit();
+    backupSay(`備份 ZIP 已核對 ${data.entry_count} 版並送出下載；請核對本機檔案。未保存編修、音檔與成果另存。`);
+  }catch(error){backupSay(error.message+'；目前工作台與音檔保留。',true);}
+  finally{backupDownloading=false;backupControls();}
+};
 async function setupLibrary(){
   try{const response=await fetch('/api/capabilities');if(!response.ok)throw Error('無法確認草稿庫狀態');
-    const info=await response.json();libraryEnabled=info.draft_library_enabled===true;
+    const info=await response.json();libraryEnabled=info.draft_library_enabled===true;backupMaximum=info.draft_backup.max_archive_bytes;
     $('library-note').textContent=libraryEnabled?'本機草稿庫已啟用；保存版本不含音檔、成果或刪除還原紀錄。':'草稿庫未啟用。停止服務後，以 python music_lab_server.py --draft-library outputs/drafts 啟動，即可明確保存到本機；目前仍可下載草稿。';
     libraryControls();if(libraryEnabled)await refreshLibrary(false);
   }catch(error){librarySay(error.message,true);libraryControls();}

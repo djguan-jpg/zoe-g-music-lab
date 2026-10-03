@@ -2,7 +2,7 @@
 
 由 **ZOE. G** 發起的四個原創專案。GitHub 帳號為 **djguan-jpg**；品牌署名與帳號可以不同。
 
-目前版本 v0.9 提供四個工作台、原創 Skill 與可明確啟用的本機草稿庫。Python 3.10 以上即可使用，沒有第三方依賴。只讀本次新建工作區，不參考使用者的其他本機或 GitHub 專案。公開第三方 README 僅用於需求比較，來源及自行設計的差異記在 [構思紀錄](CONCEPT.md)。
+目前版本 v0.10 提供四個工作台、原創 Skill、本機草稿庫及可預覽的 ZIP 備份／恢復。Python 3.10 以上即可使用，沒有第三方依賴。只讀本次新建工作區，不參考使用者的其他本機或 GitHub 專案。公開第三方 README 僅用於需求比較，來源及自行設計的差異記在 [構思紀錄](CONCEPT.md)。
 
 授權為 **PolyForm Noncommercial 1.0.0**，商業使用沒有由本版授權。可查看、修改及分發的範圍以 [LICENSE](LICENSE) 為準，保留 [NOTICE](NOTICE)。這是非商用原始碼授權；不標成 AGPL。使用者匯入的素材授權各自保留，詳見 [授權說明](LICENSING.md)。
 
@@ -72,7 +72,7 @@ python music_lab_server.py --draft-library outputs/drafts
 
 若保存回應未完成，先按「重試同一筆保存」；同一 ID、名稱與內容只保存一次。重試使用原本按下保存時的內容，之後的編修保留並提示尚未保存。「放棄待重試紀錄」只停止重試，不刪除可能已保存的版本；可重新整理清單確認。關閉頁面後沒有待重試記憶，應先檢查保存清單。
 
-草稿庫每頁預設 20 版，可讀取更早版本；最多 1000 版、每版草稿 1 MiB。達到上限會拒絕新版本並保留現有資料，可另選新庫。草稿庫不含音檔、成果、刪除歷史或臨時預覽；沒有自動保存／刪除接口。它不進 Git 或原始碼 ZIP，也不隨封裝維護清除。重要草稿請另下載 JSON 或自行備份完整所選目錄；Git 還原點只保護程式。
+草稿庫每頁預設 20 版，可讀取更早版本；最多 1000 版、每版草稿 1 MiB。達到上限會拒絕新版本並保留現有資料，可另選新庫。草稿庫不含音檔、成果、刪除歷史或臨時預覽；沒有自動保存／刪除接口。它不進 Git 或原始碼 ZIP，也不隨封裝維護清除。重要草稿請使用下方 ZIP 備份並另存可靠的位置；Git 還原點只保護程式。
 
 CLI 可使用同一草稿庫，`save` 輸入為下載的草稿 v3，`read` 回傳的 `data.draft` 才是可匯入的草稿：
 
@@ -84,16 +84,32 @@ python music_lab.py draft read --library outputs/drafts --id 'draft-000000000000
 
 最後一行的 ID 僅示範格式，請改用保存回應的 `data.entry.id`。需要安全重試時，在第一次 `save` 就用 `--id` 指定新 ID，重試保持整份草稿、名稱和 ID 相同；省略 ID 的每次命令都會建立新版本。
 
+## 備份與恢復
+
+啟用草稿庫後，在「本機保存版本 → 備份與恢復」按「下載整個草稿庫」。它只備份已保存版本，保留原 ID、名稱、時間、metadata 與草稿的原始位元組。先保存目前編修；音檔與成果需另存。下載後核對檔案並保留在可靠的位置，同一磁碟上的副本不足以防止磁碟故障。
+
+選擇 ZIP 會檢查整份備份、顯示新版本／重用版本／衝突與 SHA-256；此時不寫入草稿庫。確認後按「將備份加入這個草稿庫」，只新增版本，不載入或更改目前表單、音檔及刪除還原紀錄。相同 ID 的兩個檔案完全一致才重用；不同內容、毀損、未知 schema 或容量不足會拒絕，不覆寫現有版本。
+
+下載 ZIP 上限 32 MiB、展開資料總量 64 MiB；超限會明確失敗，沒有略過部分版本。可由 CLI 用 `--ids` 明確分批，每批另用新檔名。任何來源版本毀損時，完整備份會失敗；保留原資料，可明確選擇其他健康版本另備份。
+
+```powershell
+python music_lab.py draft backup --library outputs/drafts --out '構思備份.zip'
+python music_lab.py draft inspect --library outputs/restored-drafts --input '構思備份.zip'
+python music_lab.py draft restore --library outputs/restored-drafts --input '構思備份.zip' --sha256 '<inspect 回傳的 data.backup_sha256>'
+```
+
+恢復前再次核對選定檔案的摘要及整個庫的衝突／容量。已知錯誤在寫入前拒絕；實際磁碟故障可能留下已完成的部分新版本。回應未確認或中途中斷時，保留同一份備份重試：完全一致的版本重用，其餘繼續新增。這不是多目錄交易或斷電保證。CLI 備份輸出永不覆寫，需支援 hard link 的檔案系統；本版已在 Windows 本機驗證。
+
 ## Agent 使用
 
-四種操作可用 JSON-lines v1 或 MCP stdio adapter。MCP 明確支援 `2025-11-25`；只接受該版初始化，不自動轉換未知版本。使用 `python scripts/agent_launch.py` 產生本版 Python／入口的完整路徑設定；加 `--format codex` 可產生 Codex TOML 片段。指令只顯示設定，不安裝或啟動 Agent，移動解壓目錄後需重新產生。已驗證設定從不同目錄啟動 MCP 及實際工具輸出；Codex CLI 只做設定解析，尚未驗證 host 連線／實際 Agent 工具呼叫。操作、錯誤及音檔選擇見 [Agent 文件](docs/AGENT.md)。
+預設四種操作可用 JSON-lines v1 或 MCP stdio adapter。明確選定 `--draft-library` 後共九種工具；備份檢查／恢復另需啟動時選定 `--draft-backup '構思備份.zip'`，JSON 不能更換路徑。ZIP 匯出使用 CLI 或工作台。MCP 明確支援 `2025-11-25`；只接受該版初始化，不自動轉換未知版本。使用 `python scripts/agent_launch.py` 產生本版 Python／入口的完整路徑設定；加 `--format codex` 可產生 Codex TOML 片段。指令只顯示設定，不安裝或啟動 Agent，移動解壓目錄後需重新產生。已驗證設定從不同目錄啟動 MCP 及實際工具輸出；Codex CLI 只做設定解析，尚未驗證 host 連線／實際 Agent 工具呼叫。操作、錯誤及音檔選擇見 [Agent 文件](docs/AGENT.md)。
 
 ## 專案紀錄
 
 - [創辦與協作紀錄](FOUNDER-RECORD.md)：ZOE. G 發起方向；Codex 協助規格、文字、程式與驗證。
 - [專案清單](projects.json)：四個獨立 ID、版本與功能範圍。
 - [本輪進度](PROGRESS.md)：實跑驗證與後續工作。
-- [本版說明](RELEASE-v0.9.0.md)：功能、版本契約、驗證與限制。
+- [本版說明](RELEASE-v0.10.0.md)：功能、版本契約、驗證與限制。
 - [四個專案的投稿資料](SUBMISSION-PACKET.md)：來源連結、用途、使用方式與作者關係。
 - [分層與分支架構](docs/ARCHITECTURE.md)、[Agent 與 MCP 接口](docs/AGENT.md)、[迭代說明](CHANGELOG.md)、[本輪交接](HANDOFF.md)。
 
@@ -113,7 +129,7 @@ git diff --check
 開發／封裝驗證需要 Node.js；一般使用工作台與 CLI 只需要 Python。從指定 Git 版本建立可驗證的原始碼 ZIP：
 
 ```powershell
-python scripts/package_release.py --ref v0.9.0
+python scripts/package_release.py --ref v0.10.0
 ```
 
 封裝保存 commit、SHA-256、每檔摘要及檢查結果；解壓後重跑 Python／JavaScript 測試、Agent 能力查詢與 MCP 握手。輸出留在忽略的 outputs/releases，重複封裝同一提交會拒絕覆寫。

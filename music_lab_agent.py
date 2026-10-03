@@ -9,7 +9,7 @@ from musiclab.application import (MAX_REQUEST_BYTES, PROTOCOL_VERSION, build,
                                   capabilities, load_request, validate_request)
 
 
-def response(raw, audio_source=None, draft_library=None):
+def response(raw, audio_source=None, draft_library=None, backup_source=None):
     request_id = None
     try:
         request = load_request(raw)
@@ -21,7 +21,7 @@ def response(raw, audio_source=None, draft_library=None):
                 "error": {"code": "invalid_request", "message": "請核對 Agent v1 request 的格式、版本及操作"}}
     try:
         return {"protocol_version": PROTOCOL_VERSION, "id": request_id, "ok": True,
-                "result": build(operation, payload, audio_source=audio_source, draft_library=draft_library).wire()}
+                "result": build(operation, payload, audio_source=audio_source, draft_library=draft_library, backup_source=backup_source).wire()}
     except (ValueError, TypeError, KeyError, AttributeError, UnicodeError) as error:
         code, message = "invalid_input", str(error)
     except OSError:
@@ -32,7 +32,7 @@ def response(raw, audio_source=None, draft_library=None):
             "error": {"code": code, "message": message}}
 
 
-def serve(source, destination, audio_source=None, draft_library=None):
+def serve(source, destination, audio_source=None, draft_library=None, backup_source=None):
     while True:
         raw = source.readline(MAX_REQUEST_BYTES + 1)
         if not raw:
@@ -49,7 +49,7 @@ def serve(source, destination, audio_source=None, draft_library=None):
                 text = raw.decode("utf-8-sig")
                 if not text.strip():
                     continue
-                result = response(text, audio_source, draft_library)
+                result = response(text, audio_source, draft_library, backup_source)
             except UnicodeError:
                 result = {"protocol_version": PROTOCOL_VERSION, "id": None, "ok": False,
                           "error": {"code": "invalid_encoding", "message": "request 需為 UTF-8"}}
@@ -62,17 +62,23 @@ def main():
     parser.add_argument("--describe", action="store_true")
     parser.add_argument("--audio", help="Explicit selected WAV for audio requests; no JSON path access")
     parser.add_argument("--draft-library", help="Explicit selected directory enables immutable draft save/read/list")
+    parser.add_argument("--draft-backup", help="Explicit backup ZIP for inspect/restore; request JSON cannot select paths")
     args = parser.parse_args()
+    if args.draft_backup and not args.draft_library:
+        parser.error("--draft-backup requires --draft-library")
+    backup_source = Path(args.draft_backup) if args.draft_backup else None
+    if backup_source is not None and backup_source.suffix.lower() != ".zip":
+        parser.error("--draft-backup accepts only .zip")
     draft_library = DraftLibrary(args.draft_library) if args.draft_library else None
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
     if args.describe:
-        print(json.dumps(capabilities(draft_library), ensure_ascii=False, indent=2))
+        print(json.dumps(capabilities(draft_library, backup_source), ensure_ascii=False, indent=2))
         return 0
     audio_source = Path(args.audio) if args.audio else None
     if audio_source is not None and audio_source.suffix.lower() != ".wav":
         parser.error("--audio 只接受選定的 .wav")
-    serve(sys.stdin.buffer, sys.stdout, audio_source, draft_library)
+    serve(sys.stdin.buffer, sys.stdout, audio_source, draft_library, backup_source)
     return 0
 
 

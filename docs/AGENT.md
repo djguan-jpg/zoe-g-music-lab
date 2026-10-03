@@ -20,7 +20,7 @@ python music_lab_agent.py --describe
 Get-Content -Raw -Encoding utf8 request.json | python music_lab_agent.py > response.jsonl
 ```
 
-成功時回傳 `ok: true`、相同 id，及 result.files／data／meta。files 是創作成果檔名與內容，由呼叫者決定保存。預設 Agent 不寫檔；v0.9 可在啟動時明確啟用草稿庫，僅 draft_save 在所選庫建立不可覆寫版本。失敗回傳 `ok: false` 與 error.code／message，stdout 不混入狀態文字或 traceback。錯誤 request 不會阻止下一行正常 request。
+成功時回傳 `ok: true`、相同 id，及 result.files／data／meta。files 是創作成果檔名與內容，由呼叫者決定保存。預設 Agent 不寫檔；啟動時明確啟用草稿庫後，draft_save 與 v0.10 的 draft_backup_restore 在所選庫建立不可覆寫版本。失敗回傳 `ok: false` 與 error.code／message，stdout 不混入狀態文字或 traceback。錯誤 request 不會阻止下一行正常 request。
 
 四種 operation：music、storyboard、lyrics、audio。前兩者 payload 對應 examples 的需求 JSON；歌詞採 content／suffix 或 cues，另可含 title／duration。音訊來源必須透過啟動參數明確選定：
 
@@ -123,3 +123,29 @@ draft_save 會實際寫入選定目錄，MCP readOnlyHint=false／destructiveHin
 files 為空；保存／讀取 meta.needs_review=true，status=draft_only_not_validated。保存只證明已檢查資料形狀，未完成小節／校時可以保留；必須回到四工作台重新驗證創作與時間。list 狀態 metadata_only_checksum_verified_on_read 表示沒有逐份讀取草稿，讀取時才核對摘要。讀取壞版本拒絕，不遷移或修補檔案。
 
 產品 0.9.0、草稿 schema 3、保存紀錄 schema 1、Agent 1 與 MCP 2025-11-25 分別管理。能力查詢提供啟用狀態、容量及同源輸入 schema，不回傳草稿庫的機器路徑。已有 Windows 真實 JSON-lines／MCP／CLI／HTTP 往返與另一工作目錄的 launcher 驗證；特定 Agent host、模型執行、POSIX 及官方 conformance 尚未驗證。草稿庫與原始碼封裝／Git 還原點分開，使用者需另行備份。
+
+
+## v0.10：選定備份的預覽與恢復
+
+預設仍為四工具；明確帶 --draft-library 時共九工具，新增 draft_backup_inspect／draft_backup_restore。這兩工具還需啟動時選定 --draft-backup，不能從 payload 指定 path／input 或更換庫目錄。能力查詢只回傳 source_selected、backup schema 與容量，不洩出機器路徑。
+
+```powershell
+python music_lab_agent.py --draft-library outputs/restored-drafts --draft-backup '構思備份.zip' --describe
+python scripts/agent_launch.py --draft-library outputs/restored-drafts --draft-backup '構思備份.zip'
+```
+
+產生器仍只列印所選路徑的可審閱 command／args，不安裝或啟動 host。JSON-lines：
+
+```json
+{"protocol_version":1,"id":"preview-1","operation":"draft_backup_inspect","payload":{}}
+```
+
+inspect 的 result.data 包含 backup_sha256、entry_count、new_count／reused_count、conflicts、capacity_ok／can_restore、原名稱／時間清單；status=backup_validated_not_restored。檢查整份 ZIP，不寫入庫，也不以未審查 placeholder 代替缺失草稿。
+
+確認結果後，draft_backup_restore 的唯一 payload 欄位為 backup_sha256，值需使用此次 inspect 的結果。MCP 外層一樣使用 tools/call 的 arguments.payload；inspect readOnlyHint=true，restore=false／destructiveHint=false／idempotentHint=true。files 為空，恢復 data 回傳 added_count／reused_count／entry_count，status=restored_drafts_need_creative_validation，needs_review=true。
+
+restore 再讀有界來源、核對相同 SHA 與所有版本，鎖內再次檢查衝突／容量。原始 record／draft 檔完全相同才重用，已存在但不同的 ID 拒絕；不覆寫／遷移。io_error 或未知回應可能已發布部分完整新版本，保持同一份備份重試，或先 inspect；不用新 ID 或變更備份規避衝突。已知衝突／未知 schema／毀損在新版本寫入前拒絕。
+
+ZIP 上限 32 MiB、展開 64 MiB、每版 draft 1 MiB／metadata 16 KiB、單庫 1000 版。備份 binary 不經 JSON-lines／MCP base64；匯出使用 CLI draft backup 或工作台，超限可 CLI --ids 明確分批。備份只含已保存草稿及紀錄，不含媒體、成果、未保存編修或刪除歷史；恢復不套用工作台內容，需另行明確載入／重建創作成果。
+
+產品 0.10.0／Agent 1／MCP 2025-11-25／draft 3／library 1／backup 1 分別管理。Windows 實際 JSON-lines、由生成 command／args 啟動的 MCP、CLI／HTTP 往返與三程序同 ZIP 恢復已驗證；不是特定 Agent host、模型執行、POSIX 或官方 conformance 的證明。

@@ -30,7 +30,7 @@ def tool_list(draft_library=None):
              "title": name.replace("_", " ").title(),
              "inputSchema": input_schema(operation), "outputSchema": output_schema(),
              "execution": {"taskSupport": "forbidden"},
-             "annotations": {"readOnlyHint": operation != "draft_save", "destructiveHint": False,
+             "annotations": {"readOnlyHint": operation not in ("draft_save", "draft_backup_restore"), "destructiveHint": False,
                              "idempotentHint": True, "openWorldHint": False}}
             for name, operation in tools.items()]
 
@@ -47,7 +47,8 @@ def tool_error(message):
 
 
 class Session:
-    def __init__(self, audio_source=None, draft_library=None):
+    def __init__(self, audio_source=None, draft_library=None, backup_source=None):
+        self.backup_source = backup_source
         self.draft_library = draft_library
         self.tools = {**TOOLS, **(LIBRARY_TOOLS if draft_library is not None else {})}
         self.audio_source = audio_source
@@ -112,7 +113,7 @@ class Session:
                 result = tool_error("arguments must contain exactly one object: payload")
             else:
                 try:
-                    data = build(self.tools[name], arguments["payload"], audio_source=self.audio_source, draft_library=self.draft_library).wire()
+                    data = build(self.tools[name], arguments["payload"], audio_source=self.audio_source, draft_library=self.draft_library, backup_source=self.backup_source).wire()
                     result = {"content": [{"type": "text", "text": json.dumps(data, ensure_ascii=False, allow_nan=False)}],
                               "structuredContent": data, "isError": False}
                 except (ValueError, TypeError, KeyError, AttributeError, UnicodeError, RecursionError) as error:
@@ -124,8 +125,8 @@ class Session:
         return {"jsonrpc": "2.0", "id": request_id, "result": result}
 
 
-def serve(source, destination, audio_source=None, draft_library=None):
-    session = Session(audio_source, draft_library)
+def serve(source, destination, audio_source=None, draft_library=None, backup_source=None):
+    session = Session(audio_source, draft_library, backup_source)
     while True:
         raw = source.readline(MAX_REQUEST_BYTES + 1)
         if not raw:
@@ -153,14 +154,20 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--audio", help="Explicitly selected integer PCM WAV; JSON cannot select a path")
     parser.add_argument("--draft-library", help="Explicit selected directory enables immutable draft tools")
+    parser.add_argument("--draft-backup", help="Explicit backup ZIP for preview and immutable restore")
     args = parser.parse_args()
+    if args.draft_backup and not args.draft_library:
+        parser.error("--draft-backup requires --draft-library")
+    backup_source = Path(args.draft_backup) if args.draft_backup else None
+    if backup_source is not None and backup_source.suffix.lower() != ".zip":
+        parser.error("--draft-backup accepts only .zip")
     library = DraftLibrary(args.draft_library) if args.draft_library else None
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
     source = Path(args.audio) if args.audio else None
     if source is not None and source.suffix.lower() != ".wav":
         parser.error("--audio accepts only .wav")
-    serve(sys.stdin.buffer, sys.stdout, source, library)
+    serve(sys.stdin.buffer, sys.stdout, source, library, backup_source)
     return 0
 
 

@@ -1,5 +1,17 @@
 # 迭代說明
 
+
+## v0.10.0 — 2026-10-03
+
+- 加入整庫／明確選 ID 的可攜 ZIP 備份、整份檢查／衝突預覽／恢復。保留原 ID、metadata、名稱、時間與草稿原始 bytes，只新增／重用完整相同版本，既有版本不覆寫。
+- 分離 library_contract、draft_backup、CLI backup_files、HTTP backup_downloads 及前端 backup-transfer；HTTP／CLI／Agent 共用 application 與純驗證／保存層。backup schema 1／library 1／draft 3 分別管理，未知版拒絕。
+- 限制 ZIP 32 MiB／展開 64 MiB／1000 版，核對中央目錄、檔名、型態、索引、大小與 SHA；不 extractall，整份有錯不略過。恢復前、鎖內重查衝突／容量；磁碟故障可能留下完整部分版本，同一 ZIP 重試補完，不宣稱多目錄交易。
+- 工作台加入下載、選 ZIP、唯讀預覽與明確恢復；保留未保存編修、音檔及刪除紀錄。回應未知時保持同一 File／SHA 重試；已知失敗要求重選。Agent 啟動明確 --draft-backup，JSON 不能改來源路徑；明確啟庫共九工具，預設仍四工具。
+- 修正可重現的損壞 DEFLATE 未處理例外，HTTP 回 400 且工作台保留。下載先驗證再原生 attachment，錯誤不導離主頁。最多兩份／60 秒的下載暫存，取完即清除自有檔與空目錄，不依賴終端強制停止時的 finally。
+- 99 Python／55 JavaScript／四 Skill／六 JS 語法與實際瀏覽器備份、已提交後 500 再試、衝突／毀損保留、重啟、原始 bytes 往返、桌面／390px DOM 檢查通過。v0.9 ZIP 核對／解壓原版 77／47 通過。詳細見 docs/QA-v0.10.0.md。
+- 產品 0.10.0，Agent 1／MCP 2025-11-25／草稿 3 不變。PolyForm Noncommercial 1.0.0／LICENSE／NOTICE 保留；無新依賴／host 安裝／模型呼叫。分支 codex/iteration-v0.10.0，還原點 restore-v0.9.0-before-v0.10.0，指定提交封裝與 private PR／Release 見 HANDOFF.md／manifest。
+
+
 ## v0.9.0 — 2026-10-03
 
 - 新增明確啟用的本機草稿庫，選定目錄後 HTTP／CLI／JSON-lines／MCP 共用 application 與不可覆寫版本保存；預設接口仍無草稿寫入。分頁與摘要核對、1 MiB／1000 版上限、失敗 staged 檔清理及程序間短時鎖獨立於領域計算。
