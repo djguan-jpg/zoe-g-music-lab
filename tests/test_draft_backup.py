@@ -298,7 +298,7 @@ class BackupTests(unittest.TestCase):
                 *[{'jsonrpc':'2.0','id':i+3,'method':'tools/call','params':{'name':op,'arguments':{'payload':payload}}} for i,(op,payload) in enumerate([
                     ('draft_backup_inspect',{}),('draft_backup_restore',{'backup_sha256':summary['backup_sha256']})])]]
             replies=[json.loads(line) for line in run([config['command'],*config['args']],folder,('\n'.join(json.dumps(r) for r in requests)+'\n').encode()).splitlines()]
-            tools={t['name']:t for t in replies[1]['result']['tools']};self.assertEqual(len(tools),13)
+            tools={t['name']:t for t in replies[1]['result']['tools']};self.assertEqual(len(tools),14)
             self.assertTrue(tools['draft_backup_inspect']['annotations']['readOnlyHint']);self.assertFalse(tools['draft_backup_restore']['annotations']['readOnlyHint'])
             self.assertFalse(replies[-1]['result']['isError']);self.assertEqual(contents(target),contents(source.root))
 

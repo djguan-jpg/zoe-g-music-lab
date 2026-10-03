@@ -97,5 +97,5 @@ class MusicReadinessTests(unittest.TestCase):
             self.assertLess(html.index('/planning-values.js'),html.index('/planning-import.js'))
             self.assertLess(html.index('/readiness-state.js'),html.index('/storyboard-readiness.js'))
             self.assertLess(html.index('/music-readiness.js'),html.index('/app.js'))
-            self.assertIn('<form id="music-form" novalidate>',html);self.assertIn('max="300" step="any"',html);c.close();self.assertEqual(len(available_operations()),8)
+            self.assertIn('<form id="music-form" novalidate>',html);self.assertIn('max="300" step="any"',html);c.close();self.assertEqual(len(available_operations()),9)
         finally:server.shutdown();thread.join(5);server.server_close();self.assertFalse(thread.is_alive())

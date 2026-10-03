@@ -1,6 +1,6 @@
 {
   "suite": "ZOE. G Music Lab",
-  "version": "0.31.0",
+  "version": "0.32.0",
   "created_on": "2026-10-01",
   "founder": {
     "display_name": "ZOE. G",
@@ -9,7 +9,7 @@
   "ai_collaboration": "Codex assisted with scope, original skill text, implementation and validation",
   "publication": "github_private",
   "repository": "https://github.com/djguan-jpg/zoe-g-music-lab",
-  "release_version": "v0.31.0",
+  "release_version": "v0.32.0",
   "platform_claim": "not_submitted",
   "projects": [
     {
@@ -24,7 +24,7 @@
       "title": "ZOE MV Storyboard",
       "entry": "projects/zoe-mv-storyboard/SKILL.md",
       "cli": "storyboard",
-      "scope": "visual motif development, contiguous exclusive frame coverage, shot timing and continuity review"
+      "scope": "visual motif development, raw draft field and motif-reference diagnostics, contiguous exclusive frame coverage, shot timing and continuity review"
     },
     {
       "id": "zoe-lyrics-sync",
@@ -52,5 +52,7 @@
   "lyrics_package_schema_version": 1,
   "audio_loudness_schema_version": 1,
   "storyboard_frames_schema_version": 1,
-  "lyrics_review_schema_version": 1
+  "lyrics_review_schema_version": 1,
+  "music_review_schema_version": 1,
+  "storyboard_review_schema_version": 1
 }

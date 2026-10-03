@@ -51,6 +51,7 @@ ASSETS = {"/": ("web/index.html", "text/html"), "/app.js": ("web/app.js", "text/
           "/storyboard-duration.js": ("web/storyboard-duration.js", "text/javascript"),
           "/planning-values.js": ("web/planning-values.js", "text/javascript"),
           "/readiness-state.js": ("web/readiness-state.js", "text/javascript"),
+          "/readiness-report.js": ("web/readiness-report.js", "text/javascript"),
           "/music-readiness.js": ("web/music-readiness.js", "text/javascript"),
           "/music-arrangement.js": ("web/music-arrangement.js", "text/javascript"),
           "/storyboard-readiness.js": ("web/storyboard-readiness.js", "text/javascript"),
@@ -177,7 +178,7 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
                 return self.reply(200,json_text(backup_downloads(self.server).prepare(archive,summary)))
             operations = {"/api/music": "music", "/api/storyboard": "storyboard", "/api/lyrics": "lyrics",
                           "/api/storyboard-seed": "storyboard_seed",
-                          "/api/lyrics-seed": "lyrics_seed", "/api/lyrics-review": "lyrics_review", "/api/music-review": "music_review",
+                          "/api/lyrics-seed": "lyrics_seed", "/api/lyrics-review": "lyrics_review", "/api/music-review": "music_review", "/api/storyboard-review": "storyboard_review",
                           "/api/drafts/save": "draft_save", "/api/drafts/list": "draft_list", "/api/drafts/read": "draft_read"}
             if route.path not in operations:
                 return self.reply(404, '{"error":"找不到此操作"}')
