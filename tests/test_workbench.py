@@ -146,6 +146,16 @@ class WorkbenchHTTPTests(unittest.TestCase):
             self.assertEqual(status, 200)
             self.assertEqual(raw, (ROOT / 'web' / asset[1:]).read_bytes())
 
+    def test_seed_import_http_preserves_exact_data_and_refuses_unknown_extensions(self):
+        from musiclab.application import build
+        brief=json.loads((ROOT/'examples/first-light-music.json').read_text(encoding='utf-8'))
+        data=build('storyboard_seed',{'music':brief}).data
+        status,result=self.post_json('/api/storyboard-seed',{'seed':data})
+        self.assertEqual(status,200);self.assertEqual(result,build('storyboard_seed',{'seed':data}).wire())
+        data['slots'][0]['visual']='must not silently drop'
+        status,result=self.post_json('/api/storyboard-seed',{'seed':data})
+        self.assertEqual(status,400);self.assertIn('未知欄位',result['error'])
+
     def test_page_and_assets_are_allowlisted(self):
         status, headers, raw = self.request("GET", "/")
         self.assertEqual(status, 200)

@@ -35,14 +35,36 @@ def array_schema(items, minimum=0, maximum=None):
     return schema
 
 
+def seed_schema():
+    def exact(properties): return object_schema(properties, properties.keys(), additionalProperties=False)
+    def value(low, high, integer=False):
+        return {'type':'integer' if integer else 'number','minimum':low,'maximum':high}
+    section = exact({'section':text('Source section'),'bars':value(1,128,True),
+                     'start':value(0,3600),'end':value(.001,3600),'energy':value(1,5),
+                     'focus':text('Source task'),'texture':text('Source arrangement')})
+    slot = exact({'shot':value(1,1000,True),'start':value(0,3600),'end':value(.001,3600),
+                  'start_frame':value(0,432000,True),'end_frame_exclusive':value(1,432000,True),
+                  'bar_start':value(1,5120,True),'bar_end':value(1,5120,True),
+                  'section':text('Source section'),'purpose':text('Source task')})
+    return exact({'format':{'const':'zoe-storyboard-seed'},'schema_version':{'type':'integer','const':1},
+                  'status':{'const':'timing_seed_incomplete'},'title':text('Seed title'),
+                  'duration_seconds':value(.001,3600),'fps':value(1,120),'bars_per_shot':value(1,128,True),
+                  'source':exact({'bpm':value(20,300),'beats_per_bar':value(1,12,True),
+                                  'timing_assumption':{'const':'constant_tempo_no_pickup'},
+                                  'sections':array_schema(section,1,40)}),
+                  'slots':array_schema(slot,1,1000),'review_notes':array_schema(text('Human review note'),1,100)})
+
+
 def payload_schema(operation):
     if operation == 'storyboard_seed':
         music = payload_schema('music')
         music['required'] += ['arrangement', 'bpm', 'memory_hook']
-        return object_schema({'music': music,
+        return object_schema({'music': music, 'seed': seed_schema(),
                               'fps': numeric('Seed frame rate; default 24', 1, 120),
                               'bars_per_shot': numeric('Maximum whole bars per shot; default 4', 1, 128, integer=True)},
-                             ('music',), additionalProperties=False)
+                             additionalProperties=False,
+                             oneOf=[{'required':['music'], 'not':{'required':['seed']}},
+                                    {'required':['seed'], 'not':{'anyOf':[{'required':[key]} for key in ('music','fps','bars_per_shot')]}}])
     if operation == "draft_backup_inspect":
         return object_schema({}, (), additionalProperties=False)
     if operation == "draft_backup_restore":

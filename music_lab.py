@@ -19,7 +19,11 @@ def main(argv=None):
         sub = commands.add_parser(name)
         sub.add_argument("--out", required=True, help="指定本輪輸出資料夾")
         sub.add_argument("--overwrite", action="store_true", help="明確替換此輸出目錄的同名成果")
-        if name in ("music", "storyboard", "storyboard-seed"):
+        if name == "storyboard-seed":
+            source_group = sub.add_mutually_exclusive_group(required=True)
+            source_group.add_argument("--brief")
+            source_group.add_argument("--seed", help="已產生的起稿 JSON，先核對再輸出")
+        elif name in ("music", "storyboard"):
             sub.add_argument("--brief", required=True)
         else:
             sub.add_argument("--input", required=True)
@@ -34,8 +38,8 @@ def main(argv=None):
             for setting in ("rates", "bits", "channels"):
                 sub.add_argument(f"--{setting}", type=int, nargs="+")
         if name == 'storyboard-seed':
-            sub.add_argument('--fps', type=float, default=24)
-            sub.add_argument('--bars-per-shot', type=int, default=4)
+            sub.add_argument('--fps', type=float)
+            sub.add_argument('--bars-per-shot', type=int)
     drafts = commands.add_parser("draft", help="明確選定本機草稿庫；保存版本不覆寫")
     actions = drafts.add_subparsers(dest="draft_action", required=True)
     for action in ("save", "list", "read", "backup", "inspect", "restore"):
@@ -77,8 +81,14 @@ def main(argv=None):
             print(json.dumps(result, ensure_ascii=False, allow_nan=False))
             return 0
         if args.command == 'storyboard-seed':
-            bundle = build('storyboard_seed', {'music': read_json(args.brief), 'fps': args.fps,
-                           'bars_per_shot': args.bars_per_shot}).files
+            if args.seed:
+                if args.fps is not None or args.bars_per_shot is not None:
+                    raise ValueError('--seed 不接受 --fps／--bars-per-shot 覆蓋；請保留原起稿設定')
+                payload = {'seed': read_json(args.seed)}
+            else:
+                payload = {'music': read_json(args.brief), 'fps': args.fps if args.fps is not None else 24,
+                           'bars_per_shot': args.bars_per_shot if args.bars_per_shot is not None else 4}
+            bundle = build('storyboard_seed', payload).files
         elif args.command in ("music", "storyboard"):
             bundle = build(args.command, read_json(args.brief)).files
         elif args.command == "lyrics":

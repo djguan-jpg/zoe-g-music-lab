@@ -27,3 +27,6 @@
 
 - storyboard_seed 為獨立 schema1 時間起稿，共用歌曲驗證與 application／四 adapter；預設五工具／啟庫十工具。source 的固定速度假設保留；未完成創作欄位留空，不能冒充分鏡／成片。每鏡最多整小節，保留段落邊界，超1000鏡／不足一影格拒絕。
 - 起稿 preview／proposal 核對來源、目標與設定，晚回應不提交；局部套用保留其他 panel／音檔。draft-undo 核對實際 after 的限定／全部 panels，後續編修拒絕整份撤回，不覆蓋或丟棄 record；預覽／撤回不進草稿。
+
+- 起稿檔回讀共用timing_slots／validate_seed／seed_files，seed1未知欄位或矛盾時間拒絕；storyboard_seed的music／seed互斥，匯入不能覆蓋FPS／bars設定。保留原檔，無靜默修正／丟棄創作欄位。
+- file preview只核對target storyboard與檔案語義，music／settings編修保留；run可指定revision scope。checked file成果inputIndependent保留於頁面切換，生成成果dirty規則保持；上述暫態旗標不進草稿。

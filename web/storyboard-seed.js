@@ -8,7 +8,10 @@
   const fail=()=>{throw Error('分鏡起稿回應不完整或版本不支援；目前分鏡保留');};
   const finite=(n,low,high)=>typeof n==='number'&&Number.isFinite(n)&&n>=low&&n<=high;
   const text=s=>typeof s==='string'&&s.trim().length>0;
+  const exact=(value,keys)=>value&&typeof value==='object'&&!Array.isArray(value)&&Object.keys(value).length===keys.length&&keys.every(k=>Object.hasOwn(value,k));
   function validateSeed(data){
+    if(!exact(data,['format','schema_version','status','title','duration_seconds','fps','bars_per_shot','source','slots','review_notes'])||
+        !exact(data.source,['bpm','beats_per_bar','timing_assumption','sections']))fail();
     if(!data||data.format!=='zoe-storyboard-seed'||data.schema_version!==1||data.status!=='timing_seed_incomplete'||
         !text(data.title)||!finite(data.duration_seconds,0.001,3600)||!finite(data.fps,1,120)||
         !Number.isInteger(data.bars_per_shot)||!finite(data.bars_per_shot,1,128)||
@@ -16,16 +19,16 @@
         !Number.isInteger(data.source.beats_per_bar)||!finite(data.source.beats_per_bar,1,12)||
         !Array.isArray(data.source.sections)||!data.source.sections.length||data.source.sections.length>40||
         !Array.isArray(data.slots)||!data.slots.length||data.slots.length>1000||
-        !Array.isArray(data.review_notes)||!data.review_notes.length||data.review_notes.some(s=>!text(s)))fail();
+        !Array.isArray(data.review_notes)||!data.review_notes.length||data.review_notes.length>100||data.review_notes.some(s=>!text(s)))fail();
     let cursor=0,bar=1,index=0;
     for(const section of data.source.sections){
-      if(!text(section.section)||!text(section.focus)||!text(section.texture)||!Number.isInteger(section.bars)||
+      if(!exact(section,['section','bars','start','end','energy','focus','texture'])||!text(section.section)||!text(section.focus)||!text(section.texture)||!Number.isInteger(section.bars)||
           !finite(section.bars,1,128)||!finite(section.energy,1,5)||section.start!==cursor||
           !finite(section.end,cursor+0.001,data.duration_seconds)||
           Math.abs(section.end-section.start-section.bars*data.source.beats_per_bar*60/data.source.bpm)>0.001001)fail();
       for(let offset=0;offset<section.bars;offset+=data.bars_per_shot){
         const slot=data.slots[index],count=Math.min(data.bars_per_shot,section.bars-offset);
-        if(!slot||slot.shot!==index+1||slot.start!==cursor||!finite(slot.end,cursor+0.001,section.end)||
+        if(!exact(slot,['shot','start','end','start_frame','end_frame_exclusive','bar_start','bar_end','section','purpose'])||slot.shot!==index+1||slot.start!==cursor||!finite(slot.end,cursor+0.001,section.end)||
             Math.abs(slot.end-slot.start-count*data.source.beats_per_bar*60/data.source.bpm)>0.001001||
             slot.section!==section.section||slot.purpose!==section.focus||slot.bar_start!==bar||slot.bar_end!==bar+count-1||
             !Number.isInteger(slot.start_frame)||!Number.isInteger(slot.end_frame_exclusive)||slot.start_frame<0||
@@ -59,28 +62,41 @@
     const task=Editor.createLatestTask();let pending=null;
     const snapshot=()=>{const value=capture(),draft=Editor.validateDraft(value.draft);
       return {draft,fps:value.fps,bars_per_shot:value.bars_per_shot};};
-    const key=value=>Undo.fingerprint({music:value.draft.panels.music,storyboard:value.draft.panels.storyboard,
-      fps:value.fps,bars_per_shot:value.bars_per_shot});
+    const key=(value,origin)=>Undo.fingerprint(origin==='file'?{storyboard:value.draft.panels.storyboard}:
+      {music:value.draft.panels.music,storyboard:value.draft.panels.storyboard,fps:value.fps,bars_per_shot:value.bars_per_shot});
+    async function inspect(origin,file,isCurrent){
+      const token=task.begin(),selected=snapshot(),before=key(selected,origin);pending=null;onClear();
+      const current=()=>task.isCurrent(token)&&isCurrent()&&key(snapshot(),origin)===before;
+      try{
+        let payload;
+        if(origin==='file'){
+          if(!file||!Number.isSafeInteger(file.size)||file.size<1||file.size>1024*1024)throw Error('起稿檔需介於1 byte與1 MiB');
+          if(!file.name.toLowerCase().endsWith('.json'))throw Error('請選擇起稿 JSON');
+          const content=await file.text();if(!current())return false;
+          let parsed;try{parsed=JSON.parse(content.replace(/^\uFEFF/,''));}catch{throw Error('起稿 JSON 無法解析；原檔與目前分鏡保留，請檢查檔案。');}
+          payload={seed:validateSeed(parsed)};
+        }else payload={music:Planning.planningBrief(selected.draft,'music'),fps:selected.fps,bars_per_shot:selected.bars_per_shot};
+        const result=await request(structuredClone(payload));
+        if(!current())return false;
+        const seed=validateSeed(result?.data);
+        if(origin==='file'){if(Undo.fingerprint(seed)!==Undo.fingerprint(payload.seed))fail();}
+        else sourceMatches(seed,payload);
+        if(result.meta?.protocol_version!==1||result.meta.needs_review!==true||!text(result.meta.version)||
+            typeof result.files?.['storyboard-seed.json']!=='string'||typeof result.files?.['storyboard-seed.md']!=='string'||
+            Undo.fingerprint(JSON.parse(result.files['storyboard-seed.json']))!==Undo.fingerprint(seed))fail();
+        pending={before,seed,origin};onReady(seed,structuredClone(result.files),{origin,label:origin==='file'?file.name:'目前歌曲'});return true;
+      }catch(error){if(current())throw error;return false;}
+    }
     return {
       cancel(){task.begin();pending=null;onClear();},
-      async inspect(isCurrent=()=>true){
-        const token=task.begin(),selected=snapshot(),before=key(selected);pending=null;onClear();
-        const current=()=>task.isCurrent(token)&&isCurrent()&&key(snapshot())===before;
-        try{
-          const payload={music:Planning.planningBrief(selected.draft,'music'),fps:selected.fps,bars_per_shot:selected.bars_per_shot};
-          const result=await request(structuredClone(payload));
-          if(!current())return false;
-          const seed=validateSeed(result?.data);sourceMatches(seed,payload);
-          if(result.meta?.protocol_version!==1||result.meta.needs_review!==true||!text(result.meta.version)||
-              typeof result.files?.['storyboard-seed.json']!=='string'||typeof result.files?.['storyboard-seed.md']!=='string'||
-              Undo.fingerprint(JSON.parse(result.files['storyboard-seed.json']))!==Undo.fingerprint(seed))fail();
-          pending={before,seed};onReady(seed,structuredClone(result.files));return true;
-        }catch(error){if(current())throw error;return false;}
-      },
+      inspect:isCurrent=>inspect('music',null,isCurrent||(()=>true)),
+      read:(file,isCurrent)=>inspect('file',file,isCurrent||(()=>true)),
       proposal(){
         if(!pending)return null;
         const now=snapshot();
-        if(key(now)!==pending.before)throw Error('預覽後歌曲、分鏡或起稿設定已有修改；目前內容保留，請重新預覽。');
+        if(key(now,pending.origin)!==pending.before)throw Error(pending.origin==='file'?
+          '預覽後分鏡已有修改；目前內容保留，請重新選擇起稿檔。':
+          '預覽後歌曲、分鏡或起稿設定已有修改；目前內容保留，請重新預覽。');
         return seedDraft(now.draft,pending.seed);
       }
     };

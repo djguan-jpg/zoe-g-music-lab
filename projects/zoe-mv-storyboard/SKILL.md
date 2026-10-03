@@ -41,3 +41,7 @@ python music_lab.py storyboard --brief examples/first-light-mv.json --out output
 ### 歌曲小節接續（v0.14）
 
 `python music_lab.py storyboard-seed --brief examples/first-light-music.json --fps 24 --bars-per-shot 4 --out outputs/mv-seed` 產生時間／來源任務起稿，沒有畫面或人物創作，須按實際音檔校準。瀏覽器歌曲工作台先預覽／明確套用到分鏡，再補寫空白創作欄位；未完成起稿不能當完成分鏡包。來源／目標／設定修改後重新預覽，載入後已有編修則拒絕整份撤回，先下載草稿保留。
+
+### 起稿檔交接（v0.15）
+
+Agent／CLI產生的storyboard-seed.json可在歌曲工作台選「接續Agent／CLI起稿」讀回，先核對並預覽，明確套用才替換分鏡；目前歌曲、其他工作台與音檔保留。CLI可用`storyboard-seed --seed 起稿.json --out 新目錄`核對，不帶FPS／小節覆蓋。未知版本／欄位／矛盾來源拒絕，若已加入畫面內容則保留原檔並另交完整mv-brief；不把時間起稿當完成分鏡。

@@ -192,3 +192,13 @@ music／storyboard及MCP的music_plan／storyboard_plan仍共用同一applicatio
 回應 files 含 storyboard-seed.json／md，data為 format=zoe-storyboard-seed、schema_version1、status=timing_seed_incomplete。source記錄固定BPM／拍數／段落，小節1-based閉區間；時間end及end_frame_exclusive為排他端點。slots只有時間、影格、小節、段落與來源敘事任務，沒有畫面／人物的虛構內容；needs_review永遠true。上限1000鏡、不足一影格拒絕，時間須按實際歌曲校準。
 
 此中間JSON不能當mv-brief載入。瀏覽器先讀歌曲brief，再預覽／套用自己的起稿；或由協作Agent根據slots補寫創作欄位、另交完整mv-brief並經storyboard驗證。不能把未完成seed當完成分鏡。純模型版本拒絕與late回應保護見ARCHITECTURE，CLI／HTTP／JSON-lines／真正五工具MCP及瀏覽器草稿往返見QA-v0.14.0。沒有特定host安裝／模型工具呼叫驗收。
+
+## v0.15 起稿檢查與瀏覽器接續
+
+storyboard_seed沿用原工具，增加payload `{ "seed": 已生成的zoe-storyboard-seed資料 }`。不可與music／fps／bars_per_shot混用。tools/list、--describe與/api/capabilities提供oneOf和完整seed schema；需要新功能先重新discovery，不硬編碼只接music。預設五／啟庫十工具不變。
+
+validate_seed精確核對source段落與BPM／拍數／bars推得時間、所有slots／小節／影格和來源敘事任務。傳入未知版本、未知欄位（包括新增visual）、不完整／非有限值／矛盾狀態都拒絕，不修正或丟失。創作由Agent發展時另交完整mv-brief；時間seed不是成片或完成分鏡，needs_review=true。
+
+CLI `storyboard-seed --seed 起稿.json --out 新目錄`檢查並輸出兩檔，不能覆蓋FPS或每鏡小節設定；原檔保留，重跑預設拒絕覆寫。瀏覽器用「接續Agent／CLI起稿」選JSON，預覽後才套用；不要求目前歌曲與檔案同名，保留目前歌曲及其他panel／音檔。目標分鏡修改後重新預覽，沒有靜默覆蓋。
+
+本輪真正MCP stdio產生→CLI同bytes→IAB讀回→下載JSON／draft3與撤回、錯誤恢復已驗；特定Agent host／模型仍未接入，沒有擴大權限。數字格式／換行可重新排版，保留JSON語義，沒有原檔bytes不變的下載宣稱。
