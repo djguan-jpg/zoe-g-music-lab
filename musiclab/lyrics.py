@@ -146,8 +146,14 @@ def srt_text(cues):
 
 
 def lyrics_bundle(cues, title="歌詞", duration=None):
-    cues, duration, inferred = validate_cues(cues, duration)
-    data = {"title": title, "duration": duration, "duration_estimated": inferred, "cues": cues}
+    cleaned, duration, inferred = validate_cues(cues, duration)
+    tail = max(cues, key=lambda cue: number(cue.get('start'), '歌詞開始時間'))
+    timing = {"duration_source": ("provided" if not inferred else
+                                 "last_cue_end" if tail.get("end") is not None else "last_start_plus_three"),
+              "inferred_end_count": sum(cue.get("end") is None for cue in cues),
+              "tail_end_inferred": tail.get("end") is None}
+    cues = cleaned
+    data = {"title": title, "duration": duration, "duration_estimated": inferred, "cues": cues, "timing": timing}
     encoded = json.dumps(data, ensure_ascii=False).replace("<", "\\u003c").replace("\u2028", "\\u2028").replace("\u2029", "\\u2029")
     preview = PREVIEW.replace("__TITLE__", html.escape(title)).replace("__DATA__", encoded)
     return {"lyrics.json": json_text(data), "lyrics.lrc": lrc_text(cues), "lyrics.srt": srt_text(cues), "preview.html": preview}

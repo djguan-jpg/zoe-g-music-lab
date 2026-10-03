@@ -3,7 +3,7 @@
 // Pure state rules, shared by the browser adapter and dependency-free Node tests.
 (function(root) {
   const draftFields = {
-    music: ['music-title','music-hook','music-theme','music-style','music-vocal','music-audience','music-bpm','music-beats','music-lyrics'],
+    music: ['music-title','music-hook','music-theme','music-style','music-vocal','music-audience','music-bpm','music-beats','music-lyrics','music-language'],
     storyboard: ['mv-title','mv-duration','mv-fps','mv-ratio','mv-style','mv-anchor'],
     lyrics: ['lyrics-title','lyrics-source','lyrics-format','lyrics-duration'],
     audio: ['audio-profile']
@@ -25,14 +25,19 @@
       throw Error('不是支援的 Music Lab 草稿；目前內容未替換');
     panels.forEach(panel=>{
       const rows=draftRows[panel], source=draft.panels[panel];
-      const fields=panel==='storyboard'&&version===1?[...draftFields.storyboard,'mv-motif','mv-meaning']:draftFields[panel];
+      const fields=panel==='storyboard'&&version===1?[...draftFields.storyboard,'mv-motif','mv-meaning']:
+        panel==='music'&&version<3?draftFields.music.filter(key=>key!=='music-language'):draftFields[panel];
       const keys=rows?['fields',rows.key]:['fields'];
-      if(panel==='storyboard'&&version===2)keys.push('motifs');
+      if(panel==='storyboard'&&version>=2)keys.push('motifs');
+      if(panel==='music'&&version===3)keys.push('avoid','deliverables');
       if(!exactKeys(source,keys) || !exactKeys(source.fields,fields) ||
           Object.values(source.fields).some(value=>typeof value!=='string'))throw Error('草稿欄位不完整；目前內容未替換');
       if(rows && (!Array.isArray(source[rows.key]) || source[rows.key].length>rows.limit ||
           source[rows.key].some(row=>!exactKeys(row,version===1?rows.columns.filter(key=>key!=='motif_id'):rows.columns)||Object.values(row).some(value=>typeof value!=='string'))))
         throw Error('草稿列資料錯誤；目前內容未替換');
+      if(panel==='music'&&version===3&&['avoid','deliverables'].some(key=>!Array.isArray(source[key])||
+          source[key].length>100||source[key].some(item=>typeof item!=='string')))
+        throw Error('草稿需求清單錯誤；目前內容未替換');
     });
     if(!['.lrc','.srt','.json'].includes(draft.panels.lyrics.fields['lyrics-format']) ||
         !['distribution','video'].includes(draft.panels.audio.fields['audio-profile']) ||
@@ -40,29 +45,42 @@
       throw Error('草稿選項不支援；目前內容未替換');
     return draft;
   }
-  function validateDraft(draft) {
-    validateShape(draft,2);
-    const {motifs,shots}=draft.panels.storyboard;
+  function validateMotifs(panel) {
+    const {motifs,shots}=panel;
     if(!Array.isArray(motifs)||motifs.length>30||motifs.some(m=>!exactKeys(m,['id','name','meaning'])||
         Object.values(m).some(v=>typeof v!=='string')||!/^motif-[1-9][0-9]*$/.test(m.id)))
       throw Error('草稿母題資料錯誤；目前內容未替換');
     const ids=new Set(motifs.map(m=>m.id));
     if(ids.size!==motifs.length||shots.some(s=>s.motif_id!==''&&!ids.has(s.motif_id)))
       throw Error('草稿母題對應錯誤；目前內容未替換');
+  }
+  function validateDraft(draft) {
+    validateShape(draft,3);
+    validateMotifs(draft.panels.storyboard);
     return structuredClone(draft);
   }
   // Called only after an explicit user conversion action; no implicit migration.
   function convertLegacyDraft(draft) {
-    validateShape(draft,1);
+    if(![1,2].includes(draft?.schema_version))throw Error('不是支援的舊版草稿');
+    validateShape(draft,draft.schema_version);
     const converted=structuredClone(draft), panel=converted.panels.storyboard;
-    panel.motifs=[{id:'motif-1',name:panel.fields['mv-motif'],meaning:panel.fields['mv-meaning']}];
-    delete panel.fields['mv-motif'];delete panel.fields['mv-meaning'];
-    panel.shots.forEach(shot=>shot.motif_id='motif-1');
-    converted.schema_version=2;
+    if(draft.schema_version===1){
+      panel.motifs=[{id:'motif-1',name:panel.fields['mv-motif'],meaning:panel.fields['mv-meaning']}];
+      delete panel.fields['mv-motif'];delete panel.fields['mv-meaning'];
+      panel.shots.forEach(shot=>shot.motif_id='motif-1');
+    }
+    converted.panels.music.fields['music-language']='繁體中文';
+    converted.panels.music.avoid=['用空泛口號取代動作'];
+    converted.panels.music.deliverables=['完整歌詞','兩種副歌方案','分段編曲指令','實唱待驗證清單'];
+    converted.schema_version=3;
     return validateDraft(converted);
   }
   function inspectDraft(draft) {
-    if(draft?.schema_version===1){validateShape(draft,1);return {legacy:true,draft:structuredClone(draft)};}
+    if([1,2].includes(draft?.schema_version)){
+      validateShape(draft,draft.schema_version);
+      if(draft.schema_version===2)validateMotifs(draft.panels.storyboard);
+      return {legacy:true,draft:structuredClone(draft)};
+    }
     return {legacy:false,draft:validateDraft(draft)};
   }
   function nextMotifId(motifs) {
@@ -114,8 +132,13 @@
     });
     return active;
   }
+  function lyricsImportNotice(data) {
+    if(data.timing?.inferred_end_count)return `歌詞已讀取；${data.timing.inferred_end_count} 句結束依時間邊界補齊，請逐句校正`;
+    if(data.duration_estimated)return '歌詞已讀取；保留原檔的結束時間，歌曲總時長尚未由音檔確認';
+    return '歌詞已讀取，可逐句校正';
+  }
   const api = {createLatestTask, activeCueIndex, draftFields, draftRows, validateDraft,
-    inspectDraft,convertLegacyDraft,nextMotifId,compactShotTimes,createLyricsFileImport,shotOverview};
+    inspectDraft,convertLegacyDraft,nextMotifId,compactShotTimes,createLyricsFileImport,shotOverview,lyricsImportNotice};
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.MusicEditor = api;
 })(typeof window === 'undefined' ? {} : window);

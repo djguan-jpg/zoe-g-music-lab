@@ -73,3 +73,13 @@ python scripts/agent_launch.py --format codex
 工具只列印設定，沒有寫入全域檔案、啟動 host 或取得其他工具權限。由使用者依選定 host 的設定方式加入片段後，仍需驗證連線與一次實際工具呼叫；不要把 `mcp get` 的成功當成可呼叫證明。
 
 本輪已由生成的 command／args，在另一個暫存工作目錄啟動實際 MCP 子程序，完成握手與 `lyrics_validate`，核對歌詞成果，EOF 退出且不寫檔。另以本機 `codex-cli 0.153.4` 的 `mcp get --json` 與臨時 `-c` 覆寫解析設定，command／args 與生成值一致；只顯示本工具的白名單 metadata，不讀出其他服務或秘密，沒有修改全域設定。此項沒有建立服務連線，也沒有呼叫模型。實際 Agent host、官方 conformance、跨 host 與 2026 MCP 支援仍未完成。
+
+## v0.6：把需求交回工作台
+
+music_plan／JSON-lines music 的 `result.files["brief.json"]`、storyboard_plan／storyboard 的 `result.files["mv-brief.json"]` 是文字內容。由呼叫者明確保存這兩個成果後，工作台可選需求類型、讀入檔案、看預覽／待審查項目，再載入指定工作台，繼續人工編修。Adapter 仍不自動寫檔，不執行文件裡的指令、不安裝 host。
+
+歌曲回讀需含 arrangement、BPM、memory_hook 等設計需求，分鏡需含 motifs。既有簡單 CLI 格式仍可使用 CLI；UI 不猜測或填造缺失的設計資訊。未知欄位／UI 無法保存的畫幅或容量拒絕；整個 response envelope 或 music-plan／storyboard 結果檔需保留作參考，不能直接當輸入。
+
+本輪以實際 MCP 子程序呼叫兩工具，將回傳 brief 檔載入瀏覽器、人工確認、重建、真正下載；歌曲 brief 與來源完全一致，分鏡共用領域輸出一致。另有 Python → 生產 JS 轉換層 → Python 的實跑往返測試。這證明 artifact 交接，沒有宣稱任何特定 Agent host 已安裝或呼叫模型。
+
+lyrics 結果的 timing metadata 區分總時長來源與逐句結束補齊；duration_estimated 保留舊語義，不能直接解讀為 SRT 尾句被估計。音檔分析入口與授權不變。
