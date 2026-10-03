@@ -1,5 +1,7 @@
 # ZOE Lyrics Sync
 
+v0.25「檢查校時進度」可接受時間留白，找出原句缺失／重複開始／跨句重疊／超出宣告的位置，按待辦定位欄位。建立包失敗也定位第一項，原文與音檔保持；編修後舊報告過期、停用定位和下載。JSON／Markdown報告是診斷，不是完成字幕；最多10000句、全部count／前200明細與頁面前20項。Agent／MCP唯讀lyrics_review和CLI lyrics-review沿用同一層，CLI2表示診斷保存且有待修正項目。見[契約](../../docs/LYRICS-REVIEW.md)／[QA](../../docs/QA-v0.25.0.md)。
+
 v0.24 選音檔與作品宣告分開。已有十秒宣告、選六秒音檔仍保持十秒；需要新時長時按「採用選定音檔時長」，再驗證。撤回只改時長、保留後續歌詞；後來改時長或換來源會停用不安全撤回。原本空白且讀取期間未編修才自動接續首次時長。較短時長不裁切歌詞；獨立預覽也須明確採用並套用。見[契約](../../docs/LYRICS-MEDIA-DURATION.md)與[QA](../../docs/QA-v0.24.0.md)。
 
 v0.20接續外部JSON共用嚴格UTF-8與重複欄位檢查；損壞編碼／重複版本拒絕，不修補後替換目前內容。CLI外部JSON最多2MiB，工作台需求／分鏡起稿／草稿仍1MiB、歌詞JSON2MiB；單BOM規則與領域schema分開。見[本輪QA](../../docs/QA-v0.20.0.md)。
@@ -13,7 +15,7 @@ python music_lab.py lyrics --input old-lyrics.json --legacy-json --out outputs/c
 
 完整包檢查不可混入CLI覆蓋選項；一般cue JSON／LRC／SRT編修保持。未改cue下載保留來源，編修後另附待實聽說明；合成adapter與瀏覽器證據見[QA](../../docs/QA-v0.19.0.md)。以下歷史版本功能仍適用，完整JSON契約以上述v0.19為準。
 
-創辦：ZOE. G · GitHub：djguan-jpg · v0.24
+創辦：ZOE. G · GitHub：djguan-jpg · v0.25
 
 v0.18：TXT／LRC／SRT／JSON選檔先檢查、顯示完整原文與前六句，再明確套用／取消。TXT嚴格UTF-8、64KiB／1000非空白行，時間留白；字幕最多2MiB，無效編碼與未知JSON拒絕。慢讀取／晚回應／預覽後編修不覆蓋新內容，音檔／時長／其他工作台保持；最近一次未編修套用可撤回。直接修改原文後按讀取也先預覽；SRT多行轉單行與LRC推測結束需實聽核對。詳細證據見[QA](../../docs/QA-v0.18.0.md)。
 

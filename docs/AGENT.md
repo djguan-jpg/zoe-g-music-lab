@@ -1,5 +1,13 @@
 # 本機 Agent 接口 v1
 
+## v0.25 唯讀校時待辦
+
+新增operation／MCP tool lyrics_review、HTTP /api/lyrics-review、CLI lyrics-review。輸入cues原始start／end／text和可選title／duration，可包含時間留白；只作診斷，不補值／裁切／排序來源。來源最多10000列，明細前200項／完整計數，row為原順序1起、global0。報告schema1與lyrics_package1分開，不將檢查報告當字幕。詳細輸入、budget、固定code與CLI0／2／1語義見LYRICS-REVIEW.md。
+
+需要重新discovery：預設七tools，啟庫十二tools，readOnlyHint=true/openWorldHint=false。所有診斷meta.needs_review=true，尚待實聽；來源／report不寫檔，CLI明確--out才保存且預設拒覆寫。protocol1／MCP2025-11-25／draft3與其他schema保持，不新增Host／媒體路徑權限。
+
+真stdiosession壞request後有效、tools/list、call／EOF、CLI／HTTP與browser下載已驗證；特定Host仍未安裝。
+
 ## v0.24 時長接續保持明確
 
 沿用 lyrics operation／lyrics_validate tool／HTTP /api/lyrics／CLI lyrics。已有完整包的宣告總長保持；瀏覽器選定不同音檔不會默默送出新總長。明確採用後只改 duration，仍驗證 cue 邊界並保留待實聽說明；撤回只還原欄位，不能刪去已套用過的來源歷史。

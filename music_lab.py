@@ -14,7 +14,7 @@ from musiclab.draft_library import DraftLibrary, revision_id
 def main(argv=None):
     parser = argparse.ArgumentParser(description=f"ZOE. G Music Lab · 本機 v{__version__}")
     commands = parser.add_subparsers(dest="command", required=True)
-    for name in ("music", "storyboard", "lyrics", "audio", "storyboard-seed", "lyrics-seed"):
+    for name in ("music", "storyboard", "lyrics", "audio", "storyboard-seed", "lyrics-seed", "lyrics-review"):
         sub = commands.add_parser(name)
         sub.add_argument("--out", required=True, help="指定本輪輸出資料夾")
         sub.add_argument("--overwrite", action="store_true", help="明確替換此輸出目錄的同名成果")
@@ -85,7 +85,11 @@ def main(argv=None):
                 result = build("draft_" + args.draft_action, payload, draft_library=library).wire()
             print(json.dumps(result, ensure_ascii=False, allow_nan=False))
             return 0
-        if args.command == 'lyrics-seed':
+        if args.command == 'lyrics-review':
+            result = build('lyrics_review', read_json(args.input))
+            bundle = result.files
+            status = 2 if result.data['issue_count'] else 0
+        elif args.command == 'lyrics-seed':
             if args.seed:
                 if args.title is not None: raise ValueError('--seed 不接受 --title 覆蓋')
                 payload = {'seed':read_json(args.seed)}
@@ -143,7 +147,7 @@ def main(argv=None):
     if args.command == 'lyrics-seed':
         print('未校時歌詞起稿已建立；沒有猜測時間，請依實際音檔標記開始與結束。')
     if status == 2:
-        print("已完成分析，有需確認項目；詳見 report.md。")
+        print("已完成校時檢查；有待修正項目，詳見 lyrics-review.md。" if args.command == 'lyrics-review' else "已完成分析，有需確認項目；詳見 report.md。")
     return status
 
 

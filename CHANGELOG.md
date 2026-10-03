@@ -1,5 +1,14 @@
 # 迭代說明
 
+## v0.25.0 — 2026-10-04
+
+- 真IAB重現未完成表格只有泛用數字錯誤，focus停在建立；新增可定位校時進度／待辦與建立前標示，原句號／欄位保持。
+- lyrics_review.py純diagnostics與sharedJS／reply核對／注入controller／DOM分層；暫排序與最遠end跨句檢查、不改source／空白／文字／音檔。局部timed_rows不是全表通過，空表明示no_cues。
+- 新唯讀lyrics_review schema1／四adapter，七基本與啟庫十二tools、無路徑權限。CLI0／2／1區分無問題、待修正報告已保存與request／I/O失敗；完整lyrics另驗證，所有diagnostics needs_review=true。
+- 10000列全計數、report前200／DOM前20與截斷，變更後舊report過期／停定位與下載。產品0.25、其他protocol／schema保持，真草稿保存空白及後續編修，不存報告暫態。
+- 234Python／305JS／四Skill／22JS語法、13新Python／16新JS、50組跨語言與21真IAB、四adapter／真下載／晚成功／500／schema999／390px與Enter通過。v0.24 ZIP221／289還原，restore-v0.24.0-before-v0.25.0保留起點；指定commit封裝／privatePR／Release與遠端bytes依manifest收據確認。
+- 非商用／private／ZOE. G與來源保持；無新依賴、模型或auth。file:既有政策阻擋未繞過，本輪獨立頁未變更；原生離線播放／正式媒體／完整視覺／AgentHost／平台創始人核實仍待，滾動目標active。
+
 ## v0.24.0 — 2026-10-03
 
 - 真IAB重現已有10秒歌詞包選4秒WAV後被metadata覆寫；修正為兩時長分開顯示，明確採用／撤回只改宣告，原本空白且未編修才接續首次有效時長。
