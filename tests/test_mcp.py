@@ -39,6 +39,23 @@ def call(name, payload, request_id=3):
 
 
 class MCPTests(unittest.TestCase):
+    def test_generated_launch_settings_work_from_another_directory(self):
+        with tempfile.TemporaryDirectory() as folder:
+            descriptor = subprocess.run([sys.executable, "-X", "utf8", str(ROOT / "scripts/agent_launch.py")],
+                                        cwd=folder, capture_output=True, encoding="utf-8", timeout=10)
+            self.assertEqual(descriptor.returncode, 0, descriptor.stderr)
+            config = json.loads(descriptor.stdout)
+            requests = [initialize(), {"jsonrpc": "2.0", "method": "notifications/initialized"},
+                        call("lyrics_validate", {"content": "[00:00.000]接入測試", "duration": 3})]
+            result = subprocess.run([config["command"], *config["args"]], cwd=folder,
+                                    input="".join(json.dumps(item, ensure_ascii=False) + "\n" for item in requests),
+                                    capture_output=True, encoding="utf-8", timeout=config["tool_timeout_sec"])
+            self.assertEqual(result.returncode, 0, result.stderr)
+            replies = [json.loads(line) for line in result.stdout.splitlines()]
+            self.assertEqual(len(replies), 2)
+            self.assertIn("接入測試", replies[1]["result"]["structuredContent"]["files"]["lyrics.lrc"])
+            self.assertEqual(list(Path(folder).iterdir()), [])
+
     def test_real_subprocess_four_tools_match_application_and_exit_on_eof(self):
         with tempfile.TemporaryDirectory() as folder:
             source = Path(folder) / "synthetic.wav"

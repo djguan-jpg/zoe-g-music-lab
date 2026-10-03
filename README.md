@@ -2,7 +2,7 @@
 
 由 **ZOE. G** 發起的四個原創專案。GitHub 帳號為 **djguan-jpg**；品牌署名與帳號可以不同。
 
-目前版本 v0.4 提供四個工作台與原創 Skill。Python 3.10 以上即可使用，沒有第三方依賴。只讀本次新建工作區，不參考使用者的其他本機或 GitHub 專案。公開第三方 README 僅用於需求比較，來源及自行設計的差異記在 [構思紀錄](CONCEPT.md)。
+目前版本 v0.5 提供四個工作台與原創 Skill。Python 3.10 以上即可使用，沒有第三方依賴。只讀本次新建工作區，不參考使用者的其他本機或 GitHub 專案。公開第三方 README 僅用於需求比較，來源及自行設計的差異記在 [構思紀錄](CONCEPT.md)。
 
 授權為 **PolyForm Noncommercial 1.0.0**，商業使用沒有由本版授權。可查看、修改及分發的範圍以 [LICENSE](LICENSE) 為準，保留 [NOTICE](NOTICE)。這是非商用原始碼授權；不標成 AGPL。使用者匯入的素材授權各自保留，詳見 [授權說明](LICENSING.md)。
 
@@ -29,6 +29,10 @@ python music_lab_server.py
 
 分鏡可新增最多 30 個母題，每鏡自行選擇；改名保留對應，刪除仍使用中的母題會列出鏡頭並拒絕。時間尚未填完的鏡頭可以刪除；只有其他鏡頭時間有效時才重新接續時間。
 
+鏡頭預設展開第一鏡，其餘用時間／段落／母題摘要呈現。可全部收合或展開，並從「鏡頭定位」選擇後前往編修；時間空白或未選母題時會展開對應欄位。收合不刪除欄位，草稿與分鏡成果仍包含所有鏡頭；收合狀態只用於本頁顯示，回讀草稿恢復預設展開方式。
+
+歌詞檔上限 2 MiB，只接受 LRC／SRT／JSON。連續選檔以最後一次選擇為準，成功讀入後同時更新原文與格式；錯誤檔保留既有內容與成果。手動修改原文／格式或載入草稿會取消尚未完成的讀檔。讀入原文後按「讀取歌詞」建立逐句表格。
+
 修改輸入後會停用舊成果下載，重新建立／驗證後才恢復。歌詞播放預覽即時使用目前表格內容；數值計算及資料檢查不能代替實唱、實聽與實際畫面審查。
 
 命令列同樣可用：
@@ -50,14 +54,14 @@ python music_lab.py audio --input '自己的歌曲.wav' --profile distribution -
 
 ## Agent 使用
 
-四種操作可用原有 JSON-lines v1 或新增的 MCP stdio adapter。MCP 明確支援 `2025-11-25`；只接受該版初始化，不自動轉換未知版本。一般 MCP host 的 command 使用 `python`，args 使用解壓後 `music_lab_mcp.py` 的完整路徑；依所用 host 文件設定，不需要套件或金鑰。本輪已驗證獨立子程序四工具，尚未安装或驗證特定 Agent 平台。操作、錯誤及音檔選擇見 [Agent 文件](docs/AGENT.md)。
+四種操作可用 JSON-lines v1 或 MCP stdio adapter。MCP 明確支援 `2025-11-25`；只接受該版初始化，不自動轉換未知版本。使用 `python scripts/agent_launch.py` 產生本版 Python／入口的完整路徑設定；加 `--format codex` 可產生 Codex TOML 片段。指令只顯示設定，不安裝或啟動 Agent，移動解壓目錄後需重新產生。已驗證設定從不同目錄啟動 MCP 及實際工具輸出；Codex CLI 只做設定解析，尚未驗證 host 連線／實際 Agent 工具呼叫。操作、錯誤及音檔選擇見 [Agent 文件](docs/AGENT.md)。
 
 ## 專案紀錄
 
 - [創辦與協作紀錄](FOUNDER-RECORD.md)：ZOE. G 發起方向；Codex 協助規格、文字、程式與驗證。
 - [專案清單](projects.json)：四個獨立 ID、版本與功能範圍。
 - [本輪進度](PROGRESS.md)：實跑驗證與後續工作。
-- [本版說明](RELEASE-v0.4.0.md)：功能、版本契約、驗證與限制。
+- [本版說明](RELEASE-v0.5.0.md)：功能、版本契約、驗證與限制。
 - [四個專案的投稿資料](SUBMISSION-PACKET.md)：來源連結、用途、使用方式與作者關係。
 - [分層與分支架構](docs/ARCHITECTURE.md)、[Agent 與 MCP 接口](docs/AGENT.md)、[迭代說明](CHANGELOG.md)、[本輪交接](HANDOFF.md)。
 
@@ -77,7 +81,7 @@ git diff --check
 開發／封裝驗證需要 Node.js；一般使用工作台與 CLI 只需要 Python。從指定 Git 版本建立可驗證的原始碼 ZIP：
 
 ```powershell
-python scripts/package_release.py --ref v0.4.0
+python scripts/package_release.py --ref v0.5.0
 ```
 
 封裝保存 commit、SHA-256、每檔摘要及檢查結果；解壓後重跑 Python／JavaScript 測試、Agent 能力查詢與 MCP 握手。輸出留在忽略的 outputs/releases，重複封裝同一提交會拒絕覆寫。
