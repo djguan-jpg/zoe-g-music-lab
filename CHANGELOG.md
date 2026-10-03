@@ -1,5 +1,13 @@
 # 迭代說明
 
+## v0.16.0 — 2026-10-03
+
+- 重現並修正需求／保存版本預覽後覆蓋編修；新格式草稿由選檔即載入改為明確預覽／載入／取消，舊版維持明確轉換。
+- replacement-preview純模組共用scope／全panels內容指紋、原生File身份及最新任務／payload複製。需求只核對目標，完整草稿／保存版另核對音檔選擇；晚成功／錯誤及proposal都保護目前編修。
+- brief及library transport可注入同一preview；app只管理DOM、明確操作及既有undo，沒有新後端寫入能力／依賴／Host設定。草稿加入BOM／副檔名／1 byte–1 MiB界限及讀取狀態，正常預覽使用中性色與有界文字區。
+- 146 Python／146 JavaScript、四Skill／十三JS語法通過；真實Agent保存、HTTP assets、瀏覽器載入／撤回／音檔／延遲／錯誤及封裝見QA／HANDOFF。前版ZIP146／121通過。
+- 產品0.16.0；Agent1／seed1／MCP2025-11-25／draft3／library1／backup1保留。ZOE. G、PolyForm Noncommercial 1.0.0與private保持；restore-v0.15.0-before-v0.16.0提供還原點。
+
 ## v0.15.0 — 2026-10-03
 
 - 補齊Agent／CLI的storyboard-seed.json回讀入口；先檢查／預覽／取消，再明確套用至分鏡。匯入與目前歌曲分開，套用保留其他工作台、音檔與目前歌曲，新鏡頭仍需人工創作。

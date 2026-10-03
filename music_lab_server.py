@@ -46,6 +46,7 @@ ASSETS = {"/": ("web/index.html", "text/html"), "/app.js": ("web/app.js", "text/
           "/planning-review.js": ("web/planning-review.js", "text/javascript"),
           "/storyboard-seed.js": ("web/storyboard-seed.js", "text/javascript"),
           "/draft-undo.js": ("web/draft-undo.js", "text/javascript"),
+          "/replacement-preview.js": ("web/replacement-preview.js", "text/javascript"),
           "/license": ("LICENSE", "text/plain"), "/notice": ("NOTICE", "text/plain")}
 
 

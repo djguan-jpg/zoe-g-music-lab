@@ -57,19 +57,24 @@
     draft.tab=operation;
     return Editor.validateDraft(draft);
   }
-  function createBriefImport({validate,onReady,onError}){
+  function createBriefImport({validate,onReady,onError,preview=null}){
     const task=Editor.createLatestTask();
-    return {cancel:()=>task.begin(),async read(file,operation){
-      const token=task.begin();if(!file)return false;
+    return {cancel:()=>{task.begin();preview?.cancel();},async read(file,operation){
+      const token=task.begin();if(!file)return false;let selected;
       try{
         if(!['music','storyboard'].includes(operation))throw Error('請選擇歌曲或分鏡需求');
+        selected=preview?.begin(operation);
         if(!Number.isSafeInteger(file.size)||file.size<1||file.size>1024*1024)throw Error('需求檔需介於 1 byte 與 1 MiB');
         if(!file.name.toLowerCase().endsWith('.json'))throw Error('請選擇需求 JSON');
-        const content=await file.text();if(!task.isCurrent(token))return false;
+        const content=await file.text();if(!task.isCurrent(token)||preview&&!preview.check(selected))return false;
         const brief=JSON.parse(content.replace(/^\uFEFF/,''));object(brief,'需求');
         const checked=await validate(operation,brief);if(!task.isCurrent(token))return false;
-        onReady({operation,result:checked});return true;
-      }catch(error){if(task.isCurrent(token))onError(error);return false;}
+        const ready={operation,result:checked};if(preview&&!preview.accept(selected,ready))return false;
+        onReady(ready);return true;
+      }catch(error){if(task.isCurrent(token)){
+        if(preview&&selected!==undefined){try{if(!preview.check(selected))return false;}catch(changed){error=changed;}}
+        onError(error);
+      }return false;}
     }};
   }
   function requirementIssue(panel){

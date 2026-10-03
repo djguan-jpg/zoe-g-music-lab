@@ -370,8 +370,11 @@ $('audio-build').onclick=()=>run($('audio-build'),isCurrent=>MusicAudio.inspect(
   onResult:(result,review)=>{renderAudioReview(review);setFiles(result.files,'音檔檢查 · '+review.status);say(review.needsReview?`檢查已完成，有 ${review.warnings.length} 項需確認`:'本次技術條件通過；報告已建立');}
 }));
 const draftTask=MusicEditor.createLatestTask();
-let pendingLegacyDraft=null;
-function clearConversion(){pendingLegacyDraft=null;$('draft-conversion').hidden=true;}
+const replacementCapture=()=>({draft:captureDraft(),media:[$('lyrics-audio').files[0]||null,$('audio-file').files[0]||null]});
+const draftPreview=MusicReplacement.createPreview({capture:replacementCapture});
+const briefPreview=MusicReplacement.createPreview({capture:replacementCapture});
+const libraryPreview=MusicReplacement.createPreview({capture:replacementCapture});
+function clearConversion(){draftPreview.cancel();$('draft-conversion').hidden=true;$('draft-review-content').value='';}
 function loadDraft(draft){const previous=captureDraft();applyDraft(draft);draftUndo.record(previous,captureDraft());$('draft-undo').disabled=false;clearConversion();}
 function captureDraft(){
   const panels={};
@@ -386,7 +389,7 @@ function captureDraft(){
   panels.lyrics.cues=[...$('cues').children].map(row=>Object.fromEntries(
     MusicEditor.draftRows.lyrics.columns.map((key,i)=>[key,row.querySelectorAll('input')[i].value])));
   panels.music.avoid=requirementValues('music-avoid');panels.music.deliverables=requirementValues('music-deliverables');
-  return {format:'zoe-music-lab-draft',schema_version:3,tool_version:'0.15.0',saved_at:new Date().toISOString(),tab:state.tab,panels};
+  return {format:'zoe-music-lab-draft',schema_version:3,tool_version:'0.16.0',saved_at:new Date().toISOString(),tab:state.tab,panels};
 }
 function applyDraft(draft){
   if(seedController)seedController.cancel();
@@ -400,7 +403,8 @@ function applyDraft(draft){
   resetAudio();$('audio-file').value='';state.bundles={};state.files={};
   Object.keys(MusicEditor.draftFields).forEach(markDirty);
   ['music-visual','mv-visual','audio-visual'].forEach(id=>$(id).hidden=true);
-  document.querySelector(`[data-tab="${draft.tab}"]`).click();clearOutput();tick();
+  const tabButton=document.querySelector(`[data-tab="${draft.tab}"]`);
+  tabButton.click();clearOutput();tick();tabButton.focus({preventScroll:true});
 }
 $('draft-export').onsubmit=event=>{
   try{
@@ -412,21 +416,33 @@ $('draft-export').onsubmit=event=>{
   }catch(error){event.preventDefault();say(error.message,true);}
 };
 $('draft-open').onchange=async event=>{
-  const file=event.target.files[0];if(!file)return;
+  const file=event.target.files[0];event.target.value='';if(!file)return;
   const token=draftTask.begin();clearConversion();briefImporter.cancel();clearBriefReview();clearLibraryReview();
   try{
     if(state.busy)throw Error('目前操作尚未完成，請稍候再載入');
-    if(file.size>1024*1024)throw Error('草稿上限為 1 MiB');
-    const text=await file.text();if(!draftTask.isCurrent(token))return;
-    const inspected=MusicEditor.inspectDraft(JSON.parse(text));
+    const selected=draftPreview.begin();
+    if(!Number.isSafeInteger(file.size)||file.size<1||file.size>1024*1024)throw Error('草稿需介於1 byte與1 MiB');
+    if(!file.name.toLowerCase().endsWith('.json'))throw Error('請選擇草稿 JSON');
+    say('正在讀取草稿，完成後會先預覽；目前內容與音檔保留。');
+    const text=await file.text();if(!draftTask.isCurrent(token)||!draftPreview.check(selected))return;
+    const inspected=MusicEditor.inspectDraft(JSON.parse(text.replace(/^\uFEFF/,'')));
     if(state.busy)throw Error('目前操作尚未完成，請稍候再載入');
-    if(inspected.legacy){pendingLegacyDraft=inspected.draft;$('draft-conversion-note').textContent=`這是草稿 v${inspected.draft.schema_version}：${inspected.draft.panels.storyboard.shots.length} 鏡。轉換成 v3 後保留原有鏡頭，創作語言沿用繁體中文，避免事項與交付項目沿用舊工作台預設；目前表單尚未替換。`;$('draft-conversion').hidden=false;say('舊版草稿已檢查，選擇轉換後才會載入');return;}
-    loadDraft(inspected.draft);say('專案草稿已載入；請重新建立成果，校時與交付音檔需另選。');
+    const draft=inspected.legacy?MusicEditor.convertLegacyDraft(inspected.draft):inspected.draft;
+    const ready={draft,legacy:inspected.legacy};if(!draftPreview.accept(selected,ready))return;
+    $('draft-conversion-note').textContent=`「${file.name}」：歌曲「${draft.panels.music.fields['music-title']||'未命名'}」／分鏡「${draft.panels.storyboard.fields['mv-title']||'未命名'}」，${draft.panels.music.sections.length}段／${draft.panels.storyboard.shots.length}鏡／${draft.panels.lyrics.cues.length}句。${inspected.legacy?'舊版v'+inspected.draft.schema_version+'將明確轉換成v3，新增欄位沿用舊工作台預設。':''}載入會替換四個工作台、清除刪除紀錄與音檔選擇；目前內容尚未替換，可取消或載入後撤回。`;
+    $('draft-review-content').value=JSON.stringify(draft,null,2);
+    $('draft-convert').textContent=inspected.legacy?'轉換並載入舊版草稿':'載入這份草稿';
+    $('draft-cancel').textContent='取消草稿預覽';$('draft-conversion').hidden=false;
+    say('草稿已檢查，先確認預覽，再選擇載入；目前內容與音檔保留。');
   }catch(error){if(draftTask.isCurrent(token))say(error.message,true);}
-  finally{if(draftTask.isCurrent(token))event.target.value='';}
 };
-$('draft-convert').onclick=()=>{if(state.busy){say('目前操作尚未完成，請稍候');return;}if(!pendingLegacyDraft)return;try{loadDraft(MusicEditor.convertLegacyDraft(pendingLegacyDraft));say('草稿已明確轉換為 v3 並載入；原檔保留，可撤回本次載入');}catch(error){say(error.message,true);}};
-$('draft-cancel').onclick=()=>{clearConversion();say('已取消轉換，目前表單保留');};
+$('draft-convert').onclick=()=>{
+  if(state.busy){say('目前操作尚未完成，請稍候');return;}
+  try{const proposal=draftPreview.proposal();if(!proposal)return;loadDraft(proposal.draft);
+    say(proposal.legacy?'草稿已明確轉換為v3並載入；原檔保留，可撤回本次載入':'專案草稿已載入；可撤回，請重新建立成果，校時與交付音檔需另選。');
+  }catch(error){say(error.message,true);}
+};
+$('draft-cancel').onclick=()=>{draftTask.begin();clearConversion();say('已取消草稿預覽，目前表單與音檔保留');};
 $('draft-undo').onclick=()=>{
   if(state.busy){say('目前操作尚未完成，請稍候');return;}
   try{
@@ -438,7 +454,7 @@ $('draft-undo').onclick=()=>{
   }catch(error){say(error.message,true);}
 };
 let pendingBrief=null;
-function clearBriefReview(){pendingBrief=null;$('brief-review').hidden=true;$('brief-preview').value='';$('brief-review-notes').replaceChildren();}
+function clearBriefReview(){briefPreview.cancel();pendingBrief=null;$('brief-review').hidden=true;$('brief-preview').value='';$('brief-review-notes').replaceChildren();}
 function applyPlanningPanel(draft,operation){
   if(seedController)seedController.cancel();
   const checked=MusicEditor.validateDraft(draft),panel=checked.panels[operation];
@@ -448,9 +464,11 @@ function applyPlanningPanel(draft,operation){
   if(operation==='music'){renderSections(panel.sections);renderRequirements('music-avoid',panel.avoid,'避免事項');
     renderRequirements('music-deliverables',panel.deliverables,'交付項目');$('music-visual').hidden=true;}
   else{renderMotifs(panel.motifs);renderShots(panel.shots);$('mv-visual').hidden=true;}
-  markDirty(operation);document.querySelector(`[data-tab="${operation}"]`).click();
+  markDirty(operation);const tabButton=document.querySelector(`[data-tab="${operation}"]`);
+  tabButton.click();tabButton.focus({preventScroll:true});
 }
 const briefImporter=MusicPlanning.createBriefImport({
+  preview:briefPreview,
   validate:async(operation,brief)=>{
     MusicPlanning.planningDraft(captureDraft(),operation,brief);
     const result=await api('/api/'+operation,brief);
@@ -469,6 +487,7 @@ $('brief-file').onchange=async event=>{
   event.target.value='';
   clearBriefReview();clearConversion();draftTask.begin();clearLibraryReview();
   if(state.busy){briefImporter.cancel();say('目前操作尚未完成，請稍候再載入',true);return;}
+  say('正在檢查需求，完成後會先預覽；目前表單與音檔保留。');
   await briefImporter.read(file,operation);
 };
 $('brief-operation').onchange=()=>{briefImporter.cancel();clearBriefReview();say('已切換需求類型，請重新選擇檔案');};
@@ -476,8 +495,8 @@ $('brief-cancel').onclick=()=>{briefImporter.cancel();clearBriefReview();say('�
 $('brief-apply').onclick=()=>{
   if(state.busy){say('目前操作尚未完成，請稍候');return;}if(!pendingBrief)return;
   try{
-    const previous=captureDraft(),proposal=MusicPlanning.planningDraft(previous,pendingBrief.operation,pendingBrief.brief);
-    const operation=pendingBrief.operation;
+    const selected=briefPreview.proposal();if(!selected)return;
+    const previous=captureDraft(),operation=selected.operation,proposal=MusicPlanning.planningDraft(previous,operation,selected.result.brief);
     applyPlanningPanel(proposal,operation);draftUndo.record(previous,captureDraft(),operation);
     $('draft-undo').disabled=false;draftTask.begin();briefImporter.cancel();clearBriefReview();clearConversion();
     say('需求已載入，可撤回；其他工作台與音檔保留，請重新建立本工作台成果');
@@ -539,6 +558,7 @@ function librarySelection(){
   libraryControls();
 }
 const libraryController=MusicLibrary.createLibraryController({
+  preview:libraryPreview,
   request:async(action,payload)=>(await api('/api/drafts/'+action,payload)).data,
   capture:captureDraft,validate:MusicEditor.validateDraft,newId:()=> 'draft-'+crypto.randomUUID().replaceAll('-',''),
   onPending:({pending,saving})=>{libraryPending=pending;librarySaving=saving;libraryControls();},
@@ -584,8 +604,9 @@ $('library-preview').onclick=async()=>{
 };
 $('library-apply').onclick=()=>{
   if(!libraryAllowed()||!pendingLibraryReview)return;
-  const proposal=pendingLibraryReview;loadDraft(proposal.draft);
-  librarySay(`已載入「${proposal.entry.label}」；可撤回本次載入，請重選音檔並重新建立成果。`);
+  try{const proposal=libraryPreview.proposal();if(!proposal)return;loadDraft(proposal.draft);
+    librarySay(`已載入「${proposal.entry.label}」；可撤回本次載入，請重選音檔並重新建立成果。`);
+  }catch(error){librarySay(error.message,true);}
 };
 $('library-cancel').onclick=()=>{clearLibraryReview();librarySay('已取消版本預覽，目前工作台保留。');};
 $('library-export').onsubmit=event=>{if(!pendingLibraryReview){event.preventDefault();return;}librarySay('已送出保存版本的 JSON 下載；原版本保留。');};

@@ -30,3 +30,5 @@
 
 - 起稿檔回讀共用timing_slots／validate_seed／seed_files，seed1未知欄位或矛盾時間拒絕；storyboard_seed的music／seed互斥，匯入不能覆蓋FPS／bars設定。保留原檔，無靜默修正／丟棄創作欄位。
 - file preview只核對target storyboard與檔案語義，music／settings編修保留；run可指定revision scope。checked file成果inputIndependent保留於頁面切換，生成成果dirty規則保持；上述暫態旗標不進草稿。
+
+- replacement-preview純層共用需求／草稿／保存版本的讀取前與套用前snapshot，scope只核對目標，完整替換核對所有panels及原生File身份；未知／晚回應不覆蓋編修。原生媒體參照與preview payload不進持久草稿／Git／Agent。現代草稿也須明確預覽再載入，legacy維持明確轉換。

@@ -2,7 +2,7 @@
 
 由 **ZOE. G** 發起的四個原創專案。GitHub 帳號為 **djguan-jpg**；品牌署名與帳號可以不同。
 
-目前版本 v0.15 提供四個工作台、原創 Skill、本機草稿庫及可預覽的 ZIP 備份／恢復、整批歌詞校時及來源一致的音檔檢查報告。Python 3.10 以上即可使用，沒有第三方依賴。只讀本次新建工作區，不參考使用者的其他本機或 GitHub 專案。公開第三方 README 僅用於需求比較，來源及自行設計的差異記在 [構思紀錄](CONCEPT.md)。
+目前版本 v0.16 提供四個工作台、原創 Skill、本機草稿庫及可預覽的 ZIP 備份／恢復、整批歌詞校時及來源一致的音檔檢查報告。Python 3.10 以上即可使用，沒有第三方依賴。只讀本次新建工作區，不參考使用者的其他本機或 GitHub 專案。公開第三方 README 僅用於需求比較，來源及自行設計的差異記在 [構思紀錄](CONCEPT.md)。
 
 授權為 **PolyForm Noncommercial 1.0.0**，商業使用沒有由本版授權。可查看、修改及分發的範圍以 [LICENSE](LICENSE) 為準，保留 [NOTICE](NOTICE)。這是非商用原始碼授權；不標成 AGPL。使用者匯入的素材授權各自保留，詳見 [授權說明](LICENSING.md)。
 
@@ -12,6 +12,14 @@
 | ZOE MV Storyboard | 多母題與逐鏡選擇、人物／方向變化理由、分鏡時間、CSV 與鏡頭提示 | [技能](projects/zoe-mv-storyboard/SKILL.md) |
 | ZOE Lyrics Sync | LRC／SRT／JSON、波形定位、播放校時、時間與文字編修、匯出 | [工具](projects/zoe-lyrics-sync/README.md) |
 | ZOE Audio Delivery | PCM WAV 標頭檢查、接受條件、峰值／RMS／DC、頭尾安靜段及同一分析副本 SHA-256 | [工具](projects/zoe-audio-delivery/README.md) |
+
+## 草稿與需求先預覽（v0.16）
+
+「載入專案草稿」選擇本機 JSON 後，先顯示檔名、歌名／片名、段落／鏡頭／句數與完整內容，確認後按「載入這份草稿」。取消不改工作台或音檔；載入會替換四個工作台並清除音檔選擇，可撤回最近一次載入。舊版 v1／v2 顯示轉換說明，仍需明確按「轉換並載入舊版草稿」。最多1 MiB、支援UTF-8 BOM；原檔保留。
+
+需求檔、草稿檔及保存版本共用替換預覽保護。讀取期間或預覽後修改目標，就拒絕晚回應與套用，保留目前編修；請重新選檔／預覽。歌曲或分鏡需求只核對該工作台，其他工作台／音檔可繼續編修；完整草稿與保存版本核對四個工作台及音檔選擇，重新選同名音檔也算更換來源。切換頁面與時間戳不使預覽失效。
+
+這些檢查不替你合併兩份構思；可先下載草稿保留編修再重新預覽。預覽暫態與音檔參照不進草稿、Git或Agent資料。實際Agent保存→瀏覽器預覽／載入／撤回、延遲及錯誤驗收見[QA v0.16](docs/QA-v0.16.0.md)。
 
 ## 讀回 Agent／CLI 起稿（v0.15）
 
@@ -134,14 +142,14 @@ python music_lab.py draft restore --library outputs/restored-drafts --input '構
 
 ## Agent 使用
 
-預設四種操作可用 JSON-lines v1 或 MCP stdio adapter。明確選定 `--draft-library` 後共九種工具；備份檢查／恢復另需啟動時選定 `--draft-backup '構思備份.zip'`，JSON 不能更換路徑。ZIP 匯出使用 CLI 或工作台。MCP 明確支援 `2025-11-25`；只接受該版初始化，不自動轉換未知版本。使用 `python scripts/agent_launch.py` 產生本版 Python／入口的完整路徑設定；加 `--format codex` 可產生 Codex TOML 片段。指令只顯示設定，不安裝或啟動 Agent，移動解壓目錄後需重新產生。已驗證設定從不同目錄啟動 MCP 及實際工具輸出；Codex CLI 只做設定解析，尚未驗證 host 連線／實際 Agent 工具呼叫。操作、錯誤及音檔選擇見 [Agent 文件](docs/AGENT.md)。
+預設五種操作（歌曲、分鏡、歌詞、音檔、分鏡起稿）可用 JSON-lines v1 或 MCP stdio adapter。明確選定 `--draft-library` 後共十種工具；備份檢查／恢復另需啟動時選定 `--draft-backup '構思備份.zip'`，JSON 不能更換路徑。ZIP 匯出使用 CLI 或工作台。MCP 明確支援 `2025-11-25`；只接受該版初始化，不自動轉換未知版本。使用 `python scripts/agent_launch.py` 產生本版 Python／入口的完整路徑設定；加 `--format codex` 可產生 Codex TOML 片段。指令只顯示設定，不安裝或啟動 Agent，移動解壓目錄後需重新產生。已驗證設定從不同目錄啟動 MCP 及實際工具輸出；Codex CLI 只做設定解析，尚未驗證 host 連線／實際 Agent 工具呼叫。操作、錯誤及音檔選擇見 [Agent 文件](docs/AGENT.md)。
 
 ## 專案紀錄
 
 - [創辦與協作紀錄](FOUNDER-RECORD.md)：ZOE. G 發起方向；Codex 協助規格、文字、程式與驗證。
 - [專案清單](projects.json)：四個獨立 ID、版本與功能範圍。
 - [本輪進度](PROGRESS.md)：實跑驗證與後續工作。
-- [本版說明](RELEASE-v0.15.0.md)：功能、版本契約、驗證與限制。
+- [本版說明](RELEASE-v0.16.0.md)：功能、版本契約、驗證與限制。
 - [四個專案的投稿資料](SUBMISSION-PACKET.md)：來源連結、用途、使用方式與作者關係。
 - [分層與分支架構](docs/ARCHITECTURE.md)、[Agent 與 MCP 接口](docs/AGENT.md)、[迭代說明](CHANGELOG.md)、[本輪交接](HANDOFF.md)。
 
@@ -161,7 +169,7 @@ git diff --check
 開發／封裝驗證需要 Node.js；一般使用工作台與 CLI 只需要 Python。從指定 Git 版本建立可驗證的原始碼 ZIP：
 
 ```powershell
-python scripts/package_release.py --ref v0.15.0
+python scripts/package_release.py --ref v0.16.0
 ```
 
 封裝保存 commit、SHA-256、每檔摘要及檢查結果；解壓後重跑 Python／JavaScript 測試、Agent 能力查詢與 MCP 握手。輸出留在忽略的 outputs/releases，重複封裝同一提交會拒絕覆寫。

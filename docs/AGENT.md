@@ -1,5 +1,12 @@
 # 本機 Agent 接口 v1
 
+## v0.16 工作台接續保護
+
+Agent輸出的brief.json／mv-brief.json與草稿庫保存版本會先預覽，proposal再次核對。需求只核對目標工作台；完整草稿與保存版本另核對四工作台及原生音檔身份。讀取／預覽後編修拒絕替換，重新預覽後才可載入；沒有靜默合併。草稿JSON也改成先預覽再明確載入，BOM可讀，legacy仍明確轉換，原檔保留。
+
+純replacement-preview與transport／DOM分開，不改Agent1、MCP2025-11-25、draft3、library1、backup1、seed1及五／十工具；沒有Host安裝／模型呼叫。實際JSON-lines v1 draft_save→本輪合成草稿庫→HTTP瀏覽器預覽／guard／明確載入／撤回已驗證，特定Host連線仍未驗證。
+
+
 `music_lab_agent.py` 是 JSON-lines 的本機 adapter。v0.4 另提供 `music_lab_mcp.py`；兩個格式與入口各自獨立。沒有模型、網路、憑證或工具安裝要求。可讓不同 Agent 以子程序呼叫同一套領域操作；目前已驗證本機子程序，不宣稱任何特定 Agent 平台已整合。
 
 查看能力：
