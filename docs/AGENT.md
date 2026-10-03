@@ -1,5 +1,9 @@
 # 本機 Agent 接口 v1
 
+## v0.27 分鏡宣告保持
+
+工作台新增／刪除鏡頭保留宣告；核對後明確接續鏡尾／限定撤回。Agent／CLI payload仍需由呼叫者明確提供總長，不由application自動覆蓋。現代需求回讀先核對預覽，再明確載入；清除工作台暫態總長紀錄，其他panel與音檔保留。產品0.27，七／十二tools與各protocol／schema不變。見[契約](STORYBOARD-DURATION.md)。
+
 ## v0.26 設計需求接續
 
 四 adapter 的 planning domain 保持。Agent／CLI 回傳 brief.json、mv-brief.json 由工作台核對本次檔案與主要 JSON 後才預覽，還需明確載入。產品0.26、七／啟庫十二工具，各協定與 schema 不變，沒有新增安裝或模型。CLI 返回正常來源包，瀏覽器 sourceChecked 是暫態，沒有要求 Agent 傳入此旗標。詳見 PLANNING-SOURCE.md。

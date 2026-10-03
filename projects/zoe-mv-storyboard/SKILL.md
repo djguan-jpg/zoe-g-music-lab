@@ -61,3 +61,7 @@ storyboard.json 的 frame_timeline 為獨立 schema1，CSV／提示稿及工作�
 ## v0.26 跨工具需求核對
 
 保存原始需求。CLI／Agent 的 brief.json 或 mv-brief.json 接回工作台後，先核對本次需求與主要 JSON 成果、再預覽與明確載入；同名不代表相同設計。編修後須重建，核對資料仍需實唱／實聽或審查實際畫面。詳見 ../../docs/PLANNING-SOURCE.md。
+
+## v0.27 總長與鏡尾
+
+新增／刪除鏡頭保留作品宣告；核對全部秒數及影格覆蓋後，明確採用最後鏡尾，或手動更改總長。接續／撤回只改總長，後續創作與音檔保持；時間／列ID／FPS或實際after不同拒絕撤回。Agent／CLI仍明確提供總長，未完成創作不能冒充完整分鏡；暫態不進draft3／wire。見docs/STORYBOARD-DURATION.md。
