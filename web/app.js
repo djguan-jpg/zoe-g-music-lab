@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 'use strict';
 const $ = id => document.getElementById(id);
-const state = {tab:'music', examples:null, files:{}, bundles:{}, revisions:{}, music:[], shots:[], cues:[], audioUrl:null, audioContext:null, waveform:null, busy:false, undoDraft:null, undoScope:null};
+const state = {tab:'music', examples:null, files:{}, bundles:{}, revisions:{}, music:[], shots:[], cues:[], audioUrl:null, audioContext:null, waveform:null, busy:false};
+const draftUndo=MusicDraftUndo.createUndo();
+let seedController=null;
 let timingController=null,timingReading=false,timingReady=false,timingCanUndo=false;
 const deletionHistory=MusicHistory.createHistory(20);
 let rowSequence=0;
@@ -370,7 +372,7 @@ $('audio-build').onclick=()=>run($('audio-build'),isCurrent=>MusicAudio.inspect(
 const draftTask=MusicEditor.createLatestTask();
 let pendingLegacyDraft=null;
 function clearConversion(){pendingLegacyDraft=null;$('draft-conversion').hidden=true;}
-function loadDraft(draft){const previous=captureDraft();applyDraft(draft);state.undoDraft=previous;state.undoScope=null;$('draft-undo').disabled=false;clearConversion();}
+function loadDraft(draft){const previous=captureDraft();applyDraft(draft);draftUndo.record(previous,captureDraft());$('draft-undo').disabled=false;clearConversion();}
 function captureDraft(){
   const panels={};
   Object.entries(MusicEditor.draftFields).forEach(([panel,ids])=>{
@@ -384,9 +386,10 @@ function captureDraft(){
   panels.lyrics.cues=[...$('cues').children].map(row=>Object.fromEntries(
     MusicEditor.draftRows.lyrics.columns.map((key,i)=>[key,row.querySelectorAll('input')[i].value])));
   panels.music.avoid=requirementValues('music-avoid');panels.music.deliverables=requirementValues('music-deliverables');
-  return {format:'zoe-music-lab-draft',schema_version:3,tool_version:'0.13.0',saved_at:new Date().toISOString(),tab:state.tab,panels};
+  return {format:'zoe-music-lab-draft',schema_version:3,tool_version:'0.14.0',saved_at:new Date().toISOString(),tab:state.tab,panels};
 }
 function applyDraft(draft){
+  if(seedController)seedController.cancel();
   clearLibraryReview();
   ['music','storyboard','lyrics'].forEach(clearDeletionHistory);
   briefImporter.cancel();clearBriefReview();
@@ -426,16 +429,18 @@ $('draft-convert').onclick=()=>{if(state.busy){say('目前操作尚未完成，�
 $('draft-cancel').onclick=()=>{clearConversion();say('已取消轉換，目前表單保留');};
 $('draft-undo').onclick=()=>{
   if(state.busy){say('目前操作尚未完成，請稍候');return;}
-  if(!state.undoDraft)return;
-  draftTask.begin();clearConversion();briefImporter.cancel();clearBriefReview();
-  const scope=state.undoScope;
-  if(scope)applyPlanningPanel(state.undoDraft,scope);else applyDraft(state.undoDraft);
-  state.undoDraft=null;state.undoScope=null;$('draft-undo').disabled=true;
-  say(scope?'已撤回需求載入；其他工作台與音檔保留，請重新建立本工作台成果':'已撤回草稿載入並還原表單；請重新建立成果，音檔需另選。');
+  try{
+    const proposal=draftUndo.proposal(captureDraft());if(!proposal)return;
+    draftTask.begin();clearConversion();briefImporter.cancel();clearBriefReview();
+    if(proposal.scope)applyPlanningPanel(proposal.draft,proposal.scope);else applyDraft(proposal.draft);
+    draftUndo.clear();$('draft-undo').disabled=true;
+    say(proposal.scope?'已撤回本次載入；其他工作台與音檔保留，請重新建立成果':'已撤回草稿載入；請重新建立成果，音檔需另選。');
+  }catch(error){say(error.message,true);}
 };
 let pendingBrief=null;
 function clearBriefReview(){pendingBrief=null;$('brief-review').hidden=true;$('brief-preview').value='';$('brief-review-notes').replaceChildren();}
 function applyPlanningPanel(draft,operation){
+  if(seedController)seedController.cancel();
   const checked=MusicEditor.validateDraft(draft),panel=checked.panels[operation];
   if(!['music','storyboard'].includes(operation))throw Error('只支援歌曲或分鏡需求');
   clearDeletionHistory(operation);
@@ -473,9 +478,37 @@ $('brief-apply').onclick=()=>{
   try{
     const previous=captureDraft(),proposal=MusicPlanning.planningDraft(previous,pendingBrief.operation,pendingBrief.brief);
     const operation=pendingBrief.operation;
-    applyPlanningPanel(proposal,operation);state.undoDraft=previous;state.undoScope=operation;
+    applyPlanningPanel(proposal,operation);draftUndo.record(previous,captureDraft(),operation);
     $('draft-undo').disabled=false;draftTask.begin();briefImporter.cancel();clearBriefReview();clearConversion();
     say('需求已載入，可撤回；其他工作台與音檔保留，請重新建立本工作台成果');
+  }catch(error){say(error.message,true);}
+};
+seedController=MusicSeed.createPreview({
+  capture:()=>({draft:captureDraft(),fps:$('seed-fps').value,bars_per_shot:$('seed-bars').value}),
+  request:payload=>api('/api/storyboard-seed',payload),
+  onClear:()=>{$('seed-review').hidden=true;$('seed-content').value='';},
+  onReady:(seed,files)=>{
+    $('seed-review-note').textContent=`「${seed.title}」約 ${seed.duration_seconds} 秒，${seed.slots.length} 鏡。套用會替換分鏡片名、時長、FPS 及全部鏡頭，保留現有視覺基調、人物設定、母題清單與其他工作台。新鏡頭尚未選母題，畫面與狀態留白。`;
+    $('seed-content').value=seed.slots.map(slot=>`${slot.shot}. ${slot.section} · ${slot.start}–${slot.end} 秒 · 小節 ${slot.bar_start}–${slot.bar_end}\n任務：${slot.purpose}`).join('\n\n');
+    $('seed-review').hidden=false;setFiles(files,'分鏡時間起稿 · 尚未完成畫面');say('時間起稿已預覽；分鏡尚未替換，請確認後套用');
+  }
+});
+$('seed-preview').onclick=()=>run($('seed-preview'),async current=>{
+  const accepted=await seedController.inspect(current);
+  if(!accepted&&current())say('來源或起稿設定已修改，請重新預覽；目前分鏡保留');
+});
+['seed-fps','seed-bars'].forEach(id=>$(id).oninput=()=>{
+  if(state.bundles.music?.files['storyboard-seed.json'])markDirty('music');
+});
+$('seed-cancel').onclick=()=>{seedController.cancel();say('已取消起稿預覽，目前分鏡保留');};
+$('seed-apply').onclick=()=>{
+  if(state.busy){say('目前操作尚未完成，請稍候');return;}
+  try{
+    const proposal=seedController.proposal();if(!proposal)return;
+    const previous=captureDraft();applyPlanningPanel(proposal,'storyboard');
+    draftUndo.record(previous,captureDraft(),'storyboard');$('draft-undo').disabled=false;
+    $('shots-collapse').click();$('mv-heading').scrollIntoView({block:'start'});$('shot-jump').focus();
+    say('時間起稿已套用，可撤回；請編寫畫面、運鏡、轉場、母題與人物狀態，再檢查分鏡包');
   }catch(error){say(error.message,true);}
 };
 let libraryEnabled=false,libraryListJobs=0,libraryReadingId=null,libraryPending=false,librarySaving=false;

@@ -22,7 +22,7 @@ Get-Content -Raw -Encoding utf8 request.json | python music_lab_agent.py > respo
 
 成功時回傳 `ok: true`、相同 id，及 result.files／data／meta。files 是創作成果檔名與內容，由呼叫者決定保存。預設 Agent 不寫檔；啟動時明確啟用草稿庫後，draft_save 與 v0.10 的 draft_backup_restore 在所選庫建立不可覆寫版本。失敗回傳 `ok: false` 與 error.code／message，stdout 不混入狀態文字或 traceback。錯誤 request 不會阻止下一行正常 request。
 
-四種 operation：music、storyboard、lyrics、audio。前兩者 payload 對應 examples 的需求 JSON；歌詞採 content／suffix 或 cues，另可含 title／duration。音訊來源必須透過啟動參數明確選定：
+五種 operation：music、storyboard、lyrics、audio、storyboard_seed。前兩者 payload 對應 examples 的需求 JSON；歌詞採 content／suffix 或 cues，另可含 title／duration。音訊來源必須透過啟動參數明確選定：
 
 ```powershell
 Get-Content -Raw -Encoding utf8 audio-request.json | python music_lab_agent.py --audio '指定作品.wav' > response.jsonl
@@ -40,7 +40,7 @@ Get-Content -Raw -Encoding utf8 audio-request.json | python music_lab_agent.py -
 
 以使用的 MCP host 設定 command=`python`，args 第一項為此版 `music_lab_mcp.py` 的完整路徑。需分析音訊時在 args 明確加入 `--audio` 與所選 WAV 的路徑；JSON payload 不可選其他音檔。伺服器不開網路埠，EOF 退出；不自動安裝全域設定或取得其他工具權限。
 
-連線順序：initialize → notifications/initialized → tools/list 或 tools/call。工具名稱：music_plan、storyboard_plan、lyrics_validate、audio_report。每個工具的 arguments 都有一個 payload 物件；歌曲／分鏡使用 examples 的需求格式，其餘與上方 JSON-lines 的 payload 相同。tools/list 提供參數描述與 schema。
+連線順序：initialize → notifications/initialized → tools/list 或 tools/call。工具名稱：music_plan、storyboard_plan、lyrics_validate、audio_report、storyboard_seed。每個工具的 arguments 都有一個 payload 物件；歌曲／分鏡使用 examples 的需求格式，其餘與上方 JSON-lines 的 payload 相同。tools/list 提供參數描述與 schema。
 
 最小請求範例，每個 JSON 各一行：
 
@@ -184,3 +184,11 @@ PCM fmt 不一致或截斷會明確失敗；來源保留，錯誤後可再呼叫
 music／storyboard及MCP的music_plan／storyboard_plan仍共用同一application結果。工作台新增純planning-review呈現modern設計資料；只接收當前編修版本對應的結果，過期不取代，修改後既有摘要標為上一份設計。由Agent／CLI接續需求的預覽／載入流程保持；設計結果本身不被當成草稿或生成媒體。
 
 本版真正CLI四／五檔UTF-8 bytes、HTTP、JSON-lines壞後好、MCP握手／discovery／call與application已核對，純模型也測真正application結果。產品0.13.0；Agent1／MCP2025-11-25、四／九工具與草稿／保存／備份schema不變；特定host未整合，沒有模型呼叫或權限新增。
+
+## v0.14 分鏡時間起稿
+
+新增 JSON-lines operation／MCP tool `storyboard_seed`，HTTP `/api/storyboard-seed`；payload 為 `{ "music": 現代歌曲brief, "fps": 24, "bars_per_shot": 4 }`。只接受 music／fps／bars_per_shot，music 必須含 arrangement／bpm／memory_hook 與歌曲基本欄位。fps1–120；bars_per_shot為1–128整數（預設4）。重新讀取 discovery，不硬編碼工具數；目前預設五／啟庫十工具。readOnlyHint=true，Agent 不自行寫檔／生成媒體，CLI依明確out寫檔且預設拒絕覆寫。
+
+回應 files 含 storyboard-seed.json／md，data為 format=zoe-storyboard-seed、schema_version1、status=timing_seed_incomplete。source記錄固定BPM／拍數／段落，小節1-based閉區間；時間end及end_frame_exclusive為排他端點。slots只有時間、影格、小節、段落與來源敘事任務，沒有畫面／人物的虛構內容；needs_review永遠true。上限1000鏡、不足一影格拒絕，時間須按實際歌曲校準。
+
+此中間JSON不能當mv-brief載入。瀏覽器先讀歌曲brief，再預覽／套用自己的起稿；或由協作Agent根據slots補寫創作欄位、另交完整mv-brief並經storyboard驗證。不能把未完成seed當完成分鏡。純模型版本拒絕與late回應保護見ARCHITECTURE，CLI／HTTP／JSON-lines／真正五工具MCP及瀏覽器草稿往返見QA-v0.14.0。沒有特定host安裝／模型工具呼叫驗收。

@@ -34,6 +34,10 @@ python music_lab.py storyboard --brief examples/first-light-mv.json --out output
 
 需求含 motifs 時，各鏡填入母題狀態、人物狀態、左右方向與變化理由。工具輸出鏡頭 CSV／JSON、提示、`continuity.md` 及可重新讀入的 `mv-brief.json`。沒有理由的人物狀態或直接左右反轉、未使用母題、母題只有一種狀態，列待審查。這是資料檢查，不是審查實際影片的替代品。
 
-時間需從 0 開始連續覆蓋需求範圍。未填 motifs 的 v0.1 格式仍可用。本機 UI「母題分鏡」可編修主要母題及鏡頭；更複雜的多母題使用 CLI。工具沒有生成或渲染影片。
+時間需從 0 開始連續覆蓋需求範圍。未填 motifs 的 v0.1 格式仍可用。本機 UI「母題分鏡」可編修主要母題及鏡頭；可編修多母題，也可使用 CLI。工具沒有生成或渲染影片。
 
 共同開發可補充節奏處理、鏡頭語法與不同工具的實測範例；案例應說明輸入、改動及觀察結果。
+
+### 歌曲小節接續（v0.14）
+
+`python music_lab.py storyboard-seed --brief examples/first-light-music.json --fps 24 --bars-per-shot 4 --out outputs/mv-seed` 產生時間／來源任務起稿，沒有畫面或人物創作，須按實際音檔校準。瀏覽器歌曲工作台先預覽／明確套用到分鏡，再補寫空白創作欄位；未完成起稿不能當完成分鏡包。來源／目標／設定修改後重新預覽，載入後已有編修則拒絕整份撤回，先下載草稿保留。

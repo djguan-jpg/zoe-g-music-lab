@@ -36,6 +36,13 @@ def array_schema(items, minimum=0, maximum=None):
 
 
 def payload_schema(operation):
+    if operation == 'storyboard_seed':
+        music = payload_schema('music')
+        music['required'] += ['arrangement', 'bpm', 'memory_hook']
+        return object_schema({'music': music,
+                              'fps': numeric('Seed frame rate; default 24', 1, 120),
+                              'bars_per_shot': numeric('Maximum whole bars per shot; default 4', 1, 128, integer=True)},
+                             ('music',), additionalProperties=False)
     if operation == "draft_backup_inspect":
         return object_schema({}, (), additionalProperties=False)
     if operation == "draft_backup_restore":

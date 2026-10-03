@@ -131,6 +131,21 @@ class WorkbenchHTTPTests(unittest.TestCase):
         status, headers, raw = self.request("POST", path, json.dumps(data).encode(), {"Content-Type": "application/json"})
         return status, json.loads(raw)
 
+    def test_seed_http_matches_shared_boundary_and_rejects_bad_options(self):
+        from musiclab.application import build
+        brief = json.loads((ROOT / 'examples/first-light-music.json').read_text(encoding='utf-8'))
+        payload = {'music': brief, 'fps': 29.97, 'bars_per_shot': 5}
+        status, result = self.post_json('/api/storyboard-seed', payload)
+        self.assertEqual(status, 200)
+        self.assertEqual(result, build('storyboard_seed', payload).wire())
+        status, result = self.post_json('/api/storyboard-seed', {'music': brief, 'bars_per_shot': 0})
+        self.assertEqual(status, 400)
+        self.assertIn('小節', result['error'])
+        for asset in ('/storyboard-seed.js', '/draft-undo.js'):
+            status, _, raw = self.request('GET', asset)
+            self.assertEqual(status, 200)
+            self.assertEqual(raw, (ROOT / 'web' / asset[1:]).read_bytes())
+
     def test_page_and_assets_are_allowlisted(self):
         status, headers, raw = self.request("GET", "/")
         self.assertEqual(status, 200)
@@ -156,7 +171,7 @@ class WorkbenchHTTPTests(unittest.TestCase):
         data = json.loads(raw)
         self.assertEqual(data["license"], "PolyForm-Noncommercial-1.0.0")
         self.assertEqual(data["protocol_version"], 1)
-        self.assertEqual(len(data["operations"]), 4)
+        self.assertEqual(len(data["operations"]), 5)
 
     def test_external_host_and_origin_are_rejected(self):
         self.assertEqual(self.request("GET", "/", headers={"Host": "example.com"})[0], 403)
