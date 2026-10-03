@@ -71,6 +71,24 @@ class CreativeTests(unittest.TestCase):
 
 
 class LyricsTests(unittest.TestCase):
+    def test_explicit_ends_are_distinguished_from_unconfirmed_song_duration(self):
+        cues = parse_srt('1\n00:00:00,000 --> 00:00:05,000\n原創')
+        data = json.loads(lyrics_bundle(cues)['lyrics.json'])
+        self.assertTrue(data['duration_estimated'])
+        self.assertEqual(data['timing'], {'duration_source':'last_cue_end',
+                                        'inferred_end_count':0, 'tail_end_inferred':False})
+        self.assertEqual(cues[0]['end'], 5)
+
+    def test_missing_ends_report_their_actual_boundary_source(self):
+        cues = [{'start':0,'text':'原創'},{'start':2,'text':'結尾'}]
+        inferred = json.loads(lyrics_bundle(cues)['lyrics.json'])
+        provided = json.loads(lyrics_bundle(cues, duration=10)['lyrics.json'])
+        self.assertEqual(inferred['timing']['duration_source'], 'last_start_plus_three')
+        self.assertEqual(provided['timing']['duration_source'], 'provided')
+        self.assertEqual(provided['timing']['inferred_end_count'], 2)
+        self.assertTrue(provided['timing']['tail_end_inferred'])
+        self.assertNotIn('end', cues[0])
+
     def test_lrc_multitag_offset_and_precision(self):
         cues = parse_lrc("[offset:125]\n[00:01.25][00:02.125]回家\n[01:02.5]下一句")
         self.assertAlmostEqual(cues[0]["start"], 1.375)

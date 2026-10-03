@@ -66,7 +66,12 @@ def package(ref):
                 checkout = Path(folder) / "zoe-g-music-lab"
                 command([sys.executable, "-X", "utf8", "-m", "unittest", "discover", "-s", "tests"], checkout)
                 command(["node", "--check", "web/app.js"], checkout)
-                command(["node", "--test", "tests/test_editor_state.js"], checkout)
+                javascript_tests = sorted(file.relative_to(checkout).as_posix() for file in (checkout / "tests").glob("test_*.js"))
+                if not javascript_tests:
+                    raise ValueError("No packaged JavaScript tests found")
+                command(["node", "--test", *javascript_tests], checkout)
+                if "web/planning-import.js" in hashes:
+                    command(["node", "--check", "web/planning-import.js"], checkout)
                 capabilities = json.loads(command([sys.executable, "music_lab_agent.py", "--describe"], checkout))
                 if capabilities["version"] != version or capabilities["license"] != manifest_source["license"]:
                     raise ValueError("Packaged capabilities differ from release metadata")

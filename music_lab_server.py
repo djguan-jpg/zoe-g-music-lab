@@ -16,6 +16,7 @@ MAX_TEXT = MAX_REQUEST_BYTES
 ASSETS = {"/": ("web/index.html", "text/html"), "/app.js": ("web/app.js", "text/javascript"),
           "/style.css": ("web/style.css", "text/css"),
           "/editor-state.js": ("web/editor-state.js", "text/javascript"),
+          "/planning-import.js": ("web/planning-import.js", "text/javascript"),
           "/license": ("LICENSE", "text/plain"), "/notice": ("NOTICE", "text/plain")}
 
 

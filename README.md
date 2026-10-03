@@ -2,7 +2,7 @@
 
 由 **ZOE. G** 發起的四個原創專案。GitHub 帳號為 **djguan-jpg**；品牌署名與帳號可以不同。
 
-目前版本 v0.5 提供四個工作台與原創 Skill。Python 3.10 以上即可使用，沒有第三方依賴。只讀本次新建工作區，不參考使用者的其他本機或 GitHub 專案。公開第三方 README 僅用於需求比較，來源及自行設計的差異記在 [構思紀錄](CONCEPT.md)。
+目前版本 v0.6 提供四個工作台與原創 Skill。Python 3.10 以上即可使用，沒有第三方依賴。只讀本次新建工作區，不參考使用者的其他本機或 GitHub 專案。公開第三方 README 僅用於需求比較，來源及自行設計的差異記在 [構思紀錄](CONCEPT.md)。
 
 授權為 **PolyForm Noncommercial 1.0.0**，商業使用沒有由本版授權。可查看、修改及分發的範圍以 [LICENSE](LICENSE) 為準，保留 [NOTICE](NOTICE)。這是非商用原始碼授權；不標成 AGPL。使用者匯入的素材授權各自保留，詳見 [授權說明](LICENSING.md)。
 
@@ -25,7 +25,11 @@ python music_lab_server.py
 
 初始「樓梯間的回聲」是本次原創合成案例，可以直接改寫。歌曲與分鏡成果為設計資料；選擇 AI 後再創作／生成媒體。歌詞音檔由瀏覽器本機播放；交付檢查只把選定 WAV 傳入同一台電腦的分析器（最多 64 MiB），臨時分析檔於完成後清除，原音檔保留。
 
-成果不會自動存到磁碟或跨重載保留。請下載需要的檔案；切換工作台只保留本輪已建立的成果。上方「下載專案草稿」保存三個創作工作台的表單／列資料及交付條件，可回讀與撤回最近一次載入；草稿不含音檔或成果。回讀後需重新選擇音檔並建立成果。草稿 v2 保存多母題與穩定對應，上限 1 MiB。載入舊版 v1 時先顯示轉換摘要，按「轉換並載入舊版草稿」後才取代表單；可撤回，原檔保留。未知 schema 不替換目前內容。
+成果不會自動存到磁碟或跨重載保留。請下載需要的檔案；切換工作台只保留本輪已建立的成果。上方「下載專案草稿」保存三個創作工作台的表單／列資料及交付條件，可回讀與撤回最近一次載入；草稿不含音檔或成果。整份草稿回讀後需重新選擇音檔並建立成果。草稿 v3 保存多母題、穩定對應、創作語言及歌曲需求清單，上限 1 MiB。載入舊版 v1／v2 時先顯示轉換摘要，按「轉換並載入舊版草稿」後才取代表單；新增需求沿用舊工作台預設，可撤回，原檔保留。未知 schema 不替換目前內容。
+
+歌曲可編修創作語言、避免事項及交付項目，每份清單最多 100 項；單項可有多行。未完成項目可保存草稿，但建立歌曲設計包時會要求補齊，至少一項交付不可空白。
+
+Agent／CLI 回傳的 `brief.json`（含 BPM／arrangement／記憶點）與 `mv-brief.json`（含 motifs）可由「接續一份歌曲或分鏡需求」回讀。選定類型後上傳本機 JSON，先看經共用應用層檢查的需求與待審查提醒，再按「載入這份需求」；只替換該工作台，其他工作台、後續編修與已選音檔保留。「撤回載入」也只還原這次替換的工作台。需求檔上限 1 MiB；未知欄位、超出工作台可表達的清單或畫幅會拒絕，避免靜默丟資料。分鏡工作台支援 16:9／9:16／1:1／4:3；其他有效需求仍可保留原檔由 CLI 使用。結果 JSON、整包 Agent envelope 與舊版單純需求不會被猜測成可編修的設計需求。
 
 分鏡可新增最多 30 個母題，每鏡自行選擇；改名保留對應，刪除仍使用中的母題會列出鏡頭並拒絕。時間尚未填完的鏡頭可以刪除；只有其他鏡頭時間有效時才重新接續時間。
 
@@ -34,6 +38,8 @@ python music_lab_server.py
 歌詞檔上限 2 MiB，只接受 LRC／SRT／JSON。連續選檔以最後一次選擇為準，成功讀入後同時更新原文與格式；錯誤檔保留既有內容與成果。手動修改原文／格式或載入草稿會取消尚未完成的讀檔。讀入原文後按「讀取歌詞」建立逐句表格。
 
 修改輸入後會停用舊成果下載，重新建立／驗證後才恢復。歌詞播放預覽即時使用目前表格內容；數值計算及資料檢查不能代替實唱、實聽與實際畫面審查。
+
+歌詞 JSON 的 `duration_estimated` 仍表示總時長未明確提供，與尾句結束是否推得分開。新增 `timing` 記錄 duration_source／inferred_end_count／tail_end_inferred；SRT 明確結束時間會保留，提示總時長尚未由音檔確認，避免把它誤說成尾句估計。
 
 命令列同樣可用：
 
@@ -61,7 +67,7 @@ python music_lab.py audio --input '自己的歌曲.wav' --profile distribution -
 - [創辦與協作紀錄](FOUNDER-RECORD.md)：ZOE. G 發起方向；Codex 協助規格、文字、程式與驗證。
 - [專案清單](projects.json)：四個獨立 ID、版本與功能範圍。
 - [本輪進度](PROGRESS.md)：實跑驗證與後續工作。
-- [本版說明](RELEASE-v0.5.0.md)：功能、版本契約、驗證與限制。
+- [本版說明](RELEASE-v0.6.0.md)：功能、版本契約、驗證與限制。
 - [四個專案的投稿資料](SUBMISSION-PACKET.md)：來源連結、用途、使用方式與作者關係。
 - [分層與分支架構](docs/ARCHITECTURE.md)、[Agent 與 MCP 接口](docs/AGENT.md)、[迭代說明](CHANGELOG.md)、[本輪交接](HANDOFF.md)。
 
@@ -74,14 +80,14 @@ GitHub 儲存庫為 [djguan-jpg/zoe-g-music-lab](https://github.com/djguan-jpg/z
 ```powershell
 python -m unittest discover -s tests -v
 node --check web/app.js
-node --test tests/test_editor_state.js
+node --test tests/test_editor_state.js tests/test_planning_import.js
 git diff --check
 ```
 
 開發／封裝驗證需要 Node.js；一般使用工作台與 CLI 只需要 Python。從指定 Git 版本建立可驗證的原始碼 ZIP：
 
 ```powershell
-python scripts/package_release.py --ref v0.5.0
+python scripts/package_release.py --ref v0.6.0
 ```
 
 封裝保存 commit、SHA-256、每檔摘要及檢查結果；解壓後重跑 Python／JavaScript 測試、Agent 能力查詢與 MCP 握手。輸出留在忽略的 outputs/releases，重複封裝同一提交會拒絕覆寫。
