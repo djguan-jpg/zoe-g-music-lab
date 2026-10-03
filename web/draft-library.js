@@ -16,7 +16,7 @@
         const result=await request('save',clone(job.payload));
         if(pending!==job)return false;
         pending=null;
-        onSaved({entry:result.entry,reused:result.reused,changed:fingerprint(capture())!==job.fingerprint});
+        onSaved({entry:result.entry,reused:result.reused,draft:clone(job.payload.draft),changed:fingerprint(capture())!==job.fingerprint});
         return true;
       }catch(error){
         if(pending===job){
