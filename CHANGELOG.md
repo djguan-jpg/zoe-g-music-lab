@@ -1,5 +1,13 @@
 # 迭代說明
 
+## v0.27.0 — 2026-10-04
+
+- 真IAB重現60秒宣告新增鏡頭後被改30秒；新增／刪除鏡頭保留宣告，原有有效時間收合與刪除還原保持。
+- 新storyboard-duration純proposal／compare／注入controller與DOM分層，重用影格層；完整時間與影格覆蓋才提供候選，明確接續／只撤回總長，不捨入原秒數、不更改創作或音檔。
+- 採用前核對同一顯示來源，撤回核對原始時間／列身份／順序／數量／FPS與實際after；後續文字保留，載入新內容清除暫態。處理中停用操作，晚回應保留編修。
+- 241Python／336JS／四Skill／24JS語法、2新Python／15新JS、60跨語言與25真IAB、四adapter／五檔native下載／真draft3／390px Enter通過；v0.26 ZIP239／321還原，restore-v0.26.0-before-v0.27.0保留起點，精確commit ZIP／privatePR／Release與遠端bytes依收據。
+- 產品0.27；各protocol／schema與七／十二tools、ZOE. G／PolyForm非商用／private保持。沒有依賴／模型／auth／production。每輪盤點確定PID及outputs，最新三版SHA核對，合格舊產物才清理。正式媒體／完整視覺／Host／FreeTWAI／原生file仍待，rolling active。
+
 ## v0.26.0 — 2026-10-04
 
 - 真IAB與實際 application 重現同名80 BPM回應可覆蓋120 BPM需求，以及有前後空白的歌名被拒絕；Python歌曲標題改用清理後brief，原檔／表單保留。
