@@ -90,7 +90,7 @@ function field(value,label,type='text',wide=false){return `<input type="${type}"
 async function api(route,data,binary=false){const response=await fetch(route,{method:'POST',headers:{'Content-Type':binary?'application/octet-stream':'application/json'},body:binary?data:JSON.stringify(data)});const result=await response.json();if(!response.ok){const error=Error(result.error||'操作未完成');error.status=response.status;throw error;}return result;}
 async function run(button,task){if(state.busy)return;const tab=state.tab,revision=state.revisions[tab]||0;say('處理中，請稍候');state.busy=true;button.disabled=true;timingControls();try{await task(()=> (state.revisions[tab]||0)===revision);if((state.revisions[tab]||0)!==revision){markDirty(tab);say('處理期間輸入有修改，請重新建立成果');}}catch(error){say(error.message,true);}finally{state.busy=false;button.disabled=false;timingControls();}}
 function setFiles(files,note,dirty=false){state.files=files;state.bundles[state.tab]={files,note,dirty};const select=$('output-file');select.replaceChildren();Object.keys(files).forEach(name=>{const option=document.createElement('option');option.value=name;option.textContent=name;select.append(option);});select.disabled=false;$('download').disabled=dirty;$('output-note').textContent=note+(dirty?'（有修改尚未重新驗證）':'');previewOutput();}
-function markDirty(tab){if(tab==='lyrics'){const pending=timingReading||timingReady;timingController?.invalidate();if(pending)timingSay('歌詞有修改，請重新預覽整批校時。');}state.revisions[tab]=(state.revisions[tab]||0)+1;const saved=state.bundles[tab];if(!saved)return;saved.dirty=true;if(state.tab===tab){$('download').disabled=true;$('output-note').textContent=saved.note+'（有修改尚未重新驗證）';}}
+function markDirty(tab){if(tab==='audio')staleAudioReview();if(tab==='lyrics'){const pending=timingReading||timingReady;timingController?.invalidate();if(pending)timingSay('歌詞有修改，請重新預覽整批校時。');}state.revisions[tab]=(state.revisions[tab]||0)+1;const saved=state.bundles[tab];if(!saved)return;saved.dirty=true;if(state.tab===tab){$('download').disabled=true;$('output-note').textContent=saved.note+'（有修改尚未重新驗證）';}}
 document.querySelector('.editor').addEventListener('input',event=>{
   if(event.target.dataset.viewControl||event.target.id==='lyrics-file')return;
   const panel=event.target.closest('.panel');if(!panel)return;
@@ -293,7 +293,30 @@ window.addEventListener('pagehide',()=>{libraryController.cancel();backupControl
 $('lyrics-player').onloadedmetadata=()=>{if(!Number.isFinite($('lyrics-player').duration))return;$('lyrics-duration').value=$('lyrics-player').duration.toFixed(3);markDirty('lyrics');tick();};$('lyrics-player').ontimeupdate=tick;$('lyrics-player').onseeked=tick;$('lyrics-player').onerror=()=>say('此音檔無法在瀏覽器播放，請改用支援的格式',true);
 function seek(seconds){const p=$('lyrics-player');if(!Number.isFinite(p.duration))return;p.currentTime=Math.max(0,Math.min(p.duration,seconds));tick();}
 $('waveform').onclick=event=>{const r=event.currentTarget.getBoundingClientRect();seek((event.clientX-r.left)/r.width*$('lyrics-player').duration);};$('waveform').onkeydown=event=>{if(['ArrowLeft','ArrowRight','Home','End'].includes(event.key)){event.preventDefault();seek(event.key==='Home'?0:event.key==='End'?$('lyrics-player').duration:$('lyrics-player').currentTime+(event.key==='ArrowRight'?.5:-.5));}};
-$('audio-build').onclick=()=>run($('audio-build'),async()=>{const file=$('audio-file').files[0];if(!file)throw Error('先選擇 PCM WAV');if(file.size>64*1024*1024)throw Error('本機檢查上限為 64 MiB');const result=await api('/api/audio?'+new URLSearchParams({name:file.name,profile:$('audio-profile').value}),file,true);setFiles(result.files,result.data.warnings.length?'音檔檢查 · 有待確認項目':'音檔檢查 · 本次技術條件通過');const d=result.data,box=$('audio-visual');box.innerHTML=`<h3>檢查摘要</h3><div class="facts"><div class="fact"><strong>${d.sample_rate/1000} kHz</strong><span>${d.bit_depth} bit · ${d.channels} 聲道</span></div><div class="fact"><strong>${d.duration_seconds}s</strong><span>音檔時長</span></div><div class="fact"><strong>${d.quiet_regions.leading_seconds}s</strong><span>頭部安靜段，門檻 -60 dBFS</span></div><div class="fact"><strong>${d.stereo_correlation??'不可測'}</strong><span>立體聲相關性</span></div></div><div class="table-wrap"><table><thead><tr><th>聲道</th><th>Peak dBFS</th><th>RMS dBFS</th><th>滿刻度樣本</th></tr></thead><tbody>${d.per_channel.map(c=>`<tr><td>${c.channel}</td><td>${c.peak_dbfs??'靜音'}</td><td>${c.rms_dbfs??'靜音'}</td><td>${c.full_scale_samples}</td></tr>`).join('')}</tbody></table></div><p class="hash">SHA-256 ${esc(d.sha256)}</p>`;appendNotes(box,d.warnings);box.hidden=false;say(d.warnings.length?`檢查已完成，有 ${d.warnings.length} 項需確認`:'本次技術條件通過；報告已建立');});
+function staleAudioReview(){
+  const note=$('audio-review-stale');if(!note)return;
+  note.hidden=false;$('audio-visual').classList.add('stale');
+  $('audio-visual').querySelector('[data-audio-status]').textContent='上一份報告';
+}
+function renderAudioReview(d){
+  const box=$('audio-visual');box.classList.remove('stale');
+  box.innerHTML=`<div class="audio-review-heading"><h3>檢查摘要</h3><span data-audio-status class="audio-outcome ${d.needsReview?'needs-review':'passed'}">${esc(d.status)}</span></div>
+    <p id="audio-review-stale" class="audio-stale-note" role="status" hidden>這是上一份報告，輸入已修改；請重新分析，才能代表目前的選擇。</p>
+    <p class="audio-source-name">${esc(d.file)}</p><p class="hint">${d.bytes.toLocaleString()} bytes · ${d.profile==='video'?'影片交付示範':'音樂交付示範'}；請以實際收件需求為準。</p>
+    <div class="table-wrap"><table aria-label="本次接受條件"><thead><tr><th>項目</th><th>實際值</th><th>接受值</th><th>結果</th></tr></thead><tbody>${d.specifications.map(s=>`<tr><th scope="row">${esc(s.label)}</th><td>${esc(s.observed)}</td><td>${esc(s.accepted)}</td><td class="${s.passed?'check-pass':'check-fail'}">${s.passed?'符合':'不符'}</td></tr>`).join('')}</tbody></table></div>
+    <div class="facts"><div class="fact"><strong>${d.duration}s</strong><span>音檔時長</span></div><div class="fact"><strong>${esc(d.correlation)}</strong><span>立體聲相關性；不可測不是通過</span></div><div class="fact"><strong>${d.leading}s</strong><span>頭部安靜段，門檻 -60 dBFS</span></div><div class="fact"><strong>${d.trailing}s</strong><span>尾部安靜段，門檻 -60 dBFS</span></div></div>
+    <div class="table-wrap"><table aria-label="每聲道量測"><thead><tr><th>聲道</th><th>Sample peak</th><th>RMS</th><th>DC offset</th><th>滿刻度樣本</th></tr></thead><tbody>${d.channels.map(c=>`<tr><th scope="row">${c.number}</th><td>${esc(c.peak)}</td><td>${esc(c.rms)}</td><td>${esc(c.dc)}</td><td>${c.fullScale}</td></tr>`).join('')}</tbody></table></div>
+    <h4>需確認項目</h4><p class="hint">${d.warnings.length?'以下是技術提醒，仍需聆聽與確認收件要求。':'本次沒有技術提醒；仍需聆聽及核對素材授權。'}</p>`;
+  appendNotes(box,d.warnings);
+  const evidence=document.createElement('details'),summary=document.createElement('summary'),note=document.createElement('p'),hash=document.createElement('p');
+  summary.textContent='來源與量測範圍';note.className='hint';note.textContent=`RIFF/WAVE 整數 PCM · block align ${d.blockAlign} bytes · byte rate ${d.byteRate} bytes/s。雜湊與量測來自同一次複製的位元組；不是檔案系統原子快照或著作權證明。RMS 不是 LUFS，sample peak 不是 true peak。`;
+  hash.className='hash';hash.textContent='SHA-256 '+d.sha256;evidence.append(summary,note,hash);box.append(evidence);box.hidden=false;
+}
+$('audio-build').onclick=()=>run($('audio-build'),isCurrent=>MusicAudio.inspect({
+  selected:()=>({file:$('audio-file').files[0],profile:$('audio-profile').value}),isCurrent,
+  request:({file,profile})=>api('/api/audio?'+new URLSearchParams({name:file.name,profile}),file,true),
+  onResult:(result,review)=>{renderAudioReview(review);setFiles(result.files,'音檔檢查 · '+review.status);say(review.needsReview?`檢查已完成，有 ${review.warnings.length} 項需確認`:'本次技術條件通過；報告已建立');}
+}));
 const draftTask=MusicEditor.createLatestTask();
 let pendingLegacyDraft=null;
 function clearConversion(){pendingLegacyDraft=null;$('draft-conversion').hidden=true;}
@@ -311,7 +334,7 @@ function captureDraft(){
   panels.lyrics.cues=[...$('cues').children].map(row=>Object.fromEntries(
     MusicEditor.draftRows.lyrics.columns.map((key,i)=>[key,row.querySelectorAll('input')[i].value])));
   panels.music.avoid=requirementValues('music-avoid');panels.music.deliverables=requirementValues('music-deliverables');
-  return {format:'zoe-music-lab-draft',schema_version:3,tool_version:'0.11.0',saved_at:new Date().toISOString(),tab:state.tab,panels};
+  return {format:'zoe-music-lab-draft',schema_version:3,tool_version:'0.12.0',saved_at:new Date().toISOString(),tab:state.tab,panels};
 }
 function applyDraft(draft){
   clearLibraryReview();

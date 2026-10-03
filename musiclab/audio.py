@@ -1,10 +1,10 @@
 # SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
-import hashlib
 import math
 import wave
 from pathlib import Path
 from .common import json_text
 from . import __version__
+from .audio_source import copied_audio
 
 PROFILES = {
     "distribution": {"rates": [44100, 48000], "bits": [16, 24], "channels": [1, 2]},
@@ -29,12 +29,8 @@ def analyze_wav(path, profile="distribution", rates=None, bits=None, channels=No
                 raise ValueError(f"{key} 接受條件需為正整數")
             # JSON Schema integers include 1.0; normalize exact integer values.
             limits[key] = [int(value) for value in values]
-    sha = hashlib.sha256()
-    with path.open("rb") as raw:
-        for chunk in iter(lambda: raw.read(1024 * 1024), b""):
-            sha.update(chunk)
     try:
-        with wave.open(str(path), "rb") as wav:
+        with copied_audio(path) as (selected, digest, source_evidence), wave.open(selected, "rb") as wav:
             if wav.getcomptype() != "NONE":
                 raise ValueError("本版只分析未壓縮 PCM WAV")
             count, width, rate, declared_frames = wav.getnchannels(), wav.getsampwidth(), wav.getframerate(), wav.getnframes()
@@ -116,7 +112,10 @@ def analyze_wav(path, profile="distribution", rates=None, bits=None, channels=No
         warnings.append("頭尾低於 -60 dBFS 的安靜段超過 2 秒；請確認是否刻意保留")
     if correlation is not None and correlation < -0.5:
         warnings.append("立體聲相關性低於 -0.5；請聆聽確認轉單聲道時的相消")
-    return {"tool": "ZOE Audio Delivery", "version": __version__, "file": path.name, "sha256": sha.hexdigest(),
+    if count > 2:
+        warnings.append("多聲道僅量測樣本；本版不解讀聲道位置，請核對收件要求")
+    return {"tool": "ZOE Audio Delivery", "version": __version__, "file": path.name, "sha256": digest,
+            "source_evidence": source_evidence,
             "profile": profile, "acceptance": limits, "sample_rate": rate, "bit_depth": width * 8,
             "channels": count, "frames": frames, "duration_seconds": round(frames / rate, 6),
             "per_channel": per_channel, "checks": checks, "warnings": warnings,
@@ -134,12 +133,23 @@ def audio_bundle(report):
         peak = "-∞（靜音）" if state["peak_dbfs"] is None else state["peak_dbfs"]
         rms = "-∞（靜音）" if state["rms_dbfs"] is None else state["rms_dbfs"]
         lines.append(f"| {state['channel']} | {peak} | {rms} | {state['dc_offset']} | {state['full_scale_samples']} |\n")
+    lines.append("\n## 本次接受條件\n\n| 項目 | 實際值 | 接受值 | 結果 |\n|---|---|---|---|\n")
+    for key, observed, unit in (("sample_rate", report['sample_rate'], 'Hz'),
+                                ("bit_depth", report['bit_depth'], 'bit'),
+                                ("channels", report['channels'], '聲道')):
+        accepted = report['acceptance'][{'sample_rate':'rates', 'bit_depth':'bits', 'channels':'channels'}[key]]
+        lines.append(f"| {key} | {observed} {unit} | {', '.join(map(str, accepted))} {unit} | {'符合' if report['checks'][key] else '不符'} |\n")
     lines.append("\n## 需確認項目\n\n")
     lines.extend(f"- {item}\n" for item in report["warnings"])
     if not report["warnings"]:
         lines.append("本次技術條件沒有提醒項目。\n")
     lines.append("\n本工具預設不是平台通用交付標準。RMS 不是 LUFS，sample peak 不是 true peak。滿刻度樣本需聆聽確認；沒有評估音樂品質或授權。\n")
     lines.append(f"\n來源 SHA-256：`{report['sha256']}`\n")
+    if 'source_evidence' in report:
+        source = report['source_evidence']
+        lines.append(f"\n分析副本：{source['bytes']} bytes；PCM format tag {source['wave_format_tag']}；"
+                     f"block align {source['block_align']} bytes；byte rate {source['average_bytes_per_second']} bytes/s。\n")
+        lines.append("\n雜湊與量測使用同一次複製的位元組；不代表檔案系統的原子快照或著作權證明。\n")
     if "quiet_regions" in report:
         quiet = report["quiet_regions"]
         lines.append(f"\n安靜段（門檻 {quiet['threshold_dbfs']} dBFS）：頭 {quiet['leading_seconds']} 秒，尾 {quiet['trailing_seconds']} 秒。\n")

@@ -42,6 +42,7 @@ ASSETS = {"/": ("web/index.html", "text/html"), "/app.js": ("web/app.js", "text/
           "/backup-transfer.js": ("web/backup-transfer.js", "text/javascript"),
           "/lyric-time.js": ("musiclab/assets/lyric-time.js", "text/javascript"),
           "/lyrics-timing.js": ("web/lyrics-timing.js", "text/javascript"),
+          "/audio-review.js": ("web/audio-review.js", "text/javascript"),
           "/license": ("LICENSE", "text/plain"), "/notice": ("NOTICE", "text/plain")}
 
 

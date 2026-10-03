@@ -170,3 +170,11 @@ lyrics（MCP lyrics_validate）的來源仍明確二擇一：cues，或 content�
 時間以毫秒整數運算，半毫秒往遠離零捨入；布林值、非有限值、非十進位字串及不能保留毫秒精度的值拒絕。timing.applied_shift_seconds 僅在明確傳入 shift_seconds 時新增，表示套用的正規化量；沒有宣稱實聽驗收。非零 shift 或非空編修清單的成功結果 needs_review=true；原有總長／推得時間提醒仍保留。輸出 files 仍是內容，由呼叫者決定保存，Agent 不因此寫檔。
 
 實際 CLI／HTTP／JSON-lines／MCP 與 application 結果一致；discovery 同源新增欄位，預設四工具／啟庫九工具不變。產品 0.11.0，transport 與草稿／保存／備份 schema 不變；尚未接入特定 host，沒有模型呼叫。
+
+## v0.12 音檔結果的來源證據
+
+既有 audio／audio_report 回傳新增 data.source_evidence：bytes、analysis_source（copied_bytes）、wave_format_tag（1）、block_align、average_bytes_per_second、declared_riff_bytes。data.sha256 與量測使用同一次複製的位元組，沒有 hash 後再次開原路徑；不是外部改檔的原子快照或著作權證明。JSON／Markdown 同源，不含暫存或原資料夾路徑。
+
+PCM fmt 不一致或截斷會明確失敗；來源保留，錯誤後可再呼叫。接受值可自訂但不擴大已支援格式；多聲道不解讀位置，仍有 needs_review。報告沒有提醒只表示本次技術檢查通過，不能當實聽、LUFS／true peak、完整 RIFF conformance 或版權驗收。
+
+產品 0.12.0；Agent v1／MCP 2025-11-25 不變，預設四／明確啟庫九工具，未新增 JSON 路徑選擇、工具或權限，特定 host 未整合。

@@ -2,7 +2,7 @@
 
 由 **ZOE. G** 發起的四個原創專案。GitHub 帳號為 **djguan-jpg**；品牌署名與帳號可以不同。
 
-目前版本 v0.11 提供四個工作台、原創 Skill、本機草稿庫及可預覽的 ZIP 備份／恢復、整批歌詞校時。Python 3.10 以上即可使用，沒有第三方依賴。只讀本次新建工作區，不參考使用者的其他本機或 GitHub 專案。公開第三方 README 僅用於需求比較，來源及自行設計的差異記在 [構思紀錄](CONCEPT.md)。
+目前版本 v0.12 提供四個工作台、原創 Skill、本機草稿庫及可預覽的 ZIP 備份／恢復、整批歌詞校時及來源一致的音檔檢查報告。Python 3.10 以上即可使用，沒有第三方依賴。只讀本次新建工作區，不參考使用者的其他本機或 GitHub 專案。公開第三方 README 僅用於需求比較，來源及自行設計的差異記在 [構思紀錄](CONCEPT.md)。
 
 授權為 **PolyForm Noncommercial 1.0.0**，商業使用沒有由本版授權。可查看、修改及分發的範圍以 [LICENSE](LICENSE) 為準，保留 [NOTICE](NOTICE)。這是非商用原始碼授權；不標成 AGPL。使用者匯入的素材授權各自保留，詳見 [授權說明](LICENSING.md)。
 
@@ -11,7 +11,7 @@
 | ZOE Music Production | 記憶點設計、BPM／小節時間計算、段落能量、AI 任務包 | [技能](projects/zoe-music-production/SKILL.md) |
 | ZOE MV Storyboard | 多母題與逐鏡選擇、人物／方向變化理由、分鏡時間、CSV 與鏡頭提示 | [技能](projects/zoe-mv-storyboard/SKILL.md) |
 | ZOE Lyrics Sync | LRC／SRT／JSON、波形定位、播放校時、時間與文字編修、匯出 | [工具](projects/zoe-lyrics-sync/README.md) |
-| ZOE Audio Delivery | PCM WAV、規格／峰值／RMS、安靜段、相關性、SHA-256 報告 | [工具](projects/zoe-audio-delivery/README.md) |
+| ZOE Audio Delivery | PCM WAV 標頭檢查、接受條件、峰值／RMS／DC、頭尾安靜段及同一分析副本 SHA-256 | [工具](projects/zoe-audio-delivery/README.md) |
 
 ## 開始使用
 
@@ -115,7 +115,7 @@ python music_lab.py draft restore --library outputs/restored-drafts --input '構
 - [創辦與協作紀錄](FOUNDER-RECORD.md)：ZOE. G 發起方向；Codex 協助規格、文字、程式與驗證。
 - [專案清單](projects.json)：四個獨立 ID、版本與功能範圍。
 - [本輪進度](PROGRESS.md)：實跑驗證與後續工作。
-- [本版說明](RELEASE-v0.11.0.md)：功能、版本契約、驗證與限制。
+- [本版說明](RELEASE-v0.12.0.md)：功能、版本契約、驗證與限制。
 - [四個專案的投稿資料](SUBMISSION-PACKET.md)：來源連結、用途、使用方式與作者關係。
 - [分層與分支架構](docs/ARCHITECTURE.md)、[Agent 與 MCP 接口](docs/AGENT.md)、[迭代說明](CHANGELOG.md)、[本輪交接](HANDOFF.md)。
 
@@ -135,7 +135,7 @@ git diff --check
 開發／封裝驗證需要 Node.js；一般使用工作台與 CLI 只需要 Python。從指定 Git 版本建立可驗證的原始碼 ZIP：
 
 ```powershell
-python scripts/package_release.py --ref v0.11.0
+python scripts/package_release.py --ref v0.12.0
 ```
 
 封裝保存 commit、SHA-256、每檔摘要及檢查結果；解壓後重跑 Python／JavaScript 測試、Agent 能力查詢與 MCP 握手。輸出留在忽略的 outputs/releases，重複封裝同一提交會拒絕覆寫。
@@ -156,3 +156,9 @@ MCP tools/list 與本機 capabilities 提供完整輸入欄位及 files/data/met
 紀錄只在本頁，不存進草稿或跨重載保留；請另存草稿。載入新範例／需求／草稿會清除被取代工作台的紀錄，成功重新讀取歌詞也清除歌詞紀錄，驗證逐句表格則保留。容量已滿時不還原也不丟掉紀錄；先保存草稿、刪除另一列，再選原紀錄還原。歌曲／鏡頭／歌詞列上限分別為 40／1000／10000，需求清單 100、母題 30。
 
 歌詞匯入或驗證期間仍可修改本工作台；有修改時會捨棄舊回應，保留表格與原文，提示重新建立成果。
+
+## v0.12 的音檔檢查
+
+「交付檢查」將實際取樣率／位元深度／聲道數與本次接受值並排，逐項列出符合或不符。摘要包含來源檔名與大小、頭尾安靜段、相關性及每聲道 peak／RMS／DC offset／滿刻度樣本。「來源與量測範圍」可展開查看 SHA-256 與限制；數位靜音顯示 −∞，不可測的相關性不當成通過。
+
+換檔或改接受條件後，已顯示的摘要標為「上一份報告」，成果停用下載；必須重新分析。處理中改選檔案或條件會捨棄晚到的成功或錯誤，不用舊報告代表新選擇。原始 WAV 保留；報告的雜湊與量測使用同一次複製的位元組，但不保證複製期間外部編修的原子快照，也不是著作權證明。只支援 RIFF/WAVE 整數 PCM format tag 1；不一致的 fmt 標頭拒絕，不把它猜成有效格式。多聲道沒有解讀聲道位置，需另核對收件要求。
