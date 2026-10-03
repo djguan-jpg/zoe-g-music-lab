@@ -149,3 +149,24 @@ restore 再讀有界來源、核對相同 SHA 與所有版本，鎖內再次檢�
 ZIP 上限 32 MiB、展開 64 MiB、每版 draft 1 MiB／metadata 16 KiB、單庫 1000 版。備份 binary 不經 JSON-lines／MCP base64；匯出使用 CLI draft backup 或工作台，超限可 CLI --ids 明確分批。備份只含已保存草稿及紀錄，不含媒體、成果、未保存編修或刪除歷史；恢復不套用工作台內容，需另行明確載入／重建創作成果。
 
 產品 0.10.0／Agent 1／MCP 2025-11-25／draft 3／library 1／backup 1 分別管理。Windows 實際 JSON-lines、由生成 command／args 啟動的 MCP、CLI／HTTP 往返與三程序同 ZIP 恢復已驗證；不是特定 Agent host、模型執行、POSIX 或官方 conformance 的證明。
+
+
+## v0.11：同一歌詞操作的整批與逐句編修
+
+lyrics（MCP lyrics_validate）的來源仍明確二擇一：cues，或 content＋suffix。新增可選 payload：
+
+| 欄位 | 形狀與行為 |
+| --- | --- |
+| shift_seconds | 有限十進位數字或數字字串；正數延後、負數提前，已有 start／end 一起移動 |
+| time_changes | 字串陣列，例如 ["1=2"]；修改開始，有明確 end 時保留原句長 |
+| text_changes | 字串陣列，例如 ["2=新的歌詞"]；文字空白保留，仍只接受單行 |
+
+```json
+{"protocol_version":1,"id":"timing-001","operation":"lyrics","payload":{"cues":[{"start":1,"end":2,"text":"原創一"},{"start":4,"end":5,"text":"原創二"}],"duration":10,"shift_seconds":0.5,"time_changes":["1=2"],"text_changes":["2=第二句後修"]}}
+```
+
+輸出第一句 2–3、第二句 4.5–5.5，duration 仍為 10。句號先按原始開始時間排序，由 1 起算；先 shift，再逐個 time_changes／text_changes，最後重排／檢查。原始負時間拒絕；最終負時間、重疊、重複開始或超過指定總長整份拒絕，沒有截斷。缺失 end 在編修後推得，LRC offset 只套用一次。time_changes／text_changes 型態錯誤不是成功 no-op。
+
+時間以毫秒整數運算，半毫秒往遠離零捨入；布林值、非有限值、非十進位字串及不能保留毫秒精度的值拒絕。timing.applied_shift_seconds 僅在明確傳入 shift_seconds 時新增，表示套用的正規化量；沒有宣稱實聽驗收。非零 shift 或非空編修清單的成功結果 needs_review=true；原有總長／推得時間提醒仍保留。輸出 files 仍是內容，由呼叫者決定保存，Agent 不因此寫檔。
+
+實際 CLI／HTTP／JSON-lines／MCP 與 application 結果一致；discovery 同源新增欄位，預設四工具／啟庫九工具不變。產品 0.11.0，transport 與草稿／保存／備份 schema 不變；尚未接入特定 host，沒有模型呼叫。

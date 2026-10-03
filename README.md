@@ -2,7 +2,7 @@
 
 由 **ZOE. G** 發起的四個原創專案。GitHub 帳號為 **djguan-jpg**；品牌署名與帳號可以不同。
 
-目前版本 v0.10 提供四個工作台、原創 Skill、本機草稿庫及可預覽的 ZIP 備份／恢復。Python 3.10 以上即可使用，沒有第三方依賴。只讀本次新建工作區，不參考使用者的其他本機或 GitHub 專案。公開第三方 README 僅用於需求比較，來源及自行設計的差異記在 [構思紀錄](CONCEPT.md)。
+目前版本 v0.11 提供四個工作台、原創 Skill、本機草稿庫及可預覽的 ZIP 備份／恢復、整批歌詞校時。Python 3.10 以上即可使用，沒有第三方依賴。只讀本次新建工作區，不參考使用者的其他本機或 GitHub 專案。公開第三方 README 僅用於需求比較，來源及自行設計的差異記在 [構思紀錄](CONCEPT.md)。
 
 授權為 **PolyForm Noncommercial 1.0.0**，商業使用沒有由本版授權。可查看、修改及分發的範圍以 [LICENSE](LICENSE) 為準，保留 [NOTICE](NOTICE)。這是非商用原始碼授權；不標成 AGPL。使用者匯入的素材授權各自保留，詳見 [授權說明](LICENSING.md)。
 
@@ -40,6 +40,12 @@ Agent／CLI 回傳的 `brief.json`（含 BPM／arrangement／記憶點）與 `mv
 修改輸入後會停用舊成果下載，重新建立／驗證後才恢復。歌詞播放預覽即時使用目前表格內容；數值計算及資料檢查不能代替實唱、實聽與實際畫面審查。
 
 歌詞 JSON 的 `duration_estimated` 仍表示總時長未明確提供，與尾句結束是否推得分開。新增 `timing` 記錄 duration_source／inferred_end_count／tail_end_inferred；SRT 明確結束時間會保留，提示總時長尚未由音檔確認，避免把它誤說成尾句估計。
+
+「波形校時 → 整批校時」可輸入正數延後、負數提前，先預覽全部句子的檢查結果（表格列出前 20 句），再明確套用。已有結束時間的句長保留；負時間、重疊、重複開始或超出指定總長會整份拒絕，沒有截斷。套用／撤回只改時間，音檔、歌詞文字與刪除歷史保留。若之後改過任何句子的時間或增刪句子，撤回會拒絕整份覆蓋；恢復為套用後的時間後可再撤回。撤回只保留最近一次套用，載入新的逐句內容／草稿會清除；調整量、預覽及撤回紀錄不進草稿。
+
+CLI 的 `--shift`／`--set`／`--text` 與 HTTP、JSON-lines、MCP 共用同一操作。句號以原始開始時間排序後由 1 起算；先整批 shift，再按順序 set 開始（有明確結束時保留句長）、text，最後檢查／排序。原輸入檔與已提供總長保留；缺失結束時間在編修後推得。LRC offset 只讀取一次。
+
+時間以 0.001 秒保存，半毫秒往遠離零的方向捨入，例如 1.2345 → 1.235、-0.0005 → -0.001。開始／結束的原始負值先拒絕，不因捨入成零而接受；非有限值、布林值、空值、非十進位字串或不能保留毫秒精度的數值拒絕。獨立 `preview.html` 使用同一瀏覽器時間模組，套用後重新計算 timing 來源與提示，下載內容和目前表格一致。
 
 命令列同樣可用：
 
@@ -109,7 +115,7 @@ python music_lab.py draft restore --library outputs/restored-drafts --input '構
 - [創辦與協作紀錄](FOUNDER-RECORD.md)：ZOE. G 發起方向；Codex 協助規格、文字、程式與驗證。
 - [專案清單](projects.json)：四個獨立 ID、版本與功能範圍。
 - [本輪進度](PROGRESS.md)：實跑驗證與後續工作。
-- [本版說明](RELEASE-v0.10.0.md)：功能、版本契約、驗證與限制。
+- [本版說明](RELEASE-v0.11.0.md)：功能、版本契約、驗證與限制。
 - [四個專案的投稿資料](SUBMISSION-PACKET.md)：來源連結、用途、使用方式與作者關係。
 - [分層與分支架構](docs/ARCHITECTURE.md)、[Agent 與 MCP 接口](docs/AGENT.md)、[迭代說明](CHANGELOG.md)、[本輪交接](HANDOFF.md)。
 
@@ -129,7 +135,7 @@ git diff --check
 開發／封裝驗證需要 Node.js；一般使用工作台與 CLI 只需要 Python。從指定 Git 版本建立可驗證的原始碼 ZIP：
 
 ```powershell
-python scripts/package_release.py --ref v0.10.0
+python scripts/package_release.py --ref v0.11.0
 ```
 
 封裝保存 commit、SHA-256、每檔摘要及檢查結果；解壓後重跑 Python／JavaScript 測試、Agent 能力查詢與 MCP 握手。輸出留在忽略的 outputs/releases，重複封裝同一提交會拒絕覆寫。

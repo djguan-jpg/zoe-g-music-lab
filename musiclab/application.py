@@ -12,7 +12,7 @@ from . import __version__
 from .audio import analyze_wav, audio_bundle
 from .creative import music_bundle, storyboard_bundle
 from .design import music_plan_bundle, motif_bundle
-from .lyrics import read_cues, lyrics_bundle
+from .lyrics import read_cues, lyrics_bundle, edits
 from .tool_contracts import payload_schema, output_schema
 from .draft_contract import MAX_DRAFT_BYTES
 from .draft_library import LIBRARY_SCHEMA_VERSION, MAX_ENTRIES
@@ -112,7 +112,9 @@ def build(operation, payload, *, audio_source=None, draft_library=None, backup_s
             raise ValueError("歌詞需選擇 cues 或 content 其中一種；逐句 cues 不使用原文 suffix")
         cues = payload.get("cues") if "cues" in payload else read_cues(
             payload.get("content", ""), payload.get("suffix", ".lrc"))
-        files = lyrics_bundle(cues, payload.get("title", "歌詞"), payload.get("duration"))
+        if any(key in payload for key in ('shift_seconds', 'time_changes', 'text_changes')):
+            cues = edits(cues, payload.get('shift_seconds', 0), payload.get('time_changes', ()), payload.get('text_changes', ()))
+        files = lyrics_bundle(cues, payload.get("title", "歌詞"), payload.get("duration"), applied_shift=payload.get('shift_seconds'))
         data = json.loads(files["lyrics.json"])
     else:
         if audio_source is None:
@@ -128,6 +130,8 @@ def build(operation, payload, *, audio_source=None, draft_library=None, backup_s
             data["file"] = Path(name.replace("\\", "/")).name[:200] or "selected.wav"
         files = audio_bundle(data)
     review = bool(data.get("review_notes") or data.get("warnings") or data.get("duration_estimated"))
+    if operation == 'lyrics' and (data['timing'].get('applied_shift_seconds', 0) != 0 or payload.get('time_changes') or payload.get('text_changes')):
+        review = True  # Data checks do not verify a changed cue against the performance.
     return Result(files, data, review)
 
 
