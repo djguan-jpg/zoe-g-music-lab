@@ -11,7 +11,8 @@ def render_preview(data, title):
     timing = (Path(__file__).parent / 'assets/lyric-time.js').read_text(encoding='utf-8')
     document = (Path(__file__).parent / 'assets/json-document.js').read_text(encoding='utf-8')
     package = (Path(__file__).parent / 'assets/lyrics-package.js').read_text(encoding='utf-8')
-    parts = {'TITLE': html.escape(title), 'DATA': encoded, 'TIMING_JS': timing, 'PACKAGE_JS': document + '\n' + package}
+    media = (Path(__file__).parent / 'assets/lyrics-media.js').read_text(encoding='utf-8')
+    parts = {'TITLE': html.escape(title), 'DATA': encoded, 'TIMING_JS': timing, 'PACKAGE_JS': document + '\n' + package + '\n' + media}
     # Substitute template markers once; user text containing a marker stays text.
     return re.sub(r'__(TITLE|DATA|TIMING_JS|PACKAGE_JS)__', lambda match: parts[match[1]], PREVIEW)
 
@@ -29,10 +30,12 @@ button.primary{background:#176d83;color:white;border-color:#176d83}button:focus-
 th,td{text-align:left;padding:12px;border-bottom:1px solid #e3e9ef}th{background:#eaf0f4;font-weight:600}input[type=number]{width:90px}input[type=text]{width:100%;min-width:190px}
 input{padding:7px 8px;border:1px solid #b6c7d2;border-radius:4px}tr.active{background:#e1f4ed}.row-actions{display:flex;gap:6px;white-space:nowrap}
 #status{min-height:28px;color:#176d83}#status.error{color:#a83132}footer{color:#526571;margin-top:24px;font-size:14px}
+.media-check{margin:16px 0;padding:16px;border:1px solid #c2cfd9;border-radius:8px;overflow-wrap:anywhere}.media-check h2{font-size:18px;margin:0 0 12px}.media-clocks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.media-clocks strong{display:block;font-variant-numeric:tabular-nums}.media-check.needs-check{border-color:#a87b4f}#duration{width:150px}button:disabled{opacity:.5;cursor:default}
 @media(max-width:600px){main{padding:24px 14px}header{display:block}h1{font-size:25px}.player{padding:16px}.line{font-size:22px}th,td{padding:8px}}
 </style></head><body><main><header><div><h1>__TITLE__</h1><p>選擇音檔，逐句調整時間，匯出同步歌詞。</p></div><span>ZOE Lyrics Sync</span></header>
 <section class="player" aria-label="音檔與播放預覽"><label for="audio-file">選擇本機音檔</label> <input id="audio-file" type="file" accept="audio/*">
 <audio id="player" controls hidden></audio><div id="current-line" class="line" aria-live="off">準備播放</div></section>
+<section id="media-check" class="media-check" aria-labelledby="media-heading"><h2 id="media-heading">核對音檔與作品時長</h2><label for="duration">作品宣告時長（秒）</label> <input id="duration" type="number" min="0.001" step="0.001"><p id="duration-source" class="hint"></p><div class="media-clocks"><p>選定音檔<strong id="media-audio">尚無可用時長</strong></p><p>作品宣告<strong id="media-declared">尚未宣告</strong></p></div><p id="media-note" role="status" aria-live="polite"></p><div class="tools"><button id="media-adopt" disabled>採用選定音檔時長</button><button id="media-undo" disabled>撤回時長接續</button></div><p>只接續總長，不移動或裁切歌詞。空白且未再編修的宣告會接續首次讀取時長，可撤回；未填且未接續時沿用來源包。</p></section>
 <div class="tools"><button id="add">新增一句</button><button id="apply" class="primary">套用編修</button><button id="lrc">下載 LRC</button><button id="srt">下載 SRT</button><button id="json">下載 JSON</button></div>
 <p id="status" role="status">尚未選擇音檔。時間單位為秒；編修後請套用。</p>
 <div class="table-wrap"><table aria-label="逐句歌詞"><thead><tr><th>句</th><th>開始</th><th>結束</th><th>歌詞</th><th>操作</th></tr></thead><tbody id="rows"></tbody></table></div>
@@ -43,24 +46,33 @@ input{padding:7px 8px;border:1px solid #b6c7d2;border-radius:4px}tr.active{backg
 'use strict';
 let data=JSON.parse(document.getElementById('initial').textContent), url=null;
 const rows=document.getElementById('rows'), player=document.getElementById('player'), status=document.getElementById('status');
+const durationField=document.getElementById('duration');durationField.value=data.duration_estimated?'':String(data.duration);
+document.getElementById('duration-source').textContent='載入來源總長：'+data.duration+' 秒（'+(data.duration_estimated?'估計；尚待確認':'已宣告')+'）。未填且未接續時保留來源總長。';
+function renderMedia(view){document.getElementById('media-audio').textContent=view.phase==='loading'?'讀取中…':view.mediaText;document.getElementById('media-declared').textContent=view.declaredText;document.getElementById('media-note').textContent=view.note;document.getElementById('media-adopt').disabled=!view.canAdopt;document.getElementById('media-undo').disabled=!view.canUndo;document.getElementById('media-check').classList.toggle('needs-check',['differs','invalid'].includes(view.status)||view.phase==='error');}
+const media=MusicLyricsMedia.createController({capture:()=>durationField.value,apply:value=>{durationField.value=value;media.refresh();message('作品時長已修改，請套用編修。');},onState:renderMedia});
+media.refresh({protect:false});durationField.oninput=()=>media.refresh();rows.addEventListener('input',()=>media.refresh());
+document.getElementById('media-adopt').onclick=()=>{try{media.adopt();}catch(error){message(error.message,true);}};
+document.getElementById('media-undo').onclick=()=>{try{media.undo();}catch(error){message(error.message,true);}};
 function message(text,error=false){status.textContent=text;status.className=error?'error':'';}
 function input(value,type,label){const x=document.createElement('input');x.type=type;x.value=value;x.setAttribute('aria-label',label);if(type==='number'){x.min='0';x.step='0.001';}return x;}
 function render(cues){rows.replaceChildren();cues.forEach((c,i)=>{const tr=document.createElement('tr'), n=document.createElement('td');n.textContent=i+1;tr.append(n);
  ['start','end','text'].forEach((key,j)=>{const td=document.createElement('td');td.append(input(c[key],key==='text'?'text':'number',`第 ${i+1} 句${['開始','結束','歌詞'][j]}`));tr.append(td);});
  const actions=document.createElement('td'), wrap=document.createElement('div');wrap.className='row-actions';
- const stamp=document.createElement('button');stamp.textContent='使用播放位置';stamp.onclick=()=>{const fields=tr.querySelectorAll('input');const old=Number(fields[0].value), end=Number(fields[1].value);fields[0].value=player.currentTime.toFixed(3);fields[1].value=(player.currentTime+Math.max(.001,end-old)).toFixed(3);message('已填入播放位置，請套用編修。');};
- const remove=document.createElement('button');remove.textContent='刪除';remove.onclick=()=>{tr.remove();message('已移除此句，請套用編修。');};wrap.append(stamp,remove);actions.append(wrap);tr.append(actions);rows.append(tr);});}
+ const stamp=document.createElement('button');stamp.textContent='使用播放位置';stamp.onclick=()=>{const fields=tr.querySelectorAll('input');const old=Number(fields[0].value), end=Number(fields[1].value);fields[0].value=player.currentTime.toFixed(3);fields[1].value=(player.currentTime+Math.max(.001,end-old)).toFixed(3);media.refresh();message('已填入播放位置，請套用編修。');};
+ const remove=document.createElement('button');remove.textContent='刪除';remove.onclick=()=>{tr.remove();media.refresh();message('已移除此句，請套用編修。');};wrap.append(stamp,remove);actions.append(wrap);tr.append(actions);rows.append(tr);});}
 function collect(){return [...rows.children].map(tr=>{const x=tr.querySelectorAll('input');if(!x[0].value.trim()||!x[1].value.trim())throw Error('開始與結束時間不可空白');return {start:x[0].value,end:x[1].value,text:x[2].value};});}
-function apply(){const duration=Number.isFinite(player.duration)?player.duration:undefined;
- data=MusicLyricsPackage.revise(data,collect(),duration);render(data.cues);tick();
+function apply(){const duration=durationField.value.trim()?LyricTime.normalize(durationField.value,'作品時長',true):undefined;
+ data=MusicLyricsPackage.revise(data,collect(),duration);render(data.cues);media.refresh();tick();
  document.getElementById('timing-note').textContent=MusicLyricsPackage.notice(data);message(`已套用 ${data.cues.length} 句，可下載匯出。`);}
 function tick(){let current=-1;data.cues.forEach((c,i)=>{if(player.currentTime>=c.start&&player.currentTime<c.end)current=i;});document.getElementById('current-line').textContent=current>=0?data.cues[current].text:'…';[...rows.children].forEach((tr,i)=>tr.classList.toggle('active',i===current));}
 function tc(s,srt){return LyricTime.timecode(s,srt);}
 function download(ext){try{apply();let content;if(ext==='lrc')content=data.cues.map(c=>`[${tc(c.start,false)}]${c.text}`).join('\n')+'\n';else if(ext==='srt')content=data.cues.map((c,i)=>`${i+1}\n${tc(c.start,true)} --> ${tc(c.end,true)}\n${c.text}`).join('\n\n')+'\n';else content=JSON.stringify(data,null,2);
  const link=document.createElement('a'), blob=URL.createObjectURL(new Blob([content],{type:'text/plain;charset=utf-8'}));link.href=blob;link.download=(data.title.replace(/[\\/:*?"<>|]/g,'-')||'lyrics')+'.'+ext;document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(blob),1000);message(`已匯出 ${ext.toUpperCase()}。`);}catch(e){message(e.message,true);}}
-document.getElementById('audio-file').onchange=e=>{const file=e.target.files[0];if(!file)return;if(url)URL.revokeObjectURL(url);url=URL.createObjectURL(file);player.src=url;player.hidden=false;message('已選擇 '+file.name+'；檔案在本機讀取。');};
+document.getElementById('audio-file').onchange=e=>{const file=e.target.files[0];if(!file)return;if(url)URL.revokeObjectURL(url);url=URL.createObjectURL(file);player.src=url;player.hidden=false;media.select(url);message('已選擇 '+file.name+'；檔案在本機讀取。');};
 document.getElementById('apply').onclick=()=>{try{apply();}catch(e){message(e.message,true);}};
-document.getElementById('add').onclick=()=>{try{const cues=LyricTime.normalizeCues(collect()).cues, start=cues.at(-1).end;cues.push({start,end:start+3,text:''});render(cues);message('已新增一句，請編修後套用。');}catch(e){message(e.message,true);}};
-['lrc','srt','json'].forEach(ext=>document.getElementById(ext).onclick=()=>download(ext));player.ontimeupdate=tick;player.onseeked=tick;player.onerror=()=>message('瀏覽器無法播放此音檔，請選擇支援的音訊格式。',true);
+document.getElementById('add').onclick=()=>{try{const cues=LyricTime.normalizeCues(collect()).cues, start=cues.at(-1).end;cues.push({start,end:start+3,text:''});render(cues);media.refresh();message('已新增一句，請編修後套用。');}catch(e){message(e.message,true);}};
+['lrc','srt','json'].forEach(ext=>document.getElementById(ext).onclick=()=>download(ext));player.ontimeupdate=tick;player.onseeked=tick;
+player.onloadedmetadata=()=>{if(url&&player.currentSrc===url)media.loaded(url,player.duration);};
+player.onerror=()=>{if(url&&player.error&&media.fail(player.currentSrc||player.src))message('瀏覽器無法播放此音檔，請選擇支援的音訊格式。',true);};
 render(data.cues);document.getElementById('timing-note').textContent=MusicLyricsPackage.notice(data);
 </script></body></html>'''

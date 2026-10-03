@@ -6,6 +6,7 @@ const draftUndo=MusicDraftUndo.createUndo();
 const draftRetention=MusicDraftRetention.createGuard({capture:captureDraft,capturePanel,events:window,onState:renderRetention});
 let seedController=null,lyricsSeedController=null,lyricsImportController=null;
 let timingController=null,timingReading=false,timingReady=false,timingCanUndo=false;
+let lyricsMediaController=null;
 const deletionHistory=MusicHistory.createHistory(20);
 let rowSequence=0;
 const rowIds=(items,ids)=>ids||items.map(()=>`row-${++rowSequence}`);
@@ -99,7 +100,7 @@ async function run(button,task,scope=state.tab){
   finally{if(!current()){markDirty(scope);say('處理期間輸入有修改，請重新建立成果');}state.busy=false;button.disabled=false;timingControls();}
 }
 function setFiles(files,note,dirty=false,inputIndependent=false){state.files=files;state.bundles[state.tab]={files,note,dirty,inputIndependent};const select=$('output-file');select.replaceChildren();Object.keys(files).forEach(name=>{const option=document.createElement('option');option.value=name;option.textContent=name;select.append(option);});select.disabled=false;$('download').disabled=dirty;$('output-note').textContent=note+(dirty?'（有修改尚未重新驗證）':'');previewOutput();}
-function markDirty(tab){draftRetention.refresh(tab);if(['music','storyboard'].includes(tab))stalePlanningReview(tab);if(tab==='audio')staleAudioReview();if(tab==='lyrics'){const pending=timingReading||timingReady;timingController?.invalidate();if(pending)timingSay('歌詞有修改，請重新預覽整批校時。');}state.revisions[tab]=(state.revisions[tab]||0)+1;const saved=state.bundles[tab];if(!saved||saved.inputIndependent)return;saved.dirty=true;if(state.tab===tab){$('download').disabled=true;$('output-note').textContent=saved.note+'（有修改尚未重新驗證）';}}
+function markDirty(tab){draftRetention.refresh(tab);if(['music','storyboard'].includes(tab))stalePlanningReview(tab);if(tab==='audio')staleAudioReview();if(tab==='lyrics'){lyricsMediaController?.refresh();const pending=timingReading||timingReady;timingController?.invalidate();if(pending)timingSay('歌詞有修改，請重新預覽整批校時。');}state.revisions[tab]=(state.revisions[tab]||0)+1;const saved=state.bundles[tab];if(!saved||saved.inputIndependent)return;saved.dirty=true;if(state.tab===tab){$('download').disabled=true;$('output-note').textContent=saved.note+'（有修改尚未重新驗證）';}}
 document.querySelector('.editor').addEventListener('input',event=>{
   if(event.target.dataset.viewControl||event.target.id==='lyrics-file')return;
   const panel=event.target.closest('.panel');if(!panel)return;
@@ -295,6 +296,7 @@ function timingControls(){
   $('timing-preview').disabled=state.busy||timingReading||!state.cues.length;
   $('timing-apply').disabled=state.busy||timingReading||!timingReady;
   $('timing-undo').disabled=state.busy||timingReading||!timingCanUndo;
+  lyricsMediaController?.refresh({protect:false});
 }
 function applyCueTimes(entries){
   const targets=new Map(entries.map(e=>[e.id,e.value]));
@@ -334,6 +336,7 @@ function resetAudio(){
   const player=$('lyrics-player');player.pause();player.removeAttribute('src');player.load();player.hidden=true;
   if(state.audioUrl)URL.revokeObjectURL(state.audioUrl);
   state.audioUrl=null;state.waveform=null;
+  lyricsMediaController?.clear();
   if(state.audioContext){state.audioContext.close().catch(()=>{});state.audioContext=null;}
   $('lyrics-audio').value='';$('wave-note').textContent='音檔需另行選擇；草稿不包含音訊。';drawWave();
 }
@@ -343,7 +346,7 @@ $('lyrics-audio').onchange=async event=>{
   if(state.audioUrl)URL.revokeObjectURL(state.audioUrl);
   if(state.audioContext)state.audioContext.close().catch(()=>{});
   state.audioContext=null;state.waveform=null;state.audioUrl=URL.createObjectURL(file);
-  player.src=state.audioUrl;player.hidden=false;markDirty('lyrics');drawWave();
+  player.src=state.audioUrl;player.hidden=false;markDirty('lyrics');lyricsMediaController.select(state.audioUrl);drawWave();
   $('wave-note').textContent='正在讀取波形…';
   let context=null;
   try{
@@ -360,7 +363,22 @@ $('lyrics-audio').onchange=async event=>{
   finally{if(context&&context.state!=='closed')await context.close().catch(()=>{});if(state.audioContext===context)state.audioContext=null;}
 };
 window.addEventListener('pagehide',()=>{libraryController.cancel();backupController.cancel();timingController?.cancel();lyricsSeedController?.cancel();briefImporter.cancel();lyricsImportController?.cancel();draftTask.begin();waveTask.begin();if(state.audioUrl)URL.revokeObjectURL(state.audioUrl);if(state.audioContext)state.audioContext.close().catch(()=>{});});
-$('lyrics-player').onloadedmetadata=()=>{if(!Number.isFinite($('lyrics-player').duration))return;$('lyrics-duration').value=$('lyrics-player').duration.toFixed(3);markDirty('lyrics');tick();};$('lyrics-player').ontimeupdate=tick;$('lyrics-player').onseeked=tick;$('lyrics-player').onerror=()=>say('此音檔無法在瀏覽器播放，請改用支援的格式',true);
+function renderMediaDuration(view){
+  $('lyrics-media-audio').textContent=view.phase==='loading'?'讀取中…':view.mediaText;
+  $('lyrics-media-declared').textContent=view.declaredText;
+  $('lyrics-media-note').textContent=view.note;
+  $('lyrics-media-check').classList.toggle('needs-check',['differs','invalid'].includes(view.status)||view.phase==='error');
+  $('lyrics-media-adopt').disabled=state.busy||!view.canAdopt;
+  $('lyrics-media-undo').disabled=state.busy||!view.canUndo;
+}
+lyricsMediaController=MusicLyricsMedia.createController({capture:()=>$('lyrics-duration').value,
+  apply:value=>{$('lyrics-duration').value=value;markDirty('lyrics');tick();},onState:renderMediaDuration});
+lyricsMediaController.refresh({protect:false});
+$('lyrics-media-adopt').onclick=()=>{if(state.busy)return;try{lyricsMediaController.adopt();}catch(error){say(error.message,true);}};
+$('lyrics-media-undo').onclick=()=>{if(state.busy)return;try{lyricsMediaController.undo();}catch(error){say(error.message,true);}};
+$('lyrics-player').onloadedmetadata=()=>{const player=$('lyrics-player');if(!state.audioUrl||player.currentSrc!==state.audioUrl)return;lyricsMediaController.loaded(player.currentSrc,player.duration);tick();};
+$('lyrics-player').ontimeupdate=tick;$('lyrics-player').onseeked=tick;
+$('lyrics-player').onerror=()=>{const player=$('lyrics-player');if(!state.audioUrl||!player.error)return;if(lyricsMediaController.fail(player.currentSrc||player.src))say('此音檔無法在瀏覽器播放，請改用支援的格式',true);};
 function seek(seconds){const p=$('lyrics-player');if(!Number.isFinite(p.duration))return;p.currentTime=Math.max(0,Math.min(p.duration,seconds));tick();}
 $('waveform').onclick=event=>{const r=event.currentTarget.getBoundingClientRect();seek((event.clientX-r.left)/r.width*$('lyrics-player').duration);};$('waveform').onkeydown=event=>{if(['ArrowLeft','ArrowRight','Home','End'].includes(event.key)){event.preventDefault();seek(event.key==='Home'?0:event.key==='End'?$('lyrics-player').duration:$('lyrics-player').currentTime+(event.key==='ArrowRight'?.5:-.5));}};
 function staleAudioReview(){
@@ -421,7 +439,7 @@ function capturePanel(panel){
 }
 function captureDraft(){
   const panels=Object.fromEntries(Object.keys(MusicEditor.draftFields).map(panel=>[panel,capturePanel(panel)]));
-  return {format:'zoe-music-lab-draft',schema_version:3,tool_version:'0.23.0',saved_at:new Date().toISOString(),tab:state.tab,panels};
+  return {format:'zoe-music-lab-draft',schema_version:3,tool_version:'0.24.0',saved_at:new Date().toISOString(),tab:state.tab,panels};
 }
 function applyDraft(draft){
   if(seedController)seedController.cancel();

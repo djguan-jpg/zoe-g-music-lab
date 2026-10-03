@@ -95,7 +95,8 @@ test('target edit during inspection and after preview both reject replacing titl
 });
 test('actual production standalone apply delegates to shared package revision and preserves pending data on invalid edit',()=>{
   const preview=domain({package:estimated.data}).files['preview.html'];const start=preview.indexOf('function apply(){'),end=preview.indexOf('function tick()',start);assert.ok(start>0&&end>start);
-  let values=estimated.data.cues,rendered=null;const note={textContent:''},context={data:structuredClone(estimated.data),player:{duration:NaN},MusicLyricsPackage:P,LyricTime:T,collect:()=>values,render:v=>rendered=v,tick:()=>{},message:()=>{},document:{getElementById:()=>note}};
+  let values=estimated.data.cues,rendered=null;const note={textContent:''},context={data:structuredClone(estimated.data),durationField:{value:''},player:{duration:NaN},MusicLyricsPackage:P,LyricTime:T,collect:()=>values,render:v=>rendered=v,tick:()=>{},message:()=>{},document:{getElementById:()=>note}};
+  context.media=require('../musiclab/assets/lyrics-media.js').createController({capture:()=>context.durationField.value,apply:value=>context.durationField.value=value,onState:()=>{}});
   vm.runInNewContext(preview.slice(start,end),context);context.apply();assert.deepEqual(context.data,estimated.data);assert.match(note.textContent,/推估/);
-  values=[{start:1,end:3,text:'手動新句'}];context.apply();assert.equal(context.data.cues[0].end,3);assert.match(context.data.review_notes[0],/編修/);const before=structuredClone(context.data);context.player.duration=2;assert.throws(()=>context.apply());assert.deepEqual(context.data,before);assert.equal(rendered[0].end,3);
+  values=[{start:1,end:3,text:'手動新句'}];context.apply();assert.equal(context.data.cues[0].end,3);assert.match(context.data.review_notes[0],/編修/);const before=structuredClone(context.data);context.durationField.value='2';assert.throws(()=>context.apply());assert.deepEqual(context.data,before);assert.equal(rendered[0].end,3);
 });

@@ -1,5 +1,11 @@
 # 本機 Agent 接口 v1
 
+## v0.24 時長接續保持明確
+
+沿用 lyrics operation／lyrics_validate tool／HTTP /api/lyrics／CLI lyrics。已有完整包的宣告總長保持；瀏覽器選定不同音檔不會默默送出新總長。明確採用後只改 duration，仍驗證 cue 邊界並保留待實聽說明；撤回只還原欄位，不能刪去已套用過的來源歷史。
+
+媒體觀測及撤回不進 payload 或 draft3。沒有新工具、Host 設定、模型或持久 schema；CLI／HTTP／JSON-lines／MCP 同一 package request 仍產生四檔。見 LYRICS-MEDIA-DURATION.md 與 QA-v0.24.0.md。
+
 ## v0.23 完成分鏡影格契約
 
 沿用 operation storyboard／tool storyboard_plan／HTTP /api/storyboard。完成分鏡 data 與 storyboard.json 新增 frame_timeline：format zoe-storyboard-frames、schema_version1、rounding nearest_ties_to_even、end_semantics exclusive、total_frames。--describe／HTTP capabilities 的 storyboard_frames 描述獨立版本，不新增工具或 request 欄位。
