@@ -82,6 +82,30 @@
     let revision = 0;
     return {begin: () => ++revision, isCurrent: token => token === revision};
   }
+  function createLyricsFileImport({apply,onError}) {
+    const task=createLatestTask();
+    return {cancel:()=>task.begin(),async read(file){
+      const token=task.begin();if(!file)return false;
+      try{
+        if(!Number.isSafeInteger(file.size)||file.size<0||file.size>2*1024*1024)throw Error('歌詞檔需小於或等於 2 MiB');
+        const suffix='.'+file.name.split('.').at(-1).toLowerCase();
+        if(!['.lrc','.srt','.json'].includes(suffix))throw Error('請選擇 LRC／SRT／JSON');
+        const content=await file.text();
+        if(!task.isCurrent(token))return false;
+        apply({content,suffix});return true;
+      }catch(error){if(task.isCurrent(token))onError(error);return false;}
+    }};
+  }
+  function shotOverview(shots,motifs) {
+    const names=new Map(motifs.map(m=>[m.id,m.name]));
+    return shots.map((shot,index)=>{
+      const start=Number(shot.start),end=Number(shot.end);
+      const valid=Boolean(String(shot.start).trim()&&String(shot.end).trim()&&Number.isFinite(start)&&
+        Number.isFinite(end)&&start>=0&&end>start);
+      const time=valid?`${start}–${end} 秒`:'時間未完成';
+      return {index,valid,time,label:`${time} · ${shot.section||'未填段落'} · ${names.get(shot.motif_id)||'未選母題'}`};
+    });
+  }
   function activeCueIndex(cues, time) {
     let active = -1;
     cues.forEach((cue, index) => {
@@ -91,7 +115,7 @@
     return active;
   }
   const api = {createLatestTask, activeCueIndex, draftFields, draftRows, validateDraft,
-    inspectDraft,convertLegacyDraft,nextMotifId,compactShotTimes};
+    inspectDraft,convertLegacyDraft,nextMotifId,compactShotTimes,createLyricsFileImport,shotOverview};
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.MusicEditor = api;
 })(typeof window === 'undefined' ? {} : window);

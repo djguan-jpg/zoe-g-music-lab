@@ -58,3 +58,18 @@ Get-Content -Raw -Encoding utf8 audio-request.json | python music_lab_agent.py -
 本輪以獨立子程序完成握手、發現四工具、實際呼叫四操作、錯誤恢復與 EOF 結束，成果比對共用 application；沒有把此服務安裝進 Codex 或其他 Agent，特定 host 與官方 conformance suite 尚未驗證。
 
 規格研究僅採官方文件：[2025 lifecycle](https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle)、[stdio transport](https://modelcontextprotocol.io/specification/2025-11-25/basic/transports)、[tools](https://modelcontextprotocol.io/specification/2025-11-25/server/tools)、[2026 versioning](https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/docs/specification/2026-07-28/basic/versioning.mdx)。未搬入第三方程式或素材。
+
+## v0.5：產生目前版本的啟動設定
+
+在解壓後的專案目錄執行：
+
+```powershell
+python scripts/agent_launch.py
+python scripts/agent_launch.py --format codex
+```
+
+第一個指令顯示 JSON command／args／逾時設定，第二個顯示 `[mcp_servers.zoe_music_lab]` TOML 片段。command 為執行此指令的 Python 完整路徑，args 為本版 `music_lab_mcp.py` 完整路徑；移動專案或更換 Python 後重新產生。音檔仍由使用者明確加入 `--audio` 與指定 WAV 路徑。JSON descriptor 含 Codex 的逾時欄位，其他 host 應依其設定格式採用 command／args，不直接假設格式相同。
+
+工具只列印設定，沒有寫入全域檔案、啟動 host 或取得其他工具權限。由使用者依選定 host 的設定方式加入片段後，仍需驗證連線與一次實際工具呼叫；不要把 `mcp get` 的成功當成可呼叫證明。
+
+本輪已由生成的 command／args，在另一個暫存工作目錄啟動實際 MCP 子程序，完成握手與 `lyrics_validate`，核對歌詞成果，EOF 退出且不寫檔。另以本機 `codex-cli 0.153.4` 的 `mcp get --json` 與臨時 `-c` 覆寫解析設定，command／args 與生成值一致；只顯示本工具的白名單 metadata，不讀出其他服務或秘密，沒有修改全域設定。此項沒有建立服務連線，也沒有呼叫模型。實際 Agent host、官方 conformance、跨 host 與 2026 MCP 支援仍未完成。
