@@ -59,3 +59,6 @@
 
 /* v0.29: order controls stay outside the horizontally scrolling table. */
 .arrangement-tools{margin:16px 0;padding:16px;border:1px solid var(--line);background:#fffdf7;border-radius:8px;min-width:0}.arrangement-tools label{max-width:100%;margin-bottom:12px}.arrangement-tools .actions{display:flex;flex-wrap:wrap;gap:8px}.arrangement-tools .hint{overflow-wrap:anywhere;margin-bottom:0}#arrangement [data-section-selected]{background:#edf0e7}
+
+/* v0.30: song field locations use the same bounded checklist presentation. */
+[data-music-ready-invalid]{border-color:#a34935;background:#fff3ed;outline-offset:3px}

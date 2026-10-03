@@ -1,6 +1,10 @@
 # ZOE. G Music Lab
 
-目前版本 **v0.29.0**：歌曲段落可整列前移／後移，限定撤回保留後續欄位編修；同名與留白內容保持。重建歌曲及分鏡時間起稿使用新順序，既有分鏡保持。見[分層與使用](docs/MUSIC-ARRANGEMENT.md)及[本輪驗證](docs/QA-v0.29.0.md)。
+目前版本 **v0.30.0**：歌曲欄位待辦可定位原缺漏；建立歌曲包及從目前歌曲起稿分鏡先檢查。原字串、其他工作台及音檔保持；編修或排序後停用舊定位。BPM 120.0004 保持精度可建立，待辦為零仍須完整建立與實唱／實聽。見[使用與分層](docs/MUSIC-READINESS.md)、[本輪驗證](docs/QA-v0.30.0.md)。
+
+## 歌曲段落順序（v0.29）
+
+v0.29.0：歌曲段落可整列前移／後移，限定撤回保留後續欄位編修；同名與留白內容保持。重建歌曲及分鏡時間起稿使用新順序，既有分鏡保持。見[分層與使用](docs/MUSIC-ARRANGEMENT.md)及[本輪驗證](docs/QA-v0.29.0.md)。
 
 ## 分鏡創作待辦（v0.28）
 
@@ -60,7 +64,7 @@ CLI、HTTP、JSON-lines、MCP 共用同一次分析副本。Python 標準函式�
 
 由 **ZOE. G** 發起的四個原創專案。GitHub 帳號為 **djguan-jpg**；品牌署名與帳號可以不同。
 
-目前版本 v0.28 提供四個工作台、原創 Skill、本機草稿庫及可預覽的 ZIP 備份／恢復、整批歌詞校時及來源一致的音檔檢查報告，以及保留原文的未校時歌詞起稿。Python 3.10 以上即可使用，沒有第三方依賴。只讀本次新建工作區，不參考使用者的其他本機或 GitHub 專案。公開第三方 README 僅用於需求比較，來源及自行設計的差異記在 [構思紀錄](CONCEPT.md)。
+目前版本 v0.30 提供四個工作台、原創 Skill、本機草稿庫及可預覽的 ZIP 備份／恢復、整批歌詞校時及來源一致的音檔檢查報告，以及保留原文的未校時歌詞起稿。Python 3.10 以上即可使用，沒有第三方依賴。只讀本次新建工作區，不參考使用者的其他本機或 GitHub 專案。公開第三方 README 僅用於需求比較，來源及自行設計的差異記在 [構思紀錄](CONCEPT.md)。
 
 授權為 **PolyForm Noncommercial 1.0.0**，商業使用沒有由本版授權。可查看、修改及分發的範圍以 [LICENSE](LICENSE) 為準，保留 [NOTICE](NOTICE)。這是非商用原始碼授權；不標成 AGPL。使用者匯入的素材授權各自保留，詳見 [授權說明](LICENSING.md)。
 
@@ -261,7 +265,7 @@ git diff --check
 開發／封裝驗證需要 Node.js；一般使用工作台與 CLI 只需要 Python。從指定 Git 版本建立可驗證的原始碼 ZIP：
 
 ```powershell
-python scripts/package_release.py --ref v0.29.0
+python scripts/package_release.py --ref v0.30.0
 ```
 
 封裝保存 commit、SHA-256、每檔摘要及檢查結果；解壓後重跑 Python／JavaScript 測試、Agent 能力查詢與 MCP 握手。輸出留在忽略的 outputs/releases，重複封裝同一提交會拒絕覆寫。

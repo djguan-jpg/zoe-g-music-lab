@@ -54,7 +54,7 @@ test('actual DOM move handler refuses busy work and marks only music dirty while
   ctx.state.busy=false;ctx.moveMusicSection(-1);assert.equal(s.writes,1);assert.equal(elements['section-order'].value,'row-2');assert.ok(events.includes('music'));assert.equal(events.at(-1),'earlier');
 });
 test('actual add handler protects busy work and selects and focuses the new identity',()=>{
-  const source=fs.readFileSync('web/app.js','utf8'),start=source.indexOf("$('section-add').onclick="),end=source.indexOf("$('music-form').onsubmit",start),s=setup(),button={},select={value:''},events=[];
+  const source=fs.readFileSync('web/app.js','utf8'),start=source.indexOf("$('section-add').onclick="),end=source.indexOf('function musicIssueTarget',start),s=setup(),button={},select={value:''},events=[];
   const ctx={$:id=>id==='section-add'?button:select,state:{busy:true},rowSequence:4,collections:{arrangement:{limit:40}},entriesFor:()=>s.entries,writeEntries:(_l,e)=>s.entries=e,markDirty:scope=>events.push(scope),focusEntry:(l,i)=>events.push([l,i]),say:t=>events.push(t)};
   vm.createContext(ctx);vm.runInContext(source.slice(start,end),ctx);button.onclick();assert.equal(s.entries.length,4);ctx.state.busy=false;button.onclick();assert.equal(s.entries.length,5);assert.equal(select.value,'row-5');assert.deepEqual(events.at(-1),['arrangement',4]);assert.equal(s.entries.at(-1).value.focus,'');
 });
