@@ -26,8 +26,23 @@ document.querySelectorAll('[data-tab]').forEach(button=>button.onclick=()=>{if(s
 function getMusicSections(){return [...$('arrangement').children].map(row=>{const x=row.querySelectorAll('input');if(!x[1].value.trim()||!x[2].value.trim())throw Error('小節與能量不可空白');return {name:x[0].value,bars:Number(x[1].value),energy:Number(x[2].value),focus:x[3].value,texture:x[4].value};});}
 function renderSections(sections){$('arrangement').innerHTML=sections.map((s,i)=>`<tr><td>${field(s.name,`段落 ${i+1} 名稱`)}</td><td>${field(s.bars,`段落 ${i+1} 小節`,'number')}</td><td>${field(s.energy,`段落 ${i+1} 能量`,'number')}</td><td>${field(s.focus,`段落 ${i+1} 任務`,'text',true)}</td><td>${field(s.texture,`段落 ${i+1} 聲音`,'text',true)}</td><td><button type="button" data-remove-section="${i}" aria-label="刪除段落 ${i+1}">刪除</button></td></tr>`).join('');$('arrangement').querySelectorAll('[data-remove-section]').forEach(b=>b.onclick=()=>{b.closest('tr').remove();markDirty('music');say('已刪除段落；重新建立設計包以更新時間');});}
 function requirementValues(id){return [...$(id).querySelectorAll('textarea')].map(input=>input.value);}
+function clearRequirementError(id){
+  $(id+'-error').hidden=true;$(id+'-error').textContent='';
+  $(id).querySelectorAll('.requirement-error').forEach(note=>{note.hidden=true;note.textContent='';});
+  $(id).querySelectorAll('textarea').forEach(input=>{input.removeAttribute('aria-invalid');input.removeAttribute('aria-describedby');});
+  if(id==='music-deliverables')$('deliverable-add').removeAttribute('aria-describedby');
+}
+function showRequirementIssue(issue){
+  const id=issue.key==='avoid'?'music-avoid':'music-deliverables';
+  const input=issue.index===null?$('deliverable-add'):$(id).querySelectorAll('textarea')[issue.index];
+  const note=issue.index===null?$(id+'-error'):input.closest('.requirement-item').querySelector('.requirement-error');
+  note.textContent=issue.message;note.hidden=false;
+  if(input.tagName==='TEXTAREA')input.setAttribute('aria-invalid','true');
+  input.setAttribute('aria-describedby',note.id);input.focus();say(issue.message,true);
+}
 function renderRequirements(id,items,label){
-  $(id).innerHTML=items.map((item,index)=>`<div class="requirement-item"><label>${label} ${index+1}<textarea rows="2" aria-label="${label} ${index+1}">${esc(item)}</textarea></label><button type="button" class="subtle" aria-label="刪除${label} ${index+1}">刪除</button></div>`).join('');
+  clearRequirementError(id);
+  $(id).innerHTML=items.map((item,index)=>`<div class="requirement-item"><label>${label} ${index+1}<textarea rows="2" aria-label="${label} ${index+1}">${esc(item)}</textarea></label><p id="${id}-item-error-${index+1}" class="requirement-error" role="status" aria-live="polite" hidden></p><button type="button" class="subtle" aria-label="刪除${label} ${index+1}">刪除</button></div>`).join('');
   $(id).querySelectorAll('button').forEach((button,index)=>button.onclick=()=>{
     const values=requirementValues(id);values.splice(index,1);renderRequirements(id,values,label);markDirty('music');
     say(`已刪除${label}，重新建立歌曲設計包後更新`);
@@ -37,10 +52,15 @@ function addRequirement(id,label){const items=requirementValues(id);if(items.len
   items.push('');renderRequirements(id,items,label);markDirty('music');$(id).lastElementChild.querySelector('textarea').focus();}
 $('avoid-add').onclick=()=>addRequirement('music-avoid','避免事項');
 $('deliverable-add').onclick=()=>addRequirement('music-deliverables','交付項目');
+['music-avoid','music-deliverables'].forEach(id=>$(id).addEventListener('input',()=>clearRequirementError(id)));
 function loadMusic(){const b=structuredClone(state.examples.music);[['music-title',b.title],['music-hook',b.memory_hook],['music-theme',b.theme],['music-style',b.style],['music-vocal',b.vocal],['music-audience',b.audience],['music-bpm',b.bpm],['music-beats',b.beats_per_bar],['music-lyrics',b.existing_lyrics],['music-language',b.language]].forEach(([id,value])=>$(id).value=value);renderSections(b.arrangement);renderRequirements('music-avoid',b.avoid,'避免事項');renderRequirements('music-deliverables',b.deliverables,'交付項目');$('music-visual').hidden=true;}
 $('music-example').onclick=()=>{loadMusic();markDirty('music');say('已載入本次原創合成範例，可直接修改');};
 $('section-add').onclick=()=>{try{const sections=getMusicSections();sections.push({name:'新段落',bars:8,energy:3,focus:'',texture:''});renderSections(sections);markDirty('music');}catch(e){say(e.message,true);}};
-$('music-form').onsubmit=event=>{event.preventDefault();run(event.submitter,async()=>{const brief=MusicPlanning.planningBrief(captureDraft(),'music');const result=await api('/api/music',brief);setFiles(result.files,`歌曲設計 · ${result.data.duration_seconds} 秒 · ${result.data.sections.length} 段`);const box=$('music-visual');box.replaceChildren();const title=document.createElement('h3');title.textContent='段落能量曲線';box.append(title);result.data.sections.forEach(s=>{const row=document.createElement('div');row.className='timeline-item';const name=document.createElement('span');name.textContent=s.section;const track=document.createElement('div');track.className='energy-track';const fill=document.createElement('div');fill.className='energy-fill';fill.style.width=`${s.energy*20}%`;track.append(fill);const time=document.createElement('span');time.className='timeline-time';time.textContent=`${s.start}–${s.end}s`;row.append(name,track,time);box.append(row);});appendNotes(box,result.data.review_notes);box.hidden=false;say('歌曲設計包已建立；可檢視與下載 4 個檔案');});};
+$('music-form').onsubmit=event=>{event.preventDefault();if(state.busy)return;
+  clearRequirementError('music-avoid');clearRequirementError('music-deliverables');
+  const issue=MusicPlanning.requirementIssue({avoid:requirementValues('music-avoid'),deliverables:requirementValues('music-deliverables')});
+  if(issue){showRequirementIssue(issue);return;}
+  run(event.submitter,async()=>{const brief=MusicPlanning.planningBrief(captureDraft(),'music');const result=await api('/api/music',brief);setFiles(result.files,`歌曲設計 · ${result.data.duration_seconds} 秒 · ${result.data.sections.length} 段`);const box=$('music-visual');box.replaceChildren();const title=document.createElement('h3');title.textContent='段落能量曲線';box.append(title);result.data.sections.forEach(s=>{const row=document.createElement('div');row.className='timeline-item';const name=document.createElement('span');name.textContent=s.section;const track=document.createElement('div');track.className='energy-track';const fill=document.createElement('div');fill.className='energy-fill';fill.style.width=`${s.energy*20}%`;track.append(fill);const time=document.createElement('span');time.className='timeline-time';time.textContent=`${s.start}–${s.end}s`;row.append(name,track,time);box.append(row);});appendNotes(box,result.data.review_notes);box.hidden=false;say('歌曲設計包已建立；可檢視與下載 4 個檔案');});};
 function appendNotes(box,notes){const ul=document.createElement('ul');ul.className='review-list';notes.forEach(note=>{const li=document.createElement('li');li.textContent=typeof note==='string'?note:`${note.shot?'鏡頭 '+note.shot+'：':''}${note.message}`;ul.append(li);});box.append(ul);}
 const shotFields=[['section','歌曲段落'],['purpose','敘事用途'],['visual','畫面動作'],['camera','鏡頭運動'],['transition','尾鏡與轉場'],['motif_state','母題狀態'],['character_state','人物狀態'],['change_reason','變化理由']];
 function getMotifs(){return [...$('motifs').children].map(row=>({id:row.dataset.motifId,name:row.querySelector('[data-motif="name"]').value,meaning:row.querySelector('[data-motif="meaning"]').value}));}
@@ -183,7 +203,7 @@ function captureDraft(){
   panels.lyrics.cues=[...$('cues').children].map(row=>Object.fromEntries(
     MusicEditor.draftRows.lyrics.columns.map((key,i)=>[key,row.querySelectorAll('input')[i].value])));
   panels.music.avoid=requirementValues('music-avoid');panels.music.deliverables=requirementValues('music-deliverables');
-  return {format:'zoe-music-lab-draft',schema_version:3,tool_version:'0.6.0',saved_at:new Date().toISOString(),tab:state.tab,panels};
+  return {format:'zoe-music-lab-draft',schema_version:3,tool_version:'0.7.0',saved_at:new Date().toISOString(),tab:state.tab,panels};
 }
 function applyDraft(draft){
   briefImporter.cancel();clearBriefReview();

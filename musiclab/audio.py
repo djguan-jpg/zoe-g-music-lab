@@ -18,12 +18,17 @@ def dbfs(amplitude):
 
 def analyze_wav(path, profile="distribution", rates=None, bits=None, channels=None):
     path = Path(path)
+    if not isinstance(profile, str) or profile not in PROFILES:
+        raise ValueError("profile 需為 distribution 或 video")
     limits = {key: list(value) for key, value in PROFILES[profile].items()}
     for key, values in (("rates", rates), ("bits", bits), ("channels", channels)):
         if values is not None:
-            if not values or any(value <= 0 for value in values):
+            if not isinstance(values, list) or not values or any(
+                    type(value) not in (int, float) or value <= 0 or
+                    isinstance(value, float) and not value.is_integer() for value in values):
                 raise ValueError(f"{key} 接受條件需為正整數")
-            limits[key] = values
+            # JSON Schema integers include 1.0; normalize exact integer values.
+            limits[key] = [int(value) for value in values]
     sha = hashlib.sha256()
     with path.open("rb") as raw:
         for chunk in iter(lambda: raw.read(1024 * 1024), b""):
