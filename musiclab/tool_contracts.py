@@ -72,6 +72,12 @@ def seed_schema():
 
 
 def payload_schema(operation):
+    if operation == 'storyboard_review':
+        from .draft_contract import draft_schema
+        panel = draft_schema()['properties']['panels']['properties']['storyboard']
+        panel['properties']['shots']['items']['properties']['screen_direction'].pop('enum')
+        panel['description'] = 'Raw draft3 storyboard panel; original strings, blank fields and motif IDs; unknown direction is diagnosed; no paths or timing acceptance'
+        return object_schema({'panel': panel}, ('panel',), additionalProperties=False)
     if operation == 'music_review':
         from .draft_contract import draft_schema
         panel = draft_schema()['properties']['panels']['properties']['music']

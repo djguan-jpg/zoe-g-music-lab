@@ -1,5 +1,13 @@
 # 迭代說明
 
+## v0.32.0 — 2026-10-04
+
+- 分鏡原欄位診斷／JSON與Markdown報告接通CLI、HTTP、JSON-lines及MCP；原鏡號／母題ID與引用保持，明確--draft只取modern草稿分鏡工作台。
+- 歌曲與分鏡抽取共享純回覆核對層；完整來源／data／JSON／Markdown與protocol／schema核對後才提交，未知或晚回應保留編修／成果／媒體／另存狀態。
+- 新唯讀工具，9／14 discovery；原協定和schema保持，零待辦不是完整時間／影格／連戲或媒體驗收。
+- 267Python／400JS／四Skill／30語法、64跨語言、27IAB／兩native／四adapter／真draft CLI及Agent、390px Enter／母題原列／35待辦20定位／4秒晚回應／完整重疊拒絕及576影格通過；前版v0.31 ZIP258／391還原通過。
+- 本輪分支、restore tag、指定commit封裝與SHA、privatePR／Release、遠端檔案與限定維護收據；使用者草稿／素材不清除。見HANDOFF與QA-v0.32.0。
+
 ## v0.31.0 — 2026-10-04
 
 - 基線真Agent無music_review、IAB歌曲待辦沒有可交付報告。新增唯讀歌曲原欄位診斷與獨立zoe-music-review schema1，JSON／Markdown；原字串／留白／原列保持，不補創作，零待辦仍須完整歌曲建立。

@@ -376,6 +376,7 @@ function locateStoryboardIssue(index){
   else{target.scrollIntoView({block:'nearest'});target.focus({preventScroll:true});}
 }
 function renderStoryboardReady({report,stale}){
+  $('mv-ready-report').disabled=state.busy;
   clearStoryboardIssueMarks();const box=$('mv-ready-box'),list=$('mv-ready-issues'),stats=$('mv-ready-stats');
   box.classList.toggle('stale',stale);list.replaceChildren();stats.replaceChildren();stats.hidden=!report;
   $('mv-ready-status').textContent=!report?'時間起稿或留白鏡頭也能檢查；不補寫創作，不修改表單。':stale?'內容已有修改；下方是上一份待辦，請重新檢查目前分鏡。':report.issueCount?`共${report.issueCount}項創作待辦；補齊後再建立分鏡包。`:'欄位待辦已補齊；請建立分鏡包，繼續檢查時間、影格與連戲。';
@@ -391,6 +392,14 @@ function renderStoryboardReady({report,stale}){
 }
 storyboardReadyController=MusicStoryboardReadiness.createController({capture:()=>capturePanel('storyboard'),onState:renderStoryboardReady});
 $('mv-ready-check').onclick=()=>{if(state.busy){say('目前操作尚未完成，請稍候');return;}try{const view=storyboardReadyController.check();say(view.report.issueCount?`已列出${view.report.issueCount}項創作待辦；點選可定位欄位。`:'欄位待辦已補齊；仍須完整建立驗證。');}catch(e){say(e.message,true);}};
+$('mv-ready-report').onclick=()=>run($('mv-ready-report'),async current=>{
+  const panel=capturePanel('storyboard');storyboardReadyController.check();
+  const reply=await api('/api/storyboard-review',{panel});if(!current())return;
+  const accepted=MusicStoryboardReadiness.checkedResult(panel,reply);
+  $('mv-visual').hidden=true;
+  setFiles(accepted.files,`分鏡欄位檢查 · 待辦 ${accepted.data.issue_count} 項`);
+  say('分鏡待辦報告已建立；仍須完整建立與實際音畫驗證');
+});
 function lyricsReviewPayload(){return {title:$('lyrics-title').value,duration:$('lyrics-duration').value,cues:entriesFor('cues').map(e=>e.value)};}
 function clearLyricsIssueMarks(){document.querySelectorAll('#cues input,#lyrics-duration').forEach(e=>e.removeAttribute('aria-invalid'));}
 function staleLyricsReview(){
@@ -457,6 +466,7 @@ function timingControls(){
   storyboardDurationController?.refresh();
   storyboardReadyController?.refresh();
   $('mv-ready-check').disabled=state.busy;
+  $('mv-ready-report').disabled=state.busy;
   $('timing-preview').disabled=state.busy||timingReading||!state.cues.length;
   $('timing-apply').disabled=state.busy||timingReading||!timingReady;
   $('timing-undo').disabled=state.busy||timingReading||!timingCanUndo;
@@ -604,7 +614,7 @@ function capturePanel(panel){
 }
 function captureDraft(){
   const panels=Object.fromEntries(Object.keys(MusicEditor.draftFields).map(panel=>[panel,capturePanel(panel)]));
-  return {format:'zoe-music-lab-draft',schema_version:3,tool_version:'0.31.0',saved_at:new Date().toISOString(),tab:state.tab,panels};
+  return {format:'zoe-music-lab-draft',schema_version:3,tool_version:'0.32.0',saved_at:new Date().toISOString(),tab:state.tab,panels};
 }
 function applyDraft(draft){
   storyboardDurationController?.clear();

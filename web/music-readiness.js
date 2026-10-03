@@ -6,6 +6,7 @@
   const J=node?require('../musiclab/assets/json-document.js'):root.MusicJsonDocument;
   const Values=node?require('./planning-values.js'):root.MusicPlanningValues;
   const Checkpoint=node?require('./readiness-state.js'):root.MusicReadinessState;
+  const Report=node?require('./readiness-report.js'):root.MusicReadinessReport;
   const fields=Editor.draftFields.music,columns=Editor.draftRows.music.columns;
   const labels={'music-title':'歌名','music-hook':'記憶點','music-theme':'故事核心','music-style':'曲風與聲音','music-vocal':'人聲表現','music-audience':'聽眾','music-bpm':'BPM','music-beats':'每小節拍數','music-language':'創作語言',sections:'段落清單',deliverables:'交付清單',name:'名稱',bars:'小節',energy:'能量',focus:'敘事任務',texture:'聲音配置',text:'內容'};
   const exact=(v,keys)=>v&&typeof v==='object'&&!Array.isArray(v)&&Object.keys(v).length===keys.length&&keys.every(k=>Object.hasOwn(v,k));
@@ -48,14 +49,8 @@
     if(!data.issue_count)lines.push('目前欄位沒有待辦；仍須完整建立與實唱／實聽驗證。');
     return [...lines,'',...data.review_notes,''].join('\n');
   }
-  const canonical=v=>Array.isArray(v)?v.map(canonical):v&&typeof v==='object'?Object.fromEntries(Object.keys(v).sort().map(k=>[k,canonical(v[k])])):v;
-  const equal=(a,b)=>JSON.stringify(canonical(a))===JSON.stringify(canonical(b));
   function checkedResult(panel,reply){
-    const expected=report(panel);
-    if(!exact(reply,['files','data','meta'])||!exact(reply.meta,['version','protocol_version','needs_review'])||typeof reply.meta.version!=='string'||!reply.meta.version||reply.meta.protocol_version!==1||reply.meta.needs_review!==true||
-      !equal(reply.data,expected)||!exact(reply.files,['music-review.json','music-review.md'])||!equal(J.parse(reply.files['music-review.json'],{maxBytes:8*1024*1024,label:'歌曲待辦報告'}),expected)||reply.files['music-review.md']!==markdown(expected))
-      throw Error('歌曲待辦報告與本次來源或版本不一致；目前成果與編修保留');
-    return structuredClone(reply);
+    return Report.checkedResult({expected:report(panel),reply,jsonName:'music-review.json',markdownName:'music-review.md',markdown,label:'歌曲待辦報告'});
   }
   function createController({capture,captureIds=null,onState=()=>{}}){
     return Checkpoint.createController({capture:()=>({panel:capture(),ids:captureIds?captureIds():null}),

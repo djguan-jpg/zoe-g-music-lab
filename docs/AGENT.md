@@ -1,5 +1,12 @@
 # 本機 Agent 接口 v1
 
+## v0.32 分鏡原欄位診斷
+
+新增唯讀storyboard_review operation／MCP tool，payload精確panel（fields／motifs／shots），原字串、母題ID、留白與原鏡號保持；未知方向列待辦，未知shape／ID拒絕。report zoe-storyboard-review schema1含related_row、全部count／前200明細；完整時間／影格／連戲另由storyboard驗證。
+
+CLI storyboard-review明確--input或modern --draft、0／2／1及預設不覆寫；HTTP／Agent／MCP同application。9基本／明確啟庫14工具，需重新discovery，meta.needs_review始終true；Agent1／MCP2025-11-25／draft3與舊schema保持，無模型／路徑或自動寫檔新增。歌曲／分鏡前端共用純完整回覆核對層，報告不進草稿。見STORYBOARD-REVIEW.md；v0.31的8／13及更早7／12為歷史清單。
+
+
 ## v0.31 歌曲原欄位診斷
 
 新增唯讀music_review operation／MCP tool，payload只含panel（modern草稿panels.music），允許未完成原字串與空列；報告zoe-music-review schema1、JSON／Markdown保留source／原位置，不補創作。CLI music-review可明確--input或--draft；0為欄位零、2為已輸出待修正、1為失敗。meta.needs_review始終true，完整歌曲與媒體仍須驗證。預設8工具、明確啟庫13，需重新discovery；Agent1／MCP2025-11-25／draft3及舊schema保持。沒有Host／路徑／模型／自動寫檔權限新增。見MUSIC-REVIEW.md；既有v0.25–v0.30章節的7／12為歷史清單。

@@ -14,14 +14,14 @@ from musiclab.draft_library import DraftLibrary, revision_id
 def main(argv=None):
     parser = argparse.ArgumentParser(description=f"ZOE. G Music Lab · 本機 v{__version__}")
     commands = parser.add_subparsers(dest="command", required=True)
-    for name in ("music", "storyboard", "lyrics", "audio", "storyboard-seed", "lyrics-seed", "lyrics-review", "music-review"):
+    for name in ("music", "storyboard", "lyrics", "audio", "storyboard-seed", "lyrics-seed", "lyrics-review", "music-review", "storyboard-review"):
         sub = commands.add_parser(name)
         sub.add_argument("--out", required=True, help="指定本輪輸出資料夾")
         sub.add_argument("--overwrite", action="store_true", help="明確替換此輸出目錄的同名成果")
-        if name == 'music-review':
+        if name in ('music-review', 'storyboard-review'):
             source_group = sub.add_mutually_exclusive_group(required=True)
-            source_group.add_argument('--input', help='含 panel 的原始歌曲欄位 JSON')
-            source_group.add_argument('--draft', help='明確選定 schema3 草稿，只檢查歌曲工作台')
+            source_group.add_argument('--input', help='含 panel 的原始工作台欄位 JSON')
+            source_group.add_argument('--draft', help='明確選定 schema3 草稿，只檢查命令所選的工作台')
         elif name == 'lyrics-seed':
             source_group = sub.add_mutually_exclusive_group(required=True)
             source_group.add_argument('--text', help='明確選定UTF-8純文字檔，不猜測時間')
@@ -89,15 +89,15 @@ def main(argv=None):
                 result = build("draft_" + args.draft_action, payload, draft_library=library).wire()
             print(json.dumps(result, ensure_ascii=False, allow_nan=False))
             return 0
-        if args.command == 'music-review':
+        if args.command in ('music-review', 'storyboard-review'):
             if args.draft:
                 from musiclab.draft_contract import validate_draft, MAX_DRAFT_BYTES
                 if Path(args.draft).stat().st_size > MAX_DRAFT_BYTES + 3:
-                    raise ValueError('歌曲檢查的草稿檔最多1 MiB')
-                payload = {'panel': validate_draft(read_json(args.draft))['panels']['music']}
+                    raise ValueError('欄位檢查的草稿檔最多1 MiB')
+                payload = {'panel': validate_draft(read_json(args.draft))['panels'][args.command.removesuffix('-review')]}
             else:
                 payload = read_json(args.input)
-            result = build('music_review', payload)
+            result = build(args.command.replace('-', '_'), payload)
             bundle = result.files
             status = 2 if result.data['issue_count'] else 0
         elif args.command == 'lyrics-review':
@@ -162,7 +162,8 @@ def main(argv=None):
     if args.command == 'lyrics-seed':
         print('未校時歌詞起稿已建立；沒有猜測時間，請依實際音檔標記開始與結束。')
     if status == 2:
-        print("已完成歌曲欄位檢查；有待修正項目，詳見 music-review.md。" if args.command == 'music-review' else
+        print("已完成分鏡欄位檢查；有待修正項目，詳見 storyboard-review.md。" if args.command == 'storyboard-review' else
+              "已完成歌曲欄位檢查；有待修正項目，詳見 music-review.md。" if args.command == 'music-review' else
               "已完成校時檢查；有待修正項目，詳見 lyrics-review.md。" if args.command == 'lyrics-review' else
               "已完成分析，有需確認項目；詳見 report.md。")
     return status

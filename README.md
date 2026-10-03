@@ -1,6 +1,10 @@
 # ZOE. G Music Lab
 
-目前版本 **v0.31.0**：歌曲待辦可由共用唯讀服務產生 JSON／Markdown 報告，CLI 可讀原始欄位或 schema3 草稿，Agent／MCP 提供同一診斷。原創作與音檔保持；零待辦仍須完整建立與實唱／實聽。新增一個唯讀工具，預設8／啟庫13；協定與舊 schema 保持。見[跨工具使用與分層](docs/MUSIC-REVIEW.md)、[本輪驗證](docs/QA-v0.31.0.md)。
+目前版本 **v0.32.0**：分鏡待辦可交接為原鏡號／母題引用JSON／Markdown，CLI、HTTP、Agent／MCP共用原欄位診斷。歌曲與分鏡共用純回覆核對層；來源不同、未知版本與晚回應保留編修／成果／音檔／另存確認。預設9／明確啟庫14工具，protocol與舊schema保持；零待辦仍須完整時間／影格／連戲及實際音畫驗證。見[使用與分層](docs/STORYBOARD-REVIEW.md)、[本輪驗證](docs/QA-v0.32.0.md)、[還原與交接](docs/HANDOFF-v0.32.0.md)。
+
+## 歌曲跨工具報告（v0.31）
+
+v0.31.0：歌曲待辦可由共用唯讀服務產生 JSON／Markdown 報告，CLI 可讀原始欄位或 schema3 草稿，Agent／MCP 提供同一診斷。原創作與音檔保持；零待辦仍須完整建立與實唱／實聽。新增一個唯讀工具，預設8／啟庫13；協定與舊 schema 保持。見[跨工具使用與分層](docs/MUSIC-REVIEW.md)、[本輪驗證](docs/QA-v0.31.0.md)。
 
 ## 歌曲欄位待辦（v0.30）
 
@@ -269,7 +273,7 @@ git diff --check
 開發／封裝驗證需要 Node.js；一般使用工作台與 CLI 只需要 Python。從指定 Git 版本建立可驗證的原始碼 ZIP：
 
 ```powershell
-python scripts/package_release.py --ref v0.31.0
+python scripts/package_release.py --ref v0.32.0
 ```
 
 封裝保存 commit、SHA-256、每檔摘要及檢查結果；解壓後重跑 Python／JavaScript 測試、Agent 能力查詢與 MCP 握手。輸出留在忽略的 outputs/releases，重複封裝同一提交會拒絕覆寫。

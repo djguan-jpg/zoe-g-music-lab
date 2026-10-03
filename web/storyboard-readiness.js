@@ -6,6 +6,7 @@
   const J=node?require('../musiclab/assets/json-document.js'):root.MusicJsonDocument;
   const Values=node?require('./planning-values.js'):root.MusicPlanningValues;
   const Checkpoint=node?require('./readiness-state.js'):root.MusicReadinessState;
+  const Report=node?require('./readiness-report.js'):root.MusicReadinessReport;
   const fields=Editor.draftFields.storyboard,columns=Editor.draftRows.storyboard.columns;
   const labels={'mv-title':'片名','mv-duration':'作品總長','mv-fps':'FPS','mv-ratio':'畫幅','mv-style':'視覺基調','mv-anchor':'人物一致性',name:'母題名稱',meaning:'初始意義',start:'開始',end:'結束',section:'歌曲段落',purpose:'敘事用途',visual:'畫面動作',camera:'鏡頭運動',transition:'尾鏡與轉場',motif_id:'使用母題',motif_state:'母題狀態',character_state:'人物狀態',screen_direction:'畫面方向',motifs:'母題清單',shots:'鏡頭清單'};
   const trim=Values.trim;
@@ -49,7 +50,24 @@
     return {totalShots:panel.shots.length,filledShots:panel.shots.length-blocked.size,totalMotifs:panel.motifs.length,issueCount,issues,truncated:issueCount>issues.length};
   }
   function inspect(panel){return inspectSource(source(panel));}
+  const notes=['只檢查分鏡必填欄位、畫面方向與母題引用；時間、影格與連戲仍須完整建立驗證。','原字串、鏡號、母題 ID 與順序保留；沒有補寫創作或呼叫模型，實際音畫與素材授權另行核對。'];
+  function report(panel){
+    const selected=source(panel),data=inspectSource(selected);
+    return {format:'zoe-storyboard-review',schema_version:1,status:data.issueCount?'needs_correction':'fields_checked',source:selected,
+      total_shots:data.totalShots,filled_shots:data.filledShots,total_motifs:data.totalMotifs,issue_count:data.issueCount,
+      issues:data.issues.map(({relatedRow,...issue})=>({...issue,related_row:relatedRow})),details_truncated:data.truncated,review_notes:[...notes]};
+  }
+  function markdown(data){
+    const lines=['# 分鏡欄位檢查','',`共${data.total_shots}鏡；單鏡欄位已填${data.filled_shots}鏡；共${data.total_motifs}個母題；待辦${data.issue_count}項。`,''];
+    for(const issue of data.issues){const prefix={shots:'鏡頭',motifs:'母題'}[issue.scope];lines.push(`- ${prefix?`${prefix} ${issue.row} · `:''}${labels[issue.field]}：${issue.message}${issue.related_row!==null?`（母題 ${issue.related_row}）`:''}`);}
+    if(data.details_truncated)lines.push('- 明細僅列前200項；全部鏡頭與母題已檢查，修正後請重查。');
+    if(!data.issue_count)lines.push('目前欄位沒有待辦；仍須完整建立與實際音畫驗證。');
+    return [...lines,'',...data.review_notes,''].join('\n');
+  }
+  function checkedResult(panel,reply){
+    return Report.checkedResult({expected:report(panel),reply,jsonName:'storyboard-review.json',markdownName:'storyboard-review.md',markdown,label:'分鏡待辦報告'});
+  }
   function createController({capture,onState=()=>{}}){return Checkpoint.createController({capture,source,inspect:inspectSource,onState});}
-  const api={inspect,createController,labels};
+  const api={inspect,report,markdown,checkedResult,createController,labels};
   if(node)module.exports=api;else root.MusicStoryboardReadiness=api;
 })(typeof window==='object'?window:{});

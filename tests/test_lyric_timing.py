@@ -90,7 +90,7 @@ class LyricTimingTests(unittest.TestCase):
         replies=[json.loads(line) for line in run([sys.executable,'-X','utf8','music_lab_agent.py'],(''.join(json.dumps(r)+'\n' for r in rows)).encode()).splitlines()]
         self.assertTrue(replies[0]['ok']);self.assertFalse(replies[1]['ok']);self.assertTrue(replies[2]['ok'])
         self.assertEqual(replies[0]['result'],build('lyrics',rows[0]['payload']).wire())
-        self.assertEqual(len(capabilities()['operations']),8)
+        self.assertEqual(len(capabilities()['operations']),9)
         self.assertIn('shift_seconds',capabilities()['input_schemas']['lyrics']['properties'])
 
     def test_real_mcp_shift_discovery_and_actual_tool_match_application(self):
@@ -99,7 +99,7 @@ class LyricTimingTests(unittest.TestCase):
             {'jsonrpc':'2.0','method':'notifications/initialized'},{'jsonrpc':'2.0','id':2,'method':'tools/list'},
             {'jsonrpc':'2.0','id':3,'method':'tools/call','params':{'name':'lyrics_validate','arguments':{'payload':payload}}}]
         replies=[json.loads(line) for line in run([sys.executable,'-X','utf8','music_lab_mcp.py'],(''.join(json.dumps(r)+'\n' for r in requests)).encode()).splitlines()]
-        tools=replies[1]['result']['tools'];self.assertEqual(len(tools),8)
+        tools=replies[1]['result']['tools'];self.assertEqual(len(tools),9)
         tool=next(t for t in tools if t['name']=='lyrics_validate');self.assertIn('shift_seconds',tool['inputSchema']['properties']['payload']['properties'])
         self.assertEqual(replies[2]['result']['structuredContent'],build('lyrics',payload).wire())
 

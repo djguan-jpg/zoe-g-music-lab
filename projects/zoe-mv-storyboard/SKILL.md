@@ -69,3 +69,9 @@ storyboard.json 的 frame_timeline 為獨立 schema1，CSV／提示稿及工作�
 ## v0.28 創作待辦接續
 
 時間起稿套用後先檢查工作台創作待辦，點選定位原欄位，人工補寫畫面、運鏡、轉場及狀態。變化理由可留白，依既有連戲提醒審查。待辦補齊不是完整時間／影格或成片接受；原文字與媒體保留，建立仍走完整application。工作台待辦不進draft3／Agent wire，七／十二tools與schema保持。
+
+### 原鏡號待辦交接（v0.32）
+
+`python music_lab.py storyboard-review --input examples/unfinished-storyboard-review.json --out outputs/mv-review-run` 或明確 `--draft 已另存的modern草稿.json`，只診斷原分鏡panel，不補寫創作。JSON／Markdown保留原字串、鏡號、母題ID與相關母題原列，全部計數／前200明細；CLI退出0為欄位零、2為已輸出待修正、1為失敗，預設不覆寫。Agent／MCP同一唯讀storyboard_review、9／14 discovery。
+
+工作台即時定位與明確報告分開；unknown／來源不同／晚回應保留編修／成果／原音檔／另存確認。歌曲與分鏡共用純回覆核對層，報告暫態不進draft3。母題名稱須區分，原ID不靠名字改寫；畫面方向與引用完成後，仍須原storyboard完整驗證時間／影格／連戲與實際音畫。見docs/STORYBOARD-REVIEW.md。

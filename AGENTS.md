@@ -72,3 +72,8 @@
 
 - music_review為唯讀原歌曲panel診斷；純Python report／application／四adapter、raw shape schema與JS同模型完整回覆核對／DOM分層。新的report1不替代music brief或完成驗證，原字串與原位置保持；零待辦仍needs_review=true。
 - 8基本／明確啟庫13工具，需重新discovery，舊protocol／schema保持。40段／100清單／8MiB純source、傳輸2MiB／CLI草稿1MiB，全部計數／200明細／20UI；CLI0／2／1及預設不覆寫。核對source／完整data／JSON／Markdown後才提交成果，未知版本／來源不符／晚回應保留原成果、後續編修、媒體及草稿另存狀態。
+
+## v0.32 分鏡診斷跨工具報告
+
+- storyboard_review純原形狀／必填／畫面方向／母題引用、原列related_row與確定性report；application／四adapter／raw schema分層。1000鏡／30母題／8MiB純source、傳輸2MiB／modern草稿1MiB、全部計數／200明細／20UI；零待辦仍needs_review=true，不能代替完整時間／影格／連戲／媒體驗證。
+- readiness-report純完整回覆核對由歌曲／分鏡共用，schema／protocol／source／data／JSON／Markdown一致才交出隔離結果；app沿revision／late／busy保護後才提交DOM。來源不同／未知／晚回應保留原成果與後續編修、音檔及草稿checkpoint。原字串／鏡號／母題ID保持，暫態不進draft3；9基本／明確啟庫14工具，需重新discovery，v0.31的8／13為歷史。
