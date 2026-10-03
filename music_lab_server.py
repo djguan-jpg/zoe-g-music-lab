@@ -44,6 +44,8 @@ ASSETS = {"/": ("web/index.html", "text/html"), "/app.js": ("web/app.js", "text/
           "/lyrics-timing.js": ("web/lyrics-timing.js", "text/javascript"),
           "/audio-review.js": ("web/audio-review.js", "text/javascript"),
           "/planning-review.js": ("web/planning-review.js", "text/javascript"),
+          "/storyboard-seed.js": ("web/storyboard-seed.js", "text/javascript"),
+          "/draft-undo.js": ("web/draft-undo.js", "text/javascript"),
           "/license": ("LICENSE", "text/plain"), "/notice": ("NOTICE", "text/plain")}
 
 
@@ -157,6 +159,7 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
                 archive,summary=export_library_backup(getattr(self.server,'draft_library',None))
                 return self.reply(200,json_text(backup_downloads(self.server).prepare(archive,summary)))
             operations = {"/api/music": "music", "/api/storyboard": "storyboard", "/api/lyrics": "lyrics",
+                          "/api/storyboard-seed": "storyboard_seed",
                           "/api/drafts/save": "draft_save", "/api/drafts/list": "draft_list", "/api/drafts/read": "draft_read"}
             if route.path not in operations:
                 return self.reply(404, '{"error":"找不到此操作"}')

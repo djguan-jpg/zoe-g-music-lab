@@ -16,7 +16,7 @@ from musiclab.tool_contracts import input_schema, output_schema
 
 MCP_VERSION = "2025-11-25"
 TOOLS = {"music_plan": "music", "storyboard_plan": "storyboard",
-         "lyrics_validate": "lyrics", "audio_report": "audio"}
+         "lyrics_validate": "lyrics", "audio_report": "audio", "storyboard_seed": "storyboard_seed"}
 
 
 

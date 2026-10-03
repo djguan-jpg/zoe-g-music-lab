@@ -1,5 +1,14 @@
 # 迭代說明
 
+## v0.14.0 — 2026-10-03
+
+- 新增 `storyboard_seed` 共用領域與應用入口：驗證現代歌曲需求，按整小節與段落邊界分鏡；最多 1000 鏡，不足一影格拒絕。獨立起稿 schema 1／兩份中間檔，固定速度估算與創作未完成清楚標示，不捏造畫面。
+- CLI `storyboard-seed`、HTTP `/api/storyboard-seed`、JSON-lines／MCP `storyboard_seed` 共用結果與 discovery schema；預設五工具／啟庫十工具，四個專案保留。
+- 純前端模型驗版本／來源／時間／影格／小節與成果一致；preview token、來源／目標／設定快照保護晚回應與套用。明確套用只替換分鏡標題／時長／FPS／鏡頭，其他資料與音檔保留，創作欄位留空。
+- 修正需求、完整草稿與保存版本「撤回載入」覆蓋後續編修；純 undo 快照核對目標 panel／全部 panels，衝突保留內容與撤回紀錄。不把 transient tab／timestamp 當內容改動。
+- 136 Python／109 JavaScript／四 Skill／十二 JS 語法及 diff；實際瀏覽器起稿／取消／錯誤／過期回應／撤回保護／下載／草稿往返／校時音檔保留／390px DOM／鍵盤通過。前版 v0.13 ZIP 124／93通過，細節見 docs/QA-v0.14.0.md。
+- 產品 0.14.0；Agent1／MCP2025-11-25／draft3／library1／backup1保留。PolyForm Noncommercial1.0.0／ZOE. G／Codex、private／未投稿保持；沒有新依賴、模型、host、秘密或其他使用者專案參考。restore-v0.13.0-before-v0.14.0與本輪交接見HANDOFF／manifest。
+
 ## v0.13.0 — 2026-10-03
 
 - 歌曲與分鏡透過純 planning-review 接收當前回應，編修後晚成功不替換；共用 run 捨棄過期錯誤並恢復控制。目前錯誤仍顯示，修正後可再建立。

@@ -15,11 +15,11 @@ from musiclab.draft_library import DraftLibrary, revision_id
 def main(argv=None):
     parser = argparse.ArgumentParser(description=f"ZOE. G Music Lab · 本機 v{__version__}")
     commands = parser.add_subparsers(dest="command", required=True)
-    for name in ("music", "storyboard", "lyrics", "audio"):
+    for name in ("music", "storyboard", "lyrics", "audio", "storyboard-seed"):
         sub = commands.add_parser(name)
         sub.add_argument("--out", required=True, help="指定本輪輸出資料夾")
         sub.add_argument("--overwrite", action="store_true", help="明確替換此輸出目錄的同名成果")
-        if name in ("music", "storyboard"):
+        if name in ("music", "storyboard", "storyboard-seed"):
             sub.add_argument("--brief", required=True)
         else:
             sub.add_argument("--input", required=True)
@@ -33,6 +33,9 @@ def main(argv=None):
             sub.add_argument("--profile", choices=["distribution", "video"], default="distribution")
             for setting in ("rates", "bits", "channels"):
                 sub.add_argument(f"--{setting}", type=int, nargs="+")
+        if name == 'storyboard-seed':
+            sub.add_argument('--fps', type=float, default=24)
+            sub.add_argument('--bars-per-shot', type=int, default=4)
     drafts = commands.add_parser("draft", help="明確選定本機草稿庫；保存版本不覆寫")
     actions = drafts.add_subparsers(dest="draft_action", required=True)
     for action in ("save", "list", "read", "backup", "inspect", "restore"):
@@ -73,7 +76,10 @@ def main(argv=None):
                 result = build("draft_" + args.draft_action, payload, draft_library=library).wire()
             print(json.dumps(result, ensure_ascii=False, allow_nan=False))
             return 0
-        if args.command in ("music", "storyboard"):
+        if args.command == 'storyboard-seed':
+            bundle = build('storyboard_seed', {'music': read_json(args.brief), 'fps': args.fps,
+                           'bars_per_shot': args.bars_per_shot}).files
+        elif args.command in ("music", "storyboard"):
             bundle = build(args.command, read_json(args.brief)).files
         elif args.command == "lyrics":
             path = Path(args.input)
@@ -90,6 +96,8 @@ def main(argv=None):
         print(f"錯誤：{error}", file=sys.stderr)
         return 1
     print(f"{args.command} 完成，輸出 {len(paths)} 個檔案：{Path(args.out).resolve()}")
+    if args.command == 'storyboard-seed':
+        print('時間起稿尚未完成分鏡；請依實際音檔校準，並人工編寫畫面、運鏡、轉場與人物狀態。')
     if status == 2:
         print("已完成分析，有需確認項目；詳見 report.md。")
     return status
