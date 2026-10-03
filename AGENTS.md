@@ -55,3 +55,5 @@
 - planning-source 純核對本次完整需求與主要 JSON，planning-review checkedResult／checkedBrief 共用於建立與需求檔回讀；先 isCurrent，再檢查，最後提交 DOM。音樂標題依 Python 已清理 brief；數字與文字空白規則分開，母題提醒保留輸入順序。單份 JSON8MiB、重複鍵拒絕；不逐字重建 CSV／Markdown，sourceChecked 暫態不進草稿／wire。
 
 - storyboard-duration純時間／影格候選與注入controller；新增／刪除保留宣告，明確採用只寫原始鏡尾。撤回核對原始時間／列ID／順序／數量／FPS及實際after，保留後續文字及媒體；載入新分鏡清除暫態，記錄不進draft或wire。仍須完整創作驗證。
+
+- storyboard-readiness為純必填／引用與注入快照controller，定位前重查原分鏡；全部1000鏡／200明細／前20UI，載入清暫態，其他panel與媒體保持。filled不是完整驗證，原時間／影格／連戲照常拒絕，optional change_reason不改成必填，待辦不進draft3／wire。

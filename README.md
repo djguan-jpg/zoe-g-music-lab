@@ -1,5 +1,9 @@
 # ZOE. G Music Lab
 
+目前版本 **v0.28.0**：新增分鏡創作待辦，可定位留白欄位及母題引用；建立前也會定位第一項。原創作、時長及音檔保留，待辦補齊後仍須完整時間／影格／連戲驗證。見[分層與使用](docs/STORYBOARD-READINESS.md)及[本輪驗證](docs/QA-v0.28.0.md)。
+
+## 分鏡總長與鏡尾（v0.27）
+
 目前版本 **v0.27.0**：新增／刪除鏡頭保留作品宣告總長。核對完整時間及影格覆蓋後，可明確採用原始鏡尾，並只撤回總長；後續創作、其他工作台與音檔保留。見[總長接續](docs/STORYBOARD-DURATION.md)與[本輪驗證](docs/QA-v0.27.0.md)。
 
 ## 完整需求與主要JSON核對（v0.26）
@@ -52,7 +56,7 @@ CLI、HTTP、JSON-lines、MCP 共用同一次分析副本。Python 標準函式�
 
 由 **ZOE. G** 發起的四個原創專案。GitHub 帳號為 **djguan-jpg**；品牌署名與帳號可以不同。
 
-目前版本 v0.27 提供四個工作台、原創 Skill、本機草稿庫及可預覽的 ZIP 備份／恢復、整批歌詞校時及來源一致的音檔檢查報告，以及保留原文的未校時歌詞起稿。Python 3.10 以上即可使用，沒有第三方依賴。只讀本次新建工作區，不參考使用者的其他本機或 GitHub 專案。公開第三方 README 僅用於需求比較，來源及自行設計的差異記在 [構思紀錄](CONCEPT.md)。
+目前版本 v0.28 提供四個工作台、原創 Skill、本機草稿庫及可預覽的 ZIP 備份／恢復、整批歌詞校時及來源一致的音檔檢查報告，以及保留原文的未校時歌詞起稿。Python 3.10 以上即可使用，沒有第三方依賴。只讀本次新建工作區，不參考使用者的其他本機或 GitHub 專案。公開第三方 README 僅用於需求比較，來源及自行設計的差異記在 [構思紀錄](CONCEPT.md)。
 
 授權為 **PolyForm Noncommercial 1.0.0**，商業使用沒有由本版授權。可查看、修改及分發的範圍以 [LICENSE](LICENSE) 為準，保留 [NOTICE](NOTICE)。這是非商用原始碼授權；不標成 AGPL。使用者匯入的素材授權各自保留，詳見 [授權說明](LICENSING.md)。
 
@@ -233,7 +237,7 @@ python music_lab.py draft restore --library outputs/restored-drafts --input '構
 - [創辦與協作紀錄](FOUNDER-RECORD.md)：ZOE. G 發起方向；Codex 協助規格、文字、程式與驗證。
 - [專案清單](projects.json)：四個獨立 ID、版本與功能範圍。
 - [本輪進度](PROGRESS.md)：實跑驗證與後續工作。
-- [本版說明](docs/RELEASE-v0.27.0.md)：功能、版本契約、驗證與限制。
+- [本版說明](docs/RELEASE-v0.28.0.md)：功能、版本契約、驗證與限制。
 - [四個專案的投稿資料](SUBMISSION-PACKET.md)：來源連結、用途、使用方式與作者關係。
 - [分層與分支架構](docs/ARCHITECTURE.md)、[Agent 與 MCP 接口](docs/AGENT.md)、[迭代說明](CHANGELOG.md)、[本輪交接](HANDOFF.md)。
 
@@ -253,7 +257,7 @@ git diff --check
 開發／封裝驗證需要 Node.js；一般使用工作台與 CLI 只需要 Python。從指定 Git 版本建立可驗證的原始碼 ZIP：
 
 ```powershell
-python scripts/package_release.py --ref v0.27.0
+python scripts/package_release.py --ref v0.28.0
 ```
 
 封裝保存 commit、SHA-256、每檔摘要及檢查結果；解壓後重跑 Python／JavaScript 測試、Agent 能力查詢與 MCP 握手。輸出留在忽略的 outputs/releases，重複封裝同一提交會拒絕覆寫。

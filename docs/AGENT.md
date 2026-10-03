@@ -1,5 +1,9 @@
 # 本機 Agent 接口 v1
 
+## v0.28 起稿創作待辦
+
+Agent／CLI的storyboard_seed1先核對預覽再明確套用，工作台列出原鏡頭留白及母題待辦，可限定撤回。模型不補寫畫面，不把起稿當完整分鏡。完整storyboard_plan仍經既有完整驗證；新待辦為工作台暫態，不接收Agent報告或新增operation。產品0.28，protocol／schema、七／十二tools保持。見STORYBOARD-READINESS.md。
+
 ## v0.27 分鏡宣告保持
 
 工作台新增／刪除鏡頭保留宣告；核對後明確接續鏡尾／限定撤回。Agent／CLI payload仍需由呼叫者明確提供總長，不由application自動覆蓋。現代需求回讀先核對預覽，再明確載入；清除工作台暫態總長紀錄，其他panel與音檔保留。產品0.27，七／十二tools與各protocol／schema不變。見[契約](STORYBOARD-DURATION.md)。
