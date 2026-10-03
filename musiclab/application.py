@@ -27,7 +27,7 @@ OPERATIONS = {
     "storyboard": "Shot timing and motif continuity; no media rendering",
     "lyrics": "Manual cue validation and LRC/SRT/JSON exports; no ASR",
     "audio": "Selected integer PCM WAV evidence; source is preserved",
-    "storyboard_seed": "Bar-aligned timing seed from a modern song brief; incomplete visuals require manual writing; no model or media",
+    "storyboard_seed": "Create from a modern song brief or inspect an existing bar-aligned timing seed; incomplete visuals require manual writing; no model or media",
 }
 LIBRARY_OPERATIONS = {
     "draft_save": "Save an immutable revision only in the explicitly selected local library; no media",

@@ -90,15 +90,15 @@ function say(message,error=false){$('status').textContent=message;$('status').cl
 function esc(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function field(value,label,type='text',wide=false){return `<input type="${type}" value="${esc(value)}" aria-label="${esc(label)}" class="${wide?'wide':''}" ${type==='number'?'step="0.001"':''}>`;}
 async function api(route,data,binary=false){const response=await fetch(route,{method:'POST',headers:{'Content-Type':binary?'application/octet-stream':'application/json'},body:binary?data:JSON.stringify(data)});const result=await response.json();if(!response.ok){const error=Error(result.error||'操作未完成');error.status=response.status;throw error;}return result;}
-async function run(button,task){
+async function run(button,task,scope=state.tab){
   if(state.busy)return;
-  const tab=state.tab,revision=state.revisions[tab]||0,current=()=>state.tab===tab&&(state.revisions[tab]||0)===revision;
+  const tab=state.tab,revision=state.revisions[scope]||0,current=()=>state.tab===tab&&(state.revisions[scope]||0)===revision;
   say('處理中，請稍候');state.busy=true;button.disabled=true;timingControls();
   try{await task(current);}catch(error){if(current())say(error.message,true);}
-  finally{if(!current()){markDirty(tab);say('處理期間輸入有修改，請重新建立成果');}state.busy=false;button.disabled=false;timingControls();}
+  finally{if(!current()){markDirty(scope);say('處理期間輸入有修改，請重新建立成果');}state.busy=false;button.disabled=false;timingControls();}
 }
-function setFiles(files,note,dirty=false){state.files=files;state.bundles[state.tab]={files,note,dirty};const select=$('output-file');select.replaceChildren();Object.keys(files).forEach(name=>{const option=document.createElement('option');option.value=name;option.textContent=name;select.append(option);});select.disabled=false;$('download').disabled=dirty;$('output-note').textContent=note+(dirty?'（有修改尚未重新驗證）':'');previewOutput();}
-function markDirty(tab){if(['music','storyboard'].includes(tab))stalePlanningReview(tab);if(tab==='audio')staleAudioReview();if(tab==='lyrics'){const pending=timingReading||timingReady;timingController?.invalidate();if(pending)timingSay('歌詞有修改，請重新預覽整批校時。');}state.revisions[tab]=(state.revisions[tab]||0)+1;const saved=state.bundles[tab];if(!saved)return;saved.dirty=true;if(state.tab===tab){$('download').disabled=true;$('output-note').textContent=saved.note+'（有修改尚未重新驗證）';}}
+function setFiles(files,note,dirty=false,inputIndependent=false){state.files=files;state.bundles[state.tab]={files,note,dirty,inputIndependent};const select=$('output-file');select.replaceChildren();Object.keys(files).forEach(name=>{const option=document.createElement('option');option.value=name;option.textContent=name;select.append(option);});select.disabled=false;$('download').disabled=dirty;$('output-note').textContent=note+(dirty?'（有修改尚未重新驗證）':'');previewOutput();}
+function markDirty(tab){if(['music','storyboard'].includes(tab))stalePlanningReview(tab);if(tab==='audio')staleAudioReview();if(tab==='lyrics'){const pending=timingReading||timingReady;timingController?.invalidate();if(pending)timingSay('歌詞有修改，請重新預覽整批校時。');}state.revisions[tab]=(state.revisions[tab]||0)+1;const saved=state.bundles[tab];if(!saved||saved.inputIndependent)return;saved.dirty=true;if(state.tab===tab){$('download').disabled=true;$('output-note').textContent=saved.note+'（有修改尚未重新驗證）';}}
 document.querySelector('.editor').addEventListener('input',event=>{
   if(event.target.dataset.viewControl||event.target.id==='lyrics-file')return;
   const panel=event.target.closest('.panel');if(!panel)return;
@@ -111,7 +111,7 @@ function clearOutput(){state.files={};$('output-file').replaceChildren(new Optio
 function previewOutput(){const name=$('output-file').value;$('output-content').value=state.files[name]??'';$('export-name').value=name;$('export-content').value=state.files[name]??'';}
 $('output-file').onchange=previewOutput;
 $('export-form').onsubmit=()=>{say('已送出本機下載，請確認瀏覽器保存的檔案。');};
-document.querySelectorAll('[data-tab]').forEach(button=>button.onclick=()=>{if(state.busy){say('目前操作尚未完成，請稍候');return;}state.tab=button.dataset.tab;document.querySelectorAll('.panel').forEach(section=>section.hidden=section.id!==state.tab);document.querySelectorAll('[data-tab]').forEach(b=>{b.classList.toggle('active',b===button);if(b===button)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});const saved=state.bundles[state.tab];if(saved)setFiles(saved.files,saved.note,saved.dirty);else clearOutput();say(saved?.dirty?'有修改尚未重新驗證，請重新建立成果':'準備開始');});
+document.querySelectorAll('[data-tab]').forEach(button=>button.onclick=()=>{if(state.busy){say('目前操作尚未完成，請稍候');return;}state.tab=button.dataset.tab;document.querySelectorAll('.panel').forEach(section=>section.hidden=section.id!==state.tab);document.querySelectorAll('[data-tab]').forEach(b=>{b.classList.toggle('active',b===button);if(b===button)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});const saved=state.bundles[state.tab];if(saved)setFiles(saved.files,saved.note,saved.dirty,saved.inputIndependent);else clearOutput();say(saved?.dirty?'有修改尚未重新驗證，請重新建立成果':'準備開始');});
 function renderSections(sections,ids){const keys=rowIds(sections,ids);$('arrangement').innerHTML=sections.map((s,i)=>`<tr data-history-id="${esc(keys[i])}"><td>${field(s.name,`段落 ${i+1} 名稱`)}</td><td>${field(s.bars,`段落 ${i+1} 小節`,'number')}</td><td>${field(s.energy,`段落 ${i+1} 能量`,'number')}</td><td>${field(s.focus,`段落 ${i+1} 任務`,'text',true)}</td><td>${field(s.texture,`段落 ${i+1} 聲音`,'text',true)}</td><td><button type="button" data-remove-section="${i}" aria-label="刪除段落 ${i+1}">刪除</button></td></tr>`).join('');$('arrangement').querySelectorAll('[data-remove-section]').forEach((b,i)=>b.onclick=()=>deleteEntry('arrangement',i));}
 function requirementValues(id){return [...$(id).querySelectorAll('textarea')].map(input=>input.value);}
 function clearRequirementError(id){
@@ -386,7 +386,7 @@ function captureDraft(){
   panels.lyrics.cues=[...$('cues').children].map(row=>Object.fromEntries(
     MusicEditor.draftRows.lyrics.columns.map((key,i)=>[key,row.querySelectorAll('input')[i].value])));
   panels.music.avoid=requirementValues('music-avoid');panels.music.deliverables=requirementValues('music-deliverables');
-  return {format:'zoe-music-lab-draft',schema_version:3,tool_version:'0.14.0',saved_at:new Date().toISOString(),tab:state.tab,panels};
+  return {format:'zoe-music-lab-draft',schema_version:3,tool_version:'0.15.0',saved_at:new Date().toISOString(),tab:state.tab,panels};
 }
 function applyDraft(draft){
   if(seedController)seedController.cancel();
@@ -487,16 +487,24 @@ seedController=MusicSeed.createPreview({
   capture:()=>({draft:captureDraft(),fps:$('seed-fps').value,bars_per_shot:$('seed-bars').value}),
   request:payload=>api('/api/storyboard-seed',payload),
   onClear:()=>{$('seed-review').hidden=true;$('seed-content').value='';},
-  onReady:(seed,files)=>{
-    $('seed-review-note').textContent=`「${seed.title}」約 ${seed.duration_seconds} 秒，${seed.slots.length} 鏡。套用會替換分鏡片名、時長、FPS 及全部鏡頭，保留現有視覺基調、人物設定、母題清單與其他工作台。新鏡頭尚未選母題，畫面與狀態留白。`;
+  onReady:(seed,files,source)=>{
+    $('seed-review-note').textContent=`${source.origin==='file'?'已檢查檔案起稿「'+source.label+'」；目前歌曲保留。':'依目前歌曲估算。'}「${seed.title}」約 ${seed.duration_seconds} 秒，${seed.slots.length} 鏡。套用會替換分鏡片名、時長、FPS 及全部鏡頭，保留現有視覺基調、人物設定、母題清單與其他工作台。新鏡頭尚未選母題，畫面與狀態留白。`;
     $('seed-content').value=seed.slots.map(slot=>`${slot.shot}. ${slot.section} · ${slot.start}–${slot.end} 秒 · 小節 ${slot.bar_start}–${slot.bar_end}\n任務：${slot.purpose}`).join('\n\n');
-    $('seed-review').hidden=false;setFiles(files,'分鏡時間起稿 · 尚未完成畫面');say('時間起稿已預覽；分鏡尚未替換，請確認後套用');
+    $('seed-review').hidden=false;setFiles(files,(source.origin==='file'?'已檢查檔案':'分鏡時間')+'起稿 · 尚未完成畫面',false,source.origin==='file');say('時間起稿已預覽；分鏡尚未替換，請確認後套用');
   }
 });
 $('seed-preview').onclick=()=>run($('seed-preview'),async current=>{
   const accepted=await seedController.inspect(current);
   if(!accepted&&current())say('來源或起稿設定已修改，請重新預覽；目前分鏡保留');
 });
+$('seed-file').onchange=async event=>{
+  const file=event.target.files[0];event.target.value='';if(!file)return;
+  if(state.busy){say('目前操作尚未完成，請稍候再選擇起稿檔',true);return;}
+  await run($('seed-file'),async current=>{
+    const accepted=await seedController.read(file,current);
+    if(!accepted&&current())say('起稿選擇已取消或分鏡有修改；目前內容保留，請重新選檔');
+  },'storyboard');
+};
 ['seed-fps','seed-bars'].forEach(id=>$(id).oninput=()=>{
   if(state.bundles.music?.files['storyboard-seed.json'])markDirty('music');
 });

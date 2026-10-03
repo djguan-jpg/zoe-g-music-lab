@@ -1,5 +1,14 @@
 # 迭代說明
 
+## v0.15.0 — 2026-10-03
+
+- 補齊Agent／CLI的storyboard-seed.json回讀入口；先檢查／預覽／取消，再明確套用至分鏡。匯入與目前歌曲分開，套用保留其他工作台、音檔與目前歌曲，新鏡頭仍需人工創作。
+- 共用timing_slots與validate_seed；完整schema1形狀、固定BPM來源毫秒／影格／小節／任務一致，未知版本與延伸欄位拒絕，不靜默丟失已加的畫面或修正時間。CLI --seed與--brief互斥，匯入不接受FPS／每鏡小節覆蓋。
+- 原storyboard_seed operation新增互斥seed payload，HTTP／JSON-lines／MCP共用，discovery公布完整schema；預設五／啟庫十工具保持。
+- 純前端file read／request／proposal共享latest token，匯入核對目標分鏡與檔案語義相等；共用run可指定revision scope，歌曲編修不使外部起稿失效。已檢查檔案成果標為inputIndependent，切換頁面保持；生成型成果仍須輸入修改後重新驗證。
+- 146 Python／121 JavaScript／四Skill／十二JS語法與diff、真正CLI／HTTP／JSON-lines／MCP、實際起稿讀回／檔案下載／未覆蓋編修／取消與錯誤、前版ZIP136／109通過，詳見docs/QA-v0.15.0.md。
+- 產品0.15.0；seed1／Agent1／MCP2025-11-25／draft3／library1／backup1保留。private／ZOE. G／PolyForm Noncommercial1.0.0保持；沒有模型、依賴、host或其他使用者專案參考。restore-v0.14.0-before-v0.15.0及封裝／private PR／Release見HANDOFF／manifest。
+
 ## v0.14.0 — 2026-10-03
 
 - 新增 `storyboard_seed` 共用領域與應用入口：驗證現代歌曲需求，按整小節與段落邊界分鏡；最多 1000 鏡，不足一影格拒絕。獨立起稿 schema 1／兩份中間檔，固定速度估算與創作未完成清楚標示，不捏造畫面。

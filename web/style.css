@@ -34,3 +34,5 @@
 @media(min-width:1151px){.output{max-height:calc(100dvh - 48px);overflow:auto;scrollbar-gutter:stable}.output:focus-visible{outline:2px solid var(--green);outline-offset:3px}}
 
 .seed-tools{margin:24px 0;padding:20px;border:1px solid var(--line);border-radius:12px}.seed-tools h3{margin-top:0}.seed-actions{display:flex;gap:12px;align-items:end;flex-wrap:wrap}.seed-actions label{flex:1 1 130px;min-width:0}.seed-actions button{flex:1 1 220px}.seed-tools [readonly]{width:100%;box-sizing:border-box}.seed-tools [hidden]{display:none}
+
+.seed-file{margin-top:20px}.seed-file input{max-width:100%;box-sizing:border-box}

@@ -2,7 +2,7 @@
 
 由 **ZOE. G** 發起的四個原創專案。GitHub 帳號為 **djguan-jpg**；品牌署名與帳號可以不同。
 
-目前版本 v0.14 提供四個工作台、原創 Skill、本機草稿庫及可預覽的 ZIP 備份／恢復、整批歌詞校時及來源一致的音檔檢查報告。Python 3.10 以上即可使用，沒有第三方依賴。只讀本次新建工作區，不參考使用者的其他本機或 GitHub 專案。公開第三方 README 僅用於需求比較，來源及自行設計的差異記在 [構思紀錄](CONCEPT.md)。
+目前版本 v0.15 提供四個工作台、原創 Skill、本機草稿庫及可預覽的 ZIP 備份／恢復、整批歌詞校時及來源一致的音檔檢查報告。Python 3.10 以上即可使用，沒有第三方依賴。只讀本次新建工作區，不參考使用者的其他本機或 GitHub 專案。公開第三方 README 僅用於需求比較，來源及自行設計的差異記在 [構思紀錄](CONCEPT.md)。
 
 授權為 **PolyForm Noncommercial 1.0.0**，商業使用沒有由本版授權。可查看、修改及分發的範圍以 [LICENSE](LICENSE) 為準，保留 [NOTICE](NOTICE)。這是非商用原始碼授權；不標成 AGPL。使用者匯入的素材授權各自保留，詳見 [授權說明](LICENSING.md)。
 
@@ -12,6 +12,18 @@
 | ZOE MV Storyboard | 多母題與逐鏡選擇、人物／方向變化理由、分鏡時間、CSV 與鏡頭提示 | [技能](projects/zoe-mv-storyboard/SKILL.md) |
 | ZOE Lyrics Sync | LRC／SRT／JSON、波形定位、播放校時、時間與文字編修、匯出 | [工具](projects/zoe-lyrics-sync/README.md) |
 | ZOE Audio Delivery | PCM WAV 標頭檢查、接受條件、峰值／RMS／DC、頭尾安靜段及同一分析副本 SHA-256 | [工具](projects/zoe-audio-delivery/README.md) |
+
+## 讀回 Agent／CLI 起稿（v0.15）
+
+歌曲工作台的「接續 Agent／CLI 起稿」讀取 `storyboard-seed.json`，上限1 MiB。先檢查 schema1、欄位、BPM／小節／時長及影格，再預覽；取消不更動表單，明確套用才替換分鏡。創作欄位留空，既有視覺基調、人物設定與母題清單需要你確認適用。這是資料一致性檢查，沒有核實實際歌曲、作者或成片。
+
+檔案起稿與目前歌曲分開：改歌曲或起稿生成設定不會重算匯入檔；套用保留目前歌曲、其他工作台與音檔。預覽後改過目標分鏡會拒絕覆蓋，重新選檔再預覽。匯入結果下載跟隨檔案內容，切換工作台及改歌曲仍可下載；自己依歌曲生成的結果維持原本修改後需重驗的規則。原輸入檔保留，下載的 JSON 數字與換行格式可能重新排版，資料值不改。
+
+```powershell
+python music_lab.py storyboard-seed --seed outputs/my-seed/storyboard-seed.json --out outputs/checked-seed
+```
+
+`--brief`／`--seed`互斥，`--seed`不能再帶`--fps`／`--bars-per-shot`覆蓋來源設定。JSON-lines、HTTP、MCP沿用`storyboard_seed`，payload可選`{ "seed": 起稿資料 }`，不能混用music／fps／bars_per_shot。未知版本、未知欄位、已有畫面等延伸欄位、來源時間或影格不一致拒絕，沒有丟欄／修正／自動遷移；需要補寫畫面時改交完整mv-brief。五／十工具及各舊版本契約保持。
 
 ## 從歌曲起稿分鏡（v0.14）
 
@@ -129,7 +141,7 @@ python music_lab.py draft restore --library outputs/restored-drafts --input '構
 - [創辦與協作紀錄](FOUNDER-RECORD.md)：ZOE. G 發起方向；Codex 協助規格、文字、程式與驗證。
 - [專案清單](projects.json)：四個獨立 ID、版本與功能範圍。
 - [本輪進度](PROGRESS.md)：實跑驗證與後續工作。
-- [本版說明](RELEASE-v0.14.0.md)：功能、版本契約、驗證與限制。
+- [本版說明](RELEASE-v0.15.0.md)：功能、版本契約、驗證與限制。
 - [四個專案的投稿資料](SUBMISSION-PACKET.md)：來源連結、用途、使用方式與作者關係。
 - [分層與分支架構](docs/ARCHITECTURE.md)、[Agent 與 MCP 接口](docs/AGENT.md)、[迭代說明](CHANGELOG.md)、[本輪交接](HANDOFF.md)。
 
@@ -149,7 +161,7 @@ git diff --check
 開發／封裝驗證需要 Node.js；一般使用工作台與 CLI 只需要 Python。從指定 Git 版本建立可驗證的原始碼 ZIP：
 
 ```powershell
-python scripts/package_release.py --ref v0.14.0
+python scripts/package_release.py --ref v0.15.0
 ```
 
 封裝保存 commit、SHA-256、每檔摘要及檢查結果；解壓後重跑 Python／JavaScript 測試、Agent 能力查詢與 MCP 握手。輸出留在忽略的 outputs/releases，重複封裝同一提交會拒絕覆寫。
