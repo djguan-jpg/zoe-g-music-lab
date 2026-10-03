@@ -53,3 +53,7 @@ python music_lab.py music --brief examples/first-light-music.json --out outputs/
 ## v0.30 歌曲欄位待辦
 
 先按「檢查歌曲待辦」查看必填、數值範圍與交付清單，點選待辦定位原欄位；建立歌曲與目前歌曲分鏡起稿也先定位第一項。已有歌詞可留白，不補寫內容或改原數字。編修或移動後重查；明確歌曲載入清暫態，其他工作台與音檔保持。有效BPM120.0004可保持精度建立，待辦零仍須完整總長／來源驗證與實唱／實聽。Agent檔案起稿另核對自己的來源再預覽／明確套用，schema／七與十二工具保持。詳見 ../../docs/MUSIC-READINESS.md。
+
+## v0.31 歌曲待辦交接
+
+「檢查歌曲待辦」即時定位；「建立待辦報告」產生music-review.json／Markdown並保留原創作。CLI music-review --input接受panel原字串，或--draft讀modern schema3草稿中的歌曲，兩入口互斥、舊版不靜默轉換。診斷未完成內容也能交付，CLI status2表示報告已寫出且有待修正、0表示欄位零、1為失敗；預設拒絕同名輸出。Agent／MCP新增唯讀music_review，8／13工具需重新discovery，其他protocol／schema保持。原報告帶source與原列，不把零待辦當總長、演唱或素材授權通過；完整歌曲仍要建立與實唱／實聽。編修後重查，其他工作台／音檔／另存狀態保持。見../../docs/MUSIC-REVIEW.md。

@@ -25,7 +25,7 @@
 - 歌曲／分鏡成功回應經planning-review純模型與isCurrent才提交DOM／成果；共用run只顯示當前錯誤，過期成功／錯誤保留後續編修。dirty標示上一份設計並停用下載，收合不進草稿。設計能量不是實測音量，資料完成不是媒體生成。
 - 寬桌面成果面板維持有界高度及局部捲動／鍵盤可達，窄視窗static流；修正後以實際滑鼠／鍵盤與下載驗證，不把DOM幾何當完整視覺驗收。
 
-- storyboard_seed 為獨立 schema1 時間起稿，共用歌曲驗證與 application／四 adapter；v0.25起預設七工具／啟庫十二工具。source 的固定速度假設保留；未完成創作欄位留空，不能冒充分鏡／成片。每鏡最多整小節，保留段落邊界，超1000鏡／不足一影格拒絕。
+- storyboard_seed 為獨立 schema1 時間起稿，共用歌曲驗證與 application／四 adapter；v0.25至v0.30預設七工具／啟庫十二工具。source 的固定速度假設保留；未完成創作欄位留空，不能冒充分鏡／成片。每鏡最多整小節，保留段落邊界，超1000鏡／不足一影格拒絕。
 - 起稿 preview／proposal 核對來源、目標與設定，晚回應不提交；局部套用保留其他 panel／音檔。draft-undo 核對實際 after 的限定／全部 panels，後續編修拒絕整份撤回，不覆蓋或丟棄 record；預覽／撤回不進草稿。
 
 - 起稿檔回讀共用timing_slots／validate_seed／seed_files，seed1未知欄位或矛盾時間拒絕；storyboard_seed的music／seed互斥，匯入不能覆蓋FPS／bars設定。保留原檔，無靜默修正／丟棄創作欄位。
@@ -50,7 +50,7 @@
 
 - lyrics-media 共用純時長比較與注入 controller；選音檔保留已有作品宣告，原本空白且讀取期間未編修才接續首次有效時長。明確採用／撤回只寫 duration、同來源／實際 after 核對，保留後續 cue／原文／媒體。未知媒體與過期事件不能改內容；不裁切句子。比較／撤回不進 draft3／Agent，獨立 Apply 不直接用 player.duration，保留來源歷史提示。
 
-- lyrics_review獨立schema1為唯讀未完成表格診斷；Python純layer與共用JS／注入controller／DOM分層。原列1起、global0，全部計數／有限200明細／前20UI，局部timed不表示全表通過。原始空白、文字與順序保持；不補時間／裁切，最終lyrics仍完整驗證。未知report／source不符／晚回應拒絕，報告與focus不進draft3；新tool唯讀、無路徑權限，預設七／啟庫十二tools。
+- lyrics_review獨立schema1為唯讀未完成表格診斷；Python純layer與共用JS／注入controller／DOM分層。原列1起、global0，全部計數／有限200明細／前20UI，局部timed不表示全表通過。原始空白、文字與順序保持；不補時間／裁切，最終lyrics仍完整驗證。未知report／source不符／晚回應拒絕，報告與focus不進draft3；新tool唯讀、無路徑權限，v0.25至v0.30預設七／啟庫十二tools。
 
 - planning-source 純核對本次完整需求與主要 JSON，planning-review checkedResult／checkedBrief 共用於建立與需求檔回讀；先 isCurrent，再檢查，最後提交 DOM。音樂標題依 Python 已清理 brief；數字與文字空白規則分開，母題提醒保留輸入順序。單份 JSON8MiB、重複鍵拒絕；不逐字重建 CSV／Markdown，sourceChecked 暫態不進草稿／wire。
 
@@ -67,3 +67,8 @@
 
 - planning-values 重用本專案 Python 文字空白／有限十進位文法，不使用空字串轉零；music-readiness 純欄位／範圍模型、共享 readiness-state 快照 controller、DOM 分層。保留原字串與 optional 歌詞，BPM step=any 仍完整驗證。
 - 歌曲全部來源與列ID參與暫態定位；即使同文字列換序也停舊位置，定位前重查。歌曲載入清暫態；其他panel／媒體保持。40段／100清單／8MiB、全部計數／200明細／前20UI，零待辦及filled不是總長或作品接受。schema／wire／七及十二tools保持。
+
+## v0.31 歌曲診斷跨工具報告
+
+- music_review為唯讀原歌曲panel診斷；純Python report／application／四adapter、raw shape schema與JS同模型完整回覆核對／DOM分層。新的report1不替代music brief或完成驗證，原字串與原位置保持；零待辦仍needs_review=true。
+- 8基本／明確啟庫13工具，需重新discovery，舊protocol／schema保持。40段／100清單／8MiB純source、傳輸2MiB／CLI草稿1MiB，全部計數／200明細／20UI；CLI0／2／1及預設不覆寫。核對source／完整data／JSON／Markdown後才提交成果，未知版本／來源不符／晚回應保留原成果、後續編修、媒體及草稿另存狀態。

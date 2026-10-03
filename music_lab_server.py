@@ -177,7 +177,7 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
                 return self.reply(200,json_text(backup_downloads(self.server).prepare(archive,summary)))
             operations = {"/api/music": "music", "/api/storyboard": "storyboard", "/api/lyrics": "lyrics",
                           "/api/storyboard-seed": "storyboard_seed",
-                          "/api/lyrics-seed": "lyrics_seed", "/api/lyrics-review": "lyrics_review",
+                          "/api/lyrics-seed": "lyrics_seed", "/api/lyrics-review": "lyrics_review", "/api/music-review": "music_review",
                           "/api/drafts/save": "draft_save", "/api/drafts/list": "draft_list", "/api/drafts/read": "draft_read"}
             if route.path not in operations:
                 return self.reply(404, '{"error":"找不到此操作"}')

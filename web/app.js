@@ -199,6 +199,7 @@ function renderMusicReady({report,stale}){
   clearMusicReadyMarks();const box=$('music-ready-box'),list=$('music-ready-issues'),stats=$('music-ready-stats');
   box.classList.toggle('stale',stale);list.replaceChildren();stats.replaceChildren();stats.hidden=!report;
   $('music-ready-check').disabled=state.busy;
+  $('music-ready-report').disabled=state.busy;
   if(!report){$('music-ready-status').textContent='留白段落也能檢查；不補寫創作，不修改表單。';return;}
   for(const text of [`${report.filledSections} / ${report.totalSections} 段欄位已填`,`待辦 ${report.issueCount} 項`]){const p=document.createElement('p');p.textContent=text;stats.append(p);}
   $('music-ready-status').textContent=stale?'歌曲或段落順序已編修；請重新檢查後再定位。':report.issueCount?
@@ -215,6 +216,14 @@ function renderMusicReady({report,stale}){
 musicReadyController=MusicReadiness.createController({capture:()=>capturePanel('music'),captureIds:()=>entriesFor('arrangement').map(e=>e.id),onState:renderMusicReady});
 function checkMusicReady(){const view=musicReadyController.check();if(!view.report.issueCount)return true;locateMusicIssue(0);say(`${view.report.issueCount} 項歌曲欄位待辦，已定位第一項`,true);return false;}
 $('music-ready-check').onclick=()=>{if(state.busy)return;try{checkMusicReady();}catch(error){say(error.message,true);}};
+$('music-ready-report').onclick=()=>run($('music-ready-report'),async current=>{
+  const panel=capturePanel('music');musicReadyController.check();
+  const reply=await api('/api/music-review',{panel});if(!current())return;
+  const accepted=MusicReadiness.checkedResult(panel,reply);
+  $('music-visual').hidden=true;
+  setFiles(accepted.files,`歌曲欄位檢查 · 待辦 ${accepted.data.issue_count} 項`);
+  say('歌曲待辦報告已建立；仍須完整建立與實唱／實聽驗證');
+});
 $('music-form').onsubmit=event=>{event.preventDefault();if(state.busy)return;
   clearRequirementError('music-avoid');clearRequirementError('music-deliverables');
   try{if(!checkMusicReady())return;}catch(error){say(error.message,true);return;}
@@ -443,6 +452,7 @@ function timingControls(){
   arrangementController?.refresh();
   musicReadyController?.refresh();
   $('music-ready-check').disabled=state.busy;
+  $('music-ready-report').disabled=state.busy;
   $('section-add').disabled=state.busy;
   storyboardDurationController?.refresh();
   storyboardReadyController?.refresh();
@@ -594,7 +604,7 @@ function capturePanel(panel){
 }
 function captureDraft(){
   const panels=Object.fromEntries(Object.keys(MusicEditor.draftFields).map(panel=>[panel,capturePanel(panel)]));
-  return {format:'zoe-music-lab-draft',schema_version:3,tool_version:'0.30.0',saved_at:new Date().toISOString(),tab:state.tab,panels};
+  return {format:'zoe-music-lab-draft',schema_version:3,tool_version:'0.31.0',saved_at:new Date().toISOString(),tab:state.tab,panels};
 }
 function applyDraft(draft){
   storyboardDurationController?.clear();
