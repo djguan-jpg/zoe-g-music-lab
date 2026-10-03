@@ -1,5 +1,16 @@
 # 迭代說明
 
+## v0.11.0 — 2026-10-03
+
+- 加入整批歌詞校時的預覽／明確套用／一次撤回；只改 start／end，音檔、後續文字與刪除歷史保留。其他時間改動／增刪句子阻止整份撤回；過期候選／晚回應不寫入。
+- 共用 application 的 shift_seconds／time_changes／text_changes，CLI 不另編修。sorted original 1-based index、先 shift 再 set（保留明確句長）／text，再推缺失結束／完整驗證；非法結果不截斷，原來源與指定總長保留。
+- 分離 Python lyric_timing、原生 lyric-time.js、離線 lyric_preview 及前端 lyrics-timing controller。half-away-from-zero 至毫秒；修正負的不足半毫秒被接受／跨語言捨入不一致、離線提示／timing 過期與結果排序後句子 ID 錯配。模板標記只替換一次，輸入標記文字保持原樣。
+- Agent discovery 同源新增欄位；非零校時／非空編修標 needs_review。產品 0.11.0，預設四工具／啟庫九工具、Agent 1／MCP 2025-11-25／draft 3／library 1／backup 1 不變，暫態控制／撤回不進草稿。
+- 112 Python／69 JavaScript／四 Skill／八 JS 語法／diff、實際 transport／CLI、IAB 工作台與獨立實檔下載、桌面／390px DOM 檢查通過；v0.10 ZIP 摘要核對／原版 99／55 通過。詳見 docs/QA-v0.11.0.md。
+- PolyForm Noncommercial 1.0.0／LICENSE／NOTICE 保留，沒有依賴／host／模型新增。restore-v0.10.0-before-v0.11.0、指定提交封裝與 private PR／Release 見 HANDOFF.md／manifest。
+
+
+
 
 ## v0.10.0 — 2026-10-03
 

@@ -5,7 +5,7 @@ import json
 import sys
 from pathlib import Path
 from musiclab.common import read_json, write_bundle
-from musiclab.lyrics import read_cues, edits
+from musiclab.lyrics import read_cues
 from musiclab.application import build, export_library_backup
 from musiclab.backup_files import write_backup
 from musiclab import __version__
@@ -78,8 +78,8 @@ def main(argv=None):
         elif args.command == "lyrics":
             path = Path(args.input)
             data = read_cues(path.read_text(encoding="utf-8-sig"), path.suffix)
-            cues = edits(data, args.shift, args.set, args.text)
-            bundle = build("lyrics", {"cues": cues, "title": args.title, "duration": args.duration}).files
+            bundle = build("lyrics", {"cues": data, "title": args.title, "duration": args.duration,
+                "shift_seconds": args.shift, "time_changes": args.set, "text_changes": args.text}).files
         else:
             options = {name: getattr(args, name) for name in ("profile", "rates", "bits", "channels")}
             result = build("audio", options, audio_source=args.input)

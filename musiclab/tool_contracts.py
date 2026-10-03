@@ -102,7 +102,10 @@ def payload_schema(operation):
         return object_schema({"title": text("Title; default 歌詞", blank=True),
                               "cues": array_schema(cue, 1), "content": text("Original LRC/SRT/JSON text"),
                               "suffix": {"type": "string", "pattern": r"^\.([lL][rR][cC]|[sS][rR][tT]|[jJ][sS][oO][nN])$", "description": ".lrc/.srt/.json, case insensitive; default .lrc"},
-                              "duration": {"anyOf": [numeric("Confirmed total seconds, optional", 0, positive=True), {"type": "null"}]}},
+                              "duration": {"anyOf": [numeric("Confirmed total seconds, optional", 0, positive=True), {"type": "null"}]},
+                              "shift_seconds": numeric("Optional global offset in seconds; positive delays, negative advances. Round to milliseconds; shift explicit ends too; never clip."),
+                              "time_changes": {"type":"array","items":{"type":"string"},"description":"Optional 1-based sorted original cue edits, e.g. 2=14.5; after global shift, explicit end keeps its length."},
+                              "text_changes": {"type":"array","items":{"type":"string"},"description":"Optional 1-based sorted original cue text edits, e.g. 2=新歌詞; after global shift."}},
                              oneOf=[{"required": ["cues"], "not": {"anyOf": [{"required": ["content"]}, {"required": ["suffix"]}]}},
                                     {"required": ["content"], "not": {"required": ["cues"]}}])
     if operation == "audio":
