@@ -56,6 +56,18 @@ def seed_schema():
 
 
 def payload_schema(operation):
+    if operation == 'lyrics_seed':
+        def exact(properties): return object_schema(properties, properties.keys(), additionalProperties=False)
+        seed = exact({'format':{'const':'zoe-lyrics-seed'},'schema_version':{'type':'integer','const':1},
+                      'status':{'const':'untimed'},'title':{'type':'string','minLength':1,'maxLength':200},
+                      'source_text':{'type':'string','minLength':1,'maxLength':65536,'description':'Original text, at most64 KiB UTF-8; preserve whitespace and blank lines'},
+                      'lines':{'type':'array','minItems':1,'maxItems':1000,'items':exact({'line':{'type':'integer','minimum':1,'maximum':65537},'text':{'type':'string'}})},
+                      'review_notes':{'type':'array','minItems':1,'maxItems':20,'items':{'type':'string','minLength':1,'maxLength':2000}}})
+        return object_schema({'title':{'type':'string','minLength':1,'maxLength':200},
+                              'text':{'type':'string','minLength':1,'maxLength':65536,'description':'Untimed text, at most64 KiB UTF-8; every nonblank line becomes one cue; no guessed times'},
+                              'seed':seed}, additionalProperties=False,
+                             oneOf=[{'required':['title','text'],'not':{'required':['seed']}},
+                                    {'required':['seed'],'not':{'anyOf':[{'required':['title']},{'required':['text']}]}}])
     if operation == 'storyboard_seed':
         music = payload_schema('music')
         music['required'] += ['arrangement', 'bpm', 'memory_hook']

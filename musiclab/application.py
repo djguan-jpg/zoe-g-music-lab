@@ -13,6 +13,7 @@ from .audio import analyze_wav, audio_bundle
 from .creative import music_bundle, storyboard_bundle
 from .design import music_plan_bundle, motif_bundle
 from .storyboard_seed import storyboard_seed_bundle, SEED_SCHEMA_VERSION, MAX_SLOTS
+from .lyrics_seed import lyrics_seed_bundle, LYRICS_SEED_SCHEMA_VERSION, MAX_SOURCE_BYTES, MAX_LINES
 from .lyrics import read_cues, lyrics_bundle, edits
 from .tool_contracts import payload_schema, output_schema
 from .draft_contract import MAX_DRAFT_BYTES
@@ -28,6 +29,7 @@ OPERATIONS = {
     "lyrics": "Manual cue validation and LRC/SRT/JSON exports; no ASR",
     "audio": "Selected integer PCM WAV evidence; source is preserved",
     "storyboard_seed": "Create from a modern song brief or inspect an existing bar-aligned timing seed; incomplete visuals require manual writing; no model or media",
+    "lyrics_seed": "Create or inspect untimed lyric lines; preserves source and duplicates; no guessed times, ASR or model",
 }
 LIBRARY_OPERATIONS = {
     "draft_save": "Save an immutable revision only in the explicitly selected local library; no media",
@@ -67,6 +69,8 @@ def capabilities(draft_library=None, backup_source=None):
                              "max_archive_bytes": MAX_BACKUP_BYTES, "max_expanded_bytes": MAX_EXPANDED_BYTES},
             "storyboard_seed": {"schema_version": SEED_SCHEMA_VERSION, "max_slots": MAX_SLOTS,
                                 "status": "timing_seed_incomplete", "media_generated": False},
+            "lyrics_seed": {"schema_version": LYRICS_SEED_SCHEMA_VERSION, "max_source_bytes": MAX_SOURCE_BYTES,
+                            "max_lines": MAX_LINES, "status": "untimed", "media_generated": False},
             "input_schemas": {operation: payload_schema(operation) for operation in operations},
             "output_schema": output_schema(),
             "audio_source": "Only --audio chosen at process launch; JSON cannot select paths",
@@ -84,7 +88,7 @@ def build(operation, payload, *, audio_source=None, draft_library=None, backup_s
     if operation in LIBRARY_OPERATIONS and draft_library is None:
         raise ValueError("草稿庫未啟用；請在啟動時明確指定 --draft-library 目錄")
     if operation not in available_operations(draft_library):
-        raise ValueError("未知操作；請使用 music、storyboard、lyrics、audio 或 storyboard_seed")
+        raise ValueError("未知操作；請使用 music、storyboard、lyrics、audio、storyboard_seed 或 lyrics_seed")
     if not isinstance(payload, dict):
         raise ValueError("輸入需為 JSON 物件")
     if operation in LIBRARY_OPERATIONS:
@@ -105,7 +109,10 @@ def build(operation, payload, *, audio_source=None, draft_library=None, backup_s
         else:
             data = restore_backup(draft_library, backup_source, payload['backup_sha256'])
         return Result({}, data, operation != 'draft_list')
-    if operation == "storyboard_seed":
+    if operation == "lyrics_seed":
+        files = lyrics_seed_bundle(payload)
+        data = json.loads(files['lyrics-seed.json'])
+    elif operation == "storyboard_seed":
         files = storyboard_seed_bundle(payload)
         data = json.loads(files['storyboard-seed.json'])
     elif operation == "music":

@@ -23,7 +23,7 @@
     }
     return {
       begin(scope=null){
-        if(scope!==null&&!['music','storyboard'].includes(scope))throw Error('不支援的載入範圍');
+        if(scope!==null&&!['music','storyboard','lyrics'].includes(scope))throw Error('不支援的載入範圍');
         pending=null;job={token:++sequence,scope,before:snapshot(scope)};return job.token;
       },
       check,

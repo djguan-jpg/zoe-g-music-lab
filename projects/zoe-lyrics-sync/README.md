@@ -1,8 +1,11 @@
 # ZOE Lyrics Sync
 
-創辦：ZOE. G · GitHub：djguan-jpg · v0.11
+創辦：ZOE. G · GitHub：djguan-jpg · v0.17
 
 離線歌詞時間編修與匯出。可讀 LRC、SRT 和 JSON；LRC 多重時間標籤、offset 與小數時間會轉成逐句時間軸。純文字檔尚不會自動辨識歌曲咬字。
+
+v0.17可由已有純文字歌詞建立未校時起稿：歌曲工作台先預覽，再明確套用到校時；或CLI lyrics-seed --text lyrics.txt --title '作品名稱' --out outputs/untimed建立JSON，於校時匯入並讀取／預覽。原文、前後空白與重複句保留，空白行保留在source_text；段落標籤由你調整。時間留白，不猜測；來源／目標編修拒絕套用，音檔及時長保留。最近一次未編修的套用可撤回；未知版本或矛盾來源拒絕，不靜默丟欄。
+
 
 ```powershell
 python music_lab.py lyrics --input examples/lyrics.lrc --duration 60 --out outputs/lyrics
@@ -15,7 +18,7 @@ python music_lab.py lyrics --input examples/lyrics.lrc --shift 1.25 --set '2=14.
 
 開啟 `preview.html`，選自己的本機音檔，播放並修改表格。按「使用播放位置」記下某句開始時間；按「套用編修」後才更新播放預覽與匯出內容。瀏覽器讀取音檔不會上傳。匯出 LRC 時只保留開始時間；SRT／JSON 保留開始和結束。
 
-本機工作台：在專案根目錄執行 `python music_lab_server.py`，開啟本機介面的「波形校時」。可匯入歌詞、載入本機音檔、查看第一聲道波形、點擊定位或左右鍵微調 0.5 秒，再按「記下時間」填入某句。修改後驗證，成果在右側預覽並下載。
+本機工作台：在專案根目錄執行 `python music_lab_server.py`，開啟本機介面的「波形校時」。可匯入歌詞、載入本機音檔、查看第一聲道波形、點擊定位或左右鍵微調 0.5 秒，再分別按「記下開始」與「記下結束」填入某句；「整句移動」保留長度，超過音檔結束拒絕。修改後驗證，成果在右側預覽並下載。
 
 波形解碼上限 64 MiB，超過時保留播放功能、略過波形；音訊格式以瀏覽器支援為準。較細的逐字時間、拖曳及音訊辨識尚未實作。工作台的 HTTP 下載已驗證實際 JSON 檔案；v0.11 已確認獨立 preview.html 的 JSON／LRC／SRT 真正 Blob 下載、毫秒精度及音檔總長更新。完整視覺、其他瀏覽器與正式歌曲實聽尚未驗證。
 

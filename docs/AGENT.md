@@ -1,5 +1,14 @@
 # 本機 Agent 接口 v1
 
+## v0.17 未校時歌詞起稿
+
+JSON-lines operation／MCP tool lyrics_seed、HTTP POST /api/lyrics-seed 共用 application 與 musiclab/lyrics_seed.py。生成 payload為 {"title":"作品名稱","text":"第一句\n第二句"}；檢查外部起稿用 {"seed":完整起稿JSON}，兩者互斥，不接受覆蓋／未知欄位或路徑。title最多200字元；text UTF-8最多64 KiB、1–1000個非空白行。
+
+結果 files為 lyrics-seed.json／lyrics-seed.md，data格式zoe-lyrics-seed、schema_version1、statusuntimed、title／source_text／lines／review_notes。lines只含來源1-based行號與未修剪text；空白行不建cue但保留於source_text，重複句保留。不能加入start／end／媒體結果或宣稱校時完成，needs_review永遠true。生成與檢查都不寫磁碟；CLI由使用者明確--out保存，預設拒絕覆寫。
+
+瀏覽器「匯入歌詞」選lyrics-seed.json再「讀取歌詞」，先核對／預覽，再明確套用；目標編修／晚回應保護，保留目前音檔與時長。時間空白，須依實際音檔標記後才匯出；來源JSON可存於既有draft3，沒有自動schema遷移。現有Agent1／MCP2025-11-25／library1／backup1／storyboard seed1不變；預設六工具、明確啟庫十一工具。真實CLI、HTTP、JSON-lines及MCP子程序已驗證，特定host未安裝或驗證，沒有模型呼叫。
+
+
 ## v0.16 工作台接續保護
 
 Agent輸出的brief.json／mv-brief.json與草稿庫保存版本會先預覽，proposal再次核對。需求只核對目標工作台；完整草稿與保存版本另核對四工作台及原生音檔身份。讀取／預覽後編修拒絕替換，重新預覽後才可載入；沒有靜默合併。草稿JSON也改成先預覽再明確載入，BOM可讀，legacy仍明確轉換，原檔保留。
@@ -29,7 +38,7 @@ Get-Content -Raw -Encoding utf8 request.json | python music_lab_agent.py > respo
 
 成功時回傳 `ok: true`、相同 id，及 result.files／data／meta。files 是創作成果檔名與內容，由呼叫者決定保存。預設 Agent 不寫檔；啟動時明確啟用草稿庫後，draft_save 與 v0.10 的 draft_backup_restore 在所選庫建立不可覆寫版本。失敗回傳 `ok: false` 與 error.code／message，stdout 不混入狀態文字或 traceback。錯誤 request 不會阻止下一行正常 request。
 
-五種 operation：music、storyboard、lyrics、audio、storyboard_seed。前兩者 payload 對應 examples 的需求 JSON；歌詞採 content／suffix 或 cues，另可含 title／duration。音訊來源必須透過啟動參數明確選定：
+六種 operation：music、storyboard、lyrics、audio、storyboard_seed、lyrics_seed。前兩者 payload 對應 examples 的需求 JSON；歌詞採 content／suffix 或 cues，另可含 title／duration。音訊來源必須透過啟動參數明確選定：
 
 ```powershell
 Get-Content -Raw -Encoding utf8 audio-request.json | python music_lab_agent.py --audio '指定作品.wav' > response.jsonl
@@ -47,7 +56,7 @@ Get-Content -Raw -Encoding utf8 audio-request.json | python music_lab_agent.py -
 
 以使用的 MCP host 設定 command=`python`，args 第一項為此版 `music_lab_mcp.py` 的完整路徑。需分析音訊時在 args 明確加入 `--audio` 與所選 WAV 的路徑；JSON payload 不可選其他音檔。伺服器不開網路埠，EOF 退出；不自動安裝全域設定或取得其他工具權限。
 
-連線順序：initialize → notifications/initialized → tools/list 或 tools/call。工具名稱：music_plan、storyboard_plan、lyrics_validate、audio_report、storyboard_seed。每個工具的 arguments 都有一個 payload 物件；歌曲／分鏡使用 examples 的需求格式，其餘與上方 JSON-lines 的 payload 相同。tools/list 提供參數描述與 schema。
+連線順序：initialize → notifications/initialized → tools/list 或 tools/call。工具名稱：music_plan、storyboard_plan、lyrics_validate、audio_report、storyboard_seed、lyrics_seed。每個工具的 arguments 都有一個 payload 物件；歌曲／分鏡使用 examples 的需求格式，其餘與上方 JSON-lines 的 payload 相同。tools/list 提供參數描述與 schema。
 
 最小請求範例，每個 JSON 各一行：
 

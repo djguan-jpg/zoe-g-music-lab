@@ -1,5 +1,13 @@
 # 迭代說明
 
+## v0.17.0 — 2026-10-03
+
+- 新增未校時歌詞起稿／JSON檢查：共用Python domain與application、CLI／HTTP／JSON-lines／MCP；原文、重複句、前後空白及來源行號保留，不猜測時間。獨立lyrics seed schema1，未知／矛盾資料拒絕。
+- 新增純lyrics-seed preview／proposal：來源與目標核對、晚成功／錯誤保護、取消／明確限定套用及撤回；音檔、時長與其他工作台保留，草稿仍schema3。
+- 修正空白句子不能記下播放位置：分別記下開始／結束、保留句長的整句移動及超音檔拒絕；已校時句子可播放顯示，未完成時間禁止匯出。
+- 156 Python／168 JavaScript、四Skill／十五JS語法；真正CLI／HTTP／JSON-lines／MCP、IAB預覽／guard／校時／三格式實檔／草稿往返／390px DOM與Enter焦點。前版ZIP安全還原146／146通過。
+- 產品0.17.0，Agent1／MCP2025-11-25／draft3／storyboard seed1／library1／backup1保持，六／十一工具。ZOE. G、非商用授權與private保持；restore-v0.16.0-before-v0.17.0提供還原點。
+
 ## v0.16.0 — 2026-10-03
 
 - 重現並修正需求／保存版本預覽後覆蓋編修；新格式草稿由選檔即載入改為明確預覽／載入／取消，舊版維持明確轉換。
