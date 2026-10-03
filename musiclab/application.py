@@ -1,7 +1,8 @@
 # SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 """Shared application boundary for CLI, loopback HTTP and local agents.
 
-Domain modules return deterministic data/files. Adapters own transport and writes.
+Domain modules return deterministic data/files. Adapters own transport.
+An explicitly injected draft library owns immutable local revision writes.
 Audio sources are selected by an adapter, never by request JSON.
 """
 import json
@@ -13,6 +14,8 @@ from .creative import music_bundle, storyboard_bundle
 from .design import music_plan_bundle, motif_bundle
 from .lyrics import read_cues, lyrics_bundle
 from .tool_contracts import payload_schema, output_schema
+from .draft_contract import MAX_DRAFT_BYTES
+from .draft_library import LIBRARY_SCHEMA_VERSION, MAX_ENTRIES
 
 PROTOCOL_VERSION = 1
 MAX_REQUEST_BYTES = 2 * 1024 * 1024
@@ -22,6 +25,15 @@ OPERATIONS = {
     "lyrics": "Manual cue validation and LRC/SRT/JSON exports; no ASR",
     "audio": "Selected integer PCM WAV evidence; source is preserved",
 }
+LIBRARY_OPERATIONS = {
+    "draft_save": "Save an immutable revision only in the explicitly selected local library; no media",
+    "draft_list": "List metadata from the explicitly selected library; no arbitrary path access",
+    "draft_read": "Read a saved revision and verify its hash and draft shape before returning it",
+}
+
+
+def available_operations(draft_library=None):
+    return {**OPERATIONS, **(LIBRARY_OPERATIONS if draft_library is not None else {})}
 
 
 @dataclass(frozen=True)
@@ -36,22 +48,42 @@ class Result:
                          "needs_review": self.needs_review}}
 
 
-def capabilities():
+def capabilities(draft_library=None):
+    operations = available_operations(draft_library)
     return {"protocol_version": PROTOCOL_VERSION, "version": __version__,
             "license": "PolyForm-Noncommercial-1.0.0",
             "transport": "local_stdio_json_lines", "max_request_bytes": MAX_REQUEST_BYTES,
-            "operations": OPERATIONS, "media_generated": False,
-            "input_schemas": {operation: payload_schema(operation) for operation in OPERATIONS},
+            "operations": operations, "media_generated": False,
+            "draft_library_enabled": draft_library is not None,
+            "draft_library": {"enabled": draft_library is not None, "library_schema_version": LIBRARY_SCHEMA_VERSION,
+                              "max_draft_bytes": MAX_DRAFT_BYTES, "max_revisions": MAX_ENTRIES, "default_page_size": 20},
+            "input_schemas": {operation: payload_schema(operation) for operation in operations},
             "output_schema": output_schema(),
             "audio_source": "Only --audio chosen at process launch; JSON cannot select paths",
-            "output": "JSON results and file contents on stdout; agent adapter writes no files"}
+            "output": "JSON results on stdout; draft_save writes only to the selected library" if draft_library is not None else
+                      "JSON results and file contents on stdout; agent adapter writes no files"}
 
 
-def build(operation, payload, *, audio_source=None):
-    if operation not in OPERATIONS:
+def build(operation, payload, *, audio_source=None, draft_library=None):
+    if operation in LIBRARY_OPERATIONS and draft_library is None:
+        raise ValueError("草稿庫未啟用；請在啟動時明確指定 --draft-library 目錄")
+    if operation not in available_operations(draft_library):
         raise ValueError("未知操作；請使用 music、storyboard、lyrics 或 audio")
     if not isinstance(payload, dict):
         raise ValueError("輸入需為 JSON 物件")
+    if operation in LIBRARY_OPERATIONS:
+        required, optional = {"draft_save": ({"draft", "label", "id"}, set()),
+                              "draft_list": (set(), {"limit", "cursor"}),
+                              "draft_read": ({"id"}, set())}[operation]
+        if not required <= set(payload) or set(payload) - required - optional:
+            raise ValueError("草稿庫操作欄位錯誤；不能指定路徑或覆寫版本")
+        if operation == "draft_save":
+            data = draft_library.save(payload['draft'], payload['label'], payload['id'])
+        elif operation == "draft_read":
+            data = draft_library.read(payload['id'])
+        else:
+            data = draft_library.list(payload.get('limit', 20), payload.get('cursor'))
+        return Result({}, data, operation != 'draft_list')
     if operation == "music":
         files = music_plan_bundle(payload) if "arrangement" in payload else music_bundle(payload)
         data = json.loads(files.get("music-plan.json", files["brief.json"]))
@@ -88,7 +120,7 @@ def load_request(raw):
     return json.loads(raw, parse_constant=nonfinite)
 
 
-def validate_request(request):
+def validate_request(request, draft_library=None):
     if not isinstance(request, dict):
         raise ValueError("Agent request 需為物件")
     if set(request) - {"protocol_version", "id", "operation", "payload"}:
@@ -99,6 +131,6 @@ def validate_request(request):
     request_id = request.get("id")
     if not isinstance(request_id, str) or not 1 <= len(request_id) <= 200:
         raise ValueError("Agent id 需為 1–200 字元的文字")
-    if request.get("operation") not in OPERATIONS or not isinstance(request.get("payload"), dict):
+    if request.get("operation") not in available_operations(draft_library) or not isinstance(request.get("payload"), dict):
         raise ValueError("Agent operation 或 payload 格式錯誤")
     return request_id, request["operation"], request["payload"]

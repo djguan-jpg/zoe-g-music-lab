@@ -20,7 +20,7 @@ python music_lab_agent.py --describe
 Get-Content -Raw -Encoding utf8 request.json | python music_lab_agent.py > response.jsonl
 ```
 
-成功時回傳 `ok: true`、相同 id，及 result.files／data／meta。files 是成果檔名與內容，Agent adapter 不寫入磁碟；是否保存由呼叫者決定。失敗回傳 `ok: false` 與 error.code／message，stdout 不混入狀態文字或 traceback。錯誤 request 不會阻止下一行正常 request。
+成功時回傳 `ok: true`、相同 id，及 result.files／data／meta。files 是創作成果檔名與內容，由呼叫者決定保存。預設 Agent 不寫檔；v0.9 可在啟動時明確啟用草稿庫，僅 draft_save 在所選庫建立不可覆寫版本。失敗回傳 `ok: false` 與 error.code／message，stdout 不混入狀態文字或 traceback。錯誤 request 不會阻止下一行正常 request。
 
 四種 operation：music、storyboard、lyrics、audio。前兩者 payload 對應 examples 的需求 JSON；歌詞採 content／suffix 或 cues，另可含 title／duration。音訊來源必須透過啟動參數明確選定：
 
@@ -97,3 +97,29 @@ tools/call 明確提供非物件 arguments（包括 null）時回 -32602；paylo
 來源核對：[MCP 2025-11-25 Tools](https://modelcontextprotocol.io/specification/2025-11-25/server/tools) 定義 inputSchema、outputSchema 與兩種錯誤；[Lifecycle](https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle) 定義初始化／退出。本專案依既有規則拒絕未知 transport 版本，不把此行為宣稱為完整官方 conformance；仍僅支援 2025-11-25。
 
 本輪使用已安裝 jsonschema 4.26.0 作開發核對，沒有安裝或新增依賴：八份 schema 通過 meta-schema 檢查；七次真實 stdio 呼叫涵蓋四工具與兩種舊版企劃，成功輸入／成果皆符合 schema 並與共用 application 一致，錯誤範例被 schema 拒絕。這不是特定 Agent host 接入或模型執行證明。
+
+## v0.9：明確啟用草稿庫
+
+未帶草稿庫參數時，仍只有原有四個操作／MCP 工具，不讀寫任何草稿庫。明確指定目錄後，兩個 adapter 才增加 draft_save、draft_list、draft_read，共用相同 application、草稿形狀與保存層：
+
+```powershell
+python music_lab_agent.py --draft-library outputs/drafts --describe
+python music_lab_mcp.py --draft-library outputs/drafts
+python scripts/agent_launch.py --format codex --draft-library outputs/drafts
+```
+
+第二行是由 host 管理的 stdio 入口，EOF 退出；第三行只印出 command／args，不啟動 host 或更動設定。移動 checkout 後重新產生。明確選相同的庫即可和工作台／CLI 交換保存版本，不由 request JSON 決定路徑。
+
+| 操作／MCP 工具 | payload | 成功 data |
+| --- | --- | --- |
+| draft_save | id、label、完整草稿 v3 的 draft | entry、reused、status |
+| draft_list | 可選 limit（1–100，預設 20）、cursor（上一頁 next_cursor） | entries、next_cursor、issues、status |
+| draft_read | id | entry、draft、status |
+
+外層格式保持 JSON-lines 的 protocol_version／id／operation／payload，或 MCP arguments.payload。request id 與草稿版本 ID 是兩個不同欄位；草稿 ID 需為 `draft-` 加 32 個小寫十六進位字元。label 為 1–200 字元的非空白文字，草稿保存上限 1 MiB，單庫最多 1000 版。讀取回應的 data.draft 可下載或匯入；整個 envelope 不是草稿。
+
+draft_save 會實際寫入選定目錄，MCP readOnlyHint=false／destructiveHint=false／idempotentHint=true。相同 ID＋完整內容＋名稱才可重試，reused=true 表示沿用原保存時間及紀錄；不同內容拒絕，不能覆寫。逾時／io_error 不足以判定磁碟未保存，保留原 ID／內容重試或先 draft_read 確認。新內容使用新 ID。其他兩個草稿工具為讀取。
+
+files 為空；保存／讀取 meta.needs_review=true，status=draft_only_not_validated。保存只證明已檢查資料形狀，未完成小節／校時可以保留；必須回到四工作台重新驗證創作與時間。list 狀態 metadata_only_checksum_verified_on_read 表示沒有逐份讀取草稿，讀取時才核對摘要。讀取壞版本拒絕，不遷移或修補檔案。
+
+產品 0.9.0、草稿 schema 3、保存紀錄 schema 1、Agent 1 與 MCP 2025-11-25 分別管理。能力查詢提供啟用狀態、容量及同源輸入 schema，不回傳草稿庫的機器路徑。已有 Windows 真實 JSON-lines／MCP／CLI／HTTP 往返與另一工作目錄的 launcher 驗證；特定 Agent host、模型執行、POSIX 及官方 conformance 尚未驗證。草稿庫與原始碼封裝／Git 還原點分開，使用者需另行備份。

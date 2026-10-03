@@ -1,6 +1,6 @@
 {
   "suite": "ZOE. G Music Lab",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "created_on": "2026-10-01",
   "founder": {
     "display_name": "ZOE. G",
@@ -9,7 +9,7 @@
   "ai_collaboration": "Codex assisted with scope, original skill text, implementation and validation",
   "publication": "github_private",
   "repository": "https://github.com/djguan-jpg/zoe-g-music-lab",
-  "release_version": "v0.8.0",
+  "release_version": "v0.9.0",
   "platform_claim": "not_submitted",
   "projects": [
     {
@@ -44,5 +44,6 @@
   "license": "PolyForm-Noncommercial-1.0.0",
   "agent_protocol_version": 1,
   "draft_schema_version": 3,
+  "draft_library_schema_version": 1,
   "mcp_protocol_version": "2025-11-25"
 }

@@ -36,6 +36,18 @@ def array_schema(items, minimum=0, maximum=None):
 
 
 def payload_schema(operation):
+    if operation in ("draft_save", "draft_list", "draft_read"):
+        from .draft_contract import draft_schema
+        from .draft_library import ID_PATTERN
+        identifier = {"type": "string", "pattern": "^" + ID_PATTERN + "$",
+                      "description": "Revision ID; retry the same ID only with identical content. Never a path."}
+        if operation == "draft_save":
+            return object_schema({"id": identifier, "label": {"type": "string", "minLength": 1, "maxLength": 200, "pattern": r"\S"},
+                                  "draft": draft_schema()}, ("id", "label", "draft"), additionalProperties=False)
+        if operation == "draft_read":
+            return object_schema({"id": identifier}, ("id",), additionalProperties=False)
+        return object_schema({"limit": {"type": "integer", "minimum": 1, "maximum": 100, "default": 20},
+                              "cursor": {"anyOf": [identifier, {"type": "null"}]}}, additionalProperties=False)
     if operation == "music":
         properties = {key: text(label) for key, label in {
             "title": "Song title", "language": "Creative language", "audience": "Intended listeners",

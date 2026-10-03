@@ -2,7 +2,7 @@
 """Dependency-free local MCP stdio tools for the explicit 2025-11-25 revision.
 
 Original adapter based on the public specification; no SDK code copied.
-Only application.build performs domain work. No model, network or file writes.
+Only application.build performs domain work. No model or network. Draft writes require an explicit library at launch.
 """
 import argparse
 import json
@@ -10,7 +10,8 @@ import sys
 from pathlib import Path
 
 from musiclab import __version__
-from musiclab.application import MAX_REQUEST_BYTES, OPERATIONS, build, load_request
+from musiclab.application import MAX_REQUEST_BYTES, OPERATIONS, LIBRARY_OPERATIONS, build, load_request
+from musiclab.draft_library import DraftLibrary
 from musiclab.tool_contracts import input_schema, output_schema
 
 MCP_VERSION = "2025-11-25"
@@ -19,14 +20,19 @@ TOOLS = {"music_plan": "music", "storyboard_plan": "storyboard",
 
 
 
-def tool_list():
-    return [{"name": name, "description": OPERATIONS[operation],
+LIBRARY_TOOLS = {name: name for name in LIBRARY_OPERATIONS}
+
+
+def tool_list(draft_library=None):
+    operations = {**OPERATIONS, **LIBRARY_OPERATIONS}
+    tools = {**TOOLS, **(LIBRARY_TOOLS if draft_library is not None else {})}
+    return [{"name": name, "description": operations[operation],
              "title": name.replace("_", " ").title(),
              "inputSchema": input_schema(operation), "outputSchema": output_schema(),
              "execution": {"taskSupport": "forbidden"},
-             "annotations": {"readOnlyHint": True, "destructiveHint": False,
+             "annotations": {"readOnlyHint": operation != "draft_save", "destructiveHint": False,
                              "idempotentHint": True, "openWorldHint": False}}
-            for name, operation in TOOLS.items()]
+            for name, operation in tools.items()]
 
 
 def rpc_error(request_id, code, message, data=None):
@@ -41,7 +47,9 @@ def tool_error(message):
 
 
 class Session:
-    def __init__(self, audio_source=None):
+    def __init__(self, audio_source=None, draft_library=None):
+        self.draft_library = draft_library
+        self.tools = {**TOOLS, **(LIBRARY_TOOLS if draft_library is not None else {})}
         self.audio_source = audio_source
         self.initialized = False
         self.ready = False
@@ -82,7 +90,8 @@ class Session:
             result = {"protocolVersion": MCP_VERSION, "capabilities": {"tools": {"listChanged": False}},
                       "serverInfo": {"name": "zoe-g-music-lab", "version": __version__},
                       "instructions": "Local planning and evidence tools. PolyForm Noncommercial 1.0.0. "
-                                      "No AI generation or automatic exports; review returned content."}
+                                      "No AI generation or automatic exports; review returned content." +
+                                      (" Draft save/read/list are enabled only in the selected library; saved drafts need creative validation." if self.draft_library is not None else "")}
         elif method not in ("tools/list", "tools/call"):
             return rpc_error(request_id, -32601, "Method not supported")
         elif not self.ready:
@@ -90,12 +99,12 @@ class Session:
         elif method == "tools/list":
             if params.get("cursor") is not None:
                 return rpc_error(request_id, -32602, "The complete static tool list has no cursor")
-            result = {"tools": tool_list()}
+            result = {"tools": tool_list(self.draft_library)}
         else:
             if "task" in params:
                 return rpc_error(request_id, -32602, "Task-augmented execution is not supported")
             name, arguments = params.get("name"), params.get("arguments")
-            if not isinstance(name, str) or name not in TOOLS:
+            if not isinstance(name, str) or name not in self.tools:
                 return rpc_error(request_id, -32602, "Unknown tool")
             if "arguments" in params and not isinstance(arguments, dict):
                 return rpc_error(request_id, -32602, "arguments must be an object")
@@ -103,7 +112,7 @@ class Session:
                 result = tool_error("arguments must contain exactly one object: payload")
             else:
                 try:
-                    data = build(TOOLS[name], arguments["payload"], audio_source=self.audio_source).wire()
+                    data = build(self.tools[name], arguments["payload"], audio_source=self.audio_source, draft_library=self.draft_library).wire()
                     result = {"content": [{"type": "text", "text": json.dumps(data, ensure_ascii=False, allow_nan=False)}],
                               "structuredContent": data, "isError": False}
                 except (ValueError, TypeError, KeyError, AttributeError, UnicodeError, RecursionError) as error:
@@ -115,8 +124,8 @@ class Session:
         return {"jsonrpc": "2.0", "id": request_id, "result": result}
 
 
-def serve(source, destination, audio_source=None):
-    session = Session(audio_source)
+def serve(source, destination, audio_source=None, draft_library=None):
+    session = Session(audio_source, draft_library)
     while True:
         raw = source.readline(MAX_REQUEST_BYTES + 1)
         if not raw:
@@ -143,13 +152,15 @@ def serve(source, destination, audio_source=None):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--audio", help="Explicitly selected integer PCM WAV; JSON cannot select a path")
+    parser.add_argument("--draft-library", help="Explicit selected directory enables immutable draft tools")
     args = parser.parse_args()
+    library = DraftLibrary(args.draft_library) if args.draft_library else None
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
     source = Path(args.audio) if args.audio else None
     if source is not None and source.suffix.lower() != ".wav":
         parser.error("--audio accepts only .wav")
-    serve(sys.stdin.buffer, sys.stdout, source)
+    serve(sys.stdin.buffer, sys.stdout, source, library)
     return 0
 
 

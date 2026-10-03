@@ -9,6 +9,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from musiclab.common import json_text
 from musiclab.application import build, capabilities, load_request, MAX_REQUEST_BYTES
+from musiclab.draft_contract import browser_contract
+from musiclab.draft_library import DraftLibrary
 
 ROOT = Path(__file__).resolve().parent
 MAX_AUDIO = 64 * 1024 * 1024
@@ -18,6 +20,7 @@ ASSETS = {"/": ("web/index.html", "text/html"), "/app.js": ("web/app.js", "text/
           "/editor-state.js": ("web/editor-state.js", "text/javascript"),
           "/planning-import.js": ("web/planning-import.js", "text/javascript"),
           "/deletion-history.js": ("web/deletion-history.js", "text/javascript"),
+          "/draft-library.js": ("web/draft-library.js", "text/javascript"),
           "/license": ("LICENSE", "text/plain"), "/notice": ("NOTICE", "text/plain")}
 
 
@@ -56,7 +59,9 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
             file, kind = ASSETS[path]
             return self.reply(200, (ROOT / file).read_bytes(), kind)
         if path == "/api/capabilities":
-            return self.reply(200, json_text(capabilities()))
+            return self.reply(200, json_text(capabilities(getattr(self.server, 'draft_library', None))))
+        if path == "/draft-contract.js":
+            return self.reply(200, browser_contract(), "text/javascript")
         if path == "/api/examples":
             data = {"music": json.loads((ROOT / "examples/first-light-music.json").read_text(encoding="utf-8")),
                     "storyboard": json.loads((ROOT / "examples/first-light-mv.json").read_text(encoding="utf-8"))}
@@ -98,10 +103,12 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
             data = load_request(raw.decode("utf-8"))
             if not isinstance(data, dict):
                 raise ValueError("輸入需為物件")
-            operations = {"/api/music": "music", "/api/storyboard": "storyboard", "/api/lyrics": "lyrics"}
+            operations = {"/api/music": "music", "/api/storyboard": "storyboard", "/api/lyrics": "lyrics",
+                          "/api/drafts/save": "draft_save", "/api/drafts/list": "draft_list", "/api/drafts/read": "draft_read"}
             if route.path not in operations:
                 return self.reply(404, '{"error":"找不到此操作"}')
-            return self.reply(200, json_text(build(operations[route.path], data).wire()))
+            return self.reply(200, json_text(build(operations[route.path], data,
+                draft_library=getattr(self.server, 'draft_library', None)).wire()))
         except RecursionError:
             return self.reply(400, '{"error":"JSON 巢狀過深，請減少層數"}')
         except (ValueError, TypeError, KeyError, AttributeError, UnicodeError) as error:
@@ -113,8 +120,10 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
 def main():
     parser = argparse.ArgumentParser(description="ZOE. G Music Lab 本機工作台")
     parser.add_argument("--port", type=int, default=8875)
+    parser.add_argument("--draft-library", help="明確選定本機草稿庫目錄；未指定時不提供保存操作")
     args = parser.parse_args()
     with ThreadingHTTPServer(("127.0.0.1", args.port), WorkbenchHandler) as server:
+        server.draft_library = DraftLibrary(args.draft_library) if args.draft_library else None
         print(f"ZOE. G Music Lab：http://127.0.0.1:{server.server_port} · Ctrl+C 停止", flush=True)
         try:
             server.serve_forever()

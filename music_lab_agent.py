@@ -1,37 +1,38 @@
 # SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
-"""Versioned JSON-lines adapter. No network, credentials or automatic writes."""
+"""Versioned JSON-lines adapter. No network or credentials; draft writes require an explicit library at launch."""
 import argparse
 import json
 import sys
 from pathlib import Path
+from musiclab.draft_library import DraftLibrary
 from musiclab.application import (MAX_REQUEST_BYTES, PROTOCOL_VERSION, build,
                                   capabilities, load_request, validate_request)
 
 
-def response(raw, audio_source=None):
+def response(raw, audio_source=None, draft_library=None):
     request_id = None
     try:
         request = load_request(raw)
         if isinstance(request, dict) and isinstance(request.get("id"), str):
             request_id = request["id"][:200]
-        request_id, operation, payload = validate_request(request)
+        request_id, operation, payload = validate_request(request, draft_library)
     except (ValueError, TypeError, RecursionError):
         return {"protocol_version": PROTOCOL_VERSION, "id": request_id, "ok": False,
                 "error": {"code": "invalid_request", "message": "請核對 Agent v1 request 的格式、版本及操作"}}
     try:
         return {"protocol_version": PROTOCOL_VERSION, "id": request_id, "ok": True,
-                "result": build(operation, payload, audio_source=audio_source).wire()}
+                "result": build(operation, payload, audio_source=audio_source, draft_library=draft_library).wire()}
     except (ValueError, TypeError, KeyError, AttributeError, UnicodeError) as error:
         code, message = "invalid_input", str(error)
     except OSError:
-        code, message = "io_error", "選定音檔無法讀取"
+        code, message = "io_error", "選定音檔或草稿庫無法讀寫"
     except Exception:
         code, message = "internal_error", "本機操作未完成，請檢查輸入或回報此 request id"
     return {"protocol_version": PROTOCOL_VERSION, "id": request_id, "ok": False,
             "error": {"code": code, "message": message}}
 
 
-def serve(source, destination, audio_source=None):
+def serve(source, destination, audio_source=None, draft_library=None):
     while True:
         raw = source.readline(MAX_REQUEST_BYTES + 1)
         if not raw:
@@ -48,7 +49,7 @@ def serve(source, destination, audio_source=None):
                 text = raw.decode("utf-8-sig")
                 if not text.strip():
                     continue
-                result = response(text, audio_source)
+                result = response(text, audio_source, draft_library)
             except UnicodeError:
                 result = {"protocol_version": PROTOCOL_VERSION, "id": None, "ok": False,
                           "error": {"code": "invalid_encoding", "message": "request 需為 UTF-8"}}
@@ -60,16 +61,18 @@ def main():
     parser = argparse.ArgumentParser(description="ZOE. G Music Lab local Agent v1")
     parser.add_argument("--describe", action="store_true")
     parser.add_argument("--audio", help="Explicit selected WAV for audio requests; no JSON path access")
+    parser.add_argument("--draft-library", help="Explicit selected directory enables immutable draft save/read/list")
     args = parser.parse_args()
+    draft_library = DraftLibrary(args.draft_library) if args.draft_library else None
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
     if args.describe:
-        print(json.dumps(capabilities(), ensure_ascii=False, indent=2))
+        print(json.dumps(capabilities(draft_library), ensure_ascii=False, indent=2))
         return 0
     audio_source = Path(args.audio) if args.audio else None
     if audio_source is not None and audio_source.suffix.lower() != ".wav":
         parser.error("--audio 只接受選定的 .wav")
-    serve(sys.stdin.buffer, sys.stdout, audio_source)
+    serve(sys.stdin.buffer, sys.stdout, audio_source, draft_library)
     return 0
 
 
