@@ -5,9 +5,10 @@
 <body>
 <aside class="rail"><a href="/" class="brand">ZOE. G<span>Music Lab</span></a><p class="rail-note">一首歌，四個工作台。</p>
 <nav aria-label="工作台"><button class="nav-item active" data-tab="music" aria-current="page"><span>01</span>歌曲設計</button><button class="nav-item" data-tab="storyboard"><span>02</span>母題分鏡</button><button class="nav-item" data-tab="lyrics"><span>03</span>波形校時</button><button class="nav-item" data-tab="audio"><span>04</span>交付檢查</button></nav>
-<div class="rail-footer">創辦 ZOE. G<br><span>GitHub · djguan-jpg</span><p>本機 v0.3<br>原創構思與人工決策</p></div></aside>
+<div class="rail-footer">創辦 ZOE. G<br><span>GitHub · djguan-jpg</span><p>本機 v0.4<br>原創構思與人工決策</p></div></aside>
 <main><header class="page-header"><div><h1>從想法，到可檢查的交付。</h1><p>先把創作說清楚，再把時間與證據對齊。</p></div><span class="local-note">素材留在本機</span></header>
 <section class="project-bar" aria-label="專案草稿"><div><strong>保存這一輪的構思</strong><p>草稿可重新載入，包含三個創作工作台及交付條件；音檔需另行選擇。</p></div><div class="project-actions"><form id="draft-export" method="post" action="/api/export"><input type="hidden" name="name" value="music-lab-draft.json"><input type="hidden" name="content" id="draft-content"><button id="draft-save" class="subtle">下載專案草稿</button></form><label class="draft-open">載入專案草稿<input id="draft-open" type="file" accept=".json"></label><button id="draft-undo" class="subtle" disabled>撤回草稿載入</button></div></section>
+<section id="draft-conversion" class="conversion-box" aria-label="舊版草稿轉換" hidden><p id="draft-conversion-note"></p><div class="actions"><button id="draft-convert" class="secondary">轉換並載入舊版草稿</button><button id="draft-cancel" class="subtle">取消轉換</button></div></section>
 <div class="workspace">
 <div class="editor">
 <section id="music" class="panel" aria-labelledby="music-heading"><header class="section-header"><div><h2 id="music-heading">歌曲設計</h2><p>讓同一個記憶點，在前後段落有不同的意義。</p></div><button id="music-example" class="subtle">載入原創範例</button></header>
@@ -21,7 +22,7 @@
 <div class="fields"><label>片名<input id="mv-title" required></label><label>總時長（秒）<input id="mv-duration" type="number" min="0.001" step="0.001" required></label></div>
 <div class="fields"><label>FPS<input id="mv-fps" type="number" min="1" max="120" value="24"></label><label>畫幅<select id="mv-ratio"><option>16:9</option><option>9:16</option><option>1:1</option><option>4:3</option></select></label></div>
 <label>視覺基調<input id="mv-style"></label><label>人物與服裝固定設定<textarea id="mv-anchor" rows="2"></textarea></label>
-<div class="fields"><label>主要母題<input id="mv-motif"></label><label>初始意義<input id="mv-meaning"></label></div>
+<div class="section-row"><h3>母題與意義</h3><button id="motif-add" class="subtle">新增母題</button></div><p class="hint">每個鏡頭可選擇不同母題。改名會保留鏡頭對應；刪除前請先調整使用它的鏡頭。</p><div id="motifs"></div>
 <div class="section-row"><h3>鏡頭與變化</h3><button id="shot-add" class="subtle">新增鏡頭</button></div><div id="shots"></div><button id="mv-build" class="primary">檢查並建立分鏡包</button><p class="hint">檢查時間覆蓋及資料連戲，實際畫面仍由你決定。</p><div id="mv-visual" class="result-visual" hidden></div></section>
 
 <section id="lyrics" class="panel" aria-labelledby="lyrics-heading" hidden><header class="section-header"><div><h2 id="lyrics-heading">波形校時</h2><p>聽見那句話，記下它真正開始的位置。</p></div></header>

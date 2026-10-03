@@ -7,6 +7,7 @@ flowchart LR
   UI[瀏覽器 DOM 與表單] --> HTTP[loopback HTTP adapter]
   CLI[CLI adapter] --> APP[application.build]
   AGENT[Agent JSON-lines adapter v1] --> APP
+  MCP[MCP stdio adapter 2025-11-25] --> APP
   HTTP --> APP
   APP --> DOMAIN[歌曲 / 分鏡 / 歌詞 / PCM 分析]
   DOMAIN --> RESULT[資料與成果檔內容]
@@ -17,13 +18,14 @@ flowchart LR
 
 `web/editor-state.js` 提供可獨立測試的最新任務判定、歌詞播放區間與草稿契約。`web/app.js` 負責 DOM、事件、音檔生命週期及 HTTP；時間／規格的正式檢查仍由共用 Python 邏輯處理。
 
-## 明確的三個版本
+## 分別管理的版本
 
-- 產品版本：`musiclab.__version__` 與 `projects.json.version`。目前 v0.3.0。
+- 產品版本：`musiclab.__version__` 與 `projects.json.version`。目前 v0.4.0。
 - Agent 協定：`protocol_version: 1`，每個 request 有 id、operation、payload；每行一個 JSON。
-- 草稿格式：`format: zoe-music-lab-draft`、`schema_version: 1`。保存編修欄位及原始文字數值，允許尚未填完的草稿；不包含音檔、驗證成果或授權設定。
+- MCP 協定：`2025-11-25`，JSON-RPC 握手／工具列表／呼叫，與自訂 Agent v1 分別管理。拒絕未知版本，不宣稱支援 2026 協定或任一 host。
+- 草稿格式：`format: zoe-music-lab-draft`、`schema_version: 2`。保存編修欄位及原始文字數值，允許尚未填完的草稿；不包含音檔、驗證成果或授權設定。
 
-未知 Agent／草稿版本拒絕執行或替換。輸入資料是素材，不擴大工具的權限。未完成草稿回讀後仍需重建成果，才恢復下載。後續更動契約須明確升級 schema，提供遷移／拒絕策略與往返測試。
+草稿 v2 的母題有穩定 ID，鏡頭引用 ID，送入領域層時再轉成母題名稱。v1 僅檢查並顯示轉換摘要；需明確按鈕轉換成 v2 才載入。不覆寫原檔；撤回保存按下轉換時的表單。未知 Agent／草稿版本拒絕執行或替換。輸入資料是素材，不擴大工具的權限。未完成草稿回讀後仍需重建成果，才恢復下載。後續更動契約須明確升級 schema，提供遷移／拒絕策略與往返測試。
 
 ## Git 與可逆迭代
 

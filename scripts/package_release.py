@@ -13,8 +13,8 @@ ROOT = Path(__file__).resolve().parents[1]
 PREFIX = "zoe-g-music-lab/"
 
 
-def command(args, cwd=ROOT):
-    process = subprocess.run(args, cwd=cwd, capture_output=True, timeout=60)
+def command(args, cwd=ROOT, input=None):
+    process = subprocess.run(args, cwd=cwd, input=input, capture_output=True, timeout=60)
     if process.returncode:
         detail = (process.stdout + process.stderr).decode("utf-8", errors="replace")[-4000:]
         raise ValueError(f"Check failed: {args[0]} {args[1]}\n{detail}")
@@ -54,7 +54,11 @@ def package(ref):
             hashes = entries(archive)
             if archive.testzip() is not None:
                 raise ValueError("Damaged package")
-            for required in ("LICENSE", "NOTICE", "README.md", "music_lab_agent.py", "music_lab_server.py"):
+            required_files = ["LICENSE", "NOTICE", "README.md", "music_lab_agent.py", "music_lab_server.py"]
+            has_mcp = "mcp_protocol_version" in manifest_source
+            if has_mcp:
+                required_files.append("music_lab_mcp.py")
+            for required in required_files:
                 if required not in hashes:
                     raise ValueError(f"Missing required release file: {required}")
             with tempfile.TemporaryDirectory(prefix="zoe-release-check-") as folder:
@@ -66,12 +70,20 @@ def package(ref):
                 capabilities = json.loads(command([sys.executable, "music_lab_agent.py", "--describe"], checkout))
                 if capabilities["version"] != version or capabilities["license"] != manifest_source["license"]:
                     raise ValueError("Packaged capabilities differ from release metadata")
+                if has_mcp:
+                    request = {"jsonrpc": "2.0", "id": "package-check", "method": "initialize", "params": {
+                        "protocolVersion": manifest_source["mcp_protocol_version"], "capabilities": {},
+                        "clientInfo": {"name": "release-check", "version": "1.0"}}}
+                    reply = json.loads(command([sys.executable, "-X", "utf8", "music_lab_mcp.py"], checkout,
+                                               input=(json.dumps(request)+"\n").encode()))
+                    if reply.get("result", {}).get("serverInfo", {}).get("version") != version or reply["result"]["protocolVersion"] != manifest_source["mcp_protocol_version"]:
+                        raise ValueError("Packaged MCP metadata differs from release metadata")
         manifest = {"schema_version": 1, "commit": commit, "version": version,
                     "license": manifest_source["license"], "archive": source.name,
                     "sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
                     "bytes": source.stat().st_size, "files": hashes,
                     "checks": {"zip_integrity": "passed", "packaged_python_tests": "passed",
-                               "packaged_javascript_tests": "passed", "agent_metadata": "passed"},
+                               "packaged_javascript_tests": "passed", "agent_metadata": "passed", "mcp_metadata": "passed" if has_mcp else "not_in_this_version"},
                     "restore": f"git archive --format=zip --prefix={PREFIX} --output=restored.zip {commit}"}
         (destination / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2)+"\n", encoding="utf-8")
         return destination, manifest

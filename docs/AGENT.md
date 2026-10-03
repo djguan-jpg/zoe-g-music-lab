@@ -1,6 +1,6 @@
 # 本機 Agent 接口 v1
 
-這是 JSON-lines 的本機 adapter，**不是 MCP server**。沒有模型、網路、憑證或工具安裝要求。可讓不同 Agent 以子程序呼叫同一套領域操作；目前已驗證本機子程序，不宣稱任何特定 Agent 平台已整合。
+`music_lab_agent.py` 是 JSON-lines 的本機 adapter。v0.4 另提供 `music_lab_mcp.py`；兩個格式與入口各自獨立。沒有模型、網路、憑證或工具安裝要求。可讓不同 Agent 以子程序呼叫同一套領域操作；目前已驗證本機子程序，不宣稱任何特定 Agent 平台已整合。
 
 查看能力：
 
@@ -33,3 +33,28 @@ Get-Content -Raw -Encoding utf8 audio-request.json | python music_lab_agent.py -
 常見 error.code：invalid_request、invalid_input、request_too_large、invalid_encoding、io_error、internal_error。缺少實際媒體時不產生音樂／影片；meta.needs_review 表示有需檢視項目，不能視為音樂品質保證。
 
 授權為 PolyForm Noncommercial 1.0.0，見 LICENSE／NOTICE。商業使用沒有由本版授權。
+
+## MCP stdio adapter
+
+`music_lab_mcp.py` 以 Python 標準函式庫實作，所有工具呼叫同一個 application.build，不複製領域計算。明確支援 MCP `2025-11-25`，並非宣稱最新版。未知版本的 initialize 回傳 -32602 及 supported 清單；呼叫者可明確選支援版再重試。2026 的 stateless server/discover 未實作，回傳 -32601。
+
+以使用的 MCP host 設定 command=`python`，args 第一項為此版 `music_lab_mcp.py` 的完整路徑。需分析音訊時在 args 明確加入 `--audio` 與所選 WAV 的路徑；JSON payload 不可選其他音檔。伺服器不開網路埠，EOF 退出；不自動安裝全域設定或取得其他工具權限。
+
+連線順序：initialize → notifications/initialized → tools/list 或 tools/call。工具名稱：music_plan、storyboard_plan、lyrics_validate、audio_report。每個工具的 arguments 都有一個 payload 物件；歌曲／分鏡使用 examples 的需求格式，其餘與上方 JSON-lines 的 payload 相同。tools/list 提供參數描述與 schema。
+
+最小請求範例，每個 JSON 各一行：
+
+```json
+{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-11-25","capabilities":{},"clientInfo":{"name":"my-client","version":"1.0"}}}
+{"jsonrpc":"2.0","method":"notifications/initialized"}
+{"jsonrpc":"2.0","id":2,"method":"tools/list"}
+{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"lyrics_validate","arguments":{"payload":{"content":"[00:00.000]原創測試","duration":3}}}}
+```
+
+回應的 structuredContent 與 text 內容都包含 files/data/meta；files 是文字內容，不是已保存的檔案。meta.protocol_version=1 是共用應用結果的原有版本，MCP transport 版本以握手的 protocolVersion 為準。程式不呼叫 AI；有 review/warnings 仍需人工判斷。
+
+未知方法／工具是 JSON-RPC error；領域或 payload 錯誤是 isError=true 的工具結果。錯誤行不終止後續有效請求。每行上限 2 MiB，UTF-8；notifications 沒有回應。只宣告靜態 tools；沒有 resources/prompts、HTTP MCP、Tasks、背景作業、主動要求權限或模型 sampling。同步呼叫不提供執行中的取消／進度通知，host 應設定逾時並管理子程序。
+
+本輪以獨立子程序完成握手、發現四工具、實際呼叫四操作、錯誤恢復與 EOF 結束，成果比對共用 application；沒有把此服務安裝進 Codex 或其他 Agent，特定 host 與官方 conformance suite 尚未驗證。
+
+規格研究僅採官方文件：[2025 lifecycle](https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle)、[stdio transport](https://modelcontextprotocol.io/specification/2025-11-25/basic/transports)、[tools](https://modelcontextprotocol.io/specification/2025-11-25/server/tools)、[2026 versioning](https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/docs/specification/2026-07-28/basic/versioning.mdx)。未搬入第三方程式或素材。
