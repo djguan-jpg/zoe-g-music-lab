@@ -1,5 +1,13 @@
 # 迭代說明
 
+## v0.34.0 — 2026-10-04
+
+- 分鏡創作欄位為零仍可能有無效原時間；新增獨立時間待辦，可定位 FPS、秒數、影格缺口／重疊、短於一幀及尾端覆蓋，建立完整包先定位時間問題。
+- 新唯讀 storyboard_timing_review、CLI storyboard-timing-review、HTTP 與 JSON-lines／MCP 共用 application；最小原時間來源與 report1 獨立，舊創作 report1／Agent1／draft3保持。基本10／明確啟庫15工具。
+- 純部分時間診斷、版本報告、共享影格映射與秒數容差、adapter／DOM 分層；總長接續重用診斷與有限十進位規則，全形數字可明確採用原鏡尾並撤回原總長。原字串、原鏡號／順序、創作及媒體保留。
+- 281 Python／431 JS／4 Skill／33語法及diff；103跨語言完整report／Markdown與完成分鏡時鐘接受一致，1000列／2000待辦只截明細。11組 IAB 行為、三份原生報告與四adapter、四panel原值往返、390px DOM／Enter、晚成功／500／不同來源／未知版本保護、原音檔保持及24影格完整包通過。
+- 前版v0.33指定ZIP267／413解壓還原通過；本版指定commit封裝、private PR／Release與遠端bytes／SHA、restore及限定維護依本輪收據。PolyForm非商用、署名保持，FreeTWAI not_submitted。
+
 ## v0.33.0 — 2026-10-04
 
 - 修正合法 draft3 的原字串被 number／select／單行控制項清空或改寫：12 個數值／畫幅重現值與 8 個特殊欄位經真實瀏覽器下載，四個 panel 與載入來源相等。

@@ -75,3 +75,9 @@ storyboard.json 的 frame_timeline 為獨立 schema1，CSV／提示稿及工作�
 `python music_lab.py storyboard-review --input examples/unfinished-storyboard-review.json --out outputs/mv-review-run` 或明確 `--draft 已另存的modern草稿.json`，只診斷原分鏡panel，不補寫創作。JSON／Markdown保留原字串、鏡號、母題ID與相關母題原列，全部計數／前200明細；CLI退出0為欄位零、2為已輸出待修正、1為失敗，預設不覆寫。Agent／MCP同一唯讀storyboard_review、9／14 discovery。
 
 工作台即時定位與明確報告分開；unknown／來源不同／晚回應保留編修／成果／原音檔／另存確認。歌曲與分鏡共用純回覆核對層，報告暫態不進draft3。母題名稱須區分，原ID不靠名字改寫；畫面方向與引用完成後，仍須原storyboard完整驗證時間／影格／連戲與實際音畫。見docs/STORYBOARD-REVIEW.md。
+
+### 原時間待辦交接（v0.34）
+
+創作欄位補齊後仍需檢查原秒數、FPS與影格。工作台「檢查時間待辦」可定位原欄位；零待辦仍需完整建立與連戲、實際音畫驗證。CLI `python music_lab.py storyboard-timing-review --input examples/unfinished-storyboard-timing-review.json --out outputs/timing-review-run` 或明確 `--draft 已另存modern草稿.json`，保留原字串與順序，不排序、補值或裁切；預設不覆寫，退出0／2／1分別為時間零待辦／已輸出待修正／失敗。
+
+Agent／MCP同一唯讀storyboard_timing_review，基本10／明確啟庫15；新時間report1與既有創作report1、Agent1／draft3分開。時間報告不當成完整分鏡；未知版本或不相同來源拒絕，原成果與媒體保留。見docs/STORYBOARD-TIMING-REVIEW.md。全形有限數值的鏡尾可在核對後明確採用總長、限定撤回；保持原創作。

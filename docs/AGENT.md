@@ -1,5 +1,11 @@
 # 本機 Agent 接口 v1
 
+## v0.34 原分鏡時間診斷
+
+新唯讀 operation／MCP tool `storyboard_timing_review` 只接受 `{panel:{fields:{"mv-duration":原字串,"mv-fps":原字串},shots:[{start:原字串,end:原字串}]}}`。沒有創作或路徑欄位；最多1000鏡，全數計數／前200明細／原鏡號與 related_row（前鏡）保留。零待辦仍 meta.needs_review=true；時間report1獨立，舊創作report1、Agent1／MCP2025-11-25／draft3保持。重新 discovery 為基本10、明確啟庫15工具；下方章節工具數為各歷史版本。
+
+CLI `storyboard-timing-review` 明確 --input 最小時間JSON或 --draft 已驗證modern草稿，輸出JSON／Markdown及0／2／1退出碼。HTTP `/api/storyboard-timing-review` 與 stdio 共用application；不自動寫檔、不呼叫模型。前端核對完整來源／data／JSON／Markdown及版本，晚回應或來源不符保留成果與編修。見 [契約](STORYBOARD-TIMING-REVIEW.md)。
+
 ## v0.32 分鏡原欄位診斷
 
 新增唯讀storyboard_review operation／MCP tool，payload精確panel（fields／motifs／shots），原字串、母題ID、留白與原鏡號保持；未知方向列待辦，未知shape／ID拒絕。report zoe-storyboard-review schema1含related_row、全部count／前200明細；完整時間／影格／連戲另由storyboard驗證。

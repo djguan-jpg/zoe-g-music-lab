@@ -2,7 +2,7 @@
 import csv
 import io
 from .common import json_text, number, text
-from .storyboard_frames import frame_index, frame_timeline
+from .storyboard_frames import frame_index, frame_timeline, SECONDS_TOLERANCE
 
 
 def music_bundle(brief):
@@ -77,9 +77,9 @@ def storyboard_bundle(brief):
             raise ValueError(f"鏡頭 {index} 需為物件")
         start = number(source.get("start"), f"鏡頭 {index} start")
         end = number(source.get("end"), f"鏡頭 {index} end")
-        if start < 0 or end <= start or end > duration + 0.001 + 1e-12:
+        if start < 0 or end <= start or end > duration + SECONDS_TOLERANCE:
             raise ValueError(f"鏡頭 {index} 時間超出範圍或沒有正時長")
-        if abs(start - previous_end) > 0.001 + 1e-12:
+        if abs(start - previous_end) > SECONDS_TOLERANCE:
             raise ValueError(f"鏡頭 {index} 與前鏡有重疊／空缺，應從 {previous_end:g} 秒開始")
         shot = {"shot": index, "start": start, "end": end,
                 "start_frame": frame_index(start, fps), "end_frame_exclusive": frame_index(end, fps)}
@@ -89,7 +89,7 @@ def storyboard_bundle(brief):
             shot[field] = text(source.get(field), f"鏡頭 {index} {field}")
         shots.append(shot)
         previous_end = end
-    if abs(previous_end - duration) > 0.001 + 1e-12:
+    if abs(previous_end - duration) > SECONDS_TOLERANCE:
         raise ValueError(f"鏡頭只覆蓋到 {previous_end:g} 秒；需要 {duration:g} 秒")
     data = {"title": title, "duration_seconds": duration, "fps": fps, "aspect_ratio": ratio,
             "visual_style": visual_style, "character_anchor": anchor, "shots": shots,

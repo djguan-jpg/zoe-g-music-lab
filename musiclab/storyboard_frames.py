@@ -8,11 +8,12 @@ import math
 
 SCHEMA_VERSION = 1
 FORMAT = 'zoe-storyboard-frames'
+SECONDS_TOLERANCE = .001 + 1e-12
 
 
 def frame_index(seconds, fps):
     # Match the existing inclusive 1 ms shot tolerance at the four-hour cap.
-    if (type(seconds) not in (int, float) or not math.isfinite(seconds) or not 0 <= seconds <= 14400 + .001 + 1e-12 or
+    if (type(seconds) not in (int, float) or not math.isfinite(seconds) or not 0 <= seconds <= 14400 + SECONDS_TOLERANCE or
             type(fps) not in (int, float) or not math.isfinite(fps) or not 0 < fps <= 120):
         raise ValueError('影格時間與 FPS 需為範圍內的有限數字')
     return round(seconds * fps)

@@ -14,11 +14,11 @@ from musiclab.draft_library import DraftLibrary, revision_id
 def main(argv=None):
     parser = argparse.ArgumentParser(description=f"ZOE. G Music Lab · 本機 v{__version__}")
     commands = parser.add_subparsers(dest="command", required=True)
-    for name in ("music", "storyboard", "lyrics", "audio", "storyboard-seed", "lyrics-seed", "lyrics-review", "music-review", "storyboard-review"):
+    for name in ("music", "storyboard", "lyrics", "audio", "storyboard-seed", "lyrics-seed", "lyrics-review", "music-review", "storyboard-review", "storyboard-timing-review"):
         sub = commands.add_parser(name)
         sub.add_argument("--out", required=True, help="指定本輪輸出資料夾")
         sub.add_argument("--overwrite", action="store_true", help="明確替換此輸出目錄的同名成果")
-        if name in ('music-review', 'storyboard-review'):
+        if name in ('music-review', 'storyboard-review', 'storyboard-timing-review'):
             source_group = sub.add_mutually_exclusive_group(required=True)
             source_group.add_argument('--input', help='含 panel 的原始工作台欄位 JSON')
             source_group.add_argument('--draft', help='明確選定 schema3 草稿，只檢查命令所選的工作台')
@@ -89,12 +89,18 @@ def main(argv=None):
                 result = build("draft_" + args.draft_action, payload, draft_library=library).wire()
             print(json.dumps(result, ensure_ascii=False, allow_nan=False))
             return 0
-        if args.command in ('music-review', 'storyboard-review'):
+        if args.command in ('music-review', 'storyboard-review', 'storyboard-timing-review'):
             if args.draft:
                 from musiclab.draft_contract import validate_draft, MAX_DRAFT_BYTES
                 if Path(args.draft).stat().st_size > MAX_DRAFT_BYTES + 3:
                     raise ValueError('欄位檢查的草稿檔最多1 MiB')
-                payload = {'panel': validate_draft(read_json(args.draft))['panels'][args.command.removesuffix('-review')]}
+                draft = validate_draft(read_json(args.draft))
+                if args.command == 'storyboard-timing-review':
+                    from musiclab.storyboard_timing_review import timing_panel
+                    selected = timing_panel(draft['panels']['storyboard'])
+                else:
+                    selected = draft['panels'][args.command.removesuffix('-review')]
+                payload = {'panel': selected}
             else:
                 payload = read_json(args.input)
             result = build(args.command.replace('-', '_'), payload)

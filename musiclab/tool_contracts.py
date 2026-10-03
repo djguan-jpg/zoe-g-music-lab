@@ -72,6 +72,12 @@ def seed_schema():
 
 
 def payload_schema(operation):
+    if operation == 'storyboard_timing_review':
+        def exact(properties): return object_schema(properties, properties.keys(), additionalProperties=False)
+        raw = {'type': 'string', 'description': 'Original clock text, including empty or invalid decimal strings; never guessed'}
+        panel = exact({'fields': exact({'mv-duration': deepcopy(raw), 'mv-fps': deepcopy(raw)}),
+                       'shots': array_schema(exact({'start': deepcopy(raw), 'end': deepcopy(raw)}), 0, 1000)})
+        return exact({'panel': panel})
     if operation == 'storyboard_review':
         from .draft_contract import draft_schema
         panel = draft_schema()['properties']['panels']['properties']['storyboard']

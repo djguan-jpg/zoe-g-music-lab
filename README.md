@@ -1,6 +1,6 @@
 # ZOE. G Music Lab
 
-目前版本 **v0.33.0**：未填完的數值與未知畫幅可原樣保存草稿；換行等特殊字元以可見符號提示，未編修時另存仍保留原字串。排序、刪除還原、待辦報告及 Agent 交接使用同一份原值，完整建立仍檢查範圍、時間與影格。純原值控制器、DOM adapter 與原有 domain 分層；9／14工具、protocol1／draft3及各report1保持。見[使用與分層](docs/RAW-FIELDS.md)、[本輪驗證](docs/QA-v0.33.0.md)、[還原與交接](docs/HANDOFF-v0.33.0.md)。
+目前版本 **v0.34.0**：分鏡新增原時間待辦，留白、無效 FPS／秒數、秒數與影格缺口／重疊、短於一幀及尾端不符都可定位原鏡號。獨立時間 JSON／Markdown 可交給 CLI、Agent、MCP；原創作與媒體保留，零待辦仍須完整建立及音畫驗證。純診斷／版本報告／共用 application／adapter／DOM 分層，總長接續重用同一時間檢查。基本10／明確啟庫15工具，Agent1／draft3及舊report保持，新時間report1獨立。見[使用與分層](docs/STORYBOARD-TIMING-REVIEW.md)、[驗證](docs/QA-v0.34.0.md)、[交接與還原](docs/HANDOFF-v0.34.0.md)。
 
 ## 歌曲跨工具報告（v0.31）
 
@@ -246,14 +246,14 @@ python music_lab.py draft restore --library outputs/restored-drafts --input '構
 
 ## Agent 使用
 
-預設七種操作（歌曲、分鏡、歌詞、唯讀校時待辦、音檔、分鏡起稿、未校時歌詞起稿）可用 JSON-lines v1 或 MCP stdio adapter。明確選定 `--draft-library` 後共十二種工具；備份檢查／恢復另需啟動時選定 `--draft-backup '構思備份.zip'`，JSON 不能更換路徑。ZIP 匯出使用 CLI 或工作台。MCP 明確支援 `2025-11-25`；只接受該版初始化，不自動轉換未知版本。使用 `python scripts/agent_launch.py` 產生本版 Python／入口的完整路徑設定；加 `--format codex` 可產生 Codex TOML 片段。指令只顯示設定，不安裝或啟動 Agent，移動解壓目錄後需重新產生。已驗證設定從不同目錄啟動 MCP 及實際工具輸出；Codex CLI 只做設定解析，尚未驗證 host 連線／實際 Agent 工具呼叫。操作、錯誤及音檔選擇見 [Agent 文件](docs/AGENT.md)。
+目前預設十種操作（歌曲、分鏡、歌詞、音檔、分鏡起稿、未校時歌詞起稿、校時待辦、歌曲欄位待辦、分鏡創作待辦、分鏡時間待辦）可用 JSON-lines v1 或 MCP stdio adapter。明確選定 `--draft-library` 後共十五種工具；備份檢查／恢復另需啟動時選定 `--draft-backup '構思備份.zip'`，JSON 不能更換路徑。ZIP 匯出使用 CLI 或工作台。MCP 明確支援 `2025-11-25`；只接受該版初始化，不自動轉換未知版本。使用 `python scripts/agent_launch.py` 產生本版 Python／入口的完整路徑設定；加 `--format codex` 可產生 Codex TOML 片段。指令只顯示設定，不安裝或啟動 Agent，移動解壓目錄後需重新產生。已驗證設定從不同目錄啟動 MCP 及實際工具輸出；Codex CLI 只做設定解析，尚未驗證 host 連線／實際 Agent 工具呼叫。操作、錯誤及音檔選擇見 [Agent 文件](docs/AGENT.md)。
 
 ## 專案紀錄
 
 - [創辦與協作紀錄](FOUNDER-RECORD.md)：ZOE. G 發起方向；Codex 協助規格、文字、程式與驗證。
 - [專案清單](projects.json)：四個獨立 ID、版本與功能範圍。
 - [本輪進度](PROGRESS.md)：實跑驗證與後續工作。
-- [本版說明](docs/RELEASE-v0.28.0.md)：功能、版本契約、驗證與限制。
+- [本版說明](docs/RELEASE-v0.34.0.md)：功能、版本契約、驗證與限制。
 - [四個專案的投稿資料](SUBMISSION-PACKET.md)：來源連結、用途、使用方式與作者關係。
 - [分層與分支架構](docs/ARCHITECTURE.md)、[Agent 與 MCP 接口](docs/AGENT.md)、[迭代說明](CHANGELOG.md)、[本輪交接](HANDOFF.md)。
 
@@ -273,7 +273,7 @@ git diff --check
 開發／封裝驗證需要 Node.js；一般使用工作台與 CLI 只需要 Python。從指定 Git 版本建立可驗證的原始碼 ZIP：
 
 ```powershell
-python scripts/package_release.py --ref v0.33.0
+python scripts/package_release.py --ref v0.34.0
 ```
 
 封裝保存 commit、SHA-256、每檔摘要及檢查結果；解壓後重跑 Python／JavaScript 測試、Agent 能力查詢與 MCP 握手。輸出留在忽略的 outputs/releases，重複封裝同一提交會拒絕覆寫。
