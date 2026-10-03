@@ -120,7 +120,7 @@ class LyricsSeedTests(unittest.TestCase):
             server.draft_library=None;thread=threading.Thread(target=server.serve_forever);thread.start()
             try:
                 conn=http.client.HTTPConnection('127.0.0.1',server.server_port,timeout=5)
-                for path in ['/lyrics-seed.js','/cue-stamp.js']:
+                for path in ['/lyrics-seed.js','/cue-stamp.js','/lyrics-import.js']:
                     conn.request('GET',path);response=conn.getresponse();self.assertEqual(response.status,200);self.assertIn(b'SPDX',response.read())
                 conn.request('POST','/api/lyrics-seed',json.dumps(PAYLOAD),{'Content-Type':'application/json'})
                 response=conn.getresponse();self.assertEqual(response.status,200);self.assertEqual(json.loads(response.read()),build('lyrics_seed',PAYLOAD).wire())

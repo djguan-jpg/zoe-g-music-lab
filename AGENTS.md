@@ -35,3 +35,5 @@
 
 - lyrics_seed獨立schema1，純來源／行號／原文檢查共用application及四adapter；64KiB／1000非空白行，不猜時間、不去重／修剪原文。lyrics preview scope保留音檔／目前時長／其他panels，生成核對music來源、檔案核對目標；未知欄位／晚回應不替換，限定套用與實際after undo分層。
 - cue-stamp純位置提案重用lyric-time毫秒規則，start／end分開、move保留句長及拒絕超音檔；部分有效cue只用於播放顯示，完整匯出仍拒絕空白時間。預覽／撤回暫態不進draft3，來源起稿JSON可保存於既有lyrics-source。
+
+- 歌詞檔匯入由lyrics-import純request／reply／draft提案與controller分層，原生arrayBuffer嚴格UTF-8；讀取前snapshot、讀取後及HTTP後target scope與最新token檢查。TXT走既有lyrics_seed1／draft3，字幕走lyrics；選檔與Read均先預覽，不直接改原文／cue。apply／cancel與實際after限定undo保留其他panel／audio／duration；未知或晚回應不靜默取代。

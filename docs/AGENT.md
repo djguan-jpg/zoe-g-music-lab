@@ -1,12 +1,18 @@
 # 本機 Agent 接口 v1
 
+## v0.18 匯入資料先預覽
+
+Agent與CLI產物可在校時工作台直接選lyrics.json或lyrics-seed.json，即檢查／預覽，按「套用這份歌詞」才替換；直接TXT也走既有lyrics_seed操作。取消／目標編修／晚回應保護，保留音檔與目前時長。帶時間JSON的title／duration仍依目前校時欄位，起稿JSON的title保持；原檔保留。
+
+真正JSON-lines lyrics及MCP initialize／tools list／lyrics_seed call／EOF產物已由IAB選檔與明確套用，CLI UTF8 BOM／CRLF起稿亦已回讀。Agent1／MCP2025-11-25／draft3／兩seed1／library1／backup1及六／十一工具不變；沒有Host安裝、全域設定、模型或網路呼叫。
+
 ## v0.17 未校時歌詞起稿
 
 JSON-lines operation／MCP tool lyrics_seed、HTTP POST /api/lyrics-seed 共用 application 與 musiclab/lyrics_seed.py。生成 payload為 {"title":"作品名稱","text":"第一句\n第二句"}；檢查外部起稿用 {"seed":完整起稿JSON}，兩者互斥，不接受覆蓋／未知欄位或路徑。title最多200字元；text UTF-8最多64 KiB、1–1000個非空白行。
 
 結果 files為 lyrics-seed.json／lyrics-seed.md，data格式zoe-lyrics-seed、schema_version1、statusuntimed、title／source_text／lines／review_notes。lines只含來源1-based行號與未修剪text；空白行不建cue但保留於source_text，重複句保留。不能加入start／end／媒體結果或宣稱校時完成，needs_review永遠true。生成與檢查都不寫磁碟；CLI由使用者明確--out保存，預設拒絕覆寫。
 
-瀏覽器「匯入歌詞」選lyrics-seed.json再「讀取歌詞」，先核對／預覽，再明確套用；目標編修／晚回應保護，保留目前音檔與時長。時間空白，須依實際音檔標記後才匯出；來源JSON可存於既有draft3，沒有自動schema遷移。現有Agent1／MCP2025-11-25／library1／backup1／storyboard seed1不變；預設六工具、明確啟庫十一工具。真實CLI、HTTP、JSON-lines及MCP子程序已驗證，特定host未安裝或驗證，沒有模型呼叫。
+瀏覽器「匯入歌詞」選lyrics-seed.json即檢查，先核對／預覽，再明確套用；目標編修／晚回應保護，保留目前音檔與時長。時間空白，須依實際音檔標記後才匯出；來源JSON可存於既有draft3，沒有自動schema遷移。現有Agent1／MCP2025-11-25／library1／backup1／storyboard seed1不變；預設六工具、明確啟庫十一工具。真實CLI、HTTP、JSON-lines及MCP子程序已驗證，特定host未安裝或驗證，沒有模型呼叫。
 
 
 ## v0.16 工作台接續保護
