@@ -88,9 +88,15 @@ function say(message,error=false){$('status').textContent=message;$('status').cl
 function esc(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function field(value,label,type='text',wide=false){return `<input type="${type}" value="${esc(value)}" aria-label="${esc(label)}" class="${wide?'wide':''}" ${type==='number'?'step="0.001"':''}>`;}
 async function api(route,data,binary=false){const response=await fetch(route,{method:'POST',headers:{'Content-Type':binary?'application/octet-stream':'application/json'},body:binary?data:JSON.stringify(data)});const result=await response.json();if(!response.ok){const error=Error(result.error||'操作未完成');error.status=response.status;throw error;}return result;}
-async function run(button,task){if(state.busy)return;const tab=state.tab,revision=state.revisions[tab]||0;say('處理中，請稍候');state.busy=true;button.disabled=true;timingControls();try{await task(()=> (state.revisions[tab]||0)===revision);if((state.revisions[tab]||0)!==revision){markDirty(tab);say('處理期間輸入有修改，請重新建立成果');}}catch(error){say(error.message,true);}finally{state.busy=false;button.disabled=false;timingControls();}}
+async function run(button,task){
+  if(state.busy)return;
+  const tab=state.tab,revision=state.revisions[tab]||0,current=()=>state.tab===tab&&(state.revisions[tab]||0)===revision;
+  say('處理中，請稍候');state.busy=true;button.disabled=true;timingControls();
+  try{await task(current);}catch(error){if(current())say(error.message,true);}
+  finally{if(!current()){markDirty(tab);say('處理期間輸入有修改，請重新建立成果');}state.busy=false;button.disabled=false;timingControls();}
+}
 function setFiles(files,note,dirty=false){state.files=files;state.bundles[state.tab]={files,note,dirty};const select=$('output-file');select.replaceChildren();Object.keys(files).forEach(name=>{const option=document.createElement('option');option.value=name;option.textContent=name;select.append(option);});select.disabled=false;$('download').disabled=dirty;$('output-note').textContent=note+(dirty?'（有修改尚未重新驗證）':'');previewOutput();}
-function markDirty(tab){if(tab==='audio')staleAudioReview();if(tab==='lyrics'){const pending=timingReading||timingReady;timingController?.invalidate();if(pending)timingSay('歌詞有修改，請重新預覽整批校時。');}state.revisions[tab]=(state.revisions[tab]||0)+1;const saved=state.bundles[tab];if(!saved)return;saved.dirty=true;if(state.tab===tab){$('download').disabled=true;$('output-note').textContent=saved.note+'（有修改尚未重新驗證）';}}
+function markDirty(tab){if(['music','storyboard'].includes(tab))stalePlanningReview(tab);if(tab==='audio')staleAudioReview();if(tab==='lyrics'){const pending=timingReading||timingReady;timingController?.invalidate();if(pending)timingSay('歌詞有修改，請重新預覽整批校時。');}state.revisions[tab]=(state.revisions[tab]||0)+1;const saved=state.bundles[tab];if(!saved)return;saved.dirty=true;if(state.tab===tab){$('download').disabled=true;$('output-note').textContent=saved.note+'（有修改尚未重新驗證）';}}
 document.querySelector('.editor').addEventListener('input',event=>{
   if(event.target.dataset.viewControl||event.target.id==='lyrics-file')return;
   const panel=event.target.closest('.panel');if(!panel)return;
@@ -140,7 +146,54 @@ $('music-form').onsubmit=event=>{event.preventDefault();if(state.busy)return;
   clearRequirementError('music-avoid');clearRequirementError('music-deliverables');
   const issue=MusicPlanning.requirementIssue({avoid:requirementValues('music-avoid'),deliverables:requirementValues('music-deliverables')});
   if(issue){showRequirementIssue(issue);return;}
-  run(event.submitter,async()=>{const brief=MusicPlanning.planningBrief(captureDraft(),'music');const result=await api('/api/music',brief);setFiles(result.files,`歌曲設計 · ${result.data.duration_seconds} 秒 · ${result.data.sections.length} 段`);const box=$('music-visual');box.replaceChildren();const title=document.createElement('h3');title.textContent='段落能量曲線';box.append(title);result.data.sections.forEach(s=>{const row=document.createElement('div');row.className='timeline-item';const name=document.createElement('span');name.textContent=s.section;const track=document.createElement('div');track.className='energy-track';const fill=document.createElement('div');fill.className='energy-fill';fill.style.width=`${s.energy*20}%`;track.append(fill);const time=document.createElement('span');time.className='timeline-time';time.textContent=`${s.start}–${s.end}s`;row.append(name,track,time);box.append(row);});appendNotes(box,result.data.review_notes);box.hidden=false;say('歌曲設計包已建立；可檢視與下載 4 個檔案');});};
+  run(event.submitter,isCurrent=>MusicPlanReview.inspect({operation:'music',brief:MusicPlanning.planningBrief(captureDraft(),'music'),isCurrent,
+    request:(operation,brief)=>api('/api/'+operation,brief),onResult:applyPlanningResult}));};
+function stalePlanningReview(scope){
+  const box=$(scope==='music'?'music-visual':'mv-visual'),note=box.querySelector('[data-plan-stale]');if(!note||box.hidden)return;
+  note.hidden=false;box.classList.add('stale');box.querySelector('[data-plan-status]').textContent='上一份設計';
+}
+function planText(tag,text,className){const node=document.createElement(tag);node.textContent=text;if(className)node.className=className;return node;}
+function renderPlanningReview(d){
+  const box=$(d.operation==='music'?'music-visual':'mv-visual');box.replaceChildren();box.classList.remove('stale');
+  const heading=document.createElement('div');heading.className='plan-heading';
+  heading.append(planText('h3',d.operation==='music'?'歌曲設計摘要':'分鏡設計摘要'));
+  const status=planText('span',d.status,'plan-outcome');status.dataset.planStatus='true';heading.append(status);box.append(heading);
+  const stale=planText('p','這是上一份設計，輸入已修改；重新建立後才能代表目前內容。','plan-stale-note');stale.dataset.planStale='true';stale.hidden=true;stale.setAttribute('role','status');box.append(stale);
+  box.append(planText('p',d.title,'plan-title'));
+  const facts=document.createElement('div');facts.className='facts';
+  const values=d.operation==='music'?[[d.duration+' 秒','估計總長'],[d.bars+' 小節',d.bpm+' BPM · 每小節 '+d.beats+' 拍']]:[[d.duration+' 秒','規劃總長'],[d.shots.length+' 鏡',d.fps+' FPS · '+d.ratio]];
+  for(const [value,label] of values){const fact=document.createElement('div');fact.className='fact';fact.append(planText('strong',value),planText('span',label));facts.append(fact);}box.append(facts);
+  box.append(planText('p',d.operation==='music'?'記憶點：'+d.hook:'時間與資料已檢查；尚未渲染畫面。','plan-context'));
+  box.append(planText('h4','待人工審查'));
+  box.append(planText('p',d.notes.length?d.notes.length+' 項設計提醒；可以保留為有意識的創作選擇。':'本次沒有資料提醒；仍需'+(d.operation==='music'?'實唱與實聽。':'審查實際畫面。'),'hint'));
+  appendNotes(box,d.notes);
+  const details=document.createElement('details');details.className='plan-details';
+  details.append(planText('summary',d.operation==='music'?'段落能量與任務 · '+d.sections.length+' 段':'逐鏡母題與提醒 · '+d.shots.length+' 鏡'));
+  const list=document.createElement('ol');list.className='plan-items';
+  for(const item of d.operation==='music'?d.sections:d.shots){
+    const li=document.createElement('li');li.append(planText('h4',d.operation==='music'?item.section:'鏡頭 '+item.shot+' · '+item.section));
+    li.append(planText('p',item.start+'–'+item.end+' 秒'+(d.operation==='music'?' · '+item.bars+' 小節 · 能量 '+item.energy+' / 5':''),'plan-time'));
+    if(d.operation==='music'){
+      const track=document.createElement('div');track.className='energy-track';track.setAttribute('role','meter');track.setAttribute('aria-label',item.section+' 設計能量');track.setAttribute('aria-valuemin','1');track.setAttribute('aria-valuemax','5');track.setAttribute('aria-valuenow',String(item.energy));
+      const fill=document.createElement('div');fill.className='energy-fill';fill.style.width=(item.energy*20)+'%';track.append(fill);li.append(track);
+      li.append(planText('p','敘事任務：'+item.focus),planText('p','聲音配置：'+item.texture));
+    }else{
+      li.append(planText('p','母題：'+item.motif+' · '+item.motif_state),planText('p','敘事用途：'+item.purpose));
+      const notes=d.notes.filter(n=>n.shot===item.shot);if(notes.length)appendNotes(li,notes);
+    }
+    list.append(li);
+  }
+  details.append(list);box.append(details);
+  if(d.operation==='storyboard'){
+    const motifs=document.createElement('details');motifs.className='plan-details';motifs.append(planText('summary','母題使用位置 · '+d.motifs.length+' 個'));
+    for(const m of d.motifs)motifs.append(planText('p',m.name+'：'+m.meaning+' · '+(m.shots.length?'鏡頭 '+m.shots.join('、'):'尚未使用')));box.append(motifs);
+  }
+  box.append(planText('p',d.operation==='music'?'時間假設固定速度、沒有弱起或自由速度。能量是設計值，尚未生成音樂。':'母題與連戲為資料提醒，沒有自動導演評分或媒體生成。','hint'));box.hidden=false;
+}
+function applyPlanningResult(result,review){
+  renderPlanningReview(review);setFiles(result.files,(review.operation==='music'?'歌曲設計':'母題分鏡')+' · '+review.title+' · '+review.duration+' 秒');
+  say('設計資料已建立，'+review.fileCount+' 個檔案；'+(review.notes.length?review.notes.length+' 項待人工審查':'仍需'+(review.operation==='music'?'實唱與實聽':'審查實際畫面')));
+}
 function appendNotes(box,notes){const ul=document.createElement('ul');ul.className='review-list';notes.forEach(note=>{const li=document.createElement('li');li.textContent=typeof note==='string'?note:`${note.shot?'鏡頭 '+note.shot+'：':''}${note.message}`;ul.append(li);});box.append(ul);}
 const shotFields=[['section','歌曲段落'],['purpose','敘事用途'],['visual','畫面動作'],['camera','鏡頭運動'],['transition','尾鏡與轉場'],['motif_state','母題狀態'],['character_state','人物狀態'],['change_reason','變化理由']];
 function getMotifs(){return [...$('motifs').children].map(row=>({id:row.dataset.motifId,name:row.querySelector('[data-motif="name"]').value,meaning:row.querySelector('[data-motif="meaning"]').value}));}
@@ -198,12 +251,9 @@ function loadMv(){
 }
 $('mv-example').onclick=()=>{loadMv();markDirty('storyboard');say('已載入本次原創合成分鏡');};
 $('shot-add').onclick=()=>{const shots=rawShots(),openStates=shotOpenStates(),ids=entriesFor('shots').map(e=>e.id),last=shots.at(-1),start=last?.end?.trim()?Number(last.end):0;if(shots.length>=collections.shots.limit){say('鏡頭最多 1000 列',true);return;}if(!Number.isFinite(start)){say('最後一鏡結束時間需為數字',true);return;}shots.push({start:String(start),end:String(start+6),section:'',purpose:'',visual:'',camera:'',transition:'',motif_id:'',motif_state:'',character_state:last?.character_state||'',change_reason:'',screen_direction:'neutral'});$('mv-duration').value=start+6;openStates.push(true);ids.push(`row-${++rowSequence}`);renderShots(shots,openStates,ids);markDirty('storyboard');focusShot(shots.length-1,'motif_id');say('已新增鏡頭，請選擇母題並填入動作與敘事任務');};
-$('mv-build').onclick=()=>run($('mv-build'),async()=>{
+$('mv-build').onclick=()=>run($('mv-build'),isCurrent=>{
   const brief=MusicPlanning.planningBrief(captureDraft(),'storyboard');brief.shots=getShots();
-  const result=await api('/api/storyboard',brief);setFiles(result.files,`母題分鏡 · ${result.data.shots.length} 鏡 · ${result.data.duration_seconds} 秒`);
-  const box=$('mv-visual');box.replaceChildren();const heading=document.createElement('h3');heading.textContent='母題的變化';box.append(heading);
-  appendNotes(box,result.data.continuity.map(s=>`鏡頭 ${s.shot} · ${s.motif} · ${s.motif_state}`));appendNotes(box,result.data.review_notes);box.hidden=false;
-  say(result.data.review_notes.length?`分鏡包已建立；有 ${result.data.review_notes.length} 個待審查項目`:'分鏡包已建立；時間與資料連戲檢查通過');
+  return MusicPlanReview.inspect({operation:'storyboard',brief,isCurrent,request:(operation,selected)=>api('/api/'+operation,selected),onResult:applyPlanningResult});
 });
 function cueValues(){return [...$('cues').children].map(row=>{const x=row.querySelectorAll('input');if(!x[0].value.trim()||!x[1].value.trim())throw Error('歌詞開始與結束不可空白');return {start:Number(x[0].value),end:Number(x[1].value),text:x[2].value};});}
 function renderCues(cues,ids){if(!ids){timingController?.reset();timingSay('新的逐句內容已載入；整批校時撤回紀錄已清除。');}const keys=rowIds(cues,ids);state.cues=cues;timingControls();$('cues').innerHTML=cues.map((c,i)=>`<tr data-history-id="${esc(keys[i])}"><td>${i+1}</td><td>${field(c.start,`歌詞 ${i+1} 開始`,'number')}</td><td>${field(c.end,`歌詞 ${i+1} 結束`,'number')}</td><td><input class="lyric-field" value="${esc(c.text)}" aria-label="歌詞 ${i+1} 文字"></td><td><div class="actions"><button data-stamp="${i}" aria-label="填入第 ${i+1} 句播放位置">記下時間</button><button data-delete-cue="${i}" aria-label="刪除第 ${i+1} 句">刪除</button></div></td></tr>`).join('');$('cues').querySelectorAll('[data-stamp]').forEach(b=>b.onclick=()=>{if(!$('lyrics-player').src){say('先載入音檔，再記下播放位置',true);return;}const row=b.closest('tr'),x=row.querySelectorAll('input');if(!x[0].value.trim()||!x[1].value.trim()){say('先填入有效的開始與結束時間',true);return;}const length=Math.max(.001,Number(x[1].value)-Number(x[0].value));x[0].value=$('lyrics-player').currentTime.toFixed(3);x[1].value=(Number(x[0].value)+length).toFixed(3);markDirty('lyrics');tick();say('已填入播放位置；驗證後才更新成果');});$('cues').querySelectorAll('[data-delete-cue]').forEach(b=>b.onclick=()=>{deleteEntry('cues',Number(b.dataset.deleteCue));});}
@@ -334,7 +384,7 @@ function captureDraft(){
   panels.lyrics.cues=[...$('cues').children].map(row=>Object.fromEntries(
     MusicEditor.draftRows.lyrics.columns.map((key,i)=>[key,row.querySelectorAll('input')[i].value])));
   panels.music.avoid=requirementValues('music-avoid');panels.music.deliverables=requirementValues('music-deliverables');
-  return {format:'zoe-music-lab-draft',schema_version:3,tool_version:'0.12.0',saved_at:new Date().toISOString(),tab:state.tab,panels};
+  return {format:'zoe-music-lab-draft',schema_version:3,tool_version:'0.13.0',saved_at:new Date().toISOString(),tab:state.tab,panels};
 }
 function applyDraft(draft){
   clearLibraryReview();

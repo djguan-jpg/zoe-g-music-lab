@@ -1,5 +1,14 @@
 # 迭代說明
 
+## v0.13.0 — 2026-10-03
+
+- 歌曲與分鏡透過純 planning-review 接收當前回應，編修後晚成功不替換；共用 run 捨棄過期錯誤並恢復控制。目前錯誤仍顯示，修正後可再建立。
+- 摘要明確呈現設計資料與上一份狀態；歌曲總小節、BPM／拍數、記憶點與可收合能量／任務，分鏡逐鏡提醒／母題位置，沒有媒體生成宣稱。自由文字用 textContent。
+- 修正 1280×720 sticky 成果面板高於畫面、下載按鈕在畫面外；桌面高度限制與局部捲動，Tab／PageDown 可操作，窄螢幕保持 static 流。
+- 產品 0.13.0；Agent 1／MCP 2025-11-25／draft 3／library 1／backup 1 保持，沒有領域、輸出 schema、工具、模型、依賴或 host 新增。PolyForm Noncommercial 1.0.0 與 ZOE. G／Codex 紀錄保留。
+- 124 Python／93 JavaScript／四 Skill／十 JS 語法與 diff、真正 CLI／三 transport、IAB 兩個工作台延遲成功／錯誤、目前錯誤保留／修正、提醒／文字安全、實檔下載、短高度滑鼠／鍵盤及390px DOM通過；v0.12 ZIP 解壓124／80通過。詳見 docs/QA-v0.13.0.md。
+- restore-v0.12.0-before-v0.13.0、指定提交封裝／private PR／Release 見 HANDOFF／manifest；前輪交接存 docs/HANDOFF-v0.12.0.md。完整視覺／實唱實聽／特定 host／平台創始人未驗證。
+
 ## v0.12.0 — 2026-10-03
 
 - 開檔一次的自有音檔副本，SHA-256 與量測使用同份 bytes；新增 source_evidence，所有出口關閉暫存。不代表外部改檔原子快照。

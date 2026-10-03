@@ -178,3 +178,9 @@ lyrics（MCP lyrics_validate）的來源仍明確二擇一：cues，或 content�
 PCM fmt 不一致或截斷會明確失敗；來源保留，錯誤後可再呼叫。接受值可自訂但不擴大已支援格式；多聲道不解讀位置，仍有 needs_review。報告沒有提醒只表示本次技術檢查通過，不能當實聽、LUFS／true peak、完整 RIFF conformance 或版權驗收。
 
 產品 0.12.0；Agent v1／MCP 2025-11-25 不變，預設四／明確啟庫九工具，未新增 JSON 路徑選擇、工具或權限，特定 host 未整合。
+
+## v0.13 設計結果在工作台的接收
+
+music／storyboard及MCP的music_plan／storyboard_plan仍共用同一application結果。工作台新增純planning-review呈現modern設計資料；只接收當前編修版本對應的結果，過期不取代，修改後既有摘要標為上一份設計。由Agent／CLI接續需求的預覽／載入流程保持；設計結果本身不被當成草稿或生成媒體。
+
+本版真正CLI四／五檔UTF-8 bytes、HTTP、JSON-lines壞後好、MCP握手／discovery／call與application已核對，純模型也測真正application結果。產品0.13.0；Agent1／MCP2025-11-25、四／九工具與草稿／保存／備份schema不變；特定host未整合，沒有模型呼叫或權限新增。
