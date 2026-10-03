@@ -1,6 +1,10 @@
 # ZOE. G Music Lab
 
-目前版本 **v0.28.0**：新增分鏡創作待辦，可定位留白欄位及母題引用；建立前也會定位第一項。原創作、時長及音檔保留，待辦補齊後仍須完整時間／影格／連戲驗證。見[分層與使用](docs/STORYBOARD-READINESS.md)及[本輪驗證](docs/QA-v0.28.0.md)。
+目前版本 **v0.29.0**：歌曲段落可整列前移／後移，限定撤回保留後續欄位編修；同名與留白內容保持。重建歌曲及分鏡時間起稿使用新順序，既有分鏡保持。見[分層與使用](docs/MUSIC-ARRANGEMENT.md)及[本輪驗證](docs/QA-v0.29.0.md)。
+
+## 分鏡創作待辦（v0.28）
+
+v0.28.0：新增分鏡創作待辦，可定位留白欄位及母題引用；建立前也會定位第一項。原創作、時長及音檔保留，待辦補齊後仍須完整時間／影格／連戲驗證。見[分層與使用](docs/STORYBOARD-READINESS.md)及[本輪驗證](docs/QA-v0.28.0.md)。
 
 ## 分鏡總長與鏡尾（v0.27）
 
@@ -257,7 +261,7 @@ git diff --check
 開發／封裝驗證需要 Node.js；一般使用工作台與 CLI 只需要 Python。從指定 Git 版本建立可驗證的原始碼 ZIP：
 
 ```powershell
-python scripts/package_release.py --ref v0.28.0
+python scripts/package_release.py --ref v0.29.0
 ```
 
 封裝保存 commit、SHA-256、每檔摘要及檢查結果；解壓後重跑 Python／JavaScript 測試、Agent 能力查詢與 MCP 握手。輸出留在忽略的 outputs/releases，重複封裝同一提交會拒絕覆寫。

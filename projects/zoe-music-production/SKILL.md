@@ -45,3 +45,7 @@ python music_lab.py music --brief examples/first-light-music.json --out outputs/
 ## v0.26 跨工具需求核對
 
 保存原始需求。CLI／Agent 的 brief.json 或 mv-brief.json 接回工作台後，先核對本次需求與主要 JSON 成果、再預覽與明確載入；同名不代表相同設計。編修後須重建，核對資料仍需實唱／實聽或審查實際畫面。詳見 ../../docs/PLANNING-SOURCE.md。
+
+## v0.29 工作台段落順序
+
+用「要調整的段落」選定目前列，整列往前或往後移動；同名、原文字、小節與能量保持。限定撤回只還原最近一次順序，保留後續欄位編修；新增／刪除／還原段落或歌曲載入後舊紀錄失效。移動後重建歌曲包及分鏡時間起稿，既有分鏡保持，舊歌曲起稿預覽須重查。Agent／CLI需求與產品協定保持，暫態ID／undo不進草稿或wire。見 ../../docs/MUSIC-ARRANGEMENT.md。
