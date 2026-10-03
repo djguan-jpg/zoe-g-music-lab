@@ -4,15 +4,33 @@ import argparse
 import json
 import re
 import tempfile
+import threading
 import urllib.parse
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from musiclab.common import json_text
-from musiclab.application import build, capabilities, load_request, MAX_REQUEST_BYTES
+from musiclab.application import build, capabilities, load_request, MAX_REQUEST_BYTES, export_library_backup
+from musiclab.draft_backup import MAX_BACKUP_BYTES
+from musiclab.backup_downloads import BackupDownloads
 from musiclab.draft_contract import browser_contract
 from musiclab.draft_library import DraftLibrary
 
 ROOT = Path(__file__).resolve().parent
+DOWNLOAD_INIT_LOCK = threading.Lock()
+
+
+def backup_downloads(server):
+    with DOWNLOAD_INIT_LOCK:
+        if not hasattr(server,'backup_downloads'):
+            server.backup_downloads=BackupDownloads()
+        return server.backup_downloads
+
+
+class WorkbenchServer(ThreadingHTTPServer):
+    def server_close(self):
+        try:super().server_close()
+        finally:
+            if hasattr(self,'backup_downloads'):self.backup_downloads.close()
 MAX_AUDIO = 64 * 1024 * 1024
 MAX_TEXT = MAX_REQUEST_BYTES
 ASSETS = {"/": ("web/index.html", "text/html"), "/app.js": ("web/app.js", "text/javascript"),
@@ -21,6 +39,7 @@ ASSETS = {"/": ("web/index.html", "text/html"), "/app.js": ("web/app.js", "text/
           "/planning-import.js": ("web/planning-import.js", "text/javascript"),
           "/deletion-history.js": ("web/deletion-history.js", "text/javascript"),
           "/draft-library.js": ("web/draft-library.js", "text/javascript"),
+          "/backup-transfer.js": ("web/backup-transfer.js", "text/javascript"),
           "/license": ("LICENSE", "text/plain"), "/notice": ("NOTICE", "text/plain")}
 
 
@@ -60,6 +79,20 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
             return self.reply(200, (ROOT / file).read_bytes(), kind)
         if path == "/api/capabilities":
             return self.reply(200, json_text(capabilities(getattr(self.server, 'draft_library', None))))
+        if path == "/api/drafts/backup":
+            try:
+                raw, _ = export_library_backup(getattr(self.server, 'draft_library', None))
+                return self.reply(200, raw, "application/octet-stream", "zoe-music-lab-backup.zip")
+            except (ValueError, UnicodeError, RecursionError) as error:
+                return self.reply(400, json_text({"error": str(error)}))
+            except OSError:
+                return self.reply(500, '{"error":"草稿庫備份未完成；原資料保留"}')
+        if path.startswith('/api/drafts/backup/download/'):
+            try:
+                raw=backup_downloads(self.server).take(path.rsplit('/',1)[-1])
+                return self.reply(200,raw,'application/octet-stream','zoe-music-lab-backup.zip')
+            except (ValueError,OSError):
+                return self.reply(400,'{"error":"下載未完成或已逾時，請重新建立備份"}')
         if path == "/draft-contract.js":
             return self.reply(200, browser_contract(), "text/javascript")
         if path == "/api/examples":
@@ -73,7 +106,8 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
             return self.reply(403, '{"error":"僅接受本機來源"}')
         route = urllib.parse.urlsplit(self.path)
         audio = route.path == "/api/audio"
-        maximum = MAX_AUDIO if audio else MAX_TEXT
+        backup = route.path in ("/api/drafts/backup/inspect", "/api/drafts/backup/restore")
+        maximum = MAX_AUDIO if audio else MAX_BACKUP_BYTES if backup else MAX_TEXT
         try:
             size = int(self.headers.get("Content-Length", "0"))
             if not 0 < size <= maximum:
@@ -82,6 +116,17 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
             raw = self.rfile.read(size)
             if len(raw) != size:
                 raise ValueError("內容未完整傳入")
+            if backup:
+                query = urllib.parse.parse_qs(route.query, keep_blank_values=True)
+                restoring = route.path.endswith('/restore')
+                if (restoring and (set(query) != {'sha256'} or len(query['sha256']) != 1)) or (not restoring and query):
+                    raise ValueError('備份來源由上傳選定，恢復只接受預覽的 sha256')
+                with tempfile.TemporaryFile() as selected:
+                    selected.write(raw); selected.seek(0)
+                    result = build('draft_backup_restore' if restoring else 'draft_backup_inspect',
+                        {'backup_sha256':query['sha256'][0]} if restoring else {},
+                        draft_library=getattr(self.server,'draft_library',None), backup_source=selected)
+                return self.reply(200,json_text(result.wire()))
             if route.path == "/api/export":
                 fields = urllib.parse.parse_qs(raw.decode("utf-8"), keep_blank_values=True)
                 name, content = fields.get("name", [""])[0], fields.get("content", [""])[0]
@@ -103,6 +148,10 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
             data = load_request(raw.decode("utf-8"))
             if not isinstance(data, dict):
                 raise ValueError("輸入需為物件")
+            if route.path == '/api/drafts/backup/prepare':
+                if data or route.query:raise ValueError('備份下載不接受路徑或額外欄位')
+                archive,summary=export_library_backup(getattr(self.server,'draft_library',None))
+                return self.reply(200,json_text(backup_downloads(self.server).prepare(archive,summary)))
             operations = {"/api/music": "music", "/api/storyboard": "storyboard", "/api/lyrics": "lyrics",
                           "/api/drafts/save": "draft_save", "/api/drafts/list": "draft_list", "/api/drafts/read": "draft_read"}
             if route.path not in operations:
@@ -122,7 +171,7 @@ def main():
     parser.add_argument("--port", type=int, default=8875)
     parser.add_argument("--draft-library", help="明確選定本機草稿庫目錄；未指定時不提供保存操作")
     args = parser.parse_args()
-    with ThreadingHTTPServer(("127.0.0.1", args.port), WorkbenchHandler) as server:
+    with WorkbenchServer(("127.0.0.1", args.port), WorkbenchHandler) as server:
         server.draft_library = DraftLibrary(args.draft_library) if args.draft_library else None
         print(f"ZOE. G Music Lab：http://127.0.0.1:{server.server_port} · Ctrl+C 停止", flush=True)
         try:

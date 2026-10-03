@@ -16,6 +16,8 @@ from .lyrics import read_cues, lyrics_bundle
 from .tool_contracts import payload_schema, output_schema
 from .draft_contract import MAX_DRAFT_BYTES
 from .draft_library import LIBRARY_SCHEMA_VERSION, MAX_ENTRIES
+from .draft_backup import (BACKUP_SCHEMA_VERSION, MAX_BACKUP_BYTES, MAX_EXPANDED_BYTES,
+                           export_backup, inspect_backup, restore_backup)
 
 PROTOCOL_VERSION = 1
 MAX_REQUEST_BYTES = 2 * 1024 * 1024
@@ -29,6 +31,8 @@ LIBRARY_OPERATIONS = {
     "draft_save": "Save an immutable revision only in the explicitly selected local library; no media",
     "draft_list": "List metadata from the explicitly selected library; no arbitrary path access",
     "draft_read": "Read a saved revision and verify its hash and draft shape before returning it",
+    "draft_backup_inspect": "Validate the backup selected at launch and preview conflicts; no restore",
+    "draft_backup_restore": "Restore the selected backup after confirming its SHA-256; never overwrite revisions",
 }
 
 
@@ -48,7 +52,7 @@ class Result:
                          "needs_review": self.needs_review}}
 
 
-def capabilities(draft_library=None):
+def capabilities(draft_library=None, backup_source=None):
     operations = available_operations(draft_library)
     return {"protocol_version": PROTOCOL_VERSION, "version": __version__,
             "license": "PolyForm-Noncommercial-1.0.0",
@@ -57,14 +61,22 @@ def capabilities(draft_library=None):
             "draft_library_enabled": draft_library is not None,
             "draft_library": {"enabled": draft_library is not None, "library_schema_version": LIBRARY_SCHEMA_VERSION,
                               "max_draft_bytes": MAX_DRAFT_BYTES, "max_revisions": MAX_ENTRIES, "default_page_size": 20},
+            "draft_backup": {"backup_schema_version": BACKUP_SCHEMA_VERSION, "source_selected": backup_source is not None,
+                             "max_archive_bytes": MAX_BACKUP_BYTES, "max_expanded_bytes": MAX_EXPANDED_BYTES},
             "input_schemas": {operation: payload_schema(operation) for operation in operations},
             "output_schema": output_schema(),
             "audio_source": "Only --audio chosen at process launch; JSON cannot select paths",
-            "output": "JSON results on stdout; draft_save writes only to the selected library" if draft_library is not None else
+            "output": "JSON results on stdout; draft_save and draft_backup_restore add immutable versions only to the selected library" if draft_library is not None else
                       "JSON results and file contents on stdout; agent adapter writes no files"}
 
 
-def build(operation, payload, *, audio_source=None, draft_library=None):
+def export_library_backup(draft_library, identifiers=None):
+    if draft_library is None:
+        raise ValueError("草稿庫未啟用；請明確選定草稿庫")
+    return export_backup(draft_library, identifiers)
+
+
+def build(operation, payload, *, audio_source=None, draft_library=None, backup_source=None):
     if operation in LIBRARY_OPERATIONS and draft_library is None:
         raise ValueError("草稿庫未啟用；請在啟動時明確指定 --draft-library 目錄")
     if operation not in available_operations(draft_library):
@@ -74,15 +86,20 @@ def build(operation, payload, *, audio_source=None, draft_library=None):
     if operation in LIBRARY_OPERATIONS:
         required, optional = {"draft_save": ({"draft", "label", "id"}, set()),
                               "draft_list": (set(), {"limit", "cursor"}),
-                              "draft_read": ({"id"}, set())}[operation]
+                              "draft_read": ({"id"}, set()), "draft_backup_inspect": (set(), set()),
+                              "draft_backup_restore": ({"backup_sha256"}, set())}[operation]
         if not required <= set(payload) or set(payload) - required - optional:
             raise ValueError("草稿庫操作欄位錯誤；不能指定路徑或覆寫版本")
         if operation == "draft_save":
             data = draft_library.save(payload['draft'], payload['label'], payload['id'])
         elif operation == "draft_read":
             data = draft_library.read(payload['id'])
-        else:
+        elif operation == "draft_list":
             data = draft_library.list(payload.get('limit', 20), payload.get('cursor'))
+        elif operation == "draft_backup_inspect":
+            data = inspect_backup(draft_library, backup_source)
+        else:
+            data = restore_backup(draft_library, backup_source, payload['backup_sha256'])
         return Result({}, data, operation != 'draft_list')
     if operation == "music":
         files = music_plan_bundle(payload) if "arrangement" in payload else music_bundle(payload)

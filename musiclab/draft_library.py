@@ -12,12 +12,10 @@ from contextlib import contextmanager
 from datetime import datetime, timezone
 from pathlib import Path
 from . import __version__
-from .draft_contract import MAX_DRAFT_BYTES, draft_bytes, validate_draft
+from .draft_contract import MAX_DRAFT_BYTES, draft_bytes
+from .library_contract import (ID_PATTERN, LIBRARY_SCHEMA_VERSION, MAX_ENTRIES,
+                               MAX_METADATA_BYTES, strict_json, validate_record, validate_revision)
 
-ID_PATTERN = r'draft-[0-9a-f]{32}'
-LIBRARY_SCHEMA_VERSION = 1
-MAX_ENTRIES = 1000
-MAX_METADATA_BYTES = 16 * 1024
 
 
 def revision_id():
@@ -78,34 +76,37 @@ class DraftLibrary:
         return raw
 
     def metadata(self, identifier):
+        raw = self.bounded_read(self.directory(identifier) / 'record.json', MAX_METADATA_BYTES)
+        return validate_record(strict_json(raw), identifier)
+
+    def revision_bytes(self, identifier):
         folder = self.directory(identifier)
-        raw = self.bounded_read(folder / 'record.json', MAX_METADATA_BYTES)
-        record = json.loads(raw.decode('utf-8'))
-        keys = {'library_schema_version', 'id', 'label', 'stored_at', 'sha256', 'bytes',
-                'draft_schema_version', 'created_with', 'titles'}
-        if (not isinstance(record, dict) or set(record) != keys or
-                type(record['library_schema_version']) is not int or record['library_schema_version'] != LIBRARY_SCHEMA_VERSION or
-                record['id'] != identifier or not isinstance(record['label'], str) or not 1 <= len(record['label']) <= 200 or
-                not record['label'].strip() or not isinstance(record['stored_at'], str) or
-                not isinstance(record['sha256'], str) or not re.fullmatch(r'[0-9a-f]{64}', record['sha256']) or
-                type(record['bytes']) is not int or not 0 < record['bytes'] <= MAX_DRAFT_BYTES or
-                type(record['draft_schema_version']) is not int or record['draft_schema_version'] != 3 or
-                not isinstance(record['created_with'], str) or len(record['created_with']) > 64 or
-                not isinstance(record['titles'], dict) or set(record['titles']) != {'music', 'storyboard', 'lyrics'} or
-                any(not isinstance(v, str) or len(v) > 120 for v in record['titles'].values())):
-            raise ValueError('保存版本資料格式錯誤')
-        when = datetime.fromisoformat(record['stored_at'])
-        if when.utcoffset() != timezone.utc.utcoffset(when):
-            raise ValueError('保存時間格式錯誤')
-        return record
+        record_raw = self.bounded_read(folder / 'record.json', MAX_METADATA_BYTES)
+        draft_raw = self.bounded_read(folder / 'draft.json', MAX_DRAFT_BYTES)
+        record, draft = validate_revision(identifier, record_raw, draft_raw)
+        return record_raw, draft_raw, record, draft
 
     def read(self, identifier):
-        record = self.metadata(identifier)
-        raw = self.bounded_read(self.directory(identifier) / 'draft.json', MAX_DRAFT_BYTES)
-        if len(raw) != record['bytes'] or hashlib.sha256(raw).hexdigest() != record['sha256']:
-            raise ValueError('保存版本摘要不一致；保留目前工作台，不載入這份內容')
-        draft = validate_draft(json.loads(raw.decode('utf-8')))
+        _, _, record, draft = self.revision_bytes(identifier)
         return {'entry': record, 'draft': draft, 'status': 'draft_only_not_validated'}
+
+    def _publish(self, identifier, record_raw, draft_raw):
+        # Caller holds this library's process lock and has validated the complete request.
+        validate_revision(identifier, record_raw, draft_raw)
+        target = self.directory(identifier)
+        if target.exists():
+            raise ValueError('此保存 ID 已存在，不覆寫原版本')
+        temporary = Path(tempfile.mkdtemp(prefix='.pending-', dir=self.root))
+        try:
+            for name, content in [('draft.json', draft_raw), ('record.json', record_raw)]:
+                with (temporary / name).open('xb') as output:
+                    output.write(content); output.flush(); os.fsync(output.fileno())
+            temporary.rename(target)
+        finally:
+            if temporary.exists() and temporary.resolve().parent.samefile(self.root):
+                for name in ('draft.json', 'record.json'):
+                    (temporary / name).unlink(missing_ok=True)
+                temporary.rmdir()
 
     def directories(self):
         if not self.root.exists():
@@ -157,23 +158,5 @@ class DraftLibrary:
                           panel: draft['panels'][panel]['fields'][key][:120] for panel, key in
                           [('music', 'music-title'), ('storyboard', 'mv-title'), ('lyrics', 'lyrics-title')]}}
             metadata = (json.dumps(record, ensure_ascii=False, indent=2) + '\n').encode('utf-8')
-            temporary = Path(tempfile.mkdtemp(prefix='.pending-', dir=self.root))
-            try:
-                for name, content in [('draft.json', raw), ('record.json', metadata)]:
-                    with (temporary / name).open('xb') as output:
-                        output.write(content)
-                        output.flush()
-                        os.fsync(output.fileno())
-                try:
-                    temporary.rename(target)
-                except OSError:
-                    if target.exists():
-                        return existing()
-                    raise
-            finally:
-                # Only our two staged files; never recursively clean user directories.
-                if temporary.exists() and temporary.resolve().parent.samefile(self.root):
-                    for name in ('draft.json', 'record.json'):
-                        (temporary / name).unlink(missing_ok=True)
-                    temporary.rmdir()
+            self._publish(identifier, metadata, raw)
             return {'entry': record, 'reused': False, 'status': 'draft_only_not_validated'}

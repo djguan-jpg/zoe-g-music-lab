@@ -6,7 +6,8 @@ import sys
 from pathlib import Path
 from musiclab.common import read_json, write_bundle
 from musiclab.lyrics import read_cues, edits
-from musiclab.application import build
+from musiclab.application import build, export_library_backup
+from musiclab.backup_files import write_backup
 from musiclab import __version__
 from musiclab.draft_library import DraftLibrary, revision_id
 
@@ -34,7 +35,7 @@ def main(argv=None):
                 sub.add_argument(f"--{setting}", type=int, nargs="+")
     drafts = commands.add_parser("draft", help="明確選定本機草稿庫；保存版本不覆寫")
     actions = drafts.add_subparsers(dest="draft_action", required=True)
-    for action in ("save", "list", "read"):
+    for action in ("save", "list", "read", "backup", "inspect", "restore"):
         sub = actions.add_parser(action)
         sub.add_argument("--library", required=True, help="明確選定草稿庫目錄")
         if action == "save":
@@ -43,6 +44,13 @@ def main(argv=None):
             sub.add_argument("--id", help="相同內容重試用相同 ID，不同內容用新 ID")
         elif action == "read":
             sub.add_argument("--id", required=True)
+        elif action == "backup":
+            sub.add_argument("--out", required=True, help="新備份 ZIP 路徑，不覆寫")
+            sub.add_argument("--ids", nargs="+", help="可選：只備份明確選定的保存 ID")
+        elif action in ("inspect", "restore"):
+            sub.add_argument("--input", required=True, help="明確選定的備份 ZIP")
+            if action == "restore":
+                sub.add_argument("--sha256", required=True, help="inspect 預覽的備份摘要")
         else:
             sub.add_argument("--limit", type=int, default=20)
             sub.add_argument("--cursor")
@@ -52,10 +60,18 @@ def main(argv=None):
         if args.command == "draft":
             if hasattr(sys.stdout, "reconfigure"):
                 sys.stdout.reconfigure(encoding="utf-8")
-            payload = ({"draft": read_json(args.input), "label": args.label, "id": args.id or revision_id()} if args.draft_action == "save" else
+            library = DraftLibrary(args.library)
+            if args.draft_action == "backup":
+                raw, result = export_library_backup(library, args.ids)
+                write_backup(args.out, raw, library)
+            elif args.draft_action in ("inspect", "restore"):
+                payload = {"backup_sha256": args.sha256} if args.draft_action == "restore" else {}
+                result = build("draft_backup_"+args.draft_action, payload, draft_library=library, backup_source=args.input).wire()
+            else:
+                payload = ({"draft": read_json(args.input), "label": args.label, "id": args.id or revision_id()} if args.draft_action == "save" else
                        {"id": args.id} if args.draft_action == "read" else {"limit": args.limit, "cursor": args.cursor})
-            result = build("draft_" + args.draft_action, payload, draft_library=DraftLibrary(args.library))
-            print(json.dumps(result.wire(), ensure_ascii=False, allow_nan=False))
+                result = build("draft_" + args.draft_action, payload, draft_library=library).wire()
+            print(json.dumps(result, ensure_ascii=False, allow_nan=False))
             return 0
         if args.command in ("music", "storyboard"):
             bundle = build(args.command, read_json(args.brief)).files
