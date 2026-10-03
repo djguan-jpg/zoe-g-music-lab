@@ -1,0 +1,95 @@
+{
+  "format": "zoe-music-lab-draft",
+  "version": 3,
+  "fields": {
+    "music": [
+      "music-title",
+      "music-hook",
+      "music-theme",
+      "music-style",
+      "music-vocal",
+      "music-audience",
+      "music-bpm",
+      "music-beats",
+      "music-lyrics",
+      "music-language"
+    ],
+    "storyboard": [
+      "mv-title",
+      "mv-duration",
+      "mv-fps",
+      "mv-ratio",
+      "mv-style",
+      "mv-anchor"
+    ],
+    "lyrics": [
+      "lyrics-title",
+      "lyrics-source",
+      "lyrics-format",
+      "lyrics-duration"
+    ],
+    "audio": [
+      "audio-profile"
+    ]
+  },
+  "rows": {
+    "music": {
+      "key": "sections",
+      "columns": [
+        "name",
+        "bars",
+        "energy",
+        "focus",
+        "texture"
+      ],
+      "limit": 40
+    },
+    "storyboard": {
+      "key": "shots",
+      "columns": [
+        "start",
+        "end",
+        "section",
+        "purpose",
+        "visual",
+        "camera",
+        "transition",
+        "motif_state",
+        "character_state",
+        "change_reason",
+        "screen_direction",
+        "motif_id"
+      ],
+      "limit": 1000
+    },
+    "lyrics": {
+      "key": "cues",
+      "columns": [
+        "start",
+        "end",
+        "text"
+      ],
+      "limit": 10000
+    }
+  },
+  "limits": {
+    "requirements": 100,
+    "motifs": 30
+  },
+  "options": {
+    "lyrics-format": [
+      ".lrc",
+      ".srt",
+      ".json"
+    ],
+    "audio-profile": [
+      "distribution",
+      "video"
+    ],
+    "screen_direction": [
+      "left",
+      "right",
+      "neutral"
+    ]
+  }
+}

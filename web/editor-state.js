@@ -2,17 +2,9 @@
 'use strict';
 // Pure state rules, shared by the browser adapter and dependency-free Node tests.
 (function(root) {
-  const draftFields = {
-    music: ['music-title','music-hook','music-theme','music-style','music-vocal','music-audience','music-bpm','music-beats','music-lyrics','music-language'],
-    storyboard: ['mv-title','mv-duration','mv-fps','mv-ratio','mv-style','mv-anchor'],
-    lyrics: ['lyrics-title','lyrics-source','lyrics-format','lyrics-duration'],
-    audio: ['audio-profile']
-  };
-  const draftRows = {
-    music: {key:'sections',columns:['name','bars','energy','focus','texture'],limit:40},
-    storyboard: {key:'shots',columns:['start','end','section','purpose','visual','camera','transition','motif_state','character_state','change_reason','screen_direction','motif_id'],limit:1000},
-    lyrics: {key:'cues',columns:['start','end','text'],limit:10000}
-  };
+  const contract=typeof module!=='undefined'&&module.exports?require('../contracts/draft-v3.json'):root.MusicDraftContract;
+  if(!contract||contract.version!==3)throw Error('草稿契約未載入或版本不支援');
+  const draftFields=contract.fields,draftRows=contract.rows;
   function exactKeys(value, keys) {
     return value && typeof value==='object' && !Array.isArray(value) &&
       Object.keys(value).length===keys.length && keys.every(key=>Object.hasOwn(value,key));
@@ -20,7 +12,7 @@
   function validateShape(draft, version) {
     const panels=Object.keys(draftFields);
     if(!exactKeys(draft,['format','schema_version','tool_version','saved_at','tab','panels']) ||
-        draft.format!=='zoe-music-lab-draft' || draft.schema_version!==version || !panels.includes(draft.tab) ||
+        draft.format!==contract.format || draft.schema_version!==version || !panels.includes(draft.tab) ||
         typeof draft.tool_version!=='string' || typeof draft.saved_at!=='string' || !exactKeys(draft.panels,panels))
       throw Error('不是支援的 Music Lab 草稿；目前內容未替換');
     panels.forEach(panel=>{
@@ -36,18 +28,18 @@
           source[rows.key].some(row=>!exactKeys(row,version===1?rows.columns.filter(key=>key!=='motif_id'):rows.columns)||Object.values(row).some(value=>typeof value!=='string'))))
         throw Error('草稿列資料錯誤；目前內容未替換');
       if(panel==='music'&&version===3&&['avoid','deliverables'].some(key=>!Array.isArray(source[key])||
-          source[key].length>100||source[key].some(item=>typeof item!=='string')))
+          source[key].length>contract.limits.requirements||source[key].some(item=>typeof item!=='string')))
         throw Error('草稿需求清單錯誤；目前內容未替換');
     });
-    if(!['.lrc','.srt','.json'].includes(draft.panels.lyrics.fields['lyrics-format']) ||
-        !['distribution','video'].includes(draft.panels.audio.fields['audio-profile']) ||
-        draft.panels.storyboard.shots.some(shot=>!['left','right','neutral'].includes(shot.screen_direction)))
+    if(!contract.options['lyrics-format'].includes(draft.panels.lyrics.fields['lyrics-format']) ||
+        !contract.options['audio-profile'].includes(draft.panels.audio.fields['audio-profile']) ||
+        draft.panels.storyboard.shots.some(shot=>!contract.options.screen_direction.includes(shot.screen_direction)))
       throw Error('草稿選項不支援；目前內容未替換');
     return draft;
   }
   function validateMotifs(panel) {
     const {motifs,shots}=panel;
-    if(!Array.isArray(motifs)||motifs.length>30||motifs.some(m=>!exactKeys(m,['id','name','meaning'])||
+    if(!Array.isArray(motifs)||motifs.length>contract.limits.motifs||motifs.some(m=>!exactKeys(m,['id','name','meaning'])||
         Object.values(m).some(v=>typeof v!=='string')||!/^motif-[1-9][0-9]*$/.test(m.id)))
       throw Error('草稿母題資料錯誤；目前內容未替換');
     const ids=new Set(motifs.map(m=>m.id));
