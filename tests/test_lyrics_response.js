@@ -9,7 +9,7 @@ const MusicLyricsPackage=require('../musiclab/assets/lyrics-package.js');
 function adapter(){
   const source=fs.readFileSync(path.join(__dirname,'../web/app.js'),'utf8');
   const start=source.indexOf('async function run('),end=source.indexOf('function setFiles(',start);
-  const handlers=source.indexOf("$('lyrics-import').onclick="),handlersEnd=source.indexOf('function timingSay(',handlers);
+  const handlers=source.indexOf("$('lyrics-import').onclick="),handlersEnd=source.indexOf('lyricsReviewController=MusicLyricsReview.createController(',handlers);
   assert.ok(start>=0&&end>start&&handlers>=0&&handlersEnd>handlers);
   const state={tab:'lyrics',revisions:{lyrics:0},busy:false},nodes={};
   for(const id of ['lyrics-import','lyrics-build','cue-add','lyrics-title','lyrics-source','lyrics-format'])nodes[id]={value:id,disabled:false};
@@ -18,7 +18,7 @@ function adapter(){
   const context={state,$:id=>nodes[id],say:m=>notices.push(m),markDirty:scope=>state.revisions[scope]=(state.revisions[scope]||0)+1,
     api:(_url,value)=>{payload=value;return new Promise(resolve=>reply=resolve);},lyricDuration:()=>null,cueValues:()=>structuredClone(rows),
     renderCues:(value,ids)=>{rows=structuredClone(value);renderedIds=ids;rendered++;},clearDeletionHistory:()=>cleared++,setFiles:()=>files++,
-    lyricsSeedController:{cancel:()=>{}},lyricsImportController:{inspectCurrent:()=>{throw Error('Import has its own guarded preview tests');}},structuredClone,MusicTiming,MusicLyricsPackage,timingControls:()=>{},timingController:{invalidate:()=>{}},
+    lyricsSeedController:{cancel:()=>{}},lyricsImportController:{inspectCurrent:()=>{throw Error('Import has its own guarded preview tests');}},structuredClone,MusicTiming,MusicLyricsPackage,MusicLyricsReview:require('../musiclab/assets/lyrics-review.js'),lyricsReviewPayload:()=>({title:'原創',cues:structuredClone(rows)}),renderLyricsReview:()=>{},focusLyricsIssue:()=>{},timingControls:()=>{},timingController:{invalidate:()=>{}},
     entriesFor:()=>rows.map((value,i)=>({id:`row-${i}`,value})),tick:()=>{},MusicEditor:{lyricsImportNotice:()=> '已匯入'}};
   vm.runInNewContext(source.slice(start,end),context);
   vm.runInNewContext(source.slice(handlers,handlersEnd),context);

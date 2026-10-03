@@ -72,6 +72,11 @@ def seed_schema():
 
 
 def payload_schema(operation):
+    if operation == 'lyrics_review':
+        clock={'type':['number','string','null','boolean'],'description':'Raw clock field; empty or malformed scalar is reported, never guessed'}
+        cue=object_schema({'start':clock,'end':clock,'text':{'type':'string','maxLength':2000}},('start','end','text'),additionalProperties=False)
+        return object_schema({'title':{'type':'string','minLength':1,'maxLength':200},'duration':clock,
+                              'cues':array_schema(cue,0,10000)},('cues',),additionalProperties=False)
     if operation == 'lyrics_seed':
         def exact(properties): return object_schema(properties, properties.keys(), additionalProperties=False)
         seed = exact({'format':{'const':'zoe-lyrics-seed'},'schema_version':{'type':'integer','const':1},

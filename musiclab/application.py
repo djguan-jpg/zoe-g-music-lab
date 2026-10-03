@@ -17,6 +17,7 @@ from .creative import music_bundle, storyboard_bundle
 from .design import music_plan_bundle, motif_bundle
 from .storyboard_seed import storyboard_seed_bundle, SEED_SCHEMA_VERSION, MAX_SLOTS
 from .lyrics_seed import lyrics_seed_bundle, LYRICS_SEED_SCHEMA_VERSION, MAX_SOURCE_BYTES, MAX_LINES
+from .lyrics_review import review_bundle, descriptor as lyrics_review_descriptor
 from .lyrics import read_cues, lyrics_bundle, edits
 from .lyrics_package import (PACKAGE_SCHEMA_VERSION, MAX_PACKAGE_BYTES, validate_package,
                              package_files, decode_document, is_legacy, needs_review as package_needs_review)
@@ -32,6 +33,7 @@ OPERATIONS = {
     "music": "Song planning and AI task packaging; no model invocation",
     "storyboard": "Shot timing and motif continuity; no media rendering",
     "lyrics": "Manual cue validation and LRC/SRT/JSON exports; no ASR",
+    "lyrics_review": "Locate incomplete lyric rows, duplicate starts, overlap and declared-duration limits; read-only; no guessed times or ASR",
     "audio": "Selected integer PCM WAV evidence and gated mono/stereo integrated loudness; source is preserved; no normalization or true peak",
     "storyboard_seed": "Create from a modern song brief or inspect an existing bar-aligned timing seed; incomplete visuals require manual writing; no model or media",
     "lyrics_seed": "Create or inspect untimed lyric lines; preserves source and duplicates; no guessed times, ASR or model",
@@ -80,6 +82,7 @@ def capabilities(draft_library=None, backup_source=None):
                             "max_lines": MAX_LINES, "status": "untimed", "media_generated": False},
             "lyrics_package": {"schema_version": PACKAGE_SCHEMA_VERSION, "max_bytes": MAX_PACKAGE_BYTES,
                                "legacy_conversion": "explicit allow_legacy only", "media_generated": False},
+            "lyrics_review": lyrics_review_descriptor(),
             "audio_loudness": loudness_descriptor(),
             "storyboard_frames": frames_descriptor(),
             "input_schemas": {operation: payload_schema(operation) for operation in operations},
@@ -99,7 +102,7 @@ def build(operation, payload, *, audio_source=None, draft_library=None, backup_s
     if operation in LIBRARY_OPERATIONS and draft_library is None:
         raise ValueError("草稿庫未啟用；請在啟動時明確指定 --draft-library 目錄")
     if operation not in available_operations(draft_library):
-        raise ValueError("未知操作；請使用 music、storyboard、lyrics、audio、storyboard_seed 或 lyrics_seed")
+        raise ValueError("未知操作；請使用 music、storyboard、lyrics、audio、storyboard_seed、lyrics_seed 或 lyrics_review")
     if not isinstance(payload, dict):
         raise ValueError("輸入需為 JSON 物件")
     if operation in LIBRARY_OPERATIONS:
@@ -120,7 +123,10 @@ def build(operation, payload, *, audio_source=None, draft_library=None, backup_s
         else:
             data = restore_backup(draft_library, backup_source, payload['backup_sha256'])
         return Result({}, data, operation != 'draft_list')
-    if operation == "lyrics_seed":
+    if operation == "lyrics_review":
+        files = review_bundle(payload)
+        data = json.loads(files["lyrics-review.json"])
+    elif operation == "lyrics_seed":
         files = lyrics_seed_bundle(payload)
         data = json.loads(files['lyrics-seed.json'])
     elif operation == "storyboard_seed":
@@ -175,6 +181,8 @@ def build(operation, payload, *, audio_source=None, draft_library=None, backup_s
             data["file"] = Path(name.replace("\\", "/")).name[:200] or "selected.wav"
         files = audio_bundle(data)
     review = bool(data.get("review_notes") or data.get("warnings") or data.get("duration_estimated"))
+    if operation == 'lyrics_review':
+        review = True  # Diagnostic readiness never proves performance synchronization.
     if operation == 'lyrics':
         review = package_needs_review(data)
     if operation == 'lyrics' and (data['timing'].get('applied_shift_seconds', 0) != 0 or payload.get('time_changes') or payload.get('text_changes')):

@@ -44,6 +44,7 @@ ASSETS = {"/": ("web/index.html", "text/html"), "/app.js": ("web/app.js", "text/
           "/lyric-time.js": ("musiclab/assets/lyric-time.js", "text/javascript"),
           "/lyrics-timing.js": ("web/lyrics-timing.js", "text/javascript"),
           "/lyrics-media.js": ("musiclab/assets/lyrics-media.js", "text/javascript"),
+          "/lyrics-review.js": ("musiclab/assets/lyrics-review.js", "text/javascript"),
           "/audio-review.js": ("web/audio-review.js", "text/javascript"),
           "/planning-review.js": ("web/planning-review.js", "text/javascript"),
           "/storyboard-frames.js": ("web/storyboard-frames.js", "text/javascript"),
@@ -169,7 +170,7 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
                 return self.reply(200,json_text(backup_downloads(self.server).prepare(archive,summary)))
             operations = {"/api/music": "music", "/api/storyboard": "storyboard", "/api/lyrics": "lyrics",
                           "/api/storyboard-seed": "storyboard_seed",
-                          "/api/lyrics-seed": "lyrics_seed",
+                          "/api/lyrics-seed": "lyrics_seed", "/api/lyrics-review": "lyrics_review",
                           "/api/drafts/save": "draft_save", "/api/drafts/list": "draft_list", "/api/drafts/read": "draft_read"}
             if route.path not in operations:
                 return self.reply(404, '{"error":"找不到此操作"}')

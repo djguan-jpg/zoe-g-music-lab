@@ -45,3 +45,7 @@ python music_lab.py lyrics-seed --text lyrics.txt --title '作品名稱' --out o
 ## 音檔時長接續（v0.24）
 
 選音檔保留已有宣告，先核對兩個時長；需要採用時才按明確按鈕，再驗證匯出。撤回只還原宣告，保留後續歌詞；後來改時長／換音檔拒絕不安全撤回。原本空白且讀取期間沒有編修才自動接續首個有效時長。不要為短音檔裁切或移動句子；完整包超出總長仍拒絕。獨立預覽採用後須套用或下載才更新。媒體與撤回只在本頁，不存入 Agent／draft；不宣稱播放或時长比較等於實聽同步。
+
+## 校時待辦（v0.25）
+
+未完成表格先「檢查校時進度」或Agent／MCP lyrics_review；CLI lyrics-review --input raw-cues.json --out outputs/review。按問題定位原列開始／結束／文字，保留未標記值、不猜時間或裁切。局部已填數量不表示無重疊；修正後重查並以lyrics正式驗證，報告schema1不能當完成字幕。CLI2表示有待修正的報告已保存，meta.needs_review始終true，仍需實聽。原稿／媒體另存，編修後舊報告與定位停用。

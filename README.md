@@ -1,5 +1,11 @@
 # ZOE. G Music Lab
 
+## 可定位的校時進度與待辦（v0.25）
+
+「檢查校時進度」接受時間留白的表格，列出缺少開始／結束、無效或顛倒時間、毫秒精度的重複開始、跨句重疊及超過作品宣告的位置。按待辦可直接到原句欄位；建立歌詞包遇到問題也定位第一項，保留文字、原文與音檔。編修後上一份檢查標成過期，停用舊定位與下載，重查後才恢復。
+
+可下載獨立校時報告 JSON／Markdown；最多10000句，全部計數，報告明細前200項、頁面前20項，截斷有明示。資料檢查不能證明實聽同步，未填時間不推估或裁切。新唯讀 `lyrics_review` operation／MCP tool、CLI `lyrics-review` 與 HTTP 使用共用 application。預設七工具，啟用草稿庫十二工具；Agent protocol／MCP 與 draft3 不變。見[契約](docs/LYRICS-REVIEW.md)及[本輪 QA](docs/QA-v0.25.0.md)。
+
 ## 音檔與作品宣告分開（v0.24）
 
 選擇音檔只讀取並顯示它的時長；已有作品宣告保持。例如歌詞包宣告十秒，選六秒音檔仍輸出十秒。核對後可明確「採用選定音檔時長」，再驗證並建立歌詞包；「撤回時長接續」只還原時長，保留後續歌詞、原文與音檔。後來改過時長或換音檔時，拒絕不安全的撤回。
@@ -40,7 +46,7 @@ CLI、HTTP、JSON-lines、MCP 共用同一次分析副本。Python 標準函式�
 
 由 **ZOE. G** 發起的四個原創專案。GitHub 帳號為 **djguan-jpg**；品牌署名與帳號可以不同。
 
-目前版本 v0.24 提供四個工作台、原創 Skill、本機草稿庫及可預覽的 ZIP 備份／恢復、整批歌詞校時及來源一致的音檔檢查報告，以及保留原文的未校時歌詞起稿。Python 3.10 以上即可使用，沒有第三方依賴。只讀本次新建工作區，不參考使用者的其他本機或 GitHub 專案。公開第三方 README 僅用於需求比較，來源及自行設計的差異記在 [構思紀錄](CONCEPT.md)。
+目前版本 v0.25 提供四個工作台、原創 Skill、本機草稿庫及可預覽的 ZIP 備份／恢復、整批歌詞校時及來源一致的音檔檢查報告，以及保留原文的未校時歌詞起稿。Python 3.10 以上即可使用，沒有第三方依賴。只讀本次新建工作區，不參考使用者的其他本機或 GitHub 專案。公開第三方 README 僅用於需求比較，來源及自行設計的差異記在 [構思紀錄](CONCEPT.md)。
 
 授權為 **PolyForm Noncommercial 1.0.0**，商業使用沒有由本版授權。可查看、修改及分發的範圍以 [LICENSE](LICENSE) 為準，保留 [NOTICE](NOTICE)。這是非商用原始碼授權；不標成 AGPL。使用者匯入的素材授權各自保留，詳見 [授權說明](LICENSING.md)。
 
@@ -48,7 +54,7 @@ CLI、HTTP、JSON-lines、MCP 共用同一次分析副本。Python 標準函式�
 |---|---|---|
 | ZOE Music Production | 記憶點設計、BPM／小節時間計算、段落能量、AI 任務包 | [技能](projects/zoe-music-production/SKILL.md) |
 | ZOE MV Storyboard | 多母題與逐鏡選擇、人物／方向變化理由、分鏡時間與影格連續覆蓋、CSV 與鏡頭提示 | [技能](projects/zoe-mv-storyboard/SKILL.md) |
-| ZOE Lyrics Sync | LRC／SRT／JSON、TXT／字幕選檔預覽、波形定位、人工校時、編修與匯出 | [工具](projects/zoe-lyrics-sync/README.md) |
+| ZOE Lyrics Sync | 可定位的校時待辦、LRC／SRT／JSON、選檔預覽、波形與人工校時、編修與匯出 | [工具](projects/zoe-lyrics-sync/README.md) |
 | ZOE Audio Delivery | PCM WAV 標頭檢查、接受條件、LUFS／峰值／RMS／DC、頭尾安靜段及同一分析副本 SHA-256 | [工具](projects/zoe-audio-delivery/README.md) |
 
 ## 歌詞包回讀保留名稱、總長與待確認來源（v0.19）

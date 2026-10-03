@@ -56,7 +56,7 @@ class MCPTests(unittest.TestCase):
             self.assertIn("接入測試", replies[1]["result"]["structuredContent"]["files"]["lyrics.lrc"])
             self.assertEqual(list(Path(folder).iterdir()), [])
 
-    def test_real_subprocess_six_tools_match_application_and_exit_on_eof(self):
+    def test_real_subprocess_seven_tools_match_application_and_exit_on_eof(self):
         with tempfile.TemporaryDirectory() as folder:
             source = Path(folder) / "synthetic.wav"
             with wave.open(str(source), "wb") as wav:
@@ -70,7 +70,8 @@ class MCPTests(unittest.TestCase):
                      ("lyrics_validate", "lyrics", {"cues": [{"start": 0, "end": 3, "text": "原創"}]}),
                      ("audio_report", "audio", {"profile": "video"}),
                      ("storyboard_seed", "storyboard_seed", {"music": json.loads((ROOT / "examples/first-light-music.json").read_text(encoding="utf-8"))}),
-                     ("lyrics_seed", "lyrics_seed", {"title":"未校時", "text":"原創\n原創"})]
+                     ("lyrics_seed", "lyrics_seed", {"title":"未校時", "text":"原創\n原創"}),
+                     ("lyrics_review", "lyrics_review", {"cues":[{"start":"","end":"","text":"未完成"}]})]
             requests = [initialize(), {"jsonrpc": "2.0", "method": "notifications/initialized"},
                         message("tools/list", request_id=2)]
             requests.extend(call(name, payload, i + 3) for i, (name, _, payload) in enumerate(cases))
@@ -80,7 +81,7 @@ class MCPTests(unittest.TestCase):
             self.assertEqual(process.returncode, 0, process.stderr)
             self.assertEqual(process.stderr, "")
             replies = [json.loads(line) for line in process.stdout.splitlines()]
-            self.assertEqual(len(replies), 8)  # Notifications must not yield responses.
+            self.assertEqual(len(replies), 9)  # Notifications must not yield responses.
             self.assertEqual(replies[0]["result"]["protocolVersion"], MCP_VERSION)
             tools = replies[1]["result"]["tools"]
             self.assertEqual([tool["name"] for tool in tools], [item[0] for item in cases])
