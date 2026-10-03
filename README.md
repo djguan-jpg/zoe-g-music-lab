@@ -1,5 +1,7 @@
 # ZOE. G Music Lab
 
+目前版本 **v0.26.0**：歌曲與分鏡核對本次需求、摘要及主要 JSON 後才更新成果；Agent／CLI 需求檔回讀共用同層，預覽後明確載入。修正歌名前後空白造成建立失敗；原表單／原檔保持。未知、同名不同來源或 JSON 矛盾拒絕，上一份成果與後續編修保留。詳見 [需求核對](docs/PLANNING-SOURCE.md)、[本輪驗證](docs/QA-v0.26.0.md)。
+
 ## 可定位的校時進度與待辦（v0.25）
 
 「檢查校時進度」接受時間留白的表格，列出缺少開始／結束、無效或顛倒時間、毫秒精度的重複開始、跨句重疊及超過作品宣告的位置。按待辦可直接到原句欄位；建立歌詞包遇到問題也定位第一項，保留文字、原文與音檔。編修後上一份檢查標成過期，停用舊定位與下載，重查後才恢復。
@@ -220,14 +222,14 @@ python music_lab.py draft restore --library outputs/restored-drafts --input '構
 
 ## Agent 使用
 
-預設六種操作（歌曲、分鏡、歌詞、音檔、分鏡起稿、未校時歌詞起稿）可用 JSON-lines v1 或 MCP stdio adapter。明確選定 `--draft-library` 後共十一種工具；備份檢查／恢復另需啟動時選定 `--draft-backup '構思備份.zip'`，JSON 不能更換路徑。ZIP 匯出使用 CLI 或工作台。MCP 明確支援 `2025-11-25`；只接受該版初始化，不自動轉換未知版本。使用 `python scripts/agent_launch.py` 產生本版 Python／入口的完整路徑設定；加 `--format codex` 可產生 Codex TOML 片段。指令只顯示設定，不安裝或啟動 Agent，移動解壓目錄後需重新產生。已驗證設定從不同目錄啟動 MCP 及實際工具輸出；Codex CLI 只做設定解析，尚未驗證 host 連線／實際 Agent 工具呼叫。操作、錯誤及音檔選擇見 [Agent 文件](docs/AGENT.md)。
+預設七種操作（歌曲、分鏡、歌詞、唯讀校時待辦、音檔、分鏡起稿、未校時歌詞起稿）可用 JSON-lines v1 或 MCP stdio adapter。明確選定 `--draft-library` 後共十二種工具；備份檢查／恢復另需啟動時選定 `--draft-backup '構思備份.zip'`，JSON 不能更換路徑。ZIP 匯出使用 CLI 或工作台。MCP 明確支援 `2025-11-25`；只接受該版初始化，不自動轉換未知版本。使用 `python scripts/agent_launch.py` 產生本版 Python／入口的完整路徑設定；加 `--format codex` 可產生 Codex TOML 片段。指令只顯示設定，不安裝或啟動 Agent，移動解壓目錄後需重新產生。已驗證設定從不同目錄啟動 MCP 及實際工具輸出；Codex CLI 只做設定解析，尚未驗證 host 連線／實際 Agent 工具呼叫。操作、錯誤及音檔選擇見 [Agent 文件](docs/AGENT.md)。
 
 ## 專案紀錄
 
 - [創辦與協作紀錄](FOUNDER-RECORD.md)：ZOE. G 發起方向；Codex 協助規格、文字、程式與驗證。
 - [專案清單](projects.json)：四個獨立 ID、版本與功能範圍。
 - [本輪進度](PROGRESS.md)：實跑驗證與後續工作。
-- [本版說明](RELEASE-v0.16.0.md)：功能、版本契約、驗證與限制。
+- [本版說明](docs/RELEASE-v0.26.0.md)：功能、版本契約、驗證與限制。
 - [四個專案的投稿資料](SUBMISSION-PACKET.md)：來源連結、用途、使用方式與作者關係。
 - [分層與分支架構](docs/ARCHITECTURE.md)、[Agent 與 MCP 接口](docs/AGENT.md)、[迭代說明](CHANGELOG.md)、[本輪交接](HANDOFF.md)。
 
@@ -247,7 +249,7 @@ git diff --check
 開發／封裝驗證需要 Node.js；一般使用工作台與 CLI 只需要 Python。從指定 Git 版本建立可驗證的原始碼 ZIP：
 
 ```powershell
-python scripts/package_release.py --ref v0.16.0
+python scripts/package_release.py --ref v0.26.0
 ```
 
 封裝保存 commit、SHA-256、每檔摘要及檢查結果；解壓後重跑 Python／JavaScript 測試、Agent 能力查詢與 MCP 握手。輸出留在忽略的 outputs/releases，重複封裝同一提交會拒絕覆寫。

@@ -76,7 +76,7 @@ test('shared seed validator refuses alternative tie-even boundary formerly insid
   assert.doesNotThrow(()=>Seed.validateSeed(fixtures.seed));
 });
 test('current invalid frame response preserves prior result and a corrected response commits once',async()=>{
-  const commits=[],brief={title:fixtures.report.data.title},r=report();r.data.frame_timeline.schema_version=99;
+  const commits=[],brief=JSON.parse(fixtures.report.files['mv-brief.json']),r=report();r.data.frame_timeline.schema_version=99;
   const args={operation:'storyboard',brief,isCurrent:()=>true,onResult:(_r,m)=>commits.push(m)};
   await assert.rejects(Review.inspect({...args,request:async()=>r}));assert.equal(commits.length,0);
   assert.equal(await Review.inspect({...args,request:async()=>report()}),true);assert.equal(commits.length,1);

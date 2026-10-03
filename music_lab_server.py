@@ -47,6 +47,7 @@ ASSETS = {"/": ("web/index.html", "text/html"), "/app.js": ("web/app.js", "text/
           "/lyrics-review.js": ("musiclab/assets/lyrics-review.js", "text/javascript"),
           "/audio-review.js": ("web/audio-review.js", "text/javascript"),
           "/planning-review.js": ("web/planning-review.js", "text/javascript"),
+          "/planning-source.js": ("web/planning-source.js", "text/javascript"),
           "/storyboard-frames.js": ("web/storyboard-frames.js", "text/javascript"),
           "/storyboard-seed.js": ("web/storyboard-seed.js", "text/javascript"),
           "/draft-undo.js": ("web/draft-undo.js", "text/javascript"),

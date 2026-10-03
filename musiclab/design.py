@@ -47,12 +47,12 @@ def music_plan_bundle(brief):
         warnings.append("草稿尚未出現指定記憶點；可選擇保留意象而不直接重複文字")
     if any(line["text_units"] > 24 for line in lyric_counts):
         warnings.append("部分歌詞超過 24 文字單位；需實唱確認一口氣能否唱完")
-    data = {"title": source["title"], "bpm": bpm, "beats_per_bar": int(beats),
+    data = {"title": saved["title"], "bpm": bpm, "beats_per_bar": int(beats),
             "duration_seconds": round(elapsed, 3), "memory_hook": hook, "sections": plan,
             "lyric_units": lyric_counts, "review_notes": warnings,
             "status": "design_only_not_generated", "timing_assumption": "constant_tempo_no_pickup",
             "unit_note": "中文字元與拉丁文字詞計數，不是實測音節"}
-    markdown = [f"# {source['title']}：歌曲設計\n\n",
+    markdown = [f"# {saved['title']}：歌曲設計\n\n",
                 f"{bpm:g} BPM · 每小節 {beats:g} 拍 · 約 {elapsed:.3f} 秒\n\n記憶點：{hook}\n\n",
                 "| 段落 | 起訖秒 | 小節 | 能量 1–5 | 敘事任務 | 聲音配置 |\n|---|---|---|---|---|---|\n"]
     for s in plan:

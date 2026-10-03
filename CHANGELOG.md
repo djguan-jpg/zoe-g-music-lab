@@ -1,5 +1,14 @@
 # 迭代說明
 
+## v0.26.0 — 2026-10-04
+
+- 真IAB與實際 application 重現同名80 BPM回應可覆蓋120 BPM需求，以及有前後空白的歌名被拒絕；Python歌曲標題改用清理後brief，原檔／表單保留。
+- 新planning-source純需求／主要JSON核對與planning-review checkedResult／checkedBrief分層，建立及Agent需求回讀共用。歌曲段落／原歌詞／清單／提醒及分鏡所有鏡頭／母題／影格／連戲核對，單份JSON8MiB嚴格解碼。
+- 物件鍵順序可不同，原始型別／陣列順序保持；Python文字／數字空白分開，numeric bool／null不猜預設，數字母題與__proto__保持資料。歌曲時間先查毫秒精度再查半毫秒界，拒絕0.0004秒偏移。CSV／Markdown未在瀏覽器逐字重建，本輪九個真實檔案全文與四adapter核對。
+- 新核對提示在編修後明示上一份需求，停用舊成果下載；晚成功／500保護、原生音檔、預覽／明確限定載入／撤回及草稿保持。產品0.26，各protocol／schema與七／十二tools不變。
+- 239Python／321JS／四Skill／23JS語法、5新Python／16新JS、60組跨語言、28真IAB／九個下載與draft3／390px Enter通過。v0.25 ZIP234／305還原，restore-v0.25.0-before-v0.26.0保留起點；精確commit封裝、privatePR／Release及遠端bytes以manifest收據核對。
+- 不新增依賴、模型、auth或production變更。非商用／ZOE. G／private保持；完整視覺／正式媒體／指定AgentHost／FreeTWAI與原生file:離線仍未驗，滾動目標active。每輪只盤點自有PID與outputs、保留最新三版，合格舊產物才清理。
+
 ## v0.25.0 — 2026-10-04
 
 - 真IAB重現未完成表格只有泛用數字錯誤，focus停在建立；新增可定位校時進度／待辦與建立前標示，原句號／欄位保持。

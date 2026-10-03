@@ -57,3 +57,7 @@ Agent／CLI產生的storyboard-seed.json可在歌曲工作台選「接續Agent�
 每鏡秒數與宣告總長需連續；即使差異在原 1 ms 容差內，影格也必須連續覆蓋 `[0, total_frames)`。使用最近整數影格、正好半幀取偶數，`end_frame_exclusive` 不包含在該鏡。重疊、空缺、零影格或尾鏡不符時協助核對輸入，不能自動改秒數、FPS 或虛構鏡頭。
 
 storyboard.json 的 frame_timeline 為獨立 schema1，CSV／提示稿及工作台摘要列同一範圍。未知版本或矛盾報告拒絕；舊有效報告可核對並明示沒有版本宣告。時間起稿 seed1 保持未完成，影格連續不能取代實際歌曲段落、動作時長或音畫同步的驗收。完整欄位見 docs/FRAME-TIMELINE.md。
+
+## v0.26 跨工具需求核對
+
+保存原始需求。CLI／Agent 的 brief.json 或 mv-brief.json 接回工作台後，先核對本次需求與主要 JSON 成果、再預覽與明確載入；同名不代表相同設計。編修後須重建，核對資料仍需實唱／實聽或審查實際畫面。詳見 ../../docs/PLANNING-SOURCE.md。
