@@ -39,6 +39,7 @@ ASSETS = {"/": ("web/index.html", "text/html"), "/app.js": ("web/app.js", "text/
           "/planning-import.js": ("web/planning-import.js", "text/javascript"),
           "/deletion-history.js": ("web/deletion-history.js", "text/javascript"),
           "/draft-library.js": ("web/draft-library.js", "text/javascript"),
+          "/draft-retention.js": ("web/draft-retention.js", "text/javascript"),
           "/backup-transfer.js": ("web/backup-transfer.js", "text/javascript"),
           "/lyric-time.js": ("musiclab/assets/lyric-time.js", "text/javascript"),
           "/lyrics-timing.js": ("web/lyrics-timing.js", "text/javascript"),

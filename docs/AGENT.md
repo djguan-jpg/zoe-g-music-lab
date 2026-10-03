@@ -1,5 +1,11 @@
 # 本機 Agent 接口 v1
 
+## v0.21 保存快照與瀏覽器另存提示
+
+Agent／MCP 的 draft_save 共用既有不可覆寫保存層；工具、路徑選擇及schema不變。瀏覽器只在收到成功回應時確認當時送出的draft，保存期間新增的編修仍需另存。未知結果應保留原ID及內容重試／draft_read確認；放棄重試不表示已保存或刪除版本。
+
+真 JSON-lines Agent v1 在本輪合成草稿庫完成 draft_save／draft_read／EOF，瀏覽器refresh→選版→read預覽→明確載入後辨識完整已保存內容。預覽不清除目前未保存提醒；局部起稿／撤回依目前內容重查。Agent另建的資料不表示目前瀏覽器編修已保存。草稿下載送出後須使用者核對檔案再確認；狀態不進Agent資料、沒有新持久schema或Host安裝。
+
 ## v0.20 外部 request 的 JSON 邊界
 
 HTTP／JSON-lines／MCP在領域操作前共用json_document decoder：重複欄位（含跳脫同名）、非有限數字／溢位、無效Unicode與超64層拒絕。不能用兩個protocol_version／method／schema_version覆蓋較早值。JSON-lines回invalid_request，MCP回-32700，HTTP回400；同一stdio串流下一筆有效request仍可正常執行。

@@ -1,5 +1,14 @@
 # 迭代說明
 
+## v0.21.0 — 2026-10-03
+
+- 真瀏覽器重現重新整理直接丟失歌名編修。新增上方另存狀態及有未另存草稿時才註冊的 beforeunload；原生點擊後實際觸發提醒／closed(false)，編修保留。沒有互動時 IAB 省略提醒並重新整理，明確列為瀏覽器限制。
+- draft-retention.js 純 checkpoint 與注入事件 controller 分層，共用既有 panel fingerprint；比較原始範例與各來源最近一次確認的完整內容。逐字編修只 capturePanel，離頁重查全草稿；時間戳、頁面、收合、媒體及成果不進狀態或持久 schema。
+- 保存 callback 提供隔離的按下當時 draft，不冒用晚到期間的編修。未知保存、放棄、送出下載不能解除提醒；下載須明確確認本機檔。已驗證現代草稿／保存版本在明確載入後記錄，legacy 轉換仍需另存。
+- 範例啟動回應晚到保留既有編修；三種草稿／成果表單改同源 hidden iframe，下載不導離編修頁。狀態可換行、色彩與文字共同提示，確認按鈕可 Enter 操作。
+- 182 Python／237 JS、四 Skill／19 JS 語法與 diff 通過；兩新 Python／17 新 JS，舊 seed fixture 注入實際 retention controller，原來成果 dirty 規則保持。29 項 IAB 包含真 Agent 保存／讀取／載入、四秒成功／500、原生下載／讀回／確認、撤回、四工作台、PCM 與 390px。
+- 前版 v0.20 ZIP 還原 180／220 通過；restore-v0.20.0-before-v0.21.0 保留 main 起點。產品0.21.0，所有 protocol／領域 schema 與六／十一工具保持；無新依賴或模型、授權／署名／private 保持。
+
 ## v0.20.0 — 2026-10-03
 
 - 重現需求無效UTF-8被File.text替換「�」後仍接受，以及Agent／CLI／草稿重複版本或title被默默採用最後一個值。改為嚴格UTF-8與重複JSON欄位拒絕，原檔與工作台保持。

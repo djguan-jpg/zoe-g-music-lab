@@ -73,7 +73,12 @@ test('actual common run can guard storyboard while music edits are retained',asy
 test('actual output marks imports independent while generation still becomes dirty',()=>{
   const source=fs.readFileSync(path.join(root,'web/app.js'),'utf8'),a=source.indexOf('function markDirty('),b=source.indexOf("document.querySelector('.editor')",a);
   const state={tab:'music',revisions:{},bundles:{music:{note:'file',dirty:false,inputIndependent:true}}},nodes={download:{disabled:false},'output-note':{textContent:'file'}};
-  const context={state,$:id=>nodes[id],stalePlanningReview:()=>{},staleAudioReview:()=>{}};vm.runInNewContext(source.slice(a,b),context);
+  const retentionDraft={panels:{music:{fields:{title:'unchanged'}}}},retentionScopes=[];
+  const draftRetention=require('../web/draft-retention.js').createGuard({capture:()=>retentionDraft,
+    capturePanel:scope=>{retentionScopes.push(scope);return retentionDraft.panels[scope];},
+    events:{addEventListener:()=>{},removeEventListener:()=>{}},onState:()=>{}});draftRetention.initialize(retentionDraft);
+  const context={state,draftRetention,$:id=>nodes[id],stalePlanningReview:()=>{},staleAudioReview:()=>{}};vm.runInNewContext(source.slice(a,b),context);
   context.markDirty('music');assert.equal(state.revisions.music,1);assert.equal(state.bundles.music.dirty,false);assert.equal(nodes.download.disabled,false);
   state.bundles.music.inputIndependent=false;context.markDirty('music');assert.equal(state.bundles.music.dirty,true);assert.equal(nodes.download.disabled,true);
+  assert.deepEqual(retentionScopes,['music','music']);assert.equal(draftRetention.status().dirty,false);
 });

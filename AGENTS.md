@@ -42,3 +42,5 @@
 - 純lyrics-package.js與Python契約共用工作台／離線預覽，未改cue保留來源、確認總長仍提示曾補齊結束；人工編修加待實聽說明。provided時長衝突拒絕、空白才接續，estimated不填；source可保存於draft3既有欄位，不靜默遷移。
 
 - 外部JSON共用json_document.py與json-document.js；嚴格UTF-8／重複鍵含跳脫同名／非有限數字／無效Unicode／64層，有界bytes。原生需求／起稿／草稿使用arrayBuffer及File.size核對，保留latest／target／預覽／proposal。可信生成結果與外部輸入分開，領域schema照常驗證，不做自動修補或版本遷移。
+
+- draft-retention 純完整panel checkpoint／注入事件controller與DOM分層；markDirty只capture目標，離頁重查全部。原始範例與file／library／download各最近一筆完整確認可比較，metadata／File／成果／預覽不進草稿狀態。保存只確認click-time隔離快照，未知保存／放棄／送出下載不解警示；下載須明確核對後確認。現代檔／庫版本明確載入才留點，legacy轉換需另存；範例晚到保留編修。beforeunload受瀏覽器互動／生命週期限制，不宣稱自動保存／無資料遺失。
