@@ -1,5 +1,14 @@
 # 迭代說明
 
+## v0.23.0 — 2026-10-03
+
+- 重現1 ms內秒數容差跨半幀而接受重疊、空缺、尾端不符；完成分鏡在輸出前核對由0到總長的精確排他影格覆蓋，不改原秒數或FPS。
+- 純Python／JS影格映射與完成報告驗證分層，共用seed；保留最近整數／半幀取偶數，JS拒絕先前半幀容差內的另一個整數。
+- frame_timeline獨立schema1與discovery descriptor；摘要、每鏡範圍與提示稿增加幀數。舊有效報告明示未宣告，現代缺失／未知schema／矛盾資料拒絕且保留上一份成果。
+- 真下載重現草稿tool_version仍為0.21.0，修正為0.23.0並核對實際captureDraft與application版本，draft3與舊有效草稿保持。
+- 217Python／263JS、四Skill／20JS語法及diff、20項IAB／四入口／實檔／390px與Enter通過；17新Python／16新JS。v0.22 ZIP還原200／247通過，指定提交封裝／private PR／Release與遠端下載由manifest及收據確認。
+- restore-v0.22.0-before-v0.23.0保留起點。Agent／MCP／各既有schema與六／十一工具不變；非商用、署名、private及使用者來源保持。影格覆蓋不代表實際媒體／視覺驗收，目標active。
+
 ## v0.22.0 — 2026-10-03
 
 - 交付檢查新增獨立LUFS整合響度。純loudness.py負責K-weighting、400ms／100ms nearest-sample幀與−70 LUFS／−10 LU gate；loudness_blocks.py有界64KiB後轉暫存，成功／失敗均關閉。audio.py在同一音檔副本的一次PCM掃描整合，無FFmpeg執行或新依賴。

@@ -5,6 +5,7 @@ import math
 from copy import deepcopy
 from .common import json_text, number
 from .design import music_plan_bundle
+from .storyboard_frames import frame_index
 
 SEED_SCHEMA_VERSION = 1
 MAX_SLOTS = 1000
@@ -68,7 +69,7 @@ def timing_slots(sections, bpm, beats, fps, chunk):
             count = min(chunk, section['bars'] - offset)
             end = (section['end'] if offset + count == section['bars'] else
                    round(section['start'] + (offset + count) * seconds_per_bar, 3))
-            first, last = round(start * fps), round(end * fps)
+            first, last = frame_index(start, fps), frame_index(end, fps)
             if end <= start or last <= first:
                 raise ValueError('起稿鏡頭不足一影格；請增加 FPS 或每鏡最多小節')
             slots.append({'shot': len(slots) + 1, 'start': start, 'end': end,

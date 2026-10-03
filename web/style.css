@@ -47,3 +47,6 @@
 .project-bar .draft-retention-note{font-weight:600;overflow-wrap:anywhere}
 .project-bar .draft-retention-note[data-dirty="true"]{color:#8b3f24}
 #draft-export{display:flex;flex-wrap:wrap;gap:8px}
+
+/* v0.23: frame evidence is readable independently of narrative notes. */
+.plan-frame-range{font-variant-numeric:tabular-nums;overflow-wrap:anywhere;border-left:2px solid var(--green);padding-left:10px;color:var(--green)}.plan-frame-note{overflow-wrap:anywhere}

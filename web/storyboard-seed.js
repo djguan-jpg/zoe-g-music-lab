@@ -6,6 +6,7 @@
   const Planning=node?require('./planning-import.js'):root.MusicPlanning;
   const Undo=node?require('./draft-undo.js'):root.MusicDraftUndo;
   const J=node?require('../musiclab/assets/json-document.js'):root.MusicJsonDocument;
+  const Frames=node?require('./storyboard-frames.js'):root.MusicStoryboardFrames;
   const fail=()=>{throw Error('分鏡起稿回應不完整或版本不支援；目前分鏡保留');};
   const finite=(n,low,high)=>typeof n==='number'&&Number.isFinite(n)&&n>=low&&n<=high;
   const text=s=>typeof s==='string'&&s.trim().length>0;
@@ -33,8 +34,8 @@
             Math.abs(slot.end-slot.start-count*data.source.beats_per_bar*60/data.source.bpm)>0.001001||
             slot.section!==section.section||slot.purpose!==section.focus||slot.bar_start!==bar||slot.bar_end!==bar+count-1||
             !Number.isInteger(slot.start_frame)||!Number.isInteger(slot.end_frame_exclusive)||slot.start_frame<0||
-            slot.end_frame_exclusive<=slot.start_frame||Math.abs(slot.start_frame-slot.start*data.fps)>0.500001||
-            Math.abs(slot.end_frame_exclusive-slot.end*data.fps)>0.500001)fail();
+            slot.end_frame_exclusive<=slot.start_frame||slot.start_frame!==Frames.frameIndex(slot.start,data.fps)||
+            slot.end_frame_exclusive!==Frames.frameIndex(slot.end,data.fps))fail();
         cursor=slot.end;bar+=count;index++;
       }
       if(cursor!==section.end)fail();

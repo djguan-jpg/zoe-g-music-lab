@@ -1,5 +1,11 @@
 # 本機 Agent 接口 v1
 
+## v0.23 完成分鏡影格契約
+
+沿用 operation storyboard／tool storyboard_plan／HTTP /api/storyboard。完成分鏡 data 與 storyboard.json 新增 frame_timeline：format zoe-storyboard-frames、schema_version1、rounding nearest_ties_to_even、end_semantics exclusive、total_frames。--describe／HTTP capabilities 的 storyboard_frames 描述獨立版本，不新增工具或 request 欄位。
+
+秒數通過原 1 ms 容差後，影格仍須從 0 連續至 total_frames；重疊、空缺、零幀鏡頭或尾端不符明確失敗，原輸入與輸出保持。最近整數且正好半幀取偶數，沒有改用 ceil 或改秒數修補。CSV／prompts.md 顯示同一排他範圍。既有 seed1 使用相同映射，仍是待人工編寫的時間稿。規格與相容性見 FRAME-TIMELINE.md；完成資料不表示已生成或校準實際媒體。
+
 ## v0.22 響度量測
 
 沿用operation audio／tool audio_report與啟動時明確選定的--audio；request不得指定來源路徑。data與report.json新增獨立loudness schema1，--describe／HTTP capabilities提供audio_loudness版本、單聲道／立體聲與8000–192000Hz範圍。響度不可測保留null／status，不把它當技術接受失敗或通過。四adapter同源，既有needs_review、退出碼及六／十一工具保持；未知量測schema拒絕顯示。方法、欄位與限制見[量測契約](LOUDNESS.md)。沒有FFmpeg依賴、模型、Host設定或自動正規化。

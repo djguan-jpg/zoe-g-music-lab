@@ -12,6 +12,7 @@ from pathlib import Path
 from . import __version__
 from .audio import analyze_wav, audio_bundle
 from .loudness import descriptor as loudness_descriptor
+from .storyboard_frames import descriptor as frames_descriptor
 from .creative import music_bundle, storyboard_bundle
 from .design import music_plan_bundle, motif_bundle
 from .storyboard_seed import storyboard_seed_bundle, SEED_SCHEMA_VERSION, MAX_SLOTS
@@ -80,6 +81,7 @@ def capabilities(draft_library=None, backup_source=None):
             "lyrics_package": {"schema_version": PACKAGE_SCHEMA_VERSION, "max_bytes": MAX_PACKAGE_BYTES,
                                "legacy_conversion": "explicit allow_legacy only", "media_generated": False},
             "audio_loudness": loudness_descriptor(),
+            "storyboard_frames": frames_descriptor(),
             "input_schemas": {operation: payload_schema(operation) for operation in operations},
             "output_schema": output_schema(),
             "audio_source": "Only --audio chosen at process launch; JSON cannot select paths",

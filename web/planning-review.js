@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 'use strict';
 (function(root){
+  const Frames=typeof module==='object'&&module.exports?require('./storyboard-frames.js'):root.MusicStoryboardFrames;
   const object=value=>value&&typeof value==='object'&&!Array.isArray(value);
   const text=value=>typeof value==='string'&&Boolean(value.trim());
   const finite=value=>typeof value==='number'&&Number.isFinite(value);
@@ -50,7 +51,10 @@
     });
     if(!close(end,d.duration_seconds)||d.review_notes.some(n=>!object(n)||!text(n.message)||
       !(n.shot===null||integer(n.shot)&&n.shot<=shots.length)))invalid();
-    return {...base,fps:d.fps,ratio:d.aspect_ratio,shots,
+    const version=meta.version.split('.').map(Number);
+    if(!/^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/.test(meta.version)||!version.every(Number.isSafeInteger))invalid();
+    const frames=Frames.validateTimeline(d,{requireDeclaration:version[0]>0||version[1]>=23});
+    return {...base,fps:d.fps,ratio:d.aspect_ratio,shots,frames,
       motifs:Object.entries(d.motifs).map(([name,meaning])=>({name,meaning,shots:shots.filter(s=>s.motif===name).map(s=>s.shot)}))};
   }
   async function inspect({operation,brief,isCurrent,request,onResult}){
