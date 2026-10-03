@@ -1,5 +1,9 @@
 # 本機 Agent 接口 v1
 
+## v0.29 歌曲段落順序
+
+工作台排序後重建歌曲包與storyboard_seed，兩者沿用同一arrangement順序。Agent／CLI契約不新增ID／移動紀錄；Agent起稿檔先核對預覽再明確限定套用，歌曲與原音檔保持。歌曲brief明確替換或撤回替換時，清本頁暫態排序紀錄；沒有自動遷移或模型。產品0.29，各protocol／schema及七／十二tools保持。見MUSIC-ARRANGEMENT.md。
+
 ## v0.28 起稿創作待辦
 
 Agent／CLI的storyboard_seed1先核對預覽再明確套用，工作台列出原鏡頭留白及母題待辦，可限定撤回。模型不補寫畫面，不把起稿當完整分鏡。完整storyboard_plan仍經既有完整驗證；新待辦為工作台暫態，不接收Agent報告或新增operation。產品0.28，protocol／schema、七／十二tools保持。見STORYBOARD-READINESS.md。

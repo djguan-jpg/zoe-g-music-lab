@@ -57,3 +57,8 @@
 - storyboard-duration純時間／影格候選與注入controller；新增／刪除保留宣告，明確採用只寫原始鏡尾。撤回核對原始時間／列ID／順序／數量／FPS及實際after，保留後續文字及媒體；載入新分鏡清除暫態，記錄不進draft或wire。仍須完整創作驗證。
 
 - storyboard-readiness為純必填／引用與注入快照controller，定位前重查原分鏡；全部1000鏡／200明細／前20UI，載入清暫態，其他panel與媒體保持。filled不是完整驗證，原時間／影格／連戲照常拒絕，optional change_reason不改成必填，待辦不進draft3／wire。
+
+## v0.29 段落順序
+
+- music-arrangement純order／注入controller與DOM分層；五原字串、最多40列，穩定ID只存在本頁。同名不可合併；限定撤回只還原最近順序並保留後續欄位編修。
+- 列或順序變更停舊撤回，歌曲載入清暫態。排序後歌曲及時間起稿重建同序，既有分鏡／其他panel／音檔保持；完整domain仍驗證，暫態不進draft3／wire。

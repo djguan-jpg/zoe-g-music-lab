@@ -1,5 +1,13 @@
 # 迭代說明
 
+## v0.29.0 — 2026-10-04
+
+- 真IAB確認段落只能新增／刪除。新增歌曲段落前移／後移，同名、五原字串及穩定列識別保持；控制在橫向表格外，新增選取並聚焦新列。
+- music-arrangement純move／restore、注入controller與DOM分層，最多40段。限定撤回只還原最近順序，保留後續文字／小節／能量；列或順序變更及歌曲載入後舊紀錄失效，busy停用排序／新增。
+- 歌曲成果需重建，新的歌曲與分鏡時間起稿同序；既有分鏡／其他panel／音檔保持，舊歌曲起稿預覽拒絕套用。真Agent18鏡檔明確限定接續及撤回，需求載入清暫態。
+- 246Python／367JS／四Skill／26JS語法、2新Python／14新JS、78種40段移動／反向恢復、10真Node→Python歌曲／起稿及21IAB；四adapter、四native下載／實draft3、390px Enter、4秒晚回應及預設不覆寫通過。前版v0.28ZIP244／353還原，restore-v0.28.0-before-v0.29.0保留起點；指定commit封裝／privatePR／Release／遠端bytes依收據。
+- 產品0.29，各protocol／schema及七／十二tools保持，無新operation／依賴／模型／auth／production。非商用／private／ZOE. G保持。最新三版SHA與確定PID／outputs盤點，合格舊產物才清理；正式媒體／完整視覺／Host／FreeTWAI及原生file仍待，rolling active。
+
 ## v0.28.0 — 2026-10-04
 
 - 真IAB重現未選母題先停在泛用錯誤、焦點留建立。新分鏡創作待辦列必填與母題引用，建立先定位第一項，留白與原創作保持。
