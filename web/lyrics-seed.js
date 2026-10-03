@@ -50,6 +50,6 @@
         const data=guard.proposal();return data?seedDraft(capture(),data):null;},
       cancel(){guard.cancel();pending=null;onClear();}};
   }
-  const api={validateSeed,seedDraft,createPreview};
+  const api={validateSeed,seedDraft,createPreview,titleText:trimText};
   if(node)module.exports=api;else root.MusicLyricsSeed=api;
 })(typeof window==='undefined'?{}:window);

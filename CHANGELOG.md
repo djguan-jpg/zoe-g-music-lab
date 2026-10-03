@@ -1,5 +1,13 @@
 # 迭代說明
 
+## v0.18.0 — 2026-10-03
+
+- 修正歌詞檔慢讀取完成後覆蓋手動原文；帶時間歌詞不再一按讀取就替換表格。TXT／LRC／SRT／JSON統一先檢查／預覽，再明確套用／取消與限定撤回。
+- 新增純前端lyrics-import層，原生arrayBuffer與嚴格UTF-8解碼、BOM／大小檢查、目標snapshot／最新序列、回應與JSON成果一致性；原文、時長、音檔及其他工作台保護。取代舊File.text adapter；HTTP只新增靜態模組，既有application與四adapter共用。
+- TXT接既有lyrics_seed1，原文／重複句／空白保留、時間留白，草稿仍schema3／.json。SRT多行與LRC推測結束告知，預覽前六句但套用不截短。
+- 156 Python／189 JavaScript、四Skill／十六JS語法通過；26新增JS覆蓋舊五項adapter測試並擴充實際DOM handler／慢讀取／晚成功錯誤／最新檔／取消／clone／回應矛盾／限定undo。真正CLI／JSON-lines／MCP產物、IAB選檔／三格式下載／草稿及手機DOM驗證見QA。
+- 前版v0.17 ZIP安全還原156／168通過；restore-v0.17.0-before-v0.18.0保留main起點。產品0.18.0，Agent1／MCP2025-11-25／draft3／lyrics seed1／storyboard seed1／library1／backup1保持，六／十一工具，無新依賴或host安裝。ZOE. G、非商用授權與private保持。
+
 ## v0.17.0 — 2026-10-03
 
 - 新增未校時歌詞起稿／JSON檢查：共用Python domain與application、CLI／HTTP／JSON-lines／MCP；原文、重複句、前後空白及來源行號保留，不猜測時間。獨立lyrics seed schema1，未知／矛盾資料拒絕。

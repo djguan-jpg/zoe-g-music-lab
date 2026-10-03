@@ -92,20 +92,6 @@
     let revision = 0;
     return {begin: () => ++revision, isCurrent: token => token === revision};
   }
-  function createLyricsFileImport({apply,onError}) {
-    const task=createLatestTask();
-    return {cancel:()=>task.begin(),async read(file){
-      const token=task.begin();if(!file)return false;
-      try{
-        if(!Number.isSafeInteger(file.size)||file.size<0||file.size>2*1024*1024)throw Error('歌詞檔需小於或等於 2 MiB');
-        const suffix='.'+file.name.split('.').at(-1).toLowerCase();
-        if(!['.lrc','.srt','.json'].includes(suffix))throw Error('請選擇 LRC／SRT／JSON');
-        const content=await file.text();
-        if(!task.isCurrent(token))return false;
-        apply({content,suffix});return true;
-      }catch(error){if(task.isCurrent(token))onError(error);return false;}
-    }};
-  }
   function shotOverview(shots,motifs) {
     const names=new Map(motifs.map(m=>[m.id,m.name]));
     return shots.map((shot,index)=>{
@@ -130,7 +116,7 @@
     return '歌詞已讀取，可逐句校正';
   }
   const api = {createLatestTask, activeCueIndex, draftFields, draftRows, validateDraft,
-    inspectDraft,convertLegacyDraft,nextMotifId,compactShotTimes,createLyricsFileImport,shotOverview,lyricsImportNotice};
+    inspectDraft,convertLegacyDraft,nextMotifId,compactShotTimes,shotOverview,lyricsImportNotice};
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.MusicEditor = api;
 })(typeof window === 'undefined' ? {} : window);
