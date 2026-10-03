@@ -1,0 +1,9 @@
+{
+  "panel": {
+    "fields": {"mv-duration": "1", "mv-fps": "24"},
+    "shots": [
+      {"start": "0", "end": ".06251"},
+      {"start": ".0616", "end": "1"}
+    ]
+  }
+}

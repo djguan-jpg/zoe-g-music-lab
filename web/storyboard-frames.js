@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 'use strict';
 (function(root){
+  const secondsTolerance=.001+1e-12;
   const descriptor={format:'zoe-storyboard-frames',schema_version:1,rounding:'nearest_ties_to_even',end_semantics:'exclusive'};
   function frameIndex(seconds,fps){
-    if(typeof seconds!=='number'||!Number.isFinite(seconds)||seconds<0||seconds>14400+.001+1e-12||
+    if(typeof seconds!=='number'||!Number.isFinite(seconds)||seconds<0||seconds>14400+secondsTolerance||
       typeof fps!=='number'||!Number.isFinite(fps)||fps<=0||fps>120)throw Error('影格時間與 FPS 無效');
     const value=seconds*fps,lower=Math.floor(value),part=value-lower;
     return part<.5?lower:part>.5?lower+1:lower%2===0?lower:lower+1;
@@ -26,6 +27,6 @@
     if(cursor!==total)fail();
     return {totalFrames:total,endSemantics:'exclusive',rounding:'nearest_ties_to_even',declared:declared!==undefined};
   }
-  const api={frameIndex,validateTimeline};
+  const api={frameIndex,validateTimeline,secondsTolerance};
   if(typeof module==='object'&&module.exports)module.exports=api;else root.MusicStoryboardFrames=api;
 })(typeof globalThis==='object'?globalThis:this);

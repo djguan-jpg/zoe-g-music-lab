@@ -1,10 +1,10 @@
 # v0.34.0 本輪交接
 
-原分鏡時間待辦與版本報告完成，原創作欄位0仍可能時間無效的缺口可定位；秒數／影格分開核對，總長接續重用同一純診斷。原字串、鏡號、順序、草稿四panel與音檔保留。完整建立仍核對創作／連戲，時間零不是媒體通過。見[使用與分層](docs/STORYBOARD-TIMING-REVIEW.md)。
+原分鏡時間待辦與版本報告完成，原創作欄位0仍可能時間無效的缺口可定位；秒數／影格分開核對，總長接續重用同一純診斷。原字串、鏡號、順序、草稿四panel與音檔保留。完整建立仍核對創作／連戲，時間零不是媒體通過。見[使用與分層](STORYBOARD-TIMING-REVIEW.md)。
 
 ZOE. G署名／djguan-jpg帳號、PolyForm Noncommercial1.0.0、private與FreeTWAI not_submitted保持，四份法律／創辦紀錄Git blobs未改。基本10／明確啟庫15工具；產品0.34，新時間report1獨立，Agent1／draft3與舊報告不變。只讀新工作區與通用工具，不參考其他本機／本人GitHub作品，不增依賴或模型／外網呼叫。
 
-281Python／431JS／4Skill／33語法及diff、103跨語言及完整clock接受、11組IAB、三原生report／四adapter、原值四panel往返、390px Enter／晚成功／500／來源／未知版本、原音檔、1000列／2000待辦及24影格完整包通過。詳見[QA](docs/QA-v0.34.0.md)。正式媒體／實聽／完整視覺／特定Host／FreeTWAI／原生file播放未驗；rolling active。
+281Python／431JS／4Skill／33語法及diff、103跨語言及完整clock接受、11組IAB、三原生report／四adapter、原值四panel往返、390px Enter／晚成功／500／來源／未知版本、原音檔、1000列／2000待辦及24影格完整包通過。詳見[QA](QA-v0.34.0.md)。正式媒體／實聽／完整視覺／特定Host／FreeTWAI／原生file播放未驗；rolling active。
 
 ## 分支與可逆
 

@@ -109,7 +109,7 @@ class LyricsSeedTests(unittest.TestCase):
             proc=subprocess.run([sys.executable,'-X','utf8',str(ROOT/'music_lab_mcp.py')],cwd=folder,
                 input=''.join(json.dumps(x)+'\n' for x in requests),capture_output=True,encoding='utf-8',timeout=10)
             self.assertEqual(proc.returncode,0,proc.stderr);replies=[json.loads(x) for x in proc.stdout.splitlines()]
-            self.assertEqual(len(replies),4);self.assertEqual(len(replies[1]['result']['tools']),9)
+            self.assertEqual(len(replies),4);self.assertEqual(len(replies[1]['result']['tools']),10)
             for reply,payload in zip(replies[2:],[PAYLOAD,{'seed':seed}]):self.assertEqual(reply['result']['structuredContent'],build('lyrics_seed',payload).wire())
             self.assertEqual(list(Path(folder).iterdir()),[])
         tool={t['name']:t for t in tool_list()}['lyrics_seed'];self.assertTrue(tool['annotations']['readOnlyHint'])

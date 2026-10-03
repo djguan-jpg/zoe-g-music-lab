@@ -20,6 +20,7 @@ from .lyrics_seed import lyrics_seed_bundle, LYRICS_SEED_SCHEMA_VERSION, MAX_SOU
 from .lyrics_review import review_bundle, descriptor as lyrics_review_descriptor
 from .music_review import review_bundle as music_review_bundle, descriptor as music_review_descriptor
 from .storyboard_review import review_bundle as storyboard_review_bundle, descriptor as storyboard_review_descriptor
+from .storyboard_timing_review import review_bundle as storyboard_timing_review_bundle, descriptor as storyboard_timing_review_descriptor
 from .lyrics import read_cues, lyrics_bundle, edits
 from .lyrics_package import (PACKAGE_SCHEMA_VERSION, MAX_PACKAGE_BYTES, validate_package,
                              package_files, decode_document, is_legacy, needs_review as package_needs_review)
@@ -36,6 +37,7 @@ OPERATIONS = {
     "music_review": "Locate incomplete raw song draft fields and numeric ranges; read-only; no content filling, complete plan acceptance or model",
     "storyboard": "Shot timing and motif continuity; no media rendering",
     "storyboard_review": "Locate incomplete raw storyboard fields and motif references; read-only; no timing edits, complete plan acceptance or model",
+    "storyboard_timing_review": "Locate raw storyboard numeric, seconds and exclusive-frame coverage issues; read-only; no time edits, complete creative acceptance or media",
     "lyrics": "Manual cue validation and LRC/SRT/JSON exports; no ASR",
     "lyrics_review": "Locate incomplete lyric rows, duplicate starts, overlap and declared-duration limits; read-only; no guessed times or ASR",
     "audio": "Selected integer PCM WAV evidence and gated mono/stereo integrated loudness; source is preserved; no normalization or true peak",
@@ -89,6 +91,7 @@ def capabilities(draft_library=None, backup_source=None):
             "lyrics_review": lyrics_review_descriptor(),
             "music_review": music_review_descriptor(),
             "storyboard_review": storyboard_review_descriptor(),
+            "storyboard_timing_review": storyboard_timing_review_descriptor(),
             "audio_loudness": loudness_descriptor(),
             "storyboard_frames": frames_descriptor(),
             "input_schemas": {operation: payload_schema(operation) for operation in operations},
@@ -108,7 +111,7 @@ def build(operation, payload, *, audio_source=None, draft_library=None, backup_s
     if operation in LIBRARY_OPERATIONS and draft_library is None:
         raise ValueError("草稿庫未啟用；請在啟動時明確指定 --draft-library 目錄")
     if operation not in available_operations(draft_library):
-        raise ValueError("未知操作；請使用 music、music_review、storyboard、storyboard_review、lyrics、audio、storyboard_seed、lyrics_seed 或 lyrics_review")
+        raise ValueError("未知操作；請使用 music、music_review、storyboard、storyboard_review、storyboard_timing_review、lyrics、audio、storyboard_seed、lyrics_seed 或 lyrics_review")
     if not isinstance(payload, dict):
         raise ValueError("輸入需為 JSON 物件")
     if operation in LIBRARY_OPERATIONS:
@@ -135,6 +138,9 @@ def build(operation, payload, *, audio_source=None, draft_library=None, backup_s
     elif operation == "storyboard_review":
         files = storyboard_review_bundle(payload)
         data = json.loads(files["storyboard-review.json"])
+    elif operation == "storyboard_timing_review":
+        files = storyboard_timing_review_bundle(payload)
+        data = json.loads(files["storyboard-timing-review.json"])
     elif operation == "lyrics_review":
         files = review_bundle(payload)
         data = json.loads(files["lyrics-review.json"])
@@ -193,7 +199,7 @@ def build(operation, payload, *, audio_source=None, draft_library=None, backup_s
             data["file"] = Path(name.replace("\\", "/")).name[:200] or "selected.wav"
         files = audio_bundle(data)
     review = bool(data.get("review_notes") or data.get("warnings") or data.get("duration_estimated"))
-    if operation in ('lyrics_review', 'music_review', 'storyboard_review'):
+    if operation in ('lyrics_review', 'music_review', 'storyboard_review', 'storyboard_timing_review'):
         review = True  # Diagnostic readiness never proves performance synchronization.
     if operation == 'lyrics':
         review = package_needs_review(data)

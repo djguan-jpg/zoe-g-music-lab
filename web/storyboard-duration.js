@@ -1,12 +1,10 @@
 // SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 'use strict';
 (function(root){
-  const Frames=typeof module==='object'&&module.exports?require('./storyboard-frames.js'):root.MusicStoryboardFrames;
   const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
-  function clock(value,label){
-    if(typeof value!=='string'||!value.trim()||!/^[+-]?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:e[+-]?[0-9]+)?$/i.test(value.trim()))throw Error(label+'需為十進位數字');
-    const result=Number(value);if(!Number.isFinite(result))throw Error(label+'需為有限數字');return result;
-  }
+  const Values=typeof module==='object'&&module.exports?require('./planning-values.js'):root.MusicPlanningValues;
+  const Timing=typeof module==='object'&&module.exports?require('./storyboard-timing.js'):root.MusicStoryboardTiming;
+  const clock=(value,label)=>Values.number(value,label);
   function snapshot(value){
     if(!value||typeof value.duration!=='string'||typeof value.fps!=='string'||!Array.isArray(value.shots)||value.shots.length>1000)throw Error('分鏡總長來源不完整；目前內容保留');
     const ids=new Set();
@@ -19,16 +17,10 @@
   function proposal(value){
     const selected=snapshot(value);
     if(!selected.shots.length)throw Error('尚無鏡頭；先完成分鏡時間。');
-    const fps=clock(selected.fps,'FPS'),endText=selected.shots.at(-1).end,duration=clock(endText,'最後一鏡結束');
-    if(duration<=0||duration>14400||fps<=0||fps>120)throw Error('鏡尾需為0–14400秒內的正時長，FPS需為0–120內的正數。');
-    let previous=0;
-    const shots=selected.shots.map((s,i)=>{
-      const start=clock(s.start,`鏡頭${i+1}開始`),end=clock(s.end,`鏡頭${i+1}結束`);
-      if(start<0||end<=start||end>duration+.001+1e-12||Math.abs(start-previous)>.001+1e-12)throw Error(`鏡頭${i+1}時間有重疊、空缺或超出鏡尾；先核對時間。`);
-      previous=end;return {start,end,start_frame:Frames.frameIndex(start,fps),end_frame_exclusive:Frames.frameIndex(end,fps)};
-    });
-    const frames=Frames.validateTimeline({duration_seconds:duration,fps,shots});
-    return {source:{fps:selected.fps,shots:selected.shots},before:selected.duration,after:endText,seconds:duration,totalFrames:frames.totalFrames};
+    const endText=selected.shots.at(-1).end,duration=clock(endText,'最後一鏡結束');
+    const data=Timing.inspect({fields:{'mv-duration':endText,'mv-fps':selected.fps},shots:selected.shots.map(s=>({start:s.start,end:s.end}))});
+    if(data.issueCount){const issue=data.issues[0];throw Error(`${issue.scope==='shots'?'鏡頭'+issue.row+' ':''}${Timing.labels[issue.field]}：${issue.message}`);}
+    return {source:{fps:selected.fps,shots:selected.shots},before:selected.duration,after:endText,seconds:duration,totalFrames:data.totalFrames};
   }
   function compare(value){
     const selected=snapshot(value);let declared=null,candidate=null,error='';
