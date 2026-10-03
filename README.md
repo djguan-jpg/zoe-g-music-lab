@@ -2,7 +2,7 @@
 
 由 **ZOE. G** 發起的四個原創專案。GitHub 帳號為 **djguan-jpg**；品牌署名與帳號可以不同。
 
-目前版本 v0.7 提供四個工作台與原創 Skill。Python 3.10 以上即可使用，沒有第三方依賴。只讀本次新建工作區，不參考使用者的其他本機或 GitHub 專案。公開第三方 README 僅用於需求比較，來源及自行設計的差異記在 [構思紀錄](CONCEPT.md)。
+目前版本 v0.8 提供四個工作台與原創 Skill。Python 3.10 以上即可使用，沒有第三方依賴。只讀本次新建工作區，不參考使用者的其他本機或 GitHub 專案。公開第三方 README 僅用於需求比較，來源及自行設計的差異記在 [構思紀錄](CONCEPT.md)。
 
 授權為 **PolyForm Noncommercial 1.0.0**，商業使用沒有由本版授權。可查看、修改及分發的範圍以 [LICENSE](LICENSE) 為準，保留 [NOTICE](NOTICE)。這是非商用原始碼授權；不標成 AGPL。使用者匯入的素材授權各自保留，詳見 [授權說明](LICENSING.md)。
 
@@ -67,7 +67,7 @@ python music_lab.py audio --input '自己的歌曲.wav' --profile distribution -
 - [創辦與協作紀錄](FOUNDER-RECORD.md)：ZOE. G 發起方向；Codex 協助規格、文字、程式與驗證。
 - [專案清單](projects.json)：四個獨立 ID、版本與功能範圍。
 - [本輪進度](PROGRESS.md)：實跑驗證與後續工作。
-- [本版說明](RELEASE-v0.7.0.md)：功能、版本契約、驗證與限制。
+- [本版說明](RELEASE-v0.8.0.md)：功能、版本契約、驗證與限制。
 - [四個專案的投稿資料](SUBMISSION-PACKET.md)：來源連結、用途、使用方式與作者關係。
 - [分層與分支架構](docs/ARCHITECTURE.md)、[Agent 與 MCP 接口](docs/AGENT.md)、[迭代說明](CHANGELOG.md)、[本輪交接](HANDOFF.md)。
 
@@ -80,14 +80,14 @@ GitHub 儲存庫為 [djguan-jpg/zoe-g-music-lab](https://github.com/djguan-jpg/z
 ```powershell
 python -m unittest discover -s tests -v
 node --check web/app.js
-node --test tests/test_editor_state.js tests/test_planning_import.js
+node --test tests/test_*.js
 git diff --check
 ```
 
 開發／封裝驗證需要 Node.js；一般使用工作台與 CLI 只需要 Python。從指定 Git 版本建立可驗證的原始碼 ZIP：
 
 ```powershell
-python scripts/package_release.py --ref v0.7.0
+python scripts/package_release.py --ref v0.8.0
 ```
 
 封裝保存 commit、SHA-256、每檔摘要及檢查結果；解壓後重跑 Python／JavaScript 測試、Agent 能力查詢與 MCP 握手。輸出留在忽略的 outputs/releases，重複封裝同一提交會拒絕覆寫。
@@ -97,3 +97,14 @@ python scripts/package_release.py --ref v0.7.0
 歌曲清單的空白項目會顯示欄位旁提示並取得焦點，修正或重新載入後清除舊標示；交付清單全空時定位到新增按鈕。標示不是驗證成果，修改後仍需重建。
 
 MCP tools/list 與本機 capabilities 提供完整輸入欄位及 files/data/meta 成果 schema。現代與舊版歌曲／分鏡都有明確條件。schema 描述資料形狀，領域層檢查時間、數字文字、連戲與 PCM；沒有新增 schema engine 或模型呼叫。歌詞請求的 cues 與 content／suffix 不可同時提供，以免原文被忽略。音檔接受條件需為正整數清單，拒絕布林值與小數；1.0 這類整數值會正規化為 1。詳見 [Agent 契約](docs/AGENT.md)。
+
+
+## v0.8 的刪除還原
+
+歌曲段落、避免事項、交付項目、未使用的母題、鏡頭及歌詞句可由工作台上方選擇刪除紀錄再還原。每個創作工作台保留最近 20 筆，摘要協助辨識；可選擇較早的一筆。其他欄位、後續新增／編修及已選音檔保留。還原後需重建成果才可下載。
+
+分鏡刪除的自動時間接續只有目前值仍與刪除後相同才撤回；手動改過的時間／總長保留並提示重新檢查。可能需要人工修正空白或重疊，既有分鏡檢查仍必須通過。刪除紀錄中的母題 ID 暫時保留，新母題不會重用它。
+
+紀錄只在本頁，不存進草稿或跨重載保留；請另存草稿。載入新範例／需求／草稿會清除被取代工作台的紀錄，成功重新讀取歌詞也清除歌詞紀錄，驗證逐句表格則保留。容量已滿時不還原也不丟掉紀錄；先保存草稿、刪除另一列，再選原紀錄還原。歌曲／鏡頭／歌詞列上限分別為 40／1000／10000，需求清單 100、母題 30。
+
+歌詞匯入或驗證期間仍可修改本工作台；有修改時會捨棄舊回應，保留表格與原文，提示重新建立成果。

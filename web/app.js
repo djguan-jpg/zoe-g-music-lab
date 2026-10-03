@@ -2,12 +2,92 @@
 'use strict';
 const $ = id => document.getElementById(id);
 const state = {tab:'music', examples:null, files:{}, bundles:{}, revisions:{}, music:[], shots:[], cues:[], audioUrl:null, audioContext:null, waveform:null, busy:false, undoDraft:null, undoScope:null};
+const deletionHistory=MusicHistory.createHistory(20);
+let rowSequence=0;
+const rowIds=(items,ids)=>ids||items.map(()=>`row-${++rowSequence}`);
+const collections={
+  arrangement:{scope:'music',label:'段落',limit:MusicEditor.draftRows.music.limit},
+  'music-avoid':{scope:'music',label:'避免事項',limit:100},
+  'music-deliverables':{scope:'music',label:'交付項目',limit:100},
+  motifs:{scope:'storyboard',label:'母題',limit:30},
+  shots:{scope:'storyboard',label:'鏡頭',limit:MusicEditor.draftRows.storyboard.limit},
+  cues:{scope:'lyrics',label:'歌詞句',limit:10000}
+};
+function entriesFor(list){
+  return [...$(list).children].map(row=>{
+    let value;
+    if(list==='arrangement')value=Object.fromEntries(['name','bars','energy','focus','texture'].map((key,i)=>[key,row.querySelectorAll('input')[i].value]));
+    else if(list==='cues')value=Object.fromEntries(['start','end','text'].map((key,i)=>[key,row.querySelectorAll('input')[i].value]));
+    else if(list==='shots')value={...Object.fromEntries([...row.querySelectorAll('[data-key]')].map(x=>[x.dataset.key,x.value])),open:row.querySelector('details').open};
+    else if(list==='motifs')value={id:row.dataset.motifId,name:row.querySelector('[data-motif="name"]').value,meaning:row.querySelector('[data-motif="meaning"]').value};
+    else value=row.querySelector('textarea').value;
+    return {id:row.dataset.historyId,value};
+  });
+}
+function writeEntries(list,entries){
+  const values=entries.map(e=>e.value),ids=entries.map(e=>e.id);
+  if(list==='arrangement')renderSections(values,ids);
+  else if(list==='cues'){renderCues(values,ids);tick();}
+  else if(list==='shots')renderShots(values,values.map(s=>s.open),ids);
+  else if(list==='motifs'){renderMotifs(values);refreshMotifChoices();}
+  else renderRequirements(list,values,collections[list].label,ids);
+}
+function refreshDeletionHistory(scope){
+  const records=deletionHistory.entries(scope),record=records.at(-1),select=$(scope+'-delete-select');
+  select.replaceChildren();records.forEach((r,i)=>select.append(new Option(`${i+1} · ${r.label}`,String(i))));
+  select.disabled=!record;if(record)select.value=String(records.length-1);
+  refreshDeletionButton(scope);
+  $(scope+'-delete-note').textContent=record?`本工作台可還原 ${deletionHistory.size(scope)} 次刪除；其他內容的編修保留。`:'本頁最多保留 20 次刪除；載入新內容會清除此工作台紀錄。';
+}
+function refreshDeletionButton(scope){
+  const record=deletionHistory.at(scope,Number($(scope+'-delete-select').value)),button=$(scope+'-delete-undo');
+  button.disabled=!record;button.textContent=record?`還原：${record.label}`:'還原最近刪除';
+}
+function clearDeletionHistory(scope){deletionHistory.clear(scope);refreshDeletionHistory(scope);}
+function focusEntry(list,index){
+  const row=$(list).children[index];if(!row)return;
+  if(list==='shots'){focusShot(index);return;}
+  row.querySelector('input,textarea')?.focus();
+}
+function deleteEntry(list,index){
+  if(state.busy){say('目前操作尚未完成，請稍候');return;}
+  const spec=collections[list],before=entriesFor(list),removed=MusicHistory.remove(before,index);
+  let remaining=removed.remaining,record=removed.record;
+  if(list==='shots'){
+    const duration=$('mv-duration').value,compact=MusicEditor.compactShotTimes(remaining.map(e=>e.value));
+    if(compact){remaining=remaining.map((e,i)=>({...e,value:compact[i]}));$('mv-duration').value=compact.length?compact.at(-1).end:'0';}
+    record=MusicHistory.effects(record,before,remaining,['start','end'],{'mv-duration':duration},{'mv-duration':$('mv-duration').value});
+  }
+  const value=record.entry.value,summary=String(typeof value==='string'?value:
+    value.name||value.text||value.section||'').replace(/\s+/g,' ').trim();
+  const caption=Array.from(summary);
+  record.list=list;record.label=`${spec.label} ${index+1}${summary?' · '+caption.slice(0,24).join('')+(caption.length>24?'…':''):''}`;
+  writeEntries(list,remaining);deletionHistory.push(spec.scope,record);refreshDeletionHistory(spec.scope);
+  markDirty(spec.scope);focusEntry(list,Math.min(index,remaining.length-1));
+  say(`已刪除${record.label}，可還原；${list==='shots'?'請重新檢查分鏡時間':'重新建立成果後更新'}`);
+}
+function undoDeletion(scope){
+  if(state.busy){say('目前操作尚未完成，請稍候');return;}
+  const index=Number($(scope+'-delete-select').value),record=deletionHistory.at(scope,index);if(!record)return;
+  try{
+    const spec=collections[record.list],fields=record.list==='shots'?{'mv-duration':$('mv-duration').value}:{};
+    const result=MusicHistory.restore(entriesFor(record.list),record,{limit:spec.limit,fields});
+    Object.entries(result.fields).forEach(([id,value])=>$(id).value=value);
+    writeEntries(record.list,result.entries);deletionHistory.drop(scope,index);refreshDeletionHistory(scope);
+    markDirty(scope);focusEntry(record.list,result.index);
+    say(`已還原${record.label}；${record.list==='shots'?`後來編修的時間保留${result.kept.length?'（'+result.kept.length+' 欄）':''}，請重新檢查分鏡時間`:'其他編修保留，請重新建立成果'}`);
+  }catch(error){say(error.message,true);}
+}
+['music','storyboard','lyrics'].forEach(scope=>{
+  $(scope+'-delete-undo').onclick=()=>undoDeletion(scope);
+  $(scope+'-delete-select').onchange=()=>refreshDeletionButton(scope);
+});
 const waveTask = MusicEditor.createLatestTask();
 function say(message,error=false){$('status').textContent=message;$('status').className=error?'error':'';if(state.tab==='storyboard'){$('shot-status').textContent=message;$('shot-status').classList.toggle('error',error);}}
 function esc(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function field(value,label,type='text',wide=false){return `<input type="${type}" value="${esc(value)}" aria-label="${esc(label)}" class="${wide?'wide':''}" ${type==='number'?'step="0.001"':''}>`;}
 async function api(route,data,binary=false){const response=await fetch(route,{method:'POST',headers:{'Content-Type':binary?'application/octet-stream':'application/json'},body:binary?data:JSON.stringify(data)});const result=await response.json();if(!response.ok)throw Error(result.error||'操作未完成');return result;}
-async function run(button,task){if(state.busy)return;const tab=state.tab,revision=state.revisions[tab]||0;say('處理中，請稍候');state.busy=true;button.disabled=true;try{await task();if((state.revisions[tab]||0)!==revision){markDirty(tab);say('處理期間輸入有修改，請重新建立成果');}}catch(error){say(error.message,true);}finally{state.busy=false;button.disabled=false;}}
+async function run(button,task){if(state.busy)return;const tab=state.tab,revision=state.revisions[tab]||0;say('處理中，請稍候');state.busy=true;button.disabled=true;try{await task(()=> (state.revisions[tab]||0)===revision);if((state.revisions[tab]||0)!==revision){markDirty(tab);say('處理期間輸入有修改，請重新建立成果');}}catch(error){say(error.message,true);}finally{state.busy=false;button.disabled=false;}}
 function setFiles(files,note,dirty=false){state.files=files;state.bundles[state.tab]={files,note,dirty};const select=$('output-file');select.replaceChildren();Object.keys(files).forEach(name=>{const option=document.createElement('option');option.value=name;option.textContent=name;select.append(option);});select.disabled=false;$('download').disabled=dirty;$('output-note').textContent=note+(dirty?'（有修改尚未重新驗證）':'');previewOutput();}
 function markDirty(tab){state.revisions[tab]=(state.revisions[tab]||0)+1;const saved=state.bundles[tab];if(!saved)return;saved.dirty=true;if(state.tab===tab){$('download').disabled=true;$('output-note').textContent=saved.note+'（有修改尚未重新驗證）';}}
 document.querySelector('.editor').addEventListener('input',event=>{
@@ -23,8 +103,7 @@ function previewOutput(){const name=$('output-file').value;$('output-content').v
 $('output-file').onchange=previewOutput;
 $('export-form').onsubmit=()=>{say('已送出本機下載，請確認瀏覽器保存的檔案。');};
 document.querySelectorAll('[data-tab]').forEach(button=>button.onclick=()=>{if(state.busy){say('目前操作尚未完成，請稍候');return;}state.tab=button.dataset.tab;document.querySelectorAll('.panel').forEach(section=>section.hidden=section.id!==state.tab);document.querySelectorAll('[data-tab]').forEach(b=>{b.classList.toggle('active',b===button);if(b===button)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});const saved=state.bundles[state.tab];if(saved)setFiles(saved.files,saved.note,saved.dirty);else clearOutput();say(saved?.dirty?'有修改尚未重新驗證，請重新建立成果':'準備開始');});
-function getMusicSections(){return [...$('arrangement').children].map(row=>{const x=row.querySelectorAll('input');if(!x[1].value.trim()||!x[2].value.trim())throw Error('小節與能量不可空白');return {name:x[0].value,bars:Number(x[1].value),energy:Number(x[2].value),focus:x[3].value,texture:x[4].value};});}
-function renderSections(sections){$('arrangement').innerHTML=sections.map((s,i)=>`<tr><td>${field(s.name,`段落 ${i+1} 名稱`)}</td><td>${field(s.bars,`段落 ${i+1} 小節`,'number')}</td><td>${field(s.energy,`段落 ${i+1} 能量`,'number')}</td><td>${field(s.focus,`段落 ${i+1} 任務`,'text',true)}</td><td>${field(s.texture,`段落 ${i+1} 聲音`,'text',true)}</td><td><button type="button" data-remove-section="${i}" aria-label="刪除段落 ${i+1}">刪除</button></td></tr>`).join('');$('arrangement').querySelectorAll('[data-remove-section]').forEach(b=>b.onclick=()=>{b.closest('tr').remove();markDirty('music');say('已刪除段落；重新建立設計包以更新時間');});}
+function renderSections(sections,ids){const keys=rowIds(sections,ids);$('arrangement').innerHTML=sections.map((s,i)=>`<tr data-history-id="${esc(keys[i])}"><td>${field(s.name,`段落 ${i+1} 名稱`)}</td><td>${field(s.bars,`段落 ${i+1} 小節`,'number')}</td><td>${field(s.energy,`段落 ${i+1} 能量`,'number')}</td><td>${field(s.focus,`段落 ${i+1} 任務`,'text',true)}</td><td>${field(s.texture,`段落 ${i+1} 聲音`,'text',true)}</td><td><button type="button" data-remove-section="${i}" aria-label="刪除段落 ${i+1}">刪除</button></td></tr>`).join('');$('arrangement').querySelectorAll('[data-remove-section]').forEach((b,i)=>b.onclick=()=>deleteEntry('arrangement',i));}
 function requirementValues(id){return [...$(id).querySelectorAll('textarea')].map(input=>input.value);}
 function clearRequirementError(id){
   $(id+'-error').hidden=true;$(id+'-error').textContent='';
@@ -40,22 +119,22 @@ function showRequirementIssue(issue){
   if(input.tagName==='TEXTAREA')input.setAttribute('aria-invalid','true');
   input.setAttribute('aria-describedby',note.id);input.focus();say(issue.message,true);
 }
-function renderRequirements(id,items,label){
+function renderRequirements(id,items,label,ids){
+  const keys=rowIds(items,ids);
   clearRequirementError(id);
-  $(id).innerHTML=items.map((item,index)=>`<div class="requirement-item"><label>${label} ${index+1}<textarea rows="2" aria-label="${label} ${index+1}">${esc(item)}</textarea></label><p id="${id}-item-error-${index+1}" class="requirement-error" role="status" aria-live="polite" hidden></p><button type="button" class="subtle" aria-label="刪除${label} ${index+1}">刪除</button></div>`).join('');
+  $(id).innerHTML=items.map((item,index)=>`<div class="requirement-item" data-history-id="${esc(keys[index])}"><label>${label} ${index+1}<textarea rows="2" aria-label="${label} ${index+1}">${esc(item)}</textarea></label><p id="${id}-item-error-${index+1}" class="requirement-error" role="status" aria-live="polite" hidden></p><button type="button" class="subtle" aria-label="刪除${label} ${index+1}">刪除</button></div>`).join('');
   $(id).querySelectorAll('button').forEach((button,index)=>button.onclick=()=>{
-    const values=requirementValues(id);values.splice(index,1);renderRequirements(id,values,label);markDirty('music');
-    say(`已刪除${label}，重新建立歌曲設計包後更新`);
+    deleteEntry(id,index);
   });
 }
 function addRequirement(id,label){const items=requirementValues(id);if(items.length>=100){say(`${label}最多 100 項`,true);return;}
-  items.push('');renderRequirements(id,items,label);markDirty('music');$(id).lastElementChild.querySelector('textarea').focus();}
+  const ids=entriesFor(id).map(e=>e.id);items.push('');ids.push(`row-${++rowSequence}`);renderRequirements(id,items,label,ids);markDirty('music');$(id).lastElementChild.querySelector('textarea').focus();}
 $('avoid-add').onclick=()=>addRequirement('music-avoid','避免事項');
 $('deliverable-add').onclick=()=>addRequirement('music-deliverables','交付項目');
 ['music-avoid','music-deliverables'].forEach(id=>$(id).addEventListener('input',()=>clearRequirementError(id)));
-function loadMusic(){const b=structuredClone(state.examples.music);[['music-title',b.title],['music-hook',b.memory_hook],['music-theme',b.theme],['music-style',b.style],['music-vocal',b.vocal],['music-audience',b.audience],['music-bpm',b.bpm],['music-beats',b.beats_per_bar],['music-lyrics',b.existing_lyrics],['music-language',b.language]].forEach(([id,value])=>$(id).value=value);renderSections(b.arrangement);renderRequirements('music-avoid',b.avoid,'避免事項');renderRequirements('music-deliverables',b.deliverables,'交付項目');$('music-visual').hidden=true;}
+function loadMusic(){clearDeletionHistory('music');const b=structuredClone(state.examples.music);[['music-title',b.title],['music-hook',b.memory_hook],['music-theme',b.theme],['music-style',b.style],['music-vocal',b.vocal],['music-audience',b.audience],['music-bpm',b.bpm],['music-beats',b.beats_per_bar],['music-lyrics',b.existing_lyrics],['music-language',b.language]].forEach(([id,value])=>$(id).value=value);renderSections(b.arrangement);renderRequirements('music-avoid',b.avoid,'避免事項');renderRequirements('music-deliverables',b.deliverables,'交付項目');$('music-visual').hidden=true;}
 $('music-example').onclick=()=>{loadMusic();markDirty('music');say('已載入本次原創合成範例，可直接修改');};
-$('section-add').onclick=()=>{try{const sections=getMusicSections();sections.push({name:'新段落',bars:8,energy:3,focus:'',texture:''});renderSections(sections);markDirty('music');}catch(e){say(e.message,true);}};
+$('section-add').onclick=()=>{try{const entries=entriesFor('arrangement');if(entries.length>=collections.arrangement.limit)throw Error('段落最多 40 列');entries.push({id:`row-${++rowSequence}`,value:{name:'新段落',bars:'8',energy:'3',focus:'',texture:''}});writeEntries('arrangement',entries);markDirty('music');}catch(e){say(e.message,true);}};
 $('music-form').onsubmit=event=>{event.preventDefault();if(state.busy)return;
   clearRequirementError('music-avoid');clearRequirementError('music-deliverables');
   const issue=MusicPlanning.requirementIssue({avoid:requirementValues('music-avoid'),deliverables:requirementValues('music-deliverables')});
@@ -68,15 +147,15 @@ function rawShots(){return [...$('shots').children].map(article=>Object.fromEntr
 function motifOptions(motifs,selected){return '<option value="">請選擇母題</option>'+motifs.map((m,i)=>`<option value="${esc(m.id)}" ${m.id===selected?'selected':''}>${esc(m.name||'未命名母題 '+(i+1))}</option>`).join('');}
 function refreshMotifChoices(){const motifs=getMotifs();$('shots').querySelectorAll('[data-key="motif_id"]').forEach(select=>{const selected=select.value;select.innerHTML=motifOptions(motifs,selected);});refreshShotOverview();}
 function renderMotifs(motifs){
-  $('motifs').innerHTML=motifs.map((m,i)=>`<article class="motif" data-motif-id="${esc(m.id)}"><div class="shot-header"><h3>母題 ${i+1}</h3><button class="subtle" data-remove-motif="${esc(m.id)}" aria-label="刪除母題 ${i+1}">刪除</button></div><div class="fields"><label>母題名稱<input data-motif="name" aria-label="母題 ${i+1} 名稱" value="${esc(m.name)}"></label><label>初始意義<input data-motif="meaning" aria-label="母題 ${i+1} 初始意義" value="${esc(m.meaning)}"></label></div></article>`).join('');
+  $('motifs').innerHTML=motifs.map((m,i)=>`<article class="motif" data-history-id="${esc(m.id)}" data-motif-id="${esc(m.id)}"><div class="shot-header"><h3>母題 ${i+1}</h3><button class="subtle" data-remove-motif="${esc(m.id)}" aria-label="刪除母題 ${i+1}">刪除</button></div><div class="fields"><label>母題名稱<input data-motif="name" aria-label="母題 ${i+1} 名稱" value="${esc(m.name)}"></label><label>初始意義<input data-motif="meaning" aria-label="母題 ${i+1} 初始意義" value="${esc(m.meaning)}"></label></div></article>`).join('');
   $('motifs').querySelectorAll('[data-remove-motif]').forEach(button=>button.onclick=()=>{
     const id=button.dataset.removeMotif,used=rawShots().flatMap((s,i)=>s.motif_id===id?[i+1]:[]);
     if(used.length){say(`母題仍用於鏡頭 ${used.join('、')}，請先替這些鏡頭選擇其他母題`,true);return;}
-    renderMotifs(getMotifs().filter(m=>m.id!==id));refreshMotifChoices();markDirty('storyboard');say('已刪除未使用的母題');
+    deleteEntry('motifs',getMotifs().findIndex(m=>m.id===id));
   });
 }
 $('motifs').addEventListener('input',refreshMotifChoices);
-$('motif-add').onclick=()=>{const motifs=getMotifs();if(motifs.length>=30){say('最多可規劃 30 個母題',true);return;}motifs.push({id:MusicEditor.nextMotifId(motifs),name:'',meaning:''});renderMotifs(motifs);refreshMotifChoices();markDirty('storyboard');$('motifs').lastElementChild.querySelector('input').focus();say('已新增母題，填入意義後可在鏡頭中選擇');};
+$('motif-add').onclick=()=>{const motifs=getMotifs();if(motifs.length>=30){say('最多可規劃 30 個母題',true);return;}motifs.push({id:MusicEditor.nextMotifId([...motifs,...deletionHistory.reserved('storyboard','motifs').map(id=>({id}))]),name:'',meaning:''});renderMotifs(motifs);refreshMotifChoices();markDirty('storyboard');$('motifs').lastElementChild.querySelector('input').focus();say('已新增母題，填入意義後可在鏡頭中選擇');};
 function shotOpenStates(){return [...$('shots').querySelectorAll('details')].map(details=>details.open);}
 function refreshShotOverview(){
   const overview=MusicEditor.shotOverview(rawShots(),getMotifs()),select=$('shot-jump'),selected=select.value;
@@ -97,16 +176,12 @@ function focusShot(index,key){
 $('shots-collapse').onclick=()=>{$('shots').querySelectorAll('details').forEach(d=>d.open=false);say('所有鏡頭已收合；編修欄位與草稿完整保留');};
 $('shots-expand').onclick=()=>{$('shots').querySelectorAll('details').forEach(d=>d.open=true);say('所有鏡頭已展開');};
 $('shot-go').onclick=()=>{focusShot(Number($('shot-jump').value));say(`已定位鏡頭 ${Number($('shot-jump').value)+1}`);};
-function renderShots(shots,openStates=shots.map((_,i)=>i===0)){
-  const motifs=getMotifs();
-  $('shots').innerHTML=shots.map((s,i)=>`<article class="shot"><div class="shot-header"><h3>鏡頭 ${i+1}</h3><button class="subtle" data-remove-shot="${i}" aria-label="刪除鏡頭 ${i+1}">刪除</button></div><details ${openStates[i]?'open':''}><summary aria-label="鏡頭 ${i+1} 摘要"><span data-shot-caption></span></summary><div class="shot-editor"><div class="fields">${['start','end'].map((key,j)=>`<label>${j?'結束':'開始'}（秒）<input data-key="${key}" type="number" min="0" step="0.001" value="${esc(s[key])}" aria-label="鏡頭 ${i+1} ${j?'結束':'開始'}"></label>`).join('')}</div><label>使用母題<select data-key="motif_id" aria-label="鏡頭 ${i+1} 使用母題">${motifOptions(motifs,s.motif_id)}</select></label>${shotFields.map(([key,label])=>`<label>${label}<textarea data-key="${key}" rows="2" aria-label="鏡頭 ${i+1} ${label}">${esc(s[key])}</textarea></label>`).join('')}<label>畫面方向<select data-key="screen_direction" aria-label="鏡頭 ${i+1} 畫面方向">${[['left','向左'],['right','向右'],['neutral','正面／中性']].map(([value,label])=>`<option value="${value}" ${value===s.screen_direction?'selected':''}>${label}</option>`).join('')}</select></label></div></details></article>`).join('');
+function renderShots(shots,openStates=shots.map((_,i)=>i===0),ids){
+  const motifs=getMotifs(),keys=rowIds(shots,ids);
+  $('shots').innerHTML=shots.map((s,i)=>`<article class="shot" data-history-id="${esc(keys[i])}"><div class="shot-header"><h3>鏡頭 ${i+1}</h3><button class="subtle" data-remove-shot="${i}" aria-label="刪除鏡頭 ${i+1}">刪除</button></div><details ${openStates[i]?'open':''}><summary aria-label="鏡頭 ${i+1} 摘要"><span data-shot-caption></span></summary><div class="shot-editor"><div class="fields">${['start','end'].map((key,j)=>`<label>${j?'結束':'開始'}（秒）<input data-key="${key}" type="number" min="0" step="0.001" value="${esc(s[key])}" aria-label="鏡頭 ${i+1} ${j?'結束':'開始'}"></label>`).join('')}</div><label>使用母題<select data-key="motif_id" aria-label="鏡頭 ${i+1} 使用母題">${motifOptions(motifs,s.motif_id)}</select></label>${shotFields.map(([key,label])=>`<label>${label}<textarea data-key="${key}" rows="2" aria-label="鏡頭 ${i+1} ${label}">${esc(s[key])}</textarea></label>`).join('')}<label>畫面方向<select data-key="screen_direction" aria-label="鏡頭 ${i+1} 畫面方向">${[['left','向左'],['right','向右'],['neutral','正面／中性']].map(([value,label])=>`<option value="${value}" ${value===s.screen_direction?'selected':''}>${label}</option>`).join('')}</select></label></div></details></article>`).join('');
   refreshShotOverview();
   $('shots').querySelectorAll('[data-remove-shot]').forEach(button=>button.onclick=()=>{
-    const shots=rawShots(),openStates=shotOpenStates(),index=Number(button.dataset.removeShot);shots.splice(index,1);openStates.splice(index,1);
-    const compact=MusicEditor.compactShotTimes(shots);
-    if(compact)$('mv-duration').value=compact.length?compact.at(-1).end:'0';
-    renderShots(compact||shots,openStates);markDirty('storyboard');
-    say(compact?'已刪除鏡頭，後續時間已接續':'已刪除鏡頭；其他鏡頭時間尚未填完，請修正後重新檢查');
+    deleteEntry('shots',Number(button.dataset.removeShot));
   });
 }
 function getShots(){
@@ -114,13 +189,14 @@ function getShots(){
   return rawShots().map((s,i)=>{if(!s.start.trim()||!s.end.trim()){focusShot(i,!s.start.trim()?'start':'end');throw Error(`鏡頭 ${i+1} 時間不可空白`);}if(!s.motif_id||!motifs.has(s.motif_id)){focusShot(i,'motif_id');throw Error(`鏡頭 ${i+1} 請先選擇母題`);}const {motif_id,...shot}=s;return {...shot,start:Number(s.start),end:Number(s.end),motif:motifs.get(motif_id)};});
 }
 function loadMv(){
+  clearDeletionHistory('storyboard');
   const brief=structuredClone(state.examples.storyboard);
   [['mv-title',brief.title],['mv-duration',brief.duration_seconds],['mv-fps',brief.fps],['mv-ratio',brief.aspect_ratio],['mv-style',brief.visual_style],['mv-anchor',brief.character_anchor]].forEach(([id,value])=>$(id).value=value);
   const motifs=brief.motifs.map((m,i)=>({...m,id:`motif-${i+1}`}));renderMotifs(motifs);
   renderShots(brief.shots.map(s=>({...s,motif_id:motifs.find(m=>m.name===s.motif)?.id||''})));$('mv-visual').hidden=true;
 }
 $('mv-example').onclick=()=>{loadMv();markDirty('storyboard');say('已載入本次原創合成分鏡');};
-$('shot-add').onclick=()=>{const shots=rawShots(),openStates=shotOpenStates(),last=shots.at(-1),start=last?.end?.trim()?Number(last.end):0;if(!Number.isFinite(start)){say('最後一鏡結束時間需為數字',true);return;}shots.push({start:String(start),end:String(start+6),section:'',purpose:'',visual:'',camera:'',transition:'',motif_id:'',motif_state:'',character_state:last?.character_state||'',change_reason:'',screen_direction:'neutral'});$('mv-duration').value=start+6;openStates.push(true);renderShots(shots,openStates);markDirty('storyboard');focusShot(shots.length-1,'motif_id');say('已新增鏡頭，請選擇母題並填入動作與敘事任務');};
+$('shot-add').onclick=()=>{const shots=rawShots(),openStates=shotOpenStates(),ids=entriesFor('shots').map(e=>e.id),last=shots.at(-1),start=last?.end?.trim()?Number(last.end):0;if(shots.length>=collections.shots.limit){say('鏡頭最多 1000 列',true);return;}if(!Number.isFinite(start)){say('最後一鏡結束時間需為數字',true);return;}shots.push({start:String(start),end:String(start+6),section:'',purpose:'',visual:'',camera:'',transition:'',motif_id:'',motif_state:'',character_state:last?.character_state||'',change_reason:'',screen_direction:'neutral'});$('mv-duration').value=start+6;openStates.push(true);ids.push(`row-${++rowSequence}`);renderShots(shots,openStates,ids);markDirty('storyboard');focusShot(shots.length-1,'motif_id');say('已新增鏡頭，請選擇母題並填入動作與敘事任務');};
 $('mv-build').onclick=()=>run($('mv-build'),async()=>{
   const brief=MusicPlanning.planningBrief(captureDraft(),'storyboard');brief.shots=getShots();
   const result=await api('/api/storyboard',brief);setFiles(result.files,`母題分鏡 · ${result.data.shots.length} 鏡 · ${result.data.duration_seconds} 秒`);
@@ -129,7 +205,7 @@ $('mv-build').onclick=()=>run($('mv-build'),async()=>{
   say(result.data.review_notes.length?`分鏡包已建立；有 ${result.data.review_notes.length} 個待審查項目`:'分鏡包已建立；時間與資料連戲檢查通過');
 });
 function cueValues(){return [...$('cues').children].map(row=>{const x=row.querySelectorAll('input');if(!x[0].value.trim()||!x[1].value.trim())throw Error('歌詞開始與結束不可空白');return {start:Number(x[0].value),end:Number(x[1].value),text:x[2].value};});}
-function renderCues(cues){state.cues=cues;$('cues').innerHTML=cues.map((c,i)=>`<tr><td>${i+1}</td><td>${field(c.start,`歌詞 ${i+1} 開始`,'number')}</td><td>${field(c.end,`歌詞 ${i+1} 結束`,'number')}</td><td><input class="lyric-field" value="${esc(c.text)}" aria-label="歌詞 ${i+1} 文字"></td><td><div class="actions"><button data-stamp="${i}" aria-label="填入第 ${i+1} 句播放位置">記下時間</button><button data-delete-cue="${i}" aria-label="刪除第 ${i+1} 句">刪除</button></div></td></tr>`).join('');$('cues').querySelectorAll('[data-stamp]').forEach(b=>b.onclick=()=>{if(!$('lyrics-player').src){say('先載入音檔，再記下播放位置',true);return;}const row=b.closest('tr'),x=row.querySelectorAll('input');if(!x[0].value.trim()||!x[1].value.trim()){say('先填入有效的開始與結束時間',true);return;}const length=Math.max(.001,Number(x[1].value)-Number(x[0].value));x[0].value=$('lyrics-player').currentTime.toFixed(3);x[1].value=(Number(x[0].value)+length).toFixed(3);markDirty('lyrics');tick();say('已填入播放位置；驗證後才更新成果');});$('cues').querySelectorAll('[data-delete-cue]').forEach(b=>b.onclick=()=>{b.closest('tr').remove();markDirty('lyrics');tick();say('已刪除此句；請重新驗證');});}
+function renderCues(cues,ids){const keys=rowIds(cues,ids);state.cues=cues;$('cues').innerHTML=cues.map((c,i)=>`<tr data-history-id="${esc(keys[i])}"><td>${i+1}</td><td>${field(c.start,`歌詞 ${i+1} 開始`,'number')}</td><td>${field(c.end,`歌詞 ${i+1} 結束`,'number')}</td><td><input class="lyric-field" value="${esc(c.text)}" aria-label="歌詞 ${i+1} 文字"></td><td><div class="actions"><button data-stamp="${i}" aria-label="填入第 ${i+1} 句播放位置">記下時間</button><button data-delete-cue="${i}" aria-label="刪除第 ${i+1} 句">刪除</button></div></td></tr>`).join('');$('cues').querySelectorAll('[data-stamp]').forEach(b=>b.onclick=()=>{if(!$('lyrics-player').src){say('先載入音檔，再記下播放位置',true);return;}const row=b.closest('tr'),x=row.querySelectorAll('input');if(!x[0].value.trim()||!x[1].value.trim()){say('先填入有效的開始與結束時間',true);return;}const length=Math.max(.001,Number(x[1].value)-Number(x[0].value));x[0].value=$('lyrics-player').currentTime.toFixed(3);x[1].value=(Number(x[0].value)+length).toFixed(3);markDirty('lyrics');tick();say('已填入播放位置；驗證後才更新成果');});$('cues').querySelectorAll('[data-delete-cue]').forEach(b=>b.onclick=()=>{deleteEntry('cues',Number(b.dataset.deleteCue));});}
 const lyricFileImport=MusicEditor.createLyricsFileImport({
   apply:({content,suffix})=>{$('lyrics-source').value=content;$('lyrics-format').value=suffix;},
   onError:error=>say(error.message,true)
@@ -139,9 +215,9 @@ $('lyrics-file').onchange=async event=>{
   if(loaded){markDirty('lyrics');say('已讀入原文，按「讀取歌詞」建立逐句表格');}
 };
 function lyricDuration(){const value=$('lyrics-duration').value;return value.trim()?Number(value):null;}
-$('lyrics-import').onclick=()=>run($('lyrics-import'),async()=>{const result=await api('/api/lyrics',{title:$('lyrics-title').value,content:$('lyrics-source').value,suffix:$('lyrics-format').value,duration:lyricDuration()});renderCues(result.data.cues);setFiles(result.files,`歌詞匯入 · ${result.data.cues.length} 句`);say(MusicEditor.lyricsImportNotice(result.data));tick();});
-$('cue-add').onclick=()=>{try{const cues=cueValues(),start=cues.length?cues.at(-1).end:0;cues.push({start,end:start+3,text:''});renderCues(cues);markDirty('lyrics');}catch(e){say(e.message,true);}};
-$('lyrics-build').onclick=()=>run($('lyrics-build'),async()=>{const result=await api('/api/lyrics',{title:$('lyrics-title').value,cues:cueValues(),duration:lyricDuration()});renderCues(result.data.cues);setFiles(result.files,`已驗證歌詞 · ${result.data.cues.length} 句`);say('歌詞時間驗證通過，LRC／SRT／JSON 已建立');tick();});
+$('lyrics-import').onclick=()=>run($('lyrics-import'),async isCurrent=>{const result=await api('/api/lyrics',{title:$('lyrics-title').value,content:$('lyrics-source').value,suffix:$('lyrics-format').value,duration:lyricDuration()});if(!isCurrent())return;clearDeletionHistory('lyrics');renderCues(result.data.cues);setFiles(result.files,`歌詞匯入 · ${result.data.cues.length} 句`);say(MusicEditor.lyricsImportNotice(result.data));tick();});
+$('cue-add').onclick=()=>{try{const entries=entriesFor('cues');if(entries.length>=10000)throw Error('歌詞最多 10000 列');const last=entries.at(-1)?.value,end=last?.end?.trim(),start=end?Number(end):0;if(!Number.isFinite(start))throw Error('最後一句結束時間需為數字');entries.push({id:`row-${++rowSequence}`,value:{start:String(start),end:String(start+3),text:''}});writeEntries('cues',entries);markDirty('lyrics');}catch(e){say(e.message,true);}};
+$('lyrics-build').onclick=()=>run($('lyrics-build'),async isCurrent=>{const result=await api('/api/lyrics',{title:$('lyrics-title').value,cues:cueValues(),duration:lyricDuration()});if(!isCurrent())return;renderCues(result.data.cues,entriesFor('cues').map(e=>e.id));setFiles(result.files,`已驗證歌詞 · ${result.data.cues.length} 句`);say('歌詞時間驗證通過，LRC／SRT／JSON 已建立');tick();});
 function drawWave(){const canvas=$('waveform'),ctx=canvas.getContext('2d'),w=canvas.width,h=canvas.height;ctx.clearRect(0,0,w,h);ctx.fillStyle='#e7ecdf';ctx.fillRect(0,0,w,h);ctx.strokeStyle='#b5c4ad';ctx.beginPath();ctx.moveTo(0,h/2);ctx.lineTo(w,h/2);ctx.stroke();if(state.waveform){ctx.strokeStyle='#4b745d';ctx.lineWidth=1;state.waveform.forEach((amplitude,i)=>{const x=(i+.5)*w/state.waveform.length;ctx.beginPath();ctx.moveTo(x,h/2-amplitude*52);ctx.lineTo(x,h/2+amplitude*52);ctx.stroke();});}const player=$('lyrics-player');if(Number.isFinite(player.duration)){const x=player.currentTime/player.duration*w;ctx.strokeStyle='#c94b29';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();canvas.setAttribute('aria-valuemax',player.duration.toFixed(3));canvas.setAttribute('aria-valuenow',player.currentTime.toFixed(3));}}
 function tick(){
   let cues=[];
@@ -203,9 +279,10 @@ function captureDraft(){
   panels.lyrics.cues=[...$('cues').children].map(row=>Object.fromEntries(
     MusicEditor.draftRows.lyrics.columns.map((key,i)=>[key,row.querySelectorAll('input')[i].value])));
   panels.music.avoid=requirementValues('music-avoid');panels.music.deliverables=requirementValues('music-deliverables');
-  return {format:'zoe-music-lab-draft',schema_version:3,tool_version:'0.7.0',saved_at:new Date().toISOString(),tab:state.tab,panels};
+  return {format:'zoe-music-lab-draft',schema_version:3,tool_version:'0.8.0',saved_at:new Date().toISOString(),tab:state.tab,panels};
 }
 function applyDraft(draft){
+  ['music','storyboard','lyrics'].forEach(clearDeletionHistory);
   briefImporter.cancel();clearBriefReview();
   lyricFileImport.cancel();
   $('lyrics-file').value='';
@@ -255,6 +332,7 @@ function clearBriefReview(){pendingBrief=null;$('brief-review').hidden=true;$('b
 function applyPlanningPanel(draft,operation){
   const checked=MusicEditor.validateDraft(draft),panel=checked.panels[operation];
   if(!['music','storyboard'].includes(operation))throw Error('只支援歌曲或分鏡需求');
+  clearDeletionHistory(operation);
   Object.entries(panel.fields).forEach(([id,value])=>$(id).value=value);
   if(operation==='music'){renderSections(panel.sections);renderRequirements('music-avoid',panel.avoid,'避免事項');
     renderRequirements('music-deliverables',panel.deliverables,'交付項目');$('music-visual').hidden=true;}
