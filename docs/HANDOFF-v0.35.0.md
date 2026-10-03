@@ -1,10 +1,10 @@
 # v0.35.0 交接與可逆
 
-本輪新增獨立開發維護入口：原 managed job 以 creation time／image 核對，預設稽核封裝／本輪記錄，exact preview token 清除舊版並先保存 recovery journal。純政策、Windows唯讀reader、filesystem-Git adapter與CLI分層；創作HTTP／CLI／Agent／MCP及10／15工具保持。操作、容量與部分I/O限制見[維護契約](docs/ITERATION-MAINTENANCE.md)。
+本輪新增獨立開發維護入口：原 managed job 以 creation time／image 核對，預設稽核封裝／本輪記錄，exact preview token 清除舊版並先保存 recovery journal。純政策、Windows唯讀reader、filesystem-Git adapter與CLI分層；創作HTTP／CLI／Agent／MCP及10／15工具保持。操作、容量與部分I/O限制見[維護契約](ITERATION-MAINTENANCE.md)。
 
 ## 驗證與位置
 
-300Python／431JS／4Skill／33syntax／diff通過；19新測試、真合成CLI清除一版並8檔逐bytes復原、受管理server live阻擋／正常退出／handle關閉、原生四工作台／draft3下載讀回、v34指定ZIP281／431還原。詳見[QA](docs/QA-v0.35.0.md)。原生tab已關、QAserver正常停止。正式媒體／實聽／完整視覺／特定Host／FreeTWAI／原生file播放仍待；rolling active。
+300Python／431JS／4Skill／33syntax／diff通過；19新測試、真合成CLI清除一版並8檔逐bytes復原、受管理server live阻擋／正常退出／handle關閉、原生四工作台／draft3下載讀回、v34指定ZIP281／431還原。詳見[QA](QA-v0.35.0.md)。原生tab已關、QAserver正常停止。正式媒體／實聽／完整視覺／特定Host／FreeTWAI／原生file播放仍待；rolling active。
 
 ## 分支與原始碼還原
 

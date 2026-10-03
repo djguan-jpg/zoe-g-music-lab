@@ -1,5 +1,12 @@
 # 迭代說明
 
+## v0.35.0 — 2026-10-04
+
+- 新增獨立開發維護CLI，預設唯讀稽核／exact preview token清除／recovery journal還原。pure policy、Windows identity reader、filesystem-Git adapter分層，未知schema拒絕；創作10／15工具與既有protocol／draft保持。
+- 受管理程序記錄PID／啟動creation／image，重用／已退出／未知分別呈現；read-only單handlefinally關閉，不讀環境、不kill未知或其他程序。
+- 封裝限定本專案完整manifest／ZIP兩檔，最新三版／嚴格七天／exact tag與來源、ledger／CRC／現場Git archive SHA；journal先保存、限定搬移與兩檔刪除、restore不覆寫。草稿／備份／媒體與不完整／未知封裝保留。ZIP中央目錄預分配與journal大小有界，I/O部分結果保留journal，不宣稱原子交易。
+- 300Python／431JS／4Skill／33syntax；19新增測試、真合成CLI清除／8檔bytes還原、Windows live／handle、原生四工作台／draft3下載讀回、前版v34ZIP281／431還原；指定commit封裝與privatePR／Release／遠端bytes依收據。PolyForm非商用／署名保持，FreeTWAI not_submitted。
+
 ## v0.34.0 — 2026-10-04
 
 - 分鏡創作欄位為零仍可能有無效原時間；新增獨立時間待辦，可定位 FPS、秒數、影格缺口／重疊、短於一幀及尾端覆蓋，建立完整包先定位時間問題。

@@ -77,3 +77,11 @@
 
 - storyboard_review純原形狀／必填／畫面方向／母題引用、原列related_row與確定性report；application／四adapter／raw schema分層。1000鏡／30母題／8MiB純source、傳輸2MiB／modern草稿1MiB、全部計數／200明細／20UI；零待辦仍needs_review=true，不能代替完整時間／影格／連戲／媒體驗證。
 - readiness-report純完整回覆核對由歌曲／分鏡共用，schema／protocol／source／data／JSON／Markdown一致才交出隔離結果；app沿revision／late／busy保護後才提交DOM。來源不同／未知／晚回應保留原成果與後續編修、音檔及草稿checkpoint。原字串／鏡號／母題ID保持，暫態不進draft3；9基本／明確啟庫14工具，需重新discovery，v0.31的8／13為歷史。
+
+
+## v0.35 迭代封裝與程序
+
+- 維護pure policy／Windows唯讀reader／filesystem-Git adapter／CLI分層，run1／audit1／recovery1獨立；不用Agent或HTTP增加清除／程序權限。
+- Managed Python job啟動時自我登記PID／creation ticks／image basename，same-host核對；bare PID不判定ownership，重用外部程序保留，unknown不冒充已停止。不枚舉／kill或讀環境、命令列。
+- scripts/iteration_audit.py預設稽核，僅完整direct release manifest／ZIP且latest3之外、嚴格超七天、exact tag／source／現場Git archive SHA才可列候選。prune需exact preview token與無running／unverified記錄，journal先保存；只搬移核對的本專案目錄、unlink兩檔／空目錄；restore拒絕覆寫。未知檔／連結／不完整封裝及草稿／備份／媒體保留。
+- 讀寫有界manifest／journal與ZIP中央目錄，超限在搬移前拒絕。I/O可有部分結果，保留journal／隔離檔人工核對，不宣稱原子交易；Git objects／archive bytes不足不能冒充復原。每輪管理job依原handle正常停止，最終audit不能取代actual session completion。
