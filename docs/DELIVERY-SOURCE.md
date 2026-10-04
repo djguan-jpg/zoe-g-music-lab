@@ -11,3 +11,8 @@
 合成Node fixture8388598 bytes，30次window＋UI路徑refresh：baseline14,060.47ms／270 structuredClone calls／2,516,606,400 JSON chars；after0.99ms／60個metadata clone calls／0 JSON chars，兩次都拒絕same-revision原文改動。這是本機單次量測，未含ZIP解碼／完整雜湊／首次encoding／搜尋全文／DOM操作；不宣稱瀏覽器延遲、確切heap節省或跨機固定倍率。測試用直接禁止全文clone／JSON serialization驗證機制，不用脆弱時間門檻。
 
 產品0.48與來源工具0.38–0.48明確列入，未知拒絕。沒有新增wire/schema/tool／依賴／模型／路徑／寫檔權限；12／17tools、Agent1／draft3與交付schema保持。來源、query／batch、表單編修、busy與File身份、晚回應、取消與限定Undo的既有保護照常。正式媒體／實聽、完整視覺與Host／瀏覽器保存／FreeTWAI尚未核實。
+
+
+## v0.60 ZIP核對的本地失敗狀態
+
+`delivery-import` controller持有scope/latest job失敗；view/status加隔離nullable failure `{code,message,truncated}`，message最多240 Unicode字元加ellipsis。只屬本地UI metadata，原HTTP/Agent/MCP wire與schemas不變。early invalid/busy與讀取／完整核對拒絕皆保持原成果；onError原error callback不改寫。新選檔／cancel／apply／undo清除，scope refresh清除，old/cancelled promise不恢復錯誤。DOM literal text保持local role=status，失敗可清除／重選，clear只走既有cancel，不取消scoped undo。相同note不重寫，減少普通refresh重複live通知；未做真人screen-reader驗收。見[契約](DELIVERY-FEEDBACK.md)。

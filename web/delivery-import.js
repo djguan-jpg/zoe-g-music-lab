@@ -19,16 +19,24 @@
   return structuredClone(wire);
  }
  function createController({capture,read,replace,restore,onState,onView,onError=()=>{},onReady=()=>{},hash}){
-  let sequence=0,job=null,pending=null,comparison=null,undoState=null,reading=false,applying=false,textSource=null,previewSource=null;
+  let sequence=0,job=null,pending=null,comparison=null,undoState=null,reading=false,applying=false,textSource=null,previewSource=null,failure=null;
   const snapshot=()=>source.snapshot(capture());
   const current=()=>!!job&&source.current(capture(),job.before);
   const undoCurrent=()=>{if(!undoState)return false;const now=capture();return !now.busy&&now.scope===undoState.after.scope&&now.resultRevision===undoState.after.resultRevision;};
-  function status(){return {reading,pending:!!pending,canApply:!!pending&&!reading&&!applying&&current(),canUndo:!reading&&!applying&&undoCurrent(),proposal:pending?structuredClone(pending):null,comparison:pending?structuredClone(comparison):null};}
+  const failureView=()=>failure&&failure.scope===capture().scope?{code:failure.code,message:failure.message,truncated:failure.truncated}:null;
+  function failed(error,scope){
+   const text=typeof error?.message==='string'&&error.message.length?error.message:'選定ZIP未能完成核對，請重新選檔';
+   let message='',count=0,truncated=false;
+   for(const char of text){if(count===240){truncated=true;break;}message+=char;count++;}
+   failure={scope,code:'delivery_import_failed',message:message+(truncated?'…':''),truncated};
+   onError(error);
+  }
+  function status(){return {reading,pending:!!pending,canApply:!!pending&&!reading&&!applying&&current(),canUndo:!reading&&!applying&&undoCurrent(),proposal:pending?structuredClone(pending):null,comparison:pending?structuredClone(comparison):null,failure:failureView()};}
   // Presentation receives metadata only. Full, isolated status() remains an
   // explicit compatibility path; it is never requested by ordinary UI refreshes.
-  function view(){return {reading,pending:!!pending,canApply:!!pending&&!reading&&!applying&&current(),canUndo:!reading&&!applying&&undoCurrent(),source:pending?structuredClone(pending.data):null,comparison:pending?structuredClone(comparison):null};}
+  function view(){return {reading,pending:!!pending,canApply:!!pending&&!reading&&!applying&&current(),canUndo:!reading&&!applying&&undoCurrent(),source:pending?structuredClone(pending.data):null,comparison:pending?structuredClone(comparison):null,failure:failureView()};}
   const publish=()=>{const v=view();onView?.(v);if(onState)onState(status());return v;};
-  function refresh(){if(textSource&&!current())textSource=null;if(undoState&&!applying){const now=capture();if(now.scope!==undoState.after.scope||now.resultRevision!==undoState.after.resultRevision)undoState=null;}return publish();}
+  function refresh(){if(failure&&failure.scope!==capture().scope)failure=null;if(textSource&&!current())textSource=null;if(undoState&&!applying){const now=capture();if(now.scope!==undoState.after.scope||now.resultRevision!==undoState.after.resultRevision)undoState=null;}return publish();}
   function readText(name,side,readPart){
    if(reading||applying||!pending||!current()){textSource=null;onError(Error('原文來源已變更；請重新核對ZIP'));return null;}
    if(!['before','incoming'].includes(side)||!comparison?.files.some(f=>f.name===name)){onError(Error('原文來源或檔名無效'));return null;}
@@ -64,11 +72,11 @@
     return structuredClone(previewSource.value);
    },
    refresh(){refresh();return status();},
-   cancel(){sequence++;job=null;pending=null;comparison=null;reading=false;textSource=null;previewSource=null;publish();},
+   cancel(){sequence++;job=null;pending=null;comparison=null;reading=false;textSource=null;previewSource=null;failure=null;publish();},
    async inspect(file){
-    const token=++sequence;job=null;pending=null;comparison=null;reading=false;textSource=null;previewSource=null;publish();
-    if(snapshot().busy){onError(Error('目前操作尚未完成，請稍候再選ZIP'));return false;}
-    if(!file||typeof file.name!=='string'||!file.name.toLowerCase().endsWith('.zip')||!Number.isSafeInteger(file.size)||file.size<=0||file.size>pack.maxArchive){onError(Error('請選擇有效的本工具文字交付ZIP'));return false;}
+    const token=++sequence;job=null;pending=null;comparison=null;reading=false;textSource=null;previewSource=null;failure=null;publish();
+    if(snapshot().busy){failed(Error('目前操作尚未完成，請稍候再選ZIP'),capture().scope);publish();return false;}
+    if(!file||typeof file.name!=='string'||!file.name.toLowerCase().endsWith('.zip')||!Number.isSafeInteger(file.size)||file.size<=0||file.size>pack.maxArchive){failed(Error('請選擇有效的本工具文字交付ZIP'),capture().scope);publish();return false;}
     job={token,before:snapshot()};pending=null;reading=true;publish();
     try{
      const response=await read(file);
@@ -82,19 +90,19 @@
      if(job?.token!==token)return false;
      if(!current())throw Error('比較後目標已有修改；請重新選ZIP');
      comparison=candidateComparison;pending=accepted;return true;
-    }catch(error){if(job?.token===token){pending=null;onError(error);}return false;}
+    }catch(error){if(job?.token===token){pending=null;failed(error,job.before.scope);}return false;}
     finally{if(job?.token===token){reading=false;publish();if(pending&&current())onReady();}}
    },
    apply(){
     if(!pending||reading||applying)return false;
     if(!current()){onError(Error('預覽後目標已有修改，原成果保留；請重新選ZIP'));publish();return false;}
-    const before=job.before,proposal=structuredClone(pending);applying=true;pending=null;textSource=null;previewSource=null;publish();
+    const before=job.before,proposal=structuredClone(pending);applying=true;pending=null;textSource=null;previewSource=null;failure=null;publish();
     try{replace(proposal);const after=capture();undoState={before,after:{scope:after.scope,resultRevision:after.resultRevision}};job=null;return true;}
     finally{applying=false;publish();}
    },
    undo(){
     if(reading||applying||!undoCurrent())return false;
-    const old=undoState;undoState=null;job=null;pending=null;textSource=null;previewSource=null;applying=true;publish();
+    const old=undoState;undoState=null;job=null;pending=null;textSource=null;previewSource=null;failure=null;applying=true;publish();
     try{restore(structuredClone(old.before.bundle),old.before.revision);return true;}
     finally{applying=false;publish();}
    }

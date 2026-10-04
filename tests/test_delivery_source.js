@@ -22,7 +22,7 @@ test('equal preserves key order, exact original strings, arrays and empty versus
  assert.equal(source.equal({files:{'a.txt':content},nested:[null,1,true]},source.copy({files:{'a.txt':content},nested:[null,1,true]})),true);
 });
 test('lightweight view contains isolated metadata without full source strings; full status remains opt-in',async()=>{
- const {controller,views,wire}=await setup(),v=controller.view();assert.deepEqual(Object.keys(v),['reading','pending','canApply','canUndo','source','comparison']);assert.equal(v.canApply,true);assert.equal(Object.hasOwn(v,'proposal'),false);assert.equal(Object.hasOwn(v,'files'),false);assert.ok(JSON.stringify(v).length<5000);
+ const {controller,views,wire}=await setup(),v=controller.view();assert.deepEqual(Object.keys(v),['reading','pending','canApply','canUndo','source','comparison','failure']);assert.equal(v.failure,null);assert.equal(v.canApply,true);assert.equal(Object.hasOwn(v,'proposal'),false);assert.equal(Object.hasOwn(v,'files'),false);assert.ok(JSON.stringify(v).length<5000);
  v.source.manifest.files[0].sha256='changed';v.comparison.counts.added=99;views.at(-1).source.manifest.label='changed';assert.deepEqual(controller.view().source,wire.data);
  const full=controller.status();assert.deepEqual(full.proposal,wire);full.proposal.files['full.txt']='changed';assert.equal(controller.originalFile('full.txt').content,content);
 });

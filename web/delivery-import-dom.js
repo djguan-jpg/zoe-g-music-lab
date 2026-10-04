@@ -21,10 +21,14 @@
    originalState={pending:s.pending,canApply:s.canApply,names:new Set((s.source?.manifest.files||[]).map(f=>f.name)),records:new Map((s.comparison?.files||[]).map(f=>[f.name,f])),sha:s.source?.archive_sha256||''};
    $('delivery-import-file').disabled=!!options.capture().busy;
    $('delivery-import-preview').hidden=!s.pending;
-   $('delivery-import-cancel').disabled=!s.reading&&!s.pending;
+   $('delivery-import-cancel').disabled=!s.reading&&!s.pending&&!s.failure;
+   $('delivery-import-cancel').textContent=s.failure?'清除核對訊息':'取消成果匯入';
    $('delivery-import-apply').disabled=!s.canApply;$('delivery-import-undo').disabled=!s.canUndo;
    $('delivery-report-json').disabled=!s.canApply;$('delivery-report-md').disabled=!s.canApply;
-   $('delivery-import-note').textContent=s.reading?'正在核對選定ZIP；目前表單與成果保留。':s.pending?(s.canApply?'雜湊與清單核對通過；確認後只替換本工作台成果。':'目標已有修改，請重新選檔核對。'):'選取本工具交付ZIP，先核對，再明確載入成果；表單與音檔保持。';
+   const note=s.failure?`ZIP核對未完成：${s.failure.message}\n目前成果與表單保留。修正後重新選檔核對，或清除這則訊息。`:s.reading?'正在核對選定ZIP；目前表單與成果保留。':s.pending?(s.canApply?'雜湊與清單核對通過；確認後只替換本工作台成果。':'目標已有修改，請重新選檔核對。'):'選取本工具交付ZIP，先核對，再明確載入成果；表單與音檔保持。';
+   const noteClass=s.failure?'hint error':'hint';
+   if($('delivery-import-note').textContent!==note)$('delivery-import-note').textContent=note;
+   if($('delivery-import-note').className!==noteClass)$('delivery-import-note').className=noteClass;
    const list=$('delivery-import-files');list.replaceChildren();
    const select=$('delivery-review-file'),old=select.value;select.replaceChildren();select.disabled=!s.comparison;
    $('delivery-review-summary').textContent='';

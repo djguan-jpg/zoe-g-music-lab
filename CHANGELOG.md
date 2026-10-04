@@ -1,4 +1,12 @@
-# v0.59.0 · 2026-10-04
+# v0.60.0 · 2026-10-04
+
+ZIP核對失敗原因保留在選檔區，可清除訊息或重新選檔；編修表單保持提示，清除不取消既有撤回。純控制器的有界失敗metadata、DOM literal狀態與介面樣式分層，舊回應不能恢復已取消的錯誤。481 Python／743 JavaScript／62語法／四份Skill通過，88個歷史ZIP bytes保持。
+
+基線DOM失敗流程的global onError已報原因，但finally／refresh立即把本地note變回一般選檔說明，clear button也停用。Controller現在保留scope及latest job的failure，view/status只回code、最多240 Unicode字元加ellipsis、truncated；onError原物件callback保持。early invalid/busy與read/verification failure都可本地提示；新inspect／cancel／apply／undo清除，scope refresh清除，late fail不回寫。DOM在選檔區保持role=status、error樣式與clear action，只更新改變的live文字；不寫HTML、不擴張來源／網路／檔案權限。既有Undo保持。
+
+新增兩個真Agent/MCP stdio失敗後接續合法operation測試與七JS lifecycle／DOM／Unicode／8MiB原成果測試。MCP fixture首次誤加zoe_前綴，已按實際公開name修正，原失敗record/log保留。產品60／明確來源38–60，protocol與schema不升版；server、Agent/MCP、domain驗證、來源guard與原文producer保持。
+
+## v0.59.0 · 2026-10-04
 
 交付版本改由一份固定白名單管理，Python、瀏覽器封裝／回讀／差異報告及 Agent 使用同一規則；產品版本、草稿標示也取自同一契約。未知版本明確拒絕，不猜測範圍或靜默遷移。479 Python／736 JavaScript／62 語法／四份 Skill 通過，84 個歷史 ZIP bytes 保持。
 
