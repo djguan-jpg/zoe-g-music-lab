@@ -59,7 +59,7 @@ test('edits media busy apply undo and new source invalidate search cache without
 });
 function dom(s){
  const html=fs.readFileSync('web/index.html','utf8'),ids=[...html.matchAll(/id="(delivery-[^"]+)"/g)].map(m=>m[1]),nodes={};for(const id of ids)nodes[id]={value:'',open:false,replaceChildren(){this.children=[];this.value=''},append(v){(this.children||=[]).push(v)}};nodes['delivery-reader-side'].value='incoming';
- const context={MusicDeliveryText:text,MusicDeliverySearch:search,MusicDeliveryImport:importer};for(const file of ['delivery-text-dom.js','delivery-search-dom.js','delivery-import-dom.js'])vm.runInNewContext(fs.readFileSync('web/'+file,'utf8'),context);
+ const context={MusicDeliveryText:text,MusicDeliveryContext:require('../web/delivery-context.js'),MusicDeliverySearch:search,MusicDeliveryImport:importer};for(const file of ['delivery-text-dom.js','delivery-search-dom.js','delivery-import-dom.js'])vm.runInNewContext(fs.readFileSync('web/'+file,'utf8'),context);
  const c=context.MusicDeliveryImportDom.createAdapter({getElementById:id=>nodes[id],createElement:()=>({})},{...s.options,downloadText:()=>true});return {c,nodes};
 }
 test('DOM Enter finds exact original and selected result seeks; source changes clear positions',async()=>{

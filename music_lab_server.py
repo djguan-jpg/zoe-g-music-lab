@@ -46,7 +46,7 @@ class WorkbenchServer(ThreadingHTTPServer):
 MAX_AUDIO = 64 * 1024 * 1024
 MAX_TEXT = MAX_REQUEST_BYTES
 ASSETS = {"/delivery-report.js": ("web/delivery-report.js","text/javascript"),"/delivery-review.js": ("web/delivery-review.js","text/javascript"),"/delivery-archive.js": ("web/delivery-archive.js","text/javascript"),"/delivery-import.js": ("web/delivery-import.js","text/javascript"),
-          "/delivery-search.js": ("web/delivery-search.js","text/javascript"),"/delivery-search-dom.js": ("web/delivery-search-dom.js","text/javascript"),
+          "/delivery-context.js": ("web/delivery-context.js","text/javascript"),"/delivery-search.js": ("web/delivery-search.js","text/javascript"),"/delivery-search-dom.js": ("web/delivery-search-dom.js","text/javascript"),
           "/delivery-text.js": ("web/delivery-text.js","text/javascript"),"/delivery-text-dom.js": ("web/delivery-text-dom.js","text/javascript"),
           "/text-download.js": ("web/text-download.js","text/javascript"),"/text-download-dom.js": ("web/text-download-dom.js","text/javascript"),
           "/delivery-import-dom.js": ("web/delivery-import-dom.js","text/javascript"),"/": ("web/index.html", "text/html"), "/app.js": ("web/app.js", "text/javascript"),

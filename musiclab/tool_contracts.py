@@ -292,6 +292,7 @@ def payload_schema(operation):
                                                                  'description': 'Exact literal, 1–1024 UTF-8 bytes; '
                                                                                 'no regex, case folding or '
                                                                                 'normalization'},
+                                                       'include_context': {'type':'boolean','default':False,'description':'Explicit bounded original context, 64 UTF-8 bytes per side; independent context schema1; default position response unchanged'},
                                                        'max_matches': {'type': 'integer',
                                                                        'minimum': 1,
                                                                        'maximum': 50,

@@ -1,6 +1,6 @@
 # v0.47.0 交接與可逆
 
-context1純UTF8側邊裁切 → search明確opt-in → 完整ZIP application → CLI／Agent／MCP；browser純context／presentation → 既有KMP／單buffer／searcher → DOM唯讀片段及reader定位。每側64 bytes／單項1152／browser20／Agent50；default七欄位置回覆、source SHA與current source保護保持，清單整理不改DTO或原文。見[契約](docs/DELIVERY-CONTEXT.md)、[QA](docs/QA-v0.47.0.md)。416 Python／602 JS／51 syntax／4 Skill通過。
+context1純UTF8側邊裁切 → search明確opt-in → 完整ZIP application → CLI／Agent／MCP；browser純context／presentation → 既有KMP／單buffer／searcher → DOM唯讀片段及reader定位。每側64 bytes／單項1152／browser20／Agent50；default七欄位置回覆、source SHA與current source保護保持，清單整理不改DTO或原文。見[契約](DELIVERY-CONTEXT.md)、[QA](QA-v0.47.0.md)。416 Python／602 JS／51 syntax／4 Skill通過。
 
 branch codex/iteration-v0.47.0，restore-v0.46.0-before-v0.47.0指向起點d0acc879ae7b6704c1179b10099189d05217d1e9。還原前保存未提交創作，再從restore另開分支；指定source ZIP／SHA、private PR／Release與actual remote核對依本輪收據，main tree需同source。v46指定ZIP408／594還原通過，限定暫存移除。
 

@@ -1,5 +1,12 @@
 # 迭代說明
 
+## v0.47.0 — 2026-10-04
+
+- 用有界原文前後文區分重複搜尋字，選擇後顯示readonly片段並定位。清單標示控制符號、側邊空格縮合／120字元省略；原文與query空格不變。
+- context1純bytes裁切／嚴格DTO／presentation、search opt-in／完整ZIP application／CLI／Agent／MCP及DOM分層；每側64／單項1152 bytes，單8MiB buffer共用。預設七欄位置及12／17工具保持。
+- strict include_context、來源／query／下一批／Apply／Undo失效；產品47及來源38–47、legal4保持。416 Python／602 JS／51 syntax／4 Skill及四台原生UI、8MiB EOF、後續編修／Undo、三寬度DOM與v46 ZIP408／594還原通過。
+- server正常關閉後QA取未建立lazy staging屬性exit1；原handle及錯誤保留，補核對port0／staging未建立，沒有重啟。正式媒體、完整視覺／Host／FreeTWAI與瀏覽器全文保存仍待。
+
 ## v0.46.0 — 2026-10-04
 
 - 搜尋完整原文並跳到命中位置，解決長文只能逐段翻頁的缺口。browser ZIP／保留成果每批20筆，Enter／下拉與下一批；來源或query改變清除舊結果。
