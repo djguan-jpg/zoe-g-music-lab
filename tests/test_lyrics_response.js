@@ -4,7 +4,9 @@ const test=require('node:test'),assert=require('node:assert/strict');
 const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const MusicTiming=require('../web/lyrics-timing.js');
 const MusicLyricsPackage=require('../musiclab/assets/lyrics-package.js');
-const MusicLyricsResult=require('../web/lyrics-result.js');
+const previewContract=require('./helpers/lyric-preview-contract.js');
+const MusicLyricsPreview=require('../web/lyrics-preview.js').createInspector(previewContract);
+const MusicLyricsResult=require('../web/lyrics-result.js').createChecker(previewContract);
 const MusicLyricsExportReview=require('../musiclab/assets/lyrics-export-review.js');
 
 // Execute the actual run and lyric event adapters with a controlled API reply.
@@ -25,7 +27,7 @@ function adapter(){
   vm.runInNewContext(source.slice(start,end),context);
   vm.runInNewContext(source.slice(handlers,handlersEnd),context);
   return {nodes,state,notices,choose:id=>nodes[id].onclick(),edit:text=>{rows[0].text=text;state.revisions.lyrics++;},
-    reply:cues=>{const data=MusicLyricsResult.expectedBuild(cues?{...payload,cues}:payload);reply({data,files:{'lyrics.json':JSON.stringify(data),...MusicLyricsResult.textFiles(data.cues),'preview.html':''},meta:{version:'0.52.0',protocol_version:1,needs_review:MusicLyricsPackage.needsReview(data)}});},
+    reply:cues=>{const data=MusicLyricsResult.expectedBuild(cues?{...payload,cues}:payload);reply({data,files:{'lyrics.json':JSON.stringify(data),...MusicLyricsResult.textFiles(data.cues),'preview.html':MusicLyricsPreview.render(data)},meta:{version:'0.52.0',protocol_version:1,needs_review:MusicLyricsPackage.needsReview(data)}});},
     replyRaw:value=>reply(value),invalidations:()=>invalidated,
     setRows:value=>rows=structuredClone(value),payload:()=>payload,renderedIds:()=>Array.from(renderedIds),
     rows:()=>rows,installed:()=>installedFiles,counts:()=>({rendered,cleared,files})};
@@ -68,4 +70,16 @@ test('actual lyric build adapter installs full source and current format report 
   const a=adapter();a.setRows([{start:0,end:1,text:'[00:04] 原\t  '},{start:2,end:3,text:' \t'}]);const work=a.choose('lyrics-build');a.reply();await work;
   const files=a.installed();assert.deepEqual(Object.keys(files).sort(),['lyrics.json','lyrics.lrc','lyrics.srt','preview.html','lyrics-export-review.json','lyrics-export-review.md'].sort());
   const p=JSON.parse(files['lyrics.json']),r=JSON.parse(files['lyrics-export-review.json']);assert.equal(r.issue_count,2);assert.equal(r.source.sha256,(await MusicLyricsExportReview.review({package:p})).source.sha256);assert.deepEqual(p.cues.map(c=>c.text),['[00:04] 原\t  ',' \t']);
+});
+
+test('actual build adapter rejects an independently changed preview before row/output/timing commits and retries',async()=>{
+  const a=adapter(),work=a.choose('lyrics-build'),data=MusicLyricsResult.expectedBuild(a.payload());
+  a.replyRaw({data,files:{'lyrics.json':JSON.stringify(data),...MusicLyricsResult.textFiles(data.cues),'preview.html':MusicLyricsPreview.render(data).replace('function apply(){','function apply(){throw Error("changed");')},meta:{version:'0.55.0',protocol_version:1,needs_review:MusicLyricsPackage.needsReview(data)}});await work;
+  assert.deepEqual(a.counts(),{rendered:0,cleared:0,files:0});assert.equal(a.invalidations(),0);assert.equal(a.rows()[0].text,'原句');assert.match(a.notices.at(-1),/預覽.*保留/);
+  const retry=a.choose('lyrics-build');a.reply();await retry;assert.equal(a.counts().files,1);assert.equal(Object.keys(a.installed()).length,6);
+});
+
+test('late preview corruption is ignored before inspection and preserves subsequent row edits',async()=>{
+  const a=adapter(),work=a.choose('lyrics-build');a.edit('後續編修');a.replyRaw({files:{'preview.html':'bad'}});await work;
+  assert.equal(a.rows()[0].text,'後續編修');assert.equal(a.counts().files,0);assert.equal(a.invalidations(),0);assert.match(a.notices.at(-1),/處理期間輸入有修改/);
 });

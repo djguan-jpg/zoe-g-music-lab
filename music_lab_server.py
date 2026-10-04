@@ -45,7 +45,7 @@ class WorkbenchServer(ThreadingHTTPServer):
                 if hasattr(self,'delivery_downloads'):self.delivery_downloads.close()
 MAX_AUDIO = 64 * 1024 * 1024
 MAX_TEXT = MAX_REQUEST_BYTES
-ASSETS = {"/delivery-report.js": ("web/delivery-report.js","text/javascript"),"/delivery-review.js": ("web/delivery-review.js","text/javascript"),"/delivery-archive.js": ("web/delivery-archive.js","text/javascript"),"/delivery-source.js": ("web/delivery-source.js","text/javascript"),"/delivery-import.js": ("web/delivery-import.js","text/javascript"),
+ASSETS = {"/lyrics-preview.js": ("web/lyrics-preview.js","text/javascript"),"/delivery-report.js": ("web/delivery-report.js","text/javascript"),"/delivery-review.js": ("web/delivery-review.js","text/javascript"),"/delivery-archive.js": ("web/delivery-archive.js","text/javascript"),"/delivery-source.js": ("web/delivery-source.js","text/javascript"),"/delivery-import.js": ("web/delivery-import.js","text/javascript"),
           "/delivery-context.js": ("web/delivery-context.js","text/javascript"),"/delivery-search.js": ("web/delivery-search.js","text/javascript"),"/delivery-search-dom.js": ("web/delivery-search-dom.js","text/javascript"),
           "/delivery-text.js": ("web/delivery-text.js","text/javascript"),"/delivery-text-dom.js": ("web/delivery-text-dom.js","text/javascript"),
           "/text-download.js": ("web/text-download.js","text/javascript"),"/text-download-dom.js": ("web/text-download-dom.js","text/javascript"),
@@ -128,6 +128,9 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
         path = urllib.parse.urlsplit(self.path).path
         if path == "/favicon.ico":
             return self.reply(204, b"", "application/octet-stream")
+        if path == '/lyric-preview-contract.js':
+            from musiclab.lyric_preview import contract_script
+            return self.reply(200,contract_script(),'text/javascript')
         if path in ASSETS:
             file, kind = ASSETS[path]
             return self.reply(200, (ROOT / file).read_bytes(), kind)

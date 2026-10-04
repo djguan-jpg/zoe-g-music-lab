@@ -9,6 +9,13 @@ function domain(operation,payload){return JSON.parse(execFileSync(process.platfo
   {cwd:root,input:JSON.stringify({operation,payload}),encoding:'utf8',timeout:10000}));}
 const timed=domain('lyrics',{title:'校時測試',content:lrc,suffix:'.lrc',duration:10});
 const seed=domain('lyrics_seed',{title:'校時測試',text:plain});
+
+test('independently wrong preview cannot become a timed import proposal; normal retry preserves original raw source',async()=>{
+  const bad=structuredClone(timed);bad.files['preview.html']=bad.files['preview.html'].replace('function apply(){','function apply(){throw Error("changed");');
+  let wrong=true;const h=harness(async()=>wrong?bad:timed),before=structuredClone(h.value);
+  assert.equal(await h.c.inspectCurrent(),false);assert.equal(h.c.proposal(),null);assert.deepEqual(h.value,before);assert.match(h.errors.at(-1),/預覽.*保留/);
+  wrong=false;assert.equal(await h.c.inspectCurrent(),true);assert.equal(h.c.proposal().draft.panels.lyrics.fields['lyrics-source'],lrc);assert.deepEqual(h.value,before);
+});
 function draft(){
   const panels={};for(const [name,fields] of Object.entries(E.draftFields)){
     panels[name]={fields:Object.fromEntries(fields.map(f=>[f,'']))};if(E.draftRows[name])panels[name][E.draftRows[name].key]=[];
@@ -23,7 +30,7 @@ function file(name,text){const raw=bytes(text);return {name,size:raw.byteLength,
 function deferred(){let resolve,reject;const promise=new Promise((yes,no)=>{resolve=yes;reject=no;});return {promise,resolve,reject};}
 function harness(request){
   const value=draft(),ready=[],errors=[],states=[],requests=[],jobs=[];
-  const c=I.createImport({capture:()=>value,request:request||((operation,payload)=>{requests.push({operation,payload});const job=deferred();jobs.push(job);return job.promise;}),
+  const c=I.createImport({previewContract:require('./helpers/lyric-preview-contract.js'),capture:()=>value,request:request||((operation,payload)=>{requests.push({operation,payload});const job=deferred();jobs.push(job);return job.promise;}),
     onReady:view=>ready.push(view),onClear:()=>{},onError:e=>errors.push(e.message),onState:s=>states.push(s)});
   return {value,ready,errors,states,requests,jobs,c,resolve:data=>jobs.at(-1).resolve(structuredClone(data||timed))};
 }

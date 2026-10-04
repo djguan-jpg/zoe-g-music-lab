@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 'use strict';
 const test=require('node:test'),assert=require('node:assert/strict'),{execFileSync}=require('node:child_process'),path=require('node:path');
-const G=require('../web/lyrics-result.js'),P=require('../musiclab/assets/lyrics-package.js');
+const G=require('../web/lyrics-result.js').createChecker(require('./helpers/lyric-preview-contract.js')),P=require('../musiclab/assets/lyrics-package.js');
 const root=path.join(__dirname,'..'),payload={title:' 原名 <b> ',cues:[{start:4.125,end:5.875,text:'字\u0085後\u2028尾\u2029終\t  '},{start:1.125,end:2.5,text:'  原文 [00:02] [offset:999]\t '},{start:3,end:4,text:''}],duration:null};
 function domain(value){return JSON.parse(execFileSync(process.platform==='win32'?'python':'python3',['-X','utf8','-c','import json,sys;from musiclab.application import build;print(json.dumps(build("lyrics",json.load(sys.stdin)).wire(),ensure_ascii=False))'],{cwd:root,input:JSON.stringify(value),encoding:'utf8',timeout:10000}));}
 const actual=domain(payload),expected=G.expectedBuild(payload);

@@ -28,7 +28,7 @@
     const raw=fields['lyrics-duration'],duration=raw.trim()?T.normalize(raw,'歌曲時長',true):null;
     return {operation:'lyrics',payload:{title:fields['lyrics-title'],content,suffix,duration},content,suffix};
   }
-  function checkedResult(selected,result){
+  function checkedResult(selected,result,previewContract=root.MusicLyricsPreviewContract){
     const seed=selected.operation==='lyrics_seed',names=seed?['lyrics-seed.json','lyrics-seed.md']:['lyrics.json','lyrics.lrc','lyrics.srt','preview.html'];
     if(result?.meta?.protocol_version!==1||typeof result.meta.version!=='string'||!result.meta.version||typeof result.meta.needs_review!=='boolean'||
         !exact(result.files,names)||names.some(name=>typeof result.files[name]!=='string'))fail();
@@ -51,7 +51,7 @@
         }
         expected=G.expectedBuild({title:selected.payload.title,cues,duration:selected.payload.duration});
       }
-      return G.checkedResult(expected,result);
+      return G.checkedResult(expected,result,previewContract);
     }
     if(U.fingerprint(JSON.parse(result.files[seed?'lyrics-seed.json':'lyrics.json']))!==U.fingerprint(data))fail();
     return structuredClone(result);
@@ -85,7 +85,7 @@
       durationEstimated:seed?null:data.duration_estimated,
       reviewNotes:seed?[]:structuredClone(data.review_notes)};
   }
-  function createImport({capture,request,onReady,onClear,onError,onState}){
+  function createImport({capture,request,onReady,onClear,onError,onState,previewContract=root.MusicLyricsPreviewContract}){
     const guard=R.createPreview({capture:()=>({draft:capture()})});let sequence=0,reading=false,ready=false;
     const state=()=>onState({reading,ready});
     async function inspect(file,isCurrent=()=>true){
@@ -108,7 +108,7 @@
         const selected=sourceRequest(content,suffix,selectedDraft.panels.lyrics.fields);
         const result=await request(selected.operation,structuredClone(selected.payload));
         if(!active()||!guard.check(token))return false;
-        const job={name,selected,result:checkedResult(selected,result)};
+        const job={name,selected,result:checkedResult(selected,result,previewContract)};
         importDraft(selectedDraft,job); // Check representability before offering a replacement.
         if(!guard.accept(token,job))return false;
         ready=true;onReady(review(job));return true;

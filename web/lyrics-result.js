@@ -4,6 +4,7 @@
   const node=typeof module==='object'&&module.exports;
   const T=node?require('../musiclab/assets/lyric-time.js'):root.LyricTime;
   const P=node?require('../musiclab/assets/lyrics-package.js'):root.MusicLyricsPackage;
+  const V=node?require('./lyrics-preview.js'):root.MusicLyricsPreview;
   const exact=(value,keys)=>value&&typeof value==='object'&&!Array.isArray(value)&&Object.keys(value).length===keys.length&&keys.every(key=>Object.hasOwn(value,key));
   function same(a,b){
     if(a===b)return true;
@@ -22,7 +23,7 @@
     return {'lyrics.lrc':cues.map(c=>`[${T.timecode(c.start)}]${c.text}`).join('\n')+'\n',
       'lyrics.srt':cues.map((c,i)=>`${i+1}\n${T.timecode(c.start,true)} --> ${T.timecode(c.end,true)}\n${c.text}`).join('\n\n')+'\n'};
   }
-  function checkedResult(expected,reply){
+  function check(expected,reply,inspector){
     expected=P.validate(expected);
     const names=['lyrics.json','lyrics.lrc','lyrics.srt','preview.html'];
     if(!exact(reply,['data','files','meta'])||!exact(reply.meta,['version','protocol_version','needs_review'])||
@@ -31,9 +32,11 @@
     if(!same(P.validate(reply.data),expected)||!same(P.parseDocument(reply.files['lyrics.json']),expected))fail();
     const text=textFiles(expected.cues);
     if(reply.files['lyrics.lrc']!==text['lyrics.lrc']||reply.files['lyrics.srt']!==text['lyrics.srt'])fail();
-    // HTML is an opaque artifact here; no execution or full semantic validation.
+    inspector.inspect(expected,reply.files['preview.html']);
     return structuredClone(reply);
   }
-  const api={expectedBuild,textFiles,checkedResult};
+  function checkedResult(expected,reply,contract=root.MusicLyricsPreviewContract){return check(expected,reply,V.createInspector(contract));}
+  function createChecker(contract){const inspector=V.createInspector(contract);return {expectedBuild,textFiles,checkedResult:(expected,reply)=>check(expected,reply,inspector)};}
+  const api={expectedBuild,textFiles,checkedResult,createChecker};
   if(node)module.exports=api;else root.MusicLyricsResult=api;
 })(typeof window==='undefined'?{}:window);
