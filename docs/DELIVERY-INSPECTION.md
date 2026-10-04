@@ -61,3 +61,8 @@ browser `delivery-archive.js` 只讀所選ZIP的有界原清單，不取代serve
 ## v0.45
 
 v0.45明確接受來源工具38–45，純inspection／selection／text-window／report與Agent／draft schemas保持；未知工具版本仍拒絕。此輪的限定PID程序補查與交付檢查權限分開。
+
+
+## v0.59 固定交付版本契約
+
+`musiclab/assets/delivery-versions.json` 是產品版本與交付來源版本的唯一執行期資料源；`delivery_versions.py`／`delivery-versions.js` 純驗證後隔離保存，未知schema／缺失／錯序／重複／非標準版本即拒絕。Python package與inspection、browser package/import/report、application Agent／MCP metadata共用；schema和protocol不由產品版本推導。固定GET契約script沿既有本機Host／Origin門檻，無任意路徑或寫入。更新產品只改registry current及明確supported項，projects.json發布metadata需一致；歷史支援不靠range推測。測試保留獨立歷史oracle；封裝必須交叉核對registry／metadata／discovery。見[契約](DELIVERY-VERSIONS.md)。

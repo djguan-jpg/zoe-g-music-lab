@@ -80,6 +80,15 @@ def package(ref):
                 capabilities = json.loads(command([sys.executable, "music_lab_agent.py", "--describe"], checkout))
                 if capabilities["version"] != version or capabilities["license"] != manifest_source["license"]:
                     raise ValueError("Packaged capabilities differ from release metadata")
+                if "delivery_versions_schema_version" in manifest_source:
+                    from_script = command([sys.executable, "-X", "utf8", "-c",
+                        "import json;from musiclab.delivery_versions import POLICY;print(json.dumps(POLICY.descriptor()))"], checkout)
+                    policy = json.loads(from_script)
+                    if ("musiclab/assets/delivery-versions.json" not in hashes
+                            or policy['current'] != version
+                            or policy['schema_version'] != manifest_source['delivery_versions_schema_version']
+                            or policy['supported'] != capabilities['delivery_inspection']['supported_tool_versions']):
+                        raise ValueError("Packaged delivery-version policy differs from release metadata")
                 if has_mcp:
                     request = {"jsonrpc": "2.0", "id": "package-check", "method": "initialize", "params": {
                         "protocolVersion": manifest_source["mcp_protocol_version"], "capabilities": {},

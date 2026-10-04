@@ -35,3 +35,8 @@ browser delivery-package.js為純來源／清單／回覆核對與注入controll
 `python -X utf8 -m unittest discover -s tests`、`node --test tests/test_*.js`；Windows可用本專案現有逐檔命令列展開。新測試檢查所有檔案bytes／manifest、容量、Unicode、覆寫及競爭、CLI實際程序、Agent／初始化MCP、HTTP take一次／取消／close、過期及錯誤來源。前端測試覆蓋晚回應、所有清單欄位及原生form失敗。
 
 本輪合成QA四工作台原生ZIP下載、逐檔SHA與server摘要讀回、編修後取消與重建、手機尺寸鍵盤及桌面DOM幾何通過。正式音樂／影片、完整視覺審查、特定Agent Host及FreeTWAI創始人審核尚未驗證。
+
+
+## v0.59 固定交付版本契約
+
+`musiclab/assets/delivery-versions.json` 是產品版本與交付來源版本的唯一執行期資料源；`delivery_versions.py`／`delivery-versions.js` 純驗證後隔離保存，未知schema／缺失／錯序／重複／非標準版本即拒絕。Python package與inspection、browser package/import/report、application Agent／MCP metadata共用；schema和protocol不由產品版本推導。固定GET契約script沿既有本機Host／Origin門檻，無任意路徑或寫入。更新產品只改registry current及明確supported項，projects.json發布metadata需一致；歷史支援不靠range推測。測試保留獨立歷史oracle；封裝必須交叉核對registry／metadata／discovery。見[契約](DELIVERY-VERSIONS.md)。

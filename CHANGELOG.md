@@ -1,4 +1,12 @@
-# v0.58.0 · 2026-10-04
+# v0.59.0 · 2026-10-04
+
+交付版本改由一份固定白名單管理，Python、瀏覽器封裝／回讀／差異報告及 Agent 使用同一規則；產品版本、草稿標示也取自同一契約。未知版本明確拒絕，不猜測範圍或靜默遷移。479 Python／736 JavaScript／62 語法／四份 Skill 通過，84 個歷史 ZIP bytes 保持。
+
+原五處支援版本清單集中到 musiclab/assets/delivery-versions.json；純 Python／JS 驗證形狀、schema1、三段版本、整數上限、嚴格遞增／不重複、1–128項與current最後一版。稀疏清單只接受所列版本；固定載入失敗即拒絕，沒有推測或回退。產品59与明確來源38–59、Agent1／draft3／package1／inspection1／comparison1及13／18工具保持。
+
+固定唯讀契約script與module沿原Host／Origin／CSP／no-store門檻，封裝驗證交叉核對 registry、product metadata、Agent discovery。新測試最初漏label、既有草稿VM未注入新共用模組，兩個fixture已修正并保留原失敗記錄；Python479已通過，JS改fixture後全套736及語法／Skill通過。無新增依賴、模型、auth或寫檔權限。
+
+## v0.58.0 · 2026-10-04
 
 完整歌詞包共用Unicode文字邊界，名稱、每句文字與歷史說明在套用或匯出前一致驗證，拒絕不完整字元，避免產生無法再載入的JSON；原有效內容與待修正編修保持，修好可重試。Python／原生JS／application／Agent与固定預覽分層，合法emoji與原Unicode／控制字元不正規化。472 Python／730 JavaScript／61語法／4 Skills及原生驗收通過。
 

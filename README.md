@@ -1,8 +1,8 @@
 # ZOE. G Music Lab
 
-目前版本 **v0.58.0**：完整歌詞包共用Unicode文字邊界，名稱、每句文字與歷史說明在套用或匯出前一致驗證，拒絕不完整字元，避免產生無法再載入的JSON；原有效內容與待修正編修保持，修好可重試。Python／原生JS／application／Agent与固定預覽分層，合法emoji與原Unicode／控制字元不正規化。472 Python／730 JavaScript／61語法／4 Skills及原生驗收通過。 見[契約](docs/LYRICS-UNICODE.md)、[QA](docs/QA-v0.58.0.md)、[交接](docs/HANDOFF-v0.58.0.md)。
+目前版本 **v0.59.0**：交付版本改由一份固定白名單管理，Python、瀏覽器封裝／回讀／差異報告及 Agent 使用同一規則；產品版本、草稿標示也取自同一契約。未知版本明確拒絕，不猜測範圍或靜默遷移。479 Python／736 JavaScript／62 語法／四份 Skill 通過，84 個歷史 ZIP bytes 保持。 見[契約](docs/DELIVERY-VERSIONS.md)、[QA](docs/QA-v0.59.0.md)、[交接](docs/HANDOFF-v0.59.0.md)。
 
-上一輪 v0.51.0：SRT 保留每行空白與 Unicode 原字元，實際多行仍明確以 / 合成單句；原排版保留原檔，空白句用版本1 JSON保存。獨立解析層以整數毫秒核對時鐘，瀏覽器從 LRC／SRT 原文核對回應與文字輸出。441 Python／654 JavaScript／54 syntax／4 Skills、原生預覽／套用／撤回／匯出及 v50 ZIP 還原通過。見[契約](docs/LYRICS-SRT.md)、[QA](docs/QA-v0.51.0.md)、[交接](docs/HANDOFF-v0.51.0.md)。
+上一輪 v0.58.0：完整歌詞包在編修與匯出前一致驗證 Unicode 名稱、每句原文及歷史說明，避免下載無法回讀的 JSON；合法文字保留。v58 封裝解壓重跑 472 Python／730 JavaScript 通過。見[QA](docs/QA-v0.58.0.md)。
 
 ## ZIP原文與差異（v0.40）
 

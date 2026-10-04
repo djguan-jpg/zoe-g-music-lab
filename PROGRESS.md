@@ -1,4 +1,8 @@
-# 進度：目前 v0.58.0
+# 進度：目前 v0.59.0
+
+## v0.59.0
+
+2026-10-04：交付版本改由一份固定白名單管理，Python、瀏覽器封裝／回讀／差異報告及 Agent 使用同一規則；產品版本、草稿標示也取自同一契約。未知版本明確拒絕，不猜測範圍或靜默遷移。479 Python／736 JavaScript／62 語法／四份 Skill 通過，84 個歷史 ZIP bytes 保持。 原生 tab103 實際 v54 ZIP 預覽／載入／撤回保持表單与原成果，v60 HTTP400拒絕，v59 ZIP可核對；本版四檔ZIP真正HTTP送出8801 bytes，保存位置未驗。頁面v0.59.0與390px文字幾何通過、logs0，tab關閉／viewport reset／server64420 exit0／staging回收。指定source封裝、private PR／Release／遠端與latest59／58／57盤點依最終收據；平台not_submitted，rolling active。
 
 ## v0.58.0
 

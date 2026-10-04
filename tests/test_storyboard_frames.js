@@ -12,7 +12,7 @@ test('actual browser draft capture records the current application product versi
   const source=fs.readFileSync(path.join(root,'web/app.js'),'utf8');
   const start=source.indexOf('function captureDraft(){'),end=source.indexOf('function applyDraft(',start);
   assert.ok(start>=0&&end>start);
-  const context={MusicEditor:require('../web/editor-state.js'),capturePanel:()=>({}),state:{tab:'storyboard'}};
+  const context={MusicEditor:require('../web/editor-state.js'),MusicDeliveryVersions:require('../musiclab/assets/delivery-versions.js'),capturePanel:()=>({}),state:{tab:'storyboard'}};
   vm.createContext(context);vm.runInContext(source.slice(start,end),context);
   const draft=context.captureDraft();assert.equal(draft.tool_version,fixtures.report.meta.version);assert.equal(draft.schema_version,3);
 });

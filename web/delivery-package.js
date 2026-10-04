@@ -2,7 +2,9 @@
 'use strict';
 (function(root){
   const json=typeof module==='object'&&module.exports?require('../musiclab/assets/json-document.js'):root.MusicJsonDocument;
-  const version='0.58.0',maxSource=8*1024*1024,maxRequest=32*1024*1024,maxArchive=maxSource+65536;
+  const versions=typeof module==='object'&&module.exports?require('../musiclab/assets/delivery-versions.js'):root.MusicDeliveryVersions;
+  const supportsVersion=versions.supportsVersion;
+  const version=versions.current,maxSource=8*1024*1024,maxRequest=32*1024*1024,maxArchive=maxSource+65536;
   const scopes=['music','storyboard','lyrics','audio'],reserved='delivery-manifest.json';
   const exact=(v,keys)=>v&&typeof v==='object'&&!Array.isArray(v)&&Object.keys(v).length===keys.length&&keys.every(k=>Object.hasOwn(v,k));
   function source(s){
@@ -21,7 +23,7 @@
   const fingerprint=s=>JSON.stringify(source(s));
   async function digest(raw){const bytes=new Uint8Array(await root.crypto.subtle.digest('SHA-256',raw));return Array.from(bytes,v=>v.toString(16).padStart(2,'0')).join('');}
   async function manifest(s,hash=digest,toolVersion=version){
-    if(!['0.38.0','0.39.0','0.40.0','0.41.0','0.42.0','0.43.0','0.44.0','0.45.0','0.46.0','0.47.0','0.48.0','0.49.0','0.50.0','0.51.0','0.52.0','0.53.0','0.54.0','0.55.0','0.56.0','0.57.0','0.58.0'].includes(toolVersion))throw Error('交付工具版本不支援');
+    if(!supportsVersion(toolVersion))throw Error('交付工具版本不支援');
     s=source(s);const files=[];
     for(const [name,content] of Object.entries(s.files)){const raw=new TextEncoder().encode(content);files.push({name,bytes:raw.length,sha256:await hash(raw)});}
     if(files.some(f=>typeof f.sha256!=='string'||!/^[0-9a-f]{64}$/.test(f.sha256)))throw Error('本機檔案摘要未完成');
@@ -61,6 +63,6 @@
       label:`下載本輪所有檔案 ZIP${count?'（'+count+'）':''}`,
       note:!count?'建立成果後可一次下載所有文字檔案。':s.busy?'正在處理，請稍候。':s.dirty?'這是上一份成果；重新建立後再下載所有檔案。':error||`包含本輪 ${count} 個文字檔及逐檔摘要清單；音檔、專案草稿與私人素材另存。`};
   }
-  const api={version,maxSource,maxRequest,maxArchive,source,fingerprint,digest,manifest,checkedManifest,checked,downloadId,inspect,describe};
+  const api={version,supportsVersion,maxSource,maxRequest,maxArchive,source,fingerprint,digest,manifest,checkedManifest,checked,downloadId,inspect,describe};
   if(typeof module==='object'&&module.exports)module.exports=api;else root.MusicDeliveryPackage=api;
 })(typeof globalThis==='object'?globalThis:this);
