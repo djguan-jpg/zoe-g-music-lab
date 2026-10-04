@@ -149,6 +149,38 @@ test('scoped actual-after undo restores old lyric table but retains unrelated ed
   const current=structuredClone(after);current.panels.music.fields['music-title']='保留';assert.deepEqual(undo.proposal(current).draft.panels.lyrics,before.panels.lyrics);
   assert.equal(undo.proposal(current).draft.panels.music.fields['music-title'],'保留');current.panels.lyrics.cues[0].text='後續';assert.throws(()=>undo.proposal(current),/已有編修/);
 });
+test('actual LRC response preserves literal original through preview and proposal without touching draft',async()=>{
+  const raw='\uFEFF[offset:125]\r\n[00:01]  字 [00:02] [offset:999]\t  \r[00:04]字\u0085後\u2028尾\u2029終',h=harness(async(op,payload)=>domain(op,payload)),before=structuredClone(h.value);
+  assert.equal(await h.c.read(file('literal.LRC',raw)),true);assert.deepEqual(h.value,before);
+  const p=h.c.proposal();assert.equal(p.draft.panels.lyrics.fields['lyrics-source'],raw);
+  assert.deepEqual(p.draft.panels.lyrics.cues,[{start:'1.125',end:'4.125',text:'  字 [00:02] [offset:999]\t  '},{start:'4.125',end:'10',text:'字\u0085後\u2028尾\u2029終'}]);
+});
+test('self-consistent valid replacement LRC response cannot substitute words timing duration or inference',async()=>{
+  const substitutes=[{cues:[{start:0,text:'改掉第一句'},{start:3,text:'合成第二句'}],duration:10},
+    {cues:[{start:1,text:'合成第一句'},{start:3,text:'合成第二句'}],duration:10},
+    {cues:[{start:0,end:2,text:'合成第一句'},{start:3,end:10,text:'合成第二句'}],duration:10},
+    {cues:[{start:0,text:'合成第一句'}],duration:10}];
+  for(const payload of substitutes){
+    const h=harness(),before=structuredClone(h.value),work=h.c.inspectCurrent();h.resolve(domain('lyrics',{title:'校時測試',...payload}));
+    assert.equal(await work,false);assert.equal(h.ready.length,0);assert.equal(h.c.proposal(),null);assert.deepEqual(h.value,before);assert.match(h.errors.at(-1),/來源不一致/);
+  }
+});
+test('LRC response artifacts cannot substitute text independently of validated data',async()=>{
+  for(const name of ['lyrics.lrc','lyrics.srt']){
+    const h=harness(),before=structuredClone(h.value),work=h.c.inspectCurrent(),reply=structuredClone(timed);reply.files[name]=reply.files[name].replace('合成第一句','替換文字');h.resolve(reply);
+    assert.equal(await work,false);assert.equal(h.c.proposal(),null);assert.deepEqual(h.value,before);assert.match(h.errors.at(-1),/來源不一致/);
+  }
+});
+test('LRC last-start estimate and multi-tag offset are checked against source normalization',async()=>{
+  const h=harness(async(op,payload)=>domain(op,payload));h.value.panels.lyrics.fields['lyrics-duration']='';
+  const raw='[offset:125]\n[00:01.25][00:02.125]  字  ';assert.equal(await h.c.read(file('multi.lrc',raw)),true);
+  assert.deepEqual(h.c.proposal().draft.panels.lyrics.cues,[{start:'1.375',end:'2.25',text:'  字  '},{start:'2.25',end:'5.25',text:'  字  '}]);
+  assert.equal(h.c.proposal().draft.panels.lyrics.fields['lyrics-duration'],'');assert.match(h.ready[0].notice,/加3秒估計/);
+});
+test('LRC file BOM is not stripped twice across request and domain and retry remains possible',async()=>{
+  const h=harness(async(op,payload)=>domain(op,payload));assert.equal(await h.c.read(file('two.lrc','\uFEFF\uFEFF[00:01]字')),false);assert.equal(h.ready.length,0);
+  assert.equal(await h.c.read(file('one.lrc','\uFEFF[00:01]\uFEFF字')),true);assert.equal(h.c.proposal().draft.panels.lyrics.cues[0].text,'\uFEFF字');
+});
 function appAdapter(){
   const source=fs.readFileSync(path.join(root,'web/app.js'),'utf8'),a=source.indexOf("$('lyrics-file').onchange="),b=source.indexOf("$('cue-add').onclick=",a);
   assert.ok(a>=0&&b>a);const h=harness(async(op,payload)=>domain(op,payload)),nodes={'lyrics-file':{value:'selected'},'lyrics-import':{}},notices=[];

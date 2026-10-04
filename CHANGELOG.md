@@ -1,5 +1,12 @@
 # 迭代說明
 
+## v0.50.0 — 2026-10-04
+
+- 修正 LRC 去除歌詞前後空白、將句中 timestamp 視為額外 cue、句中 offset 移動全曲、Unicode 分隔符截斷文字。只解析相鄰行首時間標籤；標籤後全文原值保留，offset 僅獨立行最後值生效，換行只分 CRLF／CR／LF。
+- 獨立 Python lyrics_lrc 與原生 JS lyrics-lrc 純模型，整數毫秒與既有精度驗證；單次文首 BOM，CLI／browser／Agent 不重複去除。超界／負時間／無效行首時間拒絕；巨大前導零先縮小再轉整數。
+- 瀏覽器 LRC 回應核對原文推得的 cues、duration、estimated、timing／review_notes 及 LRC／SRT 原文輸出。JSON self-consistency 仍保持；完整 preview.html 只核對存在與文字型別，沒有宣稱完整 HTML 語義驗證。
+- 428 Python／641 JS／53 syntax／4 Skills、原生預覽／Space套用／重新讀原文／錯誤拒絕／取消／撤回及三寬度／前版還原通過。句首字面 timestamp 與多標籤歧義保留並告知，JSON 作完整保存。產品50／來源38–50；wire／schema／12／17tools／legal4保持。
+
 ## v0.49.0 — 2026-10-04
 
 - 新增搜尋「上一批」，回讀同來源cursor重建20筆結果與原序號；每次換批清選取與context，原文reader不自動跳。顯示範圍，最後／第一批停用相應按鈕並讓鍵盤焦點接到另一可用控制。

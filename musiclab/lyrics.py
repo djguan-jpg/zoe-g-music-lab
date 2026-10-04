@@ -3,8 +3,7 @@ import re
 from .common import number
 from .lyric_timing import milliseconds, normalized_seconds, seconds_from_milliseconds
 from .lyrics_package import (PACKAGE_FORMAT, PACKAGE_SCHEMA_VERSION, decode_document, package_files)
-
-TIMESTAMP = re.compile(r"\[(\d+):(\d{2})(?:\.(\d{1,3}))?\]")
+from .lyrics_lrc import parse_lrc
 
 
 def validate_cues(cues, duration=None):
@@ -41,27 +40,6 @@ def validate_cues(cues, duration=None):
         if cue["end"] > duration:
             raise ValueError("歌詞結束超過歌曲時長")
     return cleaned, duration, inferred
-
-
-def parse_lrc(content):
-    cues = []
-    offsets = re.findall(r"\[offset:([+-]?\d+)\]", content, re.I)
-    offset = int(offsets[-1]) / 1000 if offsets else 0
-    for line in content.splitlines():
-        matches = list(TIMESTAMP.finditer(line))
-        if not matches:
-            if re.match(r"^\[\d+:", line):
-                raise ValueError("LRC 含無法解析的時間標籤")
-            continue
-        # Metadata-like content after the timing tags is still actual lyric text.
-        lyric = line[matches[-1].end():].strip()
-        for match in matches:
-            minutes, seconds, fractional = match.groups()
-            if int(seconds) >= 60:
-                raise ValueError("LRC 秒數需小於 60")
-            start = int(minutes) * 60 + int(seconds) + int((fractional or "0").ljust(3, "0")) / 1000 + offset
-            cues.append({"start": start, "text": lyric})
-    return cues
 
 
 def parse_srt(content):

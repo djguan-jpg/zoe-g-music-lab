@@ -12,7 +12,7 @@
   if(!exact(wire,['files','data','meta'])||!exact(wire.meta,['version','protocol_version','needs_review'])||wire.meta.version!==pack.version||wire.meta.protocol_version!==1||wire.meta.needs_review!==true)throw Error('交付核對回覆版本不支援');
   const d=wire.data;
   if(!exact(d,['format','schema_version','archive_bytes','archive_sha256','manifest'])||d.format!=='zoe-delivery-inspection'||d.schema_version!==1||!Number.isSafeInteger(d.archive_bytes)||d.archive_bytes<=0||d.archive_bytes>pack.maxArchive||d.archive_bytes!==selected.bytes||typeof d.archive_sha256!=='string'||!/^[0-9a-f]{64}$/.test(d.archive_sha256)||d.archive_sha256!==selected.sha256)throw Error('交付回覆與選定ZIP不符；目前成果保留');
-  if(!d.manifest||!['0.38.0','0.39.0','0.40.0','0.41.0','0.42.0','0.43.0','0.44.0','0.45.0','0.46.0','0.47.0','0.48.0','0.49.0'].includes(d.manifest.tool_version))throw Error('來源工具版本不支援；沒有遷移');
+  if(!d.manifest||!['0.38.0','0.39.0','0.40.0','0.41.0','0.42.0','0.43.0','0.44.0','0.45.0','0.46.0','0.47.0','0.48.0','0.49.0','0.50.0'].includes(d.manifest.tool_version))throw Error('來源工具版本不支援；沒有遷移');
   const source={scope:d.manifest.scope,label:d.manifest.label,files:wire.files};
   const expected=await pack.manifest(source,hash,d.manifest.tool_version);
   try{pack.checkedManifest(d.manifest,expected);pack.checkedManifest(selected.manifest,expected);}catch{throw Error('ZIP原始清單、回覆或文字成果不一致；目前成果保留');}

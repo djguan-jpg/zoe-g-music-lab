@@ -6,6 +6,8 @@ license: PolyForm-Noncommercial-1.0.0
 
 # ZOE Lyrics Sync
 
+LRC v0.50：保留時間標籤後的空白、句中標籤及 Unicode 原文；offset 需獨立一行。先預覽再明確套用，回應必須與原文推得的 cues／時間／來源說明及 LRC／SRT 輸出相符。相鄰行首多時間標籤展開多句；字面歌詞若以 timestamp 開頭會有格式歧義，請以版本1 JSON完整保存。原檔保持；不是自動辨識。見[契約](../../docs/LYRICS-LRC.md)。
+
 ZOE. G 發起的原創歌詞校時工具。資料與時序驗證規則見 [工具說明](README.md)。
 
 先判斷素材是否已有逐句時間。已有 LRC／SRT／JSON 時匯入；只有純文字時，可先用歌曲設計的「預覽已有歌詞的校時起稿」，或CLI lyrics-seed建立未校時JSON，再匯入校時工作台。先核對原文及影響、明確套用；開始／結束留白，依實際音檔逐句標記，不能把任意配給的時間說成辨識結果。

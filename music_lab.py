@@ -181,7 +181,7 @@ def main(argv=None):
             from musiclab.lyrics_package import decode_document, is_legacy, MAX_PACKAGE_BYTES
             if path.stat().st_size > MAX_PACKAGE_BYTES + 3:
                 raise ValueError('歌詞檔最多2 MiB')
-            content = path.read_bytes().decode('utf-8-sig')
+            content = path.read_bytes().decode('utf-8' if path.suffix.lower()=='.lrc' else 'utf-8-sig')
             parsed = decode_document(content) if path.suffix.lower() == '.json' else None
             package_input = isinstance(parsed, dict) and (is_legacy(parsed) or {'format', 'schema_version'} & set(parsed))
             if package_input:
