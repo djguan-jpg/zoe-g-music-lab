@@ -1,5 +1,9 @@
 # 原文下載 v0.42
 
+## v0.43 指定 ZIP 原文
+
+完整核對來源後才能選取明確原檔名，pure selection1／application／CLI／Agent／MCP共用；Browser pending current source唯讀下載沿native bytes。512 KiB選定JSON上限、8 MiB完整來源與原文保持；來源明確38–43，12／17工具與Agent1／draft3及既有交付schemas保持。見[目前契約與使用](DELIVERY-SELECTION.md)。以下早期版本段落保留迭代來源。
+
 選擇「成果檔案」後按「下載目前檔案」，保存的是本輪完整原文。預覽超過 32768 UTF-16 units 時只顯示開頭，提示會明確標示；預覽不會切開 emoji 的 surrogate pair，原文與 ZIP 保留全文。文字框的換行顯示不是原檔位元組。
 
 成果、專案草稿、已保存版本、接受條件草稿與差異報告共用本機文字下載。UTF-8 保留 BOM、CRLF／LF／CR、NUL、非 BMP 字元及空檔；HTML 內容當文字下載，不在工作台執行。接受的完整成果單檔最多 8 MiB；草稿本身 1 MiB、接受條件與報告原有界限保持。未知 Unicode 不以替代字元修復；可攜單層文字檔名，不接受路徑或裝置名稱。

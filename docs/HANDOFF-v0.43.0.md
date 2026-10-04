@@ -1,6 +1,6 @@
 # v0.43.0 交接與可逆
 
-ZIP 原文可按檔名選取：完整核對後，Agent／MCP 只回指定小檔，CLI 明確輸出指定全文，Browser 在載入前唯讀下載原文。見[使用與分層](docs/DELIVERY-SELECTION.md)、[QA](docs/QA-v0.43.0.md)。377 Python／572 JS／46 syntax／4 Skill；13份實際原文下載逐 bytes 同 ZIP，原 WAV 保持；前版 v42 ZIP365／565還原通過。
+ZIP 原文可按檔名選取：完整核對後，Agent／MCP 只回指定小檔，CLI 明確輸出指定全文，Browser 在載入前唯讀下載原文。見[使用與分層](DELIVERY-SELECTION.md)、[QA](QA-v0.43.0.md)。377 Python／572 JS／46 syntax／4 Skill；13份實際原文下載逐 bytes 同 ZIP，原 WAV 保持；前版 v42 ZIP365／565還原通過。
 
 ## 還原與發布
 

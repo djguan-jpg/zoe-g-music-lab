@@ -5,7 +5,7 @@ import json
 import sys
 from pathlib import Path
 from musiclab.common import read_json, write_bundle
-from musiclab.application import build, export_library_backup, prepare_delivery
+from musiclab.application import build, export_library_backup, prepare_delivery, inspect_delivery
 from musiclab.backup_files import write_backup
 from musiclab import __version__
 from musiclab.draft_library import DraftLibrary, revision_id
@@ -20,6 +20,7 @@ def main(argv=None):
         sub.add_argument("--overwrite", action="store_true", help="明確替換此輸出目錄的同名成果")
         if name=='delivery-inspect':sub.add_argument('--compare-input',help='明確比較基準JSON，只含scope與files；不合併或寫入原文')
         if name=='delivery-inspect':sub.add_argument('--comparison-report',action='store_true',help='明確比較基準時另輸出JSON與Markdown來源報告')
+        if name=='delivery-inspect':sub.add_argument('--file-name',action='append',help='明確輸出此原文檔，可重複；完整核對ZIP後選取，不覆寫，不能與comparison-report混用')
         if name in ('music-review', 'storyboard-review', 'storyboard-timing-review'):
             source_group = sub.add_mutually_exclusive_group(required=True)
             source_group.add_argument('--input', help='含 panel 的原始工作台欄位 JSON')
@@ -83,9 +84,12 @@ def main(argv=None):
             if args.compare_input:
                 from musiclab.delivery_package import decode, MAX_REQUEST_BYTES
                 with Path(args.compare_input).open('rb') as source:payload['baseline']=decode(source.read(MAX_REQUEST_BYTES+1))
-            result=build('delivery_inspect',payload,delivery_source=args.input)
+            if args.file_name:
+                result=inspect_delivery(args.input,True,limit_files=False,baseline=payload.get('baseline'),include_report=args.comparison_report,file_names=args.file_name)
+            else:result=build('delivery_inspect',payload,delivery_source=args.input)
+            if any(name.lower()=='delivery-inspection.json' for name in result.files):raise ValueError('選定原檔名與CLI摘要delivery-inspection.json衝突；請在工作台下載原檔，沒有寫出')
             paths=write_bundle(args.out,{'delivery-inspection.json':json_text(result.data),**result.files},args.overwrite)
-            print('交付ZIP雜湊核對完成；沒有解壓或創作品質驗收：'+paths[0]);return 0
+            print('交付ZIP雜湊核對完成；選定原文'+str(len(result.files))+'檔，沒有創作品質驗收：'+paths[0]);return 0
         if args.command == 'delivery-package':
             from musiclab.delivery_package import decode, MAX_REQUEST_BYTES
             from musiclab.delivery_files import write_archive

@@ -3,9 +3,13 @@
 (function(root){
  function createAdapter(document,options){
   const $=id=>document.getElementById(id);let controller;
+  let originalState={pending:false,canApply:false,names:new Set()};
   const names={added:'新增',changed:'變更',removed:'移除',unchanged:'相同'};
   const showContent=()=>{
-   const preview=controller.filePreview($('delivery-review-file').value);
+   const selected=$('delivery-review-file').value,preview=controller.filePreview(selected);
+   const present=originalState.names.has(selected);
+   $('delivery-original-download').disabled=!originalState.canApply||!present;
+   $('delivery-original-note').textContent=!originalState.pending?'核對ZIP後可下載選定原文，保留目前成果與表單。':!originalState.canApply?'來源已有修改或尚在處理，請重新核對ZIP。':!present?'ZIP沒有這個檔案；不能下載目前成果中的已移除檔。':'下載ZIP中的完整原文，包含預覽未顯示的部分；不載入或取代目前成果。';
    for(const [side,title] of [['before','目前成果'],['incoming','ZIP成果']]){
     const value=preview?.[side];$('delivery-review-'+side).value=value?.text||'';
     const l=value?.lineEndings;
@@ -13,6 +17,7 @@
    }
   };
   const render=s=>{
+   originalState={pending:s.pending,canApply:s.canApply,names:new Set(Object.keys(s.proposal?.files||{}))};
    $('delivery-import-file').disabled=!!options.capture().busy;
    $('delivery-import-preview').hidden=!s.pending;
    $('delivery-import-cancel').disabled=!s.reading&&!s.pending;
@@ -34,6 +39,7 @@
   $('delivery-import-file').onchange=event=>{const file=event.target.files[0];event.target.value='';if(file)controller.inspect(file);};
   $('delivery-import-apply').onclick=()=>controller.apply();$('delivery-import-cancel').onclick=()=>controller.cancel();$('delivery-import-undo').onclick=()=>controller.undo();
   $('delivery-review-file').onchange=showContent;
+  $('delivery-original-download').onclick=()=>{try{const file=controller.originalFile($('delivery-review-file').value);if(!file)return false;if(options.downloadText(file.name,file.content)!==true)throw Error('原文下載未送出');$('delivery-original-note').textContent='已送出ZIP原文下載，請核對保存的檔案；目前成果與表單保持。';return true;}catch(error){options.onError?.(error);return false;}};
   for(const [id,name] of [['delivery-report-json','delivery-comparison.json'],['delivery-report-md','delivery-comparison.md']]){
    $(id).onclick=()=>{try{const files=controller.report();if(!files)return false;if(options.downloadText(name,files[name])!==true)throw Error('報告下載未送出');return true;}catch(error){options.onError?.(error);return false;}};
   }

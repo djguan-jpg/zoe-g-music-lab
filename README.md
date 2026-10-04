@@ -1,6 +1,6 @@
 # ZOE. G Music Lab
 
-目前版本 **v0.42.0**：成果、草稿、保存版本、接受條件與差異報告共用本機原文下載，保持 UTF-8 與換行；8 MiB 成果完整保存，長文預覽有界且明示。365 Python／565 JS、四台13份真原文下載及8 MiB邊界逐 bytes 同來源通過。見[使用與分層](docs/TEXT-DOWNLOAD.md)、[QA](docs/QA-v0.42.0.md)、[交接](docs/HANDOFF-v0.42.0.md)。
+目前版本 **v0.43.0**：核對完整 ZIP 後可只選指定原檔；Browser 載入前下載原文並保留目前成果，CLI 明確輸出全文，Agent／MCP 保持512 KiB回覆上限。377 Python／572 JS、四台13份實際原文下載逐 bytes 同 ZIP 通過。見[使用與分層](docs/DELIVERY-SELECTION.md)、[QA](docs/QA-v0.43.0.md)、[交接](docs/HANDOFF-v0.43.0.md)。
 
 ## ZIP原文與差異（v0.40）
 

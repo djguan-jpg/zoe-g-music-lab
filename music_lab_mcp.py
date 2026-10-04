@@ -8,6 +8,7 @@ import argparse
 import json
 import sys
 from pathlib import Path
+from musiclab.operation_errors import io_message
 
 from musiclab import __version__
 from musiclab.application import MAX_REQUEST_BYTES, OPERATIONS, LIBRARY_OPERATIONS, build, load_request
@@ -121,7 +122,7 @@ class Session:
                 except (ValueError, TypeError, KeyError, AttributeError, UnicodeError, RecursionError) as error:
                     result = tool_error(str(error))
                 except OSError:
-                    result = tool_error("The explicitly selected WAV cannot be read")
+                    result = tool_error(io_message(self.tools[name]))
                 except Exception:
                     return rpc_error(request_id, -32603, "Local operation did not complete")
         return {"jsonrpc": "2.0", "id": request_id, "result": result}

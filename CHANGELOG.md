@@ -1,5 +1,12 @@
 # 迭代說明
 
+## v0.43.0 — 2026-10-04
+
+- 先完整核對 ZIP，再按明確原檔名選取，解決大封裝無法只取小檔。Agent／MCP維持512 KiB files JSON上限，CLI明確輸出沿8 MiB來源，缺檔與未選取檔損壞都拒絕。
+- 四工作台在載入前下載完整 ZIP 原文，empty可下載、removed停用；重查來源與revision，保持目前成果、表單、媒體及限定撤回。DOM只快取檔名與可用狀態，避免切換時再複製大原文。
+- 新增pure selection1與共用 sanitized I/O提示，沿原portable檔名、application與native UTF-8 adapter分層。12／17工具與Agent1／draft3保持，來源版本明確38–43。
+- 377Python／572JS／46syntax／4Skill；新增12Python／7JS、實際CLI／Agent／MCP，四台13份原文同ZIP bytes／SHA與保留原WAV，三寬度DOM、晚回應取消及v42 ZIP365／565還原通過。exact-source私有發布與維護依收據。
+
 ## v0.42.0 — 2026-10-04
 
 - 五種文字下載共用原生UTF-8 bytes，修正form換行正規化及body上限；保持BOM／CRLF／LF／CR／NUL／emoji／空檔。每次取current canonical source，dirty／busy拒絕，下載失敗不新增保存確認。

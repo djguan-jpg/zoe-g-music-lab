@@ -1,5 +1,9 @@
 # 分層與版本契約
 
+## v0.43 指定 ZIP 原文
+
+完整核對來源後才能選取明確原檔名，pure selection1／application／CLI／Agent／MCP共用；Browser pending current source唯讀下載沿native bytes。512 KiB選定JSON上限、8 MiB完整來源與原文保持；來源明確38–43，12／17工具與Agent1／draft3及既有交付schemas保持。見[目前契約與使用](DELIVERY-SELECTION.md)。以下早期版本段落保留迭代來源。
+
 ## v0.42 原文下載與有界成果預覽
 
 text-download純形狀／Unicode／UTF-8 bytes與注入select-send controller→text-download-dom bounded Blob URL／anchor／timer→app current canonical source。五文字入口共用，不經HTTP form或preview textarea；error不能新增pending，sent仍需明確確認。成果預覽重用delivery-review.excerpt32768units，不拆surrogate、不改來源。URL最多2個、1秒／pagehide／dispose清理自身；binary staging與相容API cap保持。Agent／CLI／MCP無權限或schema新增，明確來源38–42。見[契約](TEXT-DOWNLOAD.md)。

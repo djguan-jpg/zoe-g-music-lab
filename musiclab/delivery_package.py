@@ -32,6 +32,12 @@ def descriptor():
             'content_validation': 'not_performed', 'media_included': False}
 
 
+def validate_name(name):
+    if not isinstance(name, str) or not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_.-]{0,99}', name) or name.endswith('.') or name.upper().split('.')[0] in DEVICES or '.'+name.rsplit('.', 1)[-1].lower() not in EXTENSIONS:
+        raise ValueError('成果檔名需為可攜的單層文字檔名；不能含路徑或裝置名稱')
+    return name
+
+
 def validate(payload):
     if not isinstance(payload, dict) or set(payload) - {'scope', 'label', 'files', 'include_archive'} or not {'scope', 'files'} <= set(payload):
         raise ValueError('交付封裝欄位錯誤；不能指定來源或目的路徑')
@@ -45,8 +51,7 @@ def validate(payload):
         raise ValueError('本輪需有 1–64 個文字成果檔案')
     lowered = set(); selected = {}; total = 0
     for name, content in files.items():
-        if not isinstance(name, str) or not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_.-]{0,99}', name) or name.endswith('.') or name.upper().split('.')[0] in DEVICES or '.'+name.rsplit('.', 1)[-1].lower() not in EXTENSIONS:
-            raise ValueError('成果檔名需為可攜的單層文字檔名；不能含路徑或裝置名稱')
+        validate_name(name)
         if name.lower() == MANIFEST_NAME.lower() or name.lower() in lowered:
             raise ValueError('成果檔名重複或占用交付清單名稱')
         if not isinstance(content, str): raise ValueError('成果內容需為文字')
@@ -82,7 +87,7 @@ class PreparedDelivery:
 
 def prepare(payload, *, tool_version=None):
     tool_version = __version__ if tool_version is None else tool_version
-    if tool_version not in ("0.38.0", "0.39.0", "0.40.0", "0.41.0", "0.42.0"): raise ValueError("不支援的交付工具版本")
+    if tool_version not in ("0.38.0", "0.39.0", "0.40.0", "0.41.0", "0.42.0", "0.43.0"): raise ValueError("不支援的交付工具版本")
     source = validate(payload)
     records = []; encoded = {}
     for name, content in source['files'].items():

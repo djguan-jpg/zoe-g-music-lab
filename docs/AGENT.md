@@ -1,5 +1,9 @@
 # 本機 Agent 接口 v1
 
+## v0.43 指定 ZIP 原文
+
+完整核對來源後才能選取明確原檔名，pure selection1／application／CLI／Agent／MCP共用；Browser pending current source唯讀下載沿native bytes。512 KiB選定JSON上限、8 MiB完整來源與原文保持；來源明確38–43，12／17工具與Agent1／draft3及既有交付schemas保持。見[目前契約與使用](DELIVERY-SELECTION.md)。以下早期版本段落保留迭代來源。
+
 ## v0.42 Browser 原文下載
 
 Browser文字入口改native UTF-8 bytes，與Agent／MCP分層：沒有新增工具或自動寫檔／路徑／網路能力。12／17與所有schema／inline512KiB／行2MiB保持，producer／inspector／browser來源版本明確38–42，未知拒絕。原文8MiB可由工作台下載或CLI明確ZIP輸出；不因此擴大Agent回覆。見[下載契約](TEXT-DOWNLOAD.md)。
