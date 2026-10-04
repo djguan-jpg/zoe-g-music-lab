@@ -3,6 +3,7 @@
 (function(root){
   const acceptance=typeof module==='object'&&module.exports?require('./audio-acceptance.js'):root.MusicAudioAcceptance;
   const json=typeof module==='object'&&module.exports?require('../musiclab/assets/json-document.js'):root.MusicJsonDocument;
+  const statistics=typeof module==='object'&&module.exports?require('./audio-statistics.js'):root.MusicAudioStatistics;
   const same=(a,b)=>typeof a===typeof b&&(a===null||typeof a!=='object'?a===b:Array.isArray(a)?Array.isArray(b)&&a.length===b.length&&a.every((v,i)=>same(v,b[i])):b!==null&&!Array.isArray(b)&&Object.keys(a).length===Object.keys(b).length&&Object.keys(a).every(k=>Object.hasOwn(b,k)&&same(a[k],b[k])));
 
   function buildLoudness(report){
@@ -86,6 +87,7 @@
     const needsReview=report.warnings.length>0;
     if(report.status!==(needsReview?'needs_review':'technical_checks_passed')||
       specifications.some(s=>!s.passed)&&!needsReview)invalid();
+    statistics.validate(report);
     return {file:report.file,bytes:source.bytes,sha256:report.sha256,profile:report.profile,custom:report.acceptance_draft?.custom===true,
       needsReview,status:needsReview?'有待確認項目':'本次技術條件通過',
       specifications,channels,warnings:structuredClone(report.warnings),duration:report.duration_seconds,

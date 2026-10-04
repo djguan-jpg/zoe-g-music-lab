@@ -43,3 +43,8 @@ HTTP 保留 `/api/audio` 原生 WAV body，query 的 `acceptance_draft` 為 URL 
 `audio-review.inspect` 先驗證有效條件，再上傳；收到回覆先查 revision、File 身份、profile 與完整原條件，後核對實際 acceptance、來源草稿、report.json／data 與顯示檔名，最後才提交成果。晚回應與未知或不符來源保留上一份成果和後續編修。改條件標為上一份且停下載。這些暫態與媒體不進 draft3 或 Agent wire。
 
 接受值只比較格式；不代表音樂品質、素材授權、平台通用標準或實聽通過。響度 LUFS 與 RMS 仍分開，沒有 true peak、正規化或模型呼叫。
+
+
+## v0.61 音檔報告数值核對
+
+`audio-statistics.js`是無I/O、無UI的整數PCM bounds validator；`audio-review`在組成presentation／onResult之前呼叫。固定HTTP asset／index dependency提供同一模組；CLI、Agent、MCP、HTTP依原共用Python application產生報告，跨語言實際producer matrix確認可讀。影格／時長／bytes、peak/RMS/null/DC/full-scale、安靜邊界与mono/multichannel correlation互相核對；只驗證報告自洽，不重算PCM／響度、不證明實聽、授權或SHA對所選瀏覽器File的獨立核對。原report schema、loudness1／acceptance-draft1、Agent1／project draft3保持。見[數值契約](AUDIO-STATISTICS.md)。

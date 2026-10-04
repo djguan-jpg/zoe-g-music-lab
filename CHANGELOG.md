@@ -1,4 +1,12 @@
-# v0.60.0 · 2026-10-04
+# v0.61.0 · 2026-10-04
+
+音檔報告新增獨立 PCM 數值核對：拒絕正值 sample peak、RMS 高於 peak、滿刻度樣本超過影格、安靜段超過時長及非立體聲相關值等矛盾回覆。原報告、表單與音檔保留，可重新分析；全安靜音檔兩端全長與四捨五入保持有效。484 Python／751 JavaScript／63 語法／四份 Skill 通過，83 份實際合成音檔與92個歷史ZIP bytes保持。
+
+實際application產生的report，在data及report.json一起變更且原條件草稿完全相符時，五種矛盾值仍被browser inspect當成technical_checks_passed。新增純audio-statistics validator，audio-review在presentation與onResult之前核對；固定server asset與index依序載入。既有measurement、響度schema、application與CLI/Agent/MCP producer不改；產品61，明確producer38–61共24項，protocol/schema保持。
+
+新增3 Python整合與8 JS測試。83實際PCM涵蓋8/16/24/32 bit、8000/11025/48000/192000 Hz、mono/stereo/多聲道、全安靜／正負滿刻度／安靜邊界、1-frame及量測區塊；真CLI警告exit2、Agent/MCP/HTTP wire與來源bytes核對。拒絕匹配原文的五種篡改、late取消、legacy量測缺席、純模型不修改輸入與browser腳本次序確認。兩舊測試fixture補齊實際producer本來就提供的frames；靜音fixture修正矛盾非零DC。
+
+## v0.60.0 · 2026-10-04
 
 ZIP核對失敗原因保留在選檔區，可清除訊息或重新選檔；編修表單保持提示，清除不取消既有撤回。純控制器的有界失敗metadata、DOM literal狀態與介面樣式分層，舊回應不能恢復已取消的錯誤。481 Python／743 JavaScript／62語法／四份Skill通過，88個歷史ZIP bytes保持。
 

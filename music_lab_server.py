@@ -70,6 +70,7 @@ ASSETS = {"/delivery-versions.js": ("musiclab/assets/delivery-versions.js","text
           "/audio-acceptance.js": ("web/audio-acceptance.js", "text/javascript"),
           "/audio-acceptance-dom.js": ("web/audio-acceptance-dom.js", "text/javascript"),
           "/audio-review.js": ("web/audio-review.js", "text/javascript"),
+          "/audio-statistics.js": ("web/audio-statistics.js", "text/javascript"),
           "/planning-review.js": ("web/planning-review.js", "text/javascript"),
           "/planning-source.js": ("web/planning-source.js", "text/javascript"),
           "/storyboard-timing.js": ("web/storyboard-timing.js", "text/javascript"),

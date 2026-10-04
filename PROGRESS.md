@@ -1,4 +1,8 @@
-# 進度：目前 v0.60.0
+# 進度：目前 v0.61.0
+
+## v0.61.0
+
+2026-10-04：音檔報告新增獨立 PCM 數值核對：拒絕正值 sample peak、RMS 高於 peak、滿刻度樣本超過影格、安靜段超過時長及非立體聲相關值等矛盾回覆。原報告、表單與音檔保留，可重新分析；全安靜音檔兩端全長與四捨五入保持有效。484 Python／751 JavaScript／63 語法／四份 Skill 通過，83 份實際合成音檔與92個歷史ZIP bytes保持。 原生tab105真HTTP正常／QA受控矛盾／正常三回覆200，矛盾時原可見report／visual／檔名清單與selected input value保持；390px錯誤提示幾何通過，Enter重試完全一致。logs0、tab關閉／viewportreset／server11071 exit0／lazy staging未建立。前版v60指定ZIP還原及本輪exact-source/private PR/Release/actual remote/latest61／60／59依收據。Agent1／draft3／13／18工具與legal4/private/not_submitted保持；rolling active。
 
 ## v0.60.0
 

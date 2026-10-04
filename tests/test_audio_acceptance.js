@@ -75,7 +75,7 @@ test('whole project load deactivates custom mode while retaining unfinished raw 
   assert.equal(a.get().custom,false);assert.equal(a.get().fields.bits,'16\n unfinished');assert.equal(a.c.status().dirty,true);
 });
 function report(d){return {file:'first.wav',profile:d.profile,acceptance_draft:structuredClone(d),sha256:'a'.repeat(64),sample_rate:48000,bit_depth:16,
-  channels:2,duration_seconds:1,acceptance:model.prepare(d).acceptance,checks:{sample_rate:true,bit_depth:true,channels:true},warnings:[],status:'technical_checks_passed',
+  channels:2,frames:48000,duration_seconds:1,acceptance:model.prepare(d).acceptance,checks:{sample_rate:true,bit_depth:true,channels:true},warnings:[],status:'technical_checks_passed',
   quiet_regions:{threshold_dbfs:-60,leading_seconds:0,trailing_seconds:0,quiet_frame_ratio:0},stereo_correlation:null,
   source_evidence:{bytes:192044,analysis_source:'copied_bytes',wave_format_tag:1,block_align:4,average_bytes_per_second:192000},
   per_channel:[1,2].map(channel=>({channel,peak_dbfs:-12,rms_dbfs:-20,dc_offset:0,full_scale_samples:0}))};}
