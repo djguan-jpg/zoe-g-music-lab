@@ -1,4 +1,8 @@
-# 進度：目前 v0.54.0
+# 進度：目前 v0.55.0
+
+## v0.55.0
+
+2026-10-04：歌詞建立與帶時間匯入現在核對完整 preview.html：內嵌來源、标题、樣式、共用模組及執行程式必須符合本次完整歌詞與目前安裝的固定範本。錯來源／空預覽／程式改動拒絕，保留原表格與成果，正常重試可完成。Python 與瀏覽器共用同一範本，合成樣本輸出與 v54 逐 bytes 相同。463 Python／704 JavaScript／58 語法／4 Skills、原生三寬度與 v54 ZIP457／691還原通過。產品55／明確交付來源38–55，13／18工具、Agent1／draft3／review1／source1保持；內部 preview-template1 獨立。 tab94／95關閉、viewport reset、server原handle exit0／lazy staging未建立。private exact-source封裝／遠端／latest55／54／53依收據；正式媒體、實聽、完整視覺、特定Host、瀏覽器保存及FreeTWAI仍待，rolling active。
 
 ## v0.54.0
 

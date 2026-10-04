@@ -6,6 +6,11 @@ license: PolyForm-Noncommercial-1.0.0
 
 # ZOE Lyrics Sync
 
+## v0.55 預覽也要符合這一份歌詞
+
+建立或匯入帶時間歌詞時，完整 preview.html 的來源、標題及固定程式需與本次歌詞和本機範本一致才接受。錯誤時原編修與上一份成果保留，可正常重試。從舊完整 lyrics.json 匯入會重新產生目前範本；不是接受任意舊 HTML。原離線預覽仍可選本機音檔、人工編修後套用；實聽同步與格式限制仍需核對。無模型辨識或作者／版權證明。見[契約](../../docs/LYRICS-PREVIEW.md)。
+
+
 SRT v0.51：保留各行空白與Unicode原文，實際多行仍以 / 合句。原排版保留原SRT檔；空白cue用版本1JSON，原文亦可另存draft3。先預覽再明確套用，回應cues／time／來源推得及JSON／LRC／SRT需符合原文。未宣告總長依末句原結束推得，不當已確認音檔時長；原檔保持。見[契約](../../docs/LYRICS-SRT.md)。
 
 LRC v0.50：保留時間標籤後的空白、句中標籤及 Unicode 原文；offset 需獨立一行。先預覽再明確套用，回應必須與原文推得的 cues／時間／來源說明及 LRC／SRT 輸出相符。相鄰行首多時間標籤展開多句；字面歌詞若以 timestamp 開頭會有格式歧義，請以版本1 JSON完整保存。原檔保持；不是自動辨識。見[契約](../../docs/LYRICS-LRC.md)。

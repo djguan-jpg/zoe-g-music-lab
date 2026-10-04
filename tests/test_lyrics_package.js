@@ -14,7 +14,7 @@ function draft(duration=''){
 }
 function harness(duration='',request=async(_op,payload)=>domain(payload)){
   const value=draft(duration),views=[],errors=[];
-  const c=I.createImport({capture:()=>value,request,onReady:v=>views.push(v),onClear:()=>{},onError:e=>errors.push(e.message),onState:()=>{}});
+  const c=I.createImport({previewContract:require('./helpers/lyric-preview-contract.js'),capture:()=>value,request,onReady:v=>views.push(v),onClear:()=>{},onError:e=>errors.push(e.message),onState:()=>{}});
   const read=d=>{const raw=new TextEncoder().encode(JSON.stringify(d)).buffer;return c.read({name:'lyrics.json',size:raw.byteLength,arrayBuffer:async()=>raw});};return {value,views,errors,c,read};
 }
 
