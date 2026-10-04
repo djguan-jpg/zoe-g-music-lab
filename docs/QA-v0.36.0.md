@@ -31,3 +31,6 @@ URL http://127.0.0.1:8875/，CUA IAB；Browser專用skill未提供，依現有CU
 前版v0.35指定source 3453224ccfb25defc01298b0c871be0fd936ed1b、ZIP779188bytes／SHA 2eab02130c1bb4c88e9e7bb5bee0de3e10d2026b9076a768ccac03c7b2a9637a 解壓300Python／431JS通過，限定暫存移除。本版source、privatePR／Release、遠端實際下載digest、restore／refs／tree與法律四檔依本輪source/package/release-remote receipts核對；GitHub CI未配置。
 
 正式媒體／實聽、完整視覺、特定Agent Host、其他瀏覽器／螢幕閱讀器與原生file預覽播放仍未驗收；FreeTWAI not_submitted，rolling goal持續。
+
+
+封裝首個source commit 57e17624a6989ce76014c16d77fdd5cedbbfd699的完整Python測試超過舊60秒deadline，流程終止、未發成功manifest；失敗ZIP／FAILED.txt保留在對應outputs/releases目錄。修正封裝command可明確指定timeout，完整Python套件使用120秒 execution deadline，其餘60秒；caller每次bounded wait仍最多60秒。發布採修正後新commit的獨立目錄，不覆寫失敗證據。解壓驗證暫存先核對絕對parent為系統temp，再由原context正常回收。

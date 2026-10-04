@@ -17,3 +17,6 @@ branch codex/iteration-v0.36.0；restore-v0.35.0-before-v0.36.0指main起點98db
 發布後latest3為v0.36／v0.35／v0.34。用v35維護工具唯讀稽核本輪actual run1記錄／source tags／ZIP ledger；只超七天且可重建的完整封裝為候選，草稿／備份／媒體與未知程序保留。最終audit／process／inventory記錄實際服務結束、8875listener與刪除數量；沒有未知kill。若無候選，沒有搬移／刪除或journal。
 
 下輪先建分支與restore，依可重現使用證據調整目標，繼續四工作台功能及正式媒體／完整視覺接受。保持產品與資料版本分離、非商用／private／作者揭露；沒有公開、平台投稿、auth或新增依賴授權。
+
+
+封裝首個source commit 57e17624a6989ce76014c16d77fdd5cedbbfd699的完整Python測試超過舊60秒deadline，流程終止、未發成功manifest；失敗ZIP／FAILED.txt保留在對應outputs/releases目錄。修正封裝command可明確指定timeout，完整Python套件使用120秒 execution deadline，其餘60秒；caller每次bounded wait仍最多60秒。發布採修正後新commit的獨立目錄，不覆寫失敗證據。解壓驗證暫存先核對絕對parent為系統temp，再由原context正常回收。

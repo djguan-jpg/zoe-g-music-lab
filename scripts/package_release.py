@@ -13,8 +13,8 @@ ROOT = Path(__file__).resolve().parents[1]
 PREFIX = "zoe-g-music-lab/"
 
 
-def command(args, cwd=ROOT, input=None):
-    process = subprocess.run(args, cwd=cwd, input=input, capture_output=True, timeout=60)
+def command(args, cwd=ROOT, input=None, timeout=60):
+    process = subprocess.run(args, cwd=cwd, input=input, capture_output=True, timeout=timeout)
     if process.returncode:
         detail = (process.stdout + process.stderr).decode("utf-8", errors="replace")[-4000:]
         raise ValueError(f"Check failed: {args[0]} {args[1]}\n{detail}")
@@ -62,9 +62,14 @@ def package(ref):
                 if required not in hashes:
                     raise ValueError(f"Missing required release file: {required}")
             with tempfile.TemporaryDirectory(prefix="zoe-release-check-") as folder:
+                selected = Path(folder).resolve()
+                if selected.parent != Path(tempfile.gettempdir()).resolve():
+                    raise ValueError("Unverified release validation temporary directory")
                 archive.extractall(folder)
                 checkout = Path(folder) / "zoe-g-music-lab"
-                command([sys.executable, "-X", "utf8", "-m", "unittest", "discover", "-s", "tests"], checkout)
+                # The full suite includes real Git/Windows process fixtures; use a
+                # bounded execution deadline separately from each caller's wait.
+                command([sys.executable, "-X", "utf8", "-m", "unittest", "discover", "-s", "tests"], checkout, timeout=120)
                 command(["node", "--check", "web/app.js"], checkout)
                 javascript_tests = sorted(file.relative_to(checkout).as_posix() for file in (checkout / "tests").glob("test_*.js"))
                 if not javascript_tests:

@@ -299,3 +299,8 @@
 ## v0.2.0 — 2026-10-01
 
 第一版四工作台、原創 Skill、35 項 Python 測試與 private GitHub 上傳。Release tag 保留首次發起與 AI 協作紀錄；未附開源授權、未送出自由工坊投稿。
+
+
+### v0.36 封裝驗證修復
+
+完整Python套件含Git／Windows實體fixture，舊60秒deadline於指定commit封裝實跑不足。只將封裝Python套件deadline明確設為120秒，其他command保留60秒；caller bounded wait仍最多60秒。失敗artifact保留，新commit另建不可覆寫封裝；暫存解壓位置先驗證系統temp parent。
