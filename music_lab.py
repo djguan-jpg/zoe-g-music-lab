@@ -26,6 +26,8 @@ def main(argv=None):
             sub.add_argument('--start-byte',type=int,help='原文UTF-8字元邊界；非零需archive-sha256')
             sub.add_argument('--window-bytes',type=int,help='分段最多4–16384 bytes；預設16384')
             sub.add_argument('--archive-sha256',help='前次核對的ZIP SHA；來源變更拒絕接續')
+            sub.add_argument('--find-text',help='與text-file一起使用；搜尋原文完全相同的字串，只輸出命中位置摘要')
+            sub.add_argument('--max-matches',type=int,help='字面搜尋每批1–50筆；預設20，可依摘要接續')
         if name in ('music-review', 'storyboard-review', 'storyboard-timing-review'):
             source_group = sub.add_mutually_exclusive_group(required=True)
             source_group.add_argument('--input', help='含 panel 的原始工作台欄位 JSON')
@@ -86,11 +88,16 @@ def main(argv=None):
             from musiclab.common import json_text
             payload={}
             if args.text_file is not None:
-                payload['text_window']={'file_name':args.text_file}
-                for key,value in [('start_byte',args.start_byte),('max_bytes',args.window_bytes),('archive_sha256',args.archive_sha256)]:
-                    if value is not None:payload['text_window'][key]=value
+                mode='text_search' if args.find_text is not None else 'text_window'
+                payload[mode]={'file_name':args.text_file}
+                if mode=='text_search':
+                    if args.window_bytes is not None:raise ValueError('find-text與window-bytes不可混用')
+                    payload[mode]['query']=args.find_text
+                elif args.max_matches is not None:raise ValueError('max-matches需明確find-text')
+                for key,value in [('start_byte',args.start_byte),('max_matches',args.max_matches) if mode=='text_search' else ('max_bytes',args.window_bytes),('archive_sha256',args.archive_sha256)]:
+                    if value is not None:payload[mode][key]=value
                 if args.file_name:raise ValueError('text-file與file-name不可同時選用')
-            elif any(value is not None for value in (args.start_byte,args.window_bytes,args.archive_sha256)):raise ValueError('分段設定需明確text-file')
+            elif any(value is not None for value in (args.start_byte,args.window_bytes,args.archive_sha256,args.find_text,args.max_matches)):raise ValueError('原文設定需明確text-file')
             if args.comparison_report:payload['include_report']=True
             if args.compare_input:
                 from musiclab.delivery_package import decode, MAX_REQUEST_BYTES

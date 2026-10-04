@@ -1,6 +1,6 @@
 # ZOE. G Music Lab
 
-目前版本 **v0.45.0**：每輪程序稽核的原生查詢失敗時，補查同一 PID 的本機 identity；分清已退出／重用／有限精度及未知狀態，模糊證據仍阻擋清除。pure policy／probe1解碼／Windows adapter／原生路由分層，既有Agent與四工作台權限保持。398 Python／582 JavaScript／48 syntax／4 Skill與diff通過。 見[契約](docs/PROCESS-PROBE.md)、[QA](docs/QA-v0.45.0.md)、[交接](docs/HANDOFF-v0.45.0.md)。
+目前版本 **v0.46.0**：核對交付ZIP後可搜尋完整原文並直接跳到命中位置，支援目前保留成果與ZIP原文。CLI／Agent／MCP共用精確非重疊UTF-8位置與SHA接續；原文／表單／媒體保留。408 Python／594 JavaScript／50 syntax／4 Skill通過。見[搜尋使用](docs/DELIVERY-SEARCH.md)、[QA](docs/QA-v0.46.0.md)、[交接](docs/HANDOFF-v0.46.0.md)。
 
 ## ZIP原文與差異（v0.40）
 

@@ -2,7 +2,7 @@
 'use strict';
 (function(root){
  function createAdapter(document,options){
-  const $=id=>document.getElementById(id);let controller,reader=null;
+  const $=id=>document.getElementById(id);let controller,reader=null,searcher=null;
   let originalState={pending:false,canApply:false,names:new Set(),records:new Map(),sha:''};
   const names={added:'新增',changed:'變更',removed:'移除',unchanged:'相同'};
   const showContent=()=>{
@@ -15,7 +15,7 @@
     const l=value?.lineEndings;
     $('delivery-review-'+side+'-note').textContent=!value?.present?title+'沒有這個檔案':`換行 CRLF ${l.crlf}／LF ${l.lf}／CR ${l.cr}。`+(value.truncated?'內容過長，預覽顯示開頭；載入與下載保留全文。':'完整文字預覽；文字框會統一顯示換行，原文下載保持。');
    }
-   reader?.refresh();
+   reader?.refresh();searcher?.refresh();
   };
   const render=s=>{
    originalState={pending:s.pending,canApply:s.canApply,names:new Set(Object.keys(s.proposal?.files||{})),records:new Map((s.comparison?.files||[]).map(f=>[f.name,f])),sha:s.proposal?.data.archive_sha256||''};
@@ -37,10 +37,15 @@
    showContent();
   };
   controller=root.MusicDeliveryImport.createController({...options,onState:render});
-  reader=root.MusicDeliveryTextDom.createAdapter(document,{
-   source:()=>{const name=$('delivery-review-file').value,side=$('delivery-reader-side').value,record=originalState.records.get(name)?.[side];return {key:[originalState.sha,name,side,record?.sha256||''].join('|'),canRead:originalState.canApply&&!!record,pending:originalState.pending,message:!originalState.pending?'核對ZIP後可逐段閱讀原文。':!originalState.canApply?'來源已有修改，請重新核對ZIP。':'所選來源沒有這個檔案；空檔會另行標示。'};},
+  const originalSource=()=>{const name=$('delivery-review-file').value,side=$('delivery-reader-side').value,record=originalState.records.get(name)?.[side];return {key:[originalState.sha,name,side,record?.sha256||''].join('|'),canRead:originalState.canApply&&!!record,pending:originalState.pending,message:!originalState.pending?'核對ZIP後可逐段閱讀原文。':!originalState.canApply?'來源已有修改，請重新核對ZIP。':'所選來源沒有這個檔案；空檔會另行標示。'};};
+  reader=root.MusicDeliveryTextDom.createAdapter(document,{source:originalSource,
    read:start=>controller.textWindow($('delivery-review-file').value,$('delivery-reader-side').value,start),onError:options.onError,onReset:()=>controller.clearTextWindow()
   });
+  searcher=root.MusicDeliverySearchDom.createAdapter(document,{source:originalSource,
+   read:request=>controller.textSearch($('delivery-review-file').value,$('delivery-reader-side').value,request),
+   onSelect:start=>reader.controller.seek(start),onError:options.onError
+  });
+  $('delivery-reader-side').onchange=()=>{reader.refresh();searcher.refresh();};
   $('delivery-import-file').onchange=event=>{const file=event.target.files[0];event.target.value='';if(file)controller.inspect(file);};
   $('delivery-import-apply').onclick=()=>controller.apply();$('delivery-import-cancel').onclick=()=>controller.cancel();$('delivery-import-undo').onclick=()=>controller.undo();
   $('delivery-review-file').onchange=showContent;

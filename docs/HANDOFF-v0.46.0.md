@@ -1,6 +1,6 @@
 # v0.46.0 交接與可逆
 
-原文搜尋text-search1 → 完整ZIP核對application → CLI／Agent／MCP；瀏覽器純KMP／searcher／DOM → 同一current original cache → reader.seek。query1–1024 UTF-8 bytes、Agent每批1–50、browser20，單buffer8MiB共用、reader16KiB；來源或query失效清除命中。原文、創作表單與媒體保留。見[契約](docs/DELIVERY-SEARCH.md)、[QA](docs/QA-v0.46.0.md)。408 Python／594 JS／50 syntax／4 Skill通過。
+原文搜尋text-search1 → 完整ZIP核對application → CLI／Agent／MCP；瀏覽器純KMP／searcher／DOM → 同一current original cache → reader.seek。query1–1024 UTF-8 bytes、Agent每批1–50、browser20，單buffer8MiB共用、reader16KiB；來源或query失效清除命中。原文、創作表單與媒體保留。見[契約](DELIVERY-SEARCH.md)、[QA](QA-v0.46.0.md)。408 Python／594 JS／50 syntax／4 Skill通過。
 
 branch codex/iteration-v0.46.0；restore-v0.45.0-before-v0.46.0指向起點038408977e93957e17485654e14f88728ea20309。需要還原時先保存未提交創作，從restore另開分支；精確source ZIP／SHA及private PR／Release依本輪收據，合併main tree須同source。v45指定ZIP398／582還原通過，暫存已移除。
 

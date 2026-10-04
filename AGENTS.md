@@ -159,3 +159,8 @@
 - 原 Windows native unavailable 才補查同一明確 PID 的本機 CIM，三欄 ProcessId／Name／CreationDate、hidden／no-profile／no-interactive，operation3秒／自有helper5秒。無全域列舉／command line／環境／remote／原工作或外部程序終止。
 - process-probe1純嚴格有界解碼／Windows adapter／原生路由／maintenance純政策分層；成功明確null才absent，未知／錯誤／warning／逾時保持unavailable。CIM時間±9 ticks內保持unverified，不假造精確ownership；明確分離／不同image才pid_reused並保留外部程序。
 - run1／audit1／recovery1及12／17工具／Agent1／draft3保持；補查evidence只有basename／ticks／精度。產品45與交付來源明確38–45同步，未知拒絕；沒有新增Agent／HTTP維護權限。見[契約](docs/PROCESS-PROBE.md)。
+
+
+## v0.46 原文搜尋與定位
+
+完整核對 ZIP 後，text-search1 精確比對原文並回傳有限筆 UTF-8 命中位置；非零接續需前次 ZIP SHA。瀏覽器在「分段閱讀完整原文」輸入搜尋字，按尋找或 Enter，再選擇命中位置直接跳到原文；可搜尋 ZIP 或目前保留成果。每批20筆，原文、表單與媒體保留，來源變更清除舊結果。12／17工具、Agent1／draft3及既有交付 schemas 保持；交付來源明確38–46，未知拒絕。見[搜尋契約](docs/DELIVERY-SEARCH.md)。以下較早章節保留歷史迭代。

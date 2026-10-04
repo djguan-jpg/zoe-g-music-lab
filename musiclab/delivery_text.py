@@ -28,12 +28,18 @@ def checked_request(value):
     return {'file_name':name,'start_byte':start,'max_bytes':limit,**({'archive_sha256':pinned} if pinned is not None else {})}
 
 
-def window(text,start_byte=0,max_bytes=MAX_WINDOW_BYTES):
+def encode_original(text):
     if not isinstance(text,str) or len(text)>MAX_SOURCE_BYTES:raise ValueError('原文需為最多8MiB的有效文字')
-    if type(start_byte) is not int or type(max_bytes) is not int or not 0<=start_byte<=MAX_SOURCE_BYTES or not 4<=max_bytes<=MAX_WINDOW_BYTES:
-        raise ValueError('原文分段位置或容量無效')
     try:raw=text.encode('utf-8')
     except UnicodeError:raise ValueError('原文含無效Unicode，沒有替換') from None
+    if len(raw)>MAX_SOURCE_BYTES:raise ValueError('原文來源超過容量')
+    return raw
+
+
+def window(text,start_byte=0,max_bytes=MAX_WINDOW_BYTES):
+    if type(start_byte) is not int or type(max_bytes) is not int or not 0<=start_byte<=MAX_SOURCE_BYTES or not 4<=max_bytes<=MAX_WINDOW_BYTES:
+        raise ValueError('原文分段位置或容量無效')
+    raw=encode_original(text)
     total=len(raw)
     if total>MAX_SOURCE_BYTES or start_byte>total:raise ValueError('原文分段位置或來源超過容量')
     if start_byte<total and raw[start_byte]&0xc0==0x80:raise ValueError('原文起點不是UTF-8字元邊界，沒有調整位置')
