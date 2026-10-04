@@ -1,5 +1,12 @@
 # 迭代說明
 
+## v0.45.0
+
+- 修正 Windows 原生 identity unavailable 導致已退出工作留在未確認狀態；只補查同一PID的本機三欄CIM。
+- probe1嚴格有界解碼、單PIDWindows adapter及原生路由分層；純政策保留±9 ticks精度範圍，近似身份不能宣告ownership。
+- 失敗／warning／空／錯PID／未知／逾時保持未知；live／unknown阻擋prune，重用的外部程序保持。operation3秒、helper5秒，沒有新維護權限。
+- 產品45、來源工具明確38–45；法律／創辦紀錄及12／17 tools／既有schemas保持。398 Python／582 JavaScript／48 syntax／4 Skill與diff通過。
+
 ## v0.44.0 — 2026-10-04
 
 - 完整核對ZIP後明確原文分段，Agent／MCP／CLI讀長檔不擴大512KiB files cap。非零起點pin前次archive SHA，變更來源、UTF-8字元中間與缺檔拒絕；片段明示位置與來源，不冒充完整原檔。

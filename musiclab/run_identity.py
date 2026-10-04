@@ -1,16 +1,22 @@
 # SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
-"""Read one explicit Windows process handle; never enumerate, signal or kill."""
+"""Read one exact Windows PID; preserve unavailable and precision-limited evidence."""
 import ctypes
 import os
 import sys
 from .maintenance import validate_identity, validate_run
+from .process_probe import checked_pid
+from .process_probe_windows import observe_cim
 
 
 def observe_process(pid):
-    if type(pid) is not int or not 0 < pid <= 2147483647:
-        raise ValueError('Run PID must be a positive bounded integer')
+    checked_pid(pid)
     if sys.platform != 'win32':
         return {'pid': pid, 'state': 'unavailable', 'reason': 'Windows identity reader unavailable'}
+    native = _observe_native(pid)
+    return observe_cim(pid) if native['state'] == 'unavailable' else native
+
+
+def _observe_native(pid):
     from ctypes import wintypes
     kernel = ctypes.WinDLL('kernel32', use_last_error=True)
     kernel.OpenProcess.argtypes = (wintypes.DWORD, wintypes.BOOL, wintypes.DWORD)

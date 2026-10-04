@@ -153,3 +153,9 @@
 - text-window1純請求／UTF-8 byte boundary model → application全份ZIP核對與SHA pin → CLI／Agent／MCP。起點字元中間拒絕、不自動調整；max4–16384，非零需archive_sha256，未選取檔損壞仍拒絕。明示片段不是完整檔案，files保持空、不能混用include_files／file_names／include_report。
 - Browser純UTF-8模型／注入reader／DOM → current pending source；source key隔離原值、讀後重查。單buffer最多8MiB，頁面16KiB，history最多512；換檔／失效／cancel／apply／undo清除，不進status／草稿／wire。empty與missing分開，原下載全文及限定撤回保持。
 - 12／17工具與Agent1／draft3及交付schemas保持，text-window1獨立；來源明確38–44，未知拒絕。只新增兩靜態JS，沒有路徑／寫檔／模型權限擴張。見[契約](docs/DELIVERY-TEXT.md)。
+
+## v0.45 程序唯讀補查
+
+- 原 Windows native unavailable 才補查同一明確 PID 的本機 CIM，三欄 ProcessId／Name／CreationDate、hidden／no-profile／no-interactive，operation3秒／自有helper5秒。無全域列舉／command line／環境／remote／原工作或外部程序終止。
+- process-probe1純嚴格有界解碼／Windows adapter／原生路由／maintenance純政策分層；成功明確null才absent，未知／錯誤／warning／逾時保持unavailable。CIM時間±9 ticks內保持unverified，不假造精確ownership；明確分離／不同image才pid_reused並保留外部程序。
+- run1／audit1／recovery1及12／17工具／Agent1／draft3保持；補查evidence只有basename／ticks／精度。產品45與交付來源明確38–45同步，未知拒絕；沒有新增Agent／HTTP維護權限。見[契約](docs/PROCESS-PROBE.md)。

@@ -1,6 +1,6 @@
 # ZOE. G Music Lab
 
-目前版本 **v0.44.0**：核對ZIP後可分段讀完整原文，Browser前後段／兩份來源與CLI／Agent／MCP共用UTF-8位置契約；接續pin原ZIP SHA，單段16KiB，完整下載保持。387Python／582JS，四台20段顯示與4份全文下載核對通過。見[使用與分層](docs/DELIVERY-TEXT.md)、[QA](docs/QA-v0.44.0.md)、[交接](docs/HANDOFF-v0.44.0.md)。
+目前版本 **v0.45.0**：每輪程序稽核的原生查詢失敗時，補查同一 PID 的本機 identity；分清已退出／重用／有限精度及未知狀態，模糊證據仍阻擋清除。pure policy／probe1解碼／Windows adapter／原生路由分層，既有Agent與四工作台權限保持。398 Python／582 JavaScript／48 syntax／4 Skill與diff通過。 見[契約](docs/PROCESS-PROBE.md)、[QA](docs/QA-v0.45.0.md)、[交接](docs/HANDOFF-v0.45.0.md)。
 
 ## ZIP原文與差異（v0.40）
 

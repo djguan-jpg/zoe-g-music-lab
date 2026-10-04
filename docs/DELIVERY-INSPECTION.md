@@ -45,3 +45,7 @@ ZIP來源只能由啟動參數明確選定，JSON不能傳路徑、URL或ZIP bas
 browser `delivery-archive.js` 只讀所選ZIP的有界原清單，不取代server完整CRC／canonical核對。`delivery-import.js` 為純回覆核對與注入controller；`delivery-import-dom.js` 只渲染literal文字／按鈕，app接既有bundle／revision／media。實際所選ZIP大小、SHA、原清單與server回覆逐檔摘要一起核對，防止只改回覆scope／label卻沿用原ZIP SHA。雜湊前後與套用前都重查來源；取消後晚回應不生效。撤回保存必要舊成果，生效後只追蹤scope／result revision，避免反覆複製大型成果。
 
 未來產品版本調整時，須同步明確更新producer／inspector／browser支援版本表與契約測試，再改__version__；不得因產品升版自動接受未知package版本。詳見[QA](QA-v0.39.0.md)及[交接](HANDOFF-v0.39.0.md)。
+
+## v0.45
+
+v0.45明確接受來源工具38–45，純inspection／selection／text-window／report與Agent／draft schemas保持；未知工具版本仍拒絕。此輪的限定PID程序補查與交付檢查權限分開。

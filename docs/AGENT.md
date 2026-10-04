@@ -341,3 +341,7 @@ CLI `storyboard-seed --seed 起稿.json --out 新目錄`檢查並輸出兩檔，
 ## v0.37 原接受條件接續
 
 `audio`／`audio_report` payload 可嵌入 acceptance_draft schema1；不能與 profile／rates／bits／channels 混用。discovery新增 audio_acceptance_draft descriptor及input schema；基本10／啟庫15工具、Agent1及MCP版本保持。media仍由啟動參數選定。report會交回原條件JSON與實際acceptance；未完成原值可以保存，但分析拒絕。詳見[AUDIO-ACCEPTANCE](AUDIO-ACCEPTANCE.md)。
+
+## v0.45
+
+v0.45產品與明確交付來源38–45同步，12／17工具、Agent1／draft3及交付schema保持。限定PID程序補查只供開發維護CLI，沒有新增Agent／MCP程序或清除權限。見[維護契約](PROCESS-PROBE.md)。
