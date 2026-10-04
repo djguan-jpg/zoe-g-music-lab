@@ -11,3 +11,5 @@ baseline確認格式表達限制：原JSON句首[00:04]輸出LRC回讀會展開�
 exact v52 ZIP SHA4d2aafd43a88c1765e56d1474fbbe29ad0a528310a23763f61fc6aaed78f3111，1087388bytes，隔離還原442Python／672JS通过／暫存移除。本輪source及exact ZIP各自驗證，package／source／PR／private prerelease／實際遠端下载SHA／digest／legal4／tree／refs依outputs/v53-qa收據；GitHub CI未配置，不把本機測試說成遠端CI。
 
 latest53／52／51保護；只盤點本outputs及明確typed owned runs，>7天且Git／tag exact可重建才清。failed36／unknown／media／draft／backup／foreign processes保留；實際清除與running狀態依末輪audit。特定Agent Host／正式媒體／HTML語義／完整視覺／瀏覽器保存／FreeTWAI創始接受未驗證，platform not_submitted、rolling active。
+
+指定提交9f62537第一次封裝451測試中，external Origin POST讀403之前遇到WinError10054。獨立loopback重現：帶2-byte body的200次199個403／1個reset，無body的200次全部403；未出現允許外部來源。早期拒絕不讀body，而HTTP client分開送headers／body，Windows可能reset。既有Origin測試改成無body以驗證相同403 guard且仍先於body-size／application驗證；沒有改產品handler、Host／Origin規則或接受範圍。重新全套與exact新source封裝驗證；失敗v0.53.0-9f6253783bed及其收據保留，未發布。

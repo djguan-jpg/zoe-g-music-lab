@@ -9,3 +9,5 @@ branch codex/iteration-v0.53.0，restore-v0.52.0-before-v0.53.0指向62051d7575f
 tab88／89已關閉，viewport reset，server原handle exit0／staging未建立；最新53／52／51與超過七天exact-reconstructable政策保持，failed36／素材／未知／草稿／backup與其他程序保留。只清本輪確認範圍，實際數量與owned runs依audit；不為零候選刪新封裝。
 
 legal4保持ZOE. G／djguan-jpg／PolyForm Noncommercial1.0.0、private。平台not_submitted；創始署名是原創記錄，FreeTWAI接受未確認。正式媒體／實聽／完整視覺／特定Host／瀏覽器保存／完整HTML語義仍未驗證，rolling goal active。
+
+指定提交9f62537第一次封裝451測試中，external Origin POST讀403之前遇到WinError10054。獨立loopback重現：帶2-byte body的200次199個403／1個reset，無body的200次全部403；未出現允許外部來源。早期拒絕不讀body，而HTTP client分開送headers／body，Windows可能reset。既有Origin測試改成無body以驗證相同403 guard且仍先於body-size／application驗證；沒有改產品handler、Host／Origin規則或接受範圍。重新全套與exact新source封裝驗證；失敗v0.53.0-9f6253783bed及其收據保留，未發布。

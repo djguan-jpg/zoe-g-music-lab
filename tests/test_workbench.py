@@ -184,8 +184,10 @@ class WorkbenchHTTPTests(unittest.TestCase):
         self.assertEqual(len(data["operations"]),13)
 
     def test_external_host_and_origin_are_rejected(self):
+        # No unread body: Windows may reset before the early 403 can be read.
+        # The origin gate must precede body-size/application validation.
         self.assertEqual(self.request("GET", "/", headers={"Host": "example.com"})[0], 403)
-        self.assertEqual(self.request("POST", "/api/music", b"{}", {"Origin": "https://example.com"})[0], 403)
+        self.assertEqual(self.request("POST", "/api/music", headers={"Origin": "https://example.com"})[0], 403)
 
     def test_both_planning_flows_return_real_exports(self):
         status, result = self.post_json("/api/music", example("first-light-music.json"))

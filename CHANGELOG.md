@@ -8,6 +8,8 @@
 
 校時建立從本次送出的 cues／總長或完整 package 派生期望，核對完整回應、時間來源／歷史說明、嚴格JSON及字面LRC／SRT後才替換表格與成果。純 lyrics-result 共用建立及所有帶時間匯入；錯來源／損壞／不完整保留原編修、上一份成果及待套用校時。raw JSON也核對原句，seed保持。HTML只核對存在與字串、不完整語義驗證；wire／schemas／12／17 tools不變。442／672／55 syntax／4 Skills與v51指定ZIP還原通過。見docs/QA-v0.52.0.md及docs/HANDOFF-v0.52.0.md；封裝／private遠端依本輪收據。
 
+指定提交9f62537第一次封裝451測試中，external Origin POST讀403之前遇到WinError10054。獨立loopback重現：帶2-byte body的200次199個403／1個reset，無body的200次全部403；未出現允許外部來源。早期拒絕不讀body，而HTTP client分開送headers／body，Windows可能reset。既有Origin測試改成無body以驗證相同403 guard且仍先於body-size／application驗證；沒有改產品handler、Host／Origin規則或接受範圍。重新全套與exact新source封裝驗證；失敗v0.53.0-9f6253783bed及其收據保留，未發布。
+
 # 迭代說明
 
 ## v0.51.0 — 2026-10-04
