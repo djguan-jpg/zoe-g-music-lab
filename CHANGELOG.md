@@ -1,5 +1,12 @@
 # 迭代說明
 
+## v0.51.0 — 2026-10-04
+
+- 修正 SRT 匯入尾端空白刪除與 Unicode U+0085／U+2028／U+2029 被當換行改為 /；原文各行文字、tab及前後空白保留，真正多行仍沿既有 / 合為單句。ASCII空白行分段，原排版／空白cue限制於介面與文件告知。
+- 新增 Python lyrics_srt／原生 JS lyrics-srt 純解析層；CRLF／CR／LF、可選ASCII索引、逗號／點時碼與空白／tab箭頭，checked integer milliseconds、單次文首BOM。超界／缺文字／無效時鐘拒絕；倒置／重疊由共用validate拒絕，不裁切。
+- LRC與SRT沿同一timed-source回應核對，從所選原文核對cues／time／inference與JSON／LRC／SRT輸出，拒絕自洽但wrong-source回應。LRC原解析／測試維持；一項Unicode候選未重現。HTML preview僅存在／型別檢查，不宣稱完整語義核對。
+- 441 Python／654 JS／54 syntax／4 Skills及原生／三寬度／v50還原通過。產品51與來源38–51、各wire／schema／12／17tools／legal4維持；private exact-source與maintenance依收據。
+
 ## v0.50.0 — 2026-10-04
 
 - 修正 LRC 去除歌詞前後空白、將句中 timestamp 視為額外 cue、句中 offset 移動全曲、Unicode 分隔符截斷文字。只解析相鄰行首時間標籤；標籤後全文原值保留，offset 僅獨立行最後值生效，換行只分 CRLF／CR／LF。

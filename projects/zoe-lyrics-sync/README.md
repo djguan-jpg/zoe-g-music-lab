@@ -1,5 +1,7 @@
 # ZOE Lyrics Sync
 
+v0.51：SRT保留每行空白、tab與Unicode原字元，真正多行仍以 / 合句；原排版保存原檔／draft3原文，空白cue用版本1JSON。獨立Python／JS parser與integer clock、單次文首BOM共用adapter；browser從LRC／SRT原文核對cues／time／inference及文字輸出再preview／Apply。末句原結束估總長不填宣告、不宣稱音檔確認。見[契約](../../docs/LYRICS-SRT.md)、[QA](../../docs/QA-v0.51.0.md)。
+
 v0.25「檢查校時進度」可接受時間留白，找出原句缺失／重複開始／跨句重疊／超出宣告的位置，按待辦定位欄位。建立包失敗也定位第一項，原文與音檔保持；編修後舊報告過期、停用定位和下載。JSON／Markdown報告是診斷，不是完成字幕；最多10000句、全部count／前200明細與頁面前20項。Agent／MCP唯讀lyrics_review和CLI lyrics-review沿用同一層，CLI2表示診斷保存且有待修正項目。見[契約](../../docs/LYRICS-REVIEW.md)／[QA](../../docs/QA-v0.25.0.md)。
 
 v0.24 選音檔與作品宣告分開。已有十秒宣告、選六秒音檔仍保持十秒；需要新時長時按「採用選定音檔時長」，再驗證。撤回只改時長、保留後續歌詞；後來改時長或換來源會停用不安全撤回。原本空白且讀取期間未編修才自動接續首次時長。較短時長不裁切歌詞；獨立預覽也須明確採用並套用。見[契約](../../docs/LYRICS-MEDIA-DURATION.md)與[QA](../../docs/QA-v0.24.0.md)。

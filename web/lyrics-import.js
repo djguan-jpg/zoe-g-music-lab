@@ -9,11 +9,12 @@
   const T=node?require('../musiclab/assets/lyric-time.js'):root.LyricTime;
   const P=node?require('../musiclab/assets/lyrics-package.js'):root.MusicLyricsPackage;
   const L=node?require('../musiclab/assets/lyrics-lrc.js'):root.MusicLyricsLrc;
+  const V=node?require('../musiclab/assets/lyrics-srt.js'):root.MusicLyricsSrt;
   const exact=(value,keys)=>value&&typeof value==='object'&&!Array.isArray(value)&&Object.keys(value).length===keys.length&&keys.every(k=>Object.hasOwn(value,k));
   const fail=()=>{throw Error('歌詞檢查回應不完整或與來源不一致；目前內容保留');};
   function sourceRequest(content,suffix,fields){
     if(typeof content!=='string'||!['.lrc','.srt','.json','.txt'].includes(suffix))throw Error('請選擇 UTF-8 TXT／LRC／SRT／JSON');
-    if(suffix!=='.lrc')content=content.replace(/^\uFEFF/,'');
+    if(!['.lrc','.srt'].includes(suffix))content=content.replace(/^\uFEFF/,'');
     if(new TextEncoder().encode(content).length>(suffix==='.txt'?65536:2*1024*1024))throw Error(suffix==='.txt'?'純歌詞文字最多64 KiB':'歌詞檔需小於或等於2 MiB');
     if(suffix==='.txt')return {operation:'lyrics_seed',payload:{title:fields['lyrics-title'],text:content},content,suffix};
     if(suffix==='.json'){
@@ -42,8 +43,8 @@
         if(U.fingerprint(data)!==U.fingerprint(expected))fail();
       }else if(data.title!==selected.payload.title||data.duration_estimated!==(selected.payload.duration===null)||
           selected.payload.duration!==null&&selected.payload.duration!==data.duration)fail();
-      if(selected.suffix==='.lrc'){
-        const expected=T.normalizeCues(L.parse(selected.content),selected.payload.duration);
+      if(['.lrc','.srt'].includes(selected.suffix)){
+        const expected=T.normalizeCues((selected.suffix==='.lrc'?L:V).parse(selected.content),selected.payload.duration);
         for(const key of ['cues','duration','duration_estimated','timing'])if(U.fingerprint(data[key])!==U.fingerprint(expected[key]))fail();
         if(data.review_notes.length)fail();
         const lrc=expected.cues.map(c=>`[${T.timecode(c.start)}]${c.text}`).join('\n')+'\n';

@@ -181,6 +181,39 @@ test('LRC file BOM is not stripped twice across request and domain and retry rem
   const h=harness(async(op,payload)=>domain(op,payload));assert.equal(await h.c.read(file('two.lrc','\uFEFF\uFEFF[00:01]字')),false);assert.equal(h.ready.length,0);
   assert.equal(await h.c.read(file('one.lrc','\uFEFF[00:01]\uFEFF字')),true);assert.equal(h.c.proposal().draft.panels.lyrics.cues[0].text,'\uFEFF字');
 });
+test('SRT preview preserves BOM original source literal Unicode and multiline edge spaces',async()=>{
+  const raw='\uFEFF1\r\n00:00:01,125 --> 00:00:02,500\r\n  字\t  \r\n第二行\t \r\n\r\n2\r00:00:04,500 --> 00:00:05,875\r字\u0085後\u2028尾\u2029終\t  \n',h=harness(async(op,payload)=>domain(op,payload)),before=structuredClone(h.value);
+  assert.equal(await h.c.read(file('literal.SRT',raw)),true);assert.deepEqual(h.value,before);const p=h.c.proposal();assert.equal(p.draft.panels.lyrics.fields['lyrics-source'],raw);
+  assert.deepEqual(p.draft.panels.lyrics.cues,[{start:'1.125',end:'2.5',text:'  字\t   / 第二行\t '},{start:'4.5',end:'5.875',text:'字\u0085後\u2028尾\u2029終\t  '}]);
+});
+test('SRT self-consistent unrelated text clocks ends counts and inference cannot replace source',async()=>{
+  for(const cues of [[{start:0,end:2,text:'替換'},{start:3,end:5,text:'結束'}],[{start:1,end:2,text:'第一行 / 第二行'},{start:3,end:5,text:'結束'}],
+    [{start:0,end:1,text:'第一行 / 第二行'},{start:3,end:5,text:'結束'}],[{start:0,end:2,text:'第一行 / 第二行'}],
+    [{start:0,text:'第一行 / 第二行'},{start:3,text:'結束'}]]){
+    const h=harness(),before=structuredClone(h.value),work=h.c.read(file('source.srt',srt));await Promise.resolve();h.resolve(domain('lyrics',{title:'校時測試',duration:10,cues}));
+    assert.equal(await work,false);assert.equal(h.c.proposal(),null);assert.deepEqual(h.value,before);assert.match(h.errors.at(-1),/來源不一致/);
+  }
+});
+test('SRT source guard checks LRC and SRT artifacts as well as JSON data',async()=>{
+  for(const name of ['lyrics.lrc','lyrics.srt']){
+    const h=harness(),before=structuredClone(h.value),work=h.c.read(file('source.srt',srt));await Promise.resolve();const reply=domain('lyrics',{title:'校時測試',content:srt,suffix:'.srt',duration:10});reply.files[name]=reply.files[name].replace('第一行','錯誤文字');h.resolve(reply);
+    assert.equal(await work,false);assert.deepEqual(h.value,before);assert.equal(h.ready.length,0);assert.match(h.errors.at(-1),/來源不一致/);
+  }
+});
+test('SRT estimated total derives from explicit last end and does not promote to declared duration',async()=>{
+  const h=harness(async(op,payload)=>domain(op,payload));h.value.panels.lyrics.fields['lyrics-duration']='';assert.equal(await h.c.read(file('source.srt',srt)),true);
+  const p=h.c.proposal();assert.equal(p.draft.panels.lyrics.fields['lyrics-duration'],'');assert.equal(JSON.parse(p.files['lyrics.json']).duration,5);
+  assert.equal(JSON.parse(p.files['lyrics.json']).timing.inferred_end_count,0);assert.equal(h.ready[0].rows[1].end,'5');
+});
+test('SRT double document BOM refuses and single BOM retry keeps literal lyric BOM',async()=>{
+  const h=harness(async(op,payload)=>domain(op,payload)),raw='1\n00:00:01,000 --> 00:00:02,000\n\uFEFF字';
+  assert.equal(await h.c.read(file('double.srt','\uFEFF\uFEFF'+raw)),false);assert.equal(h.ready.length,0);
+  assert.equal(await h.c.read(file('single.srt','\uFEFF'+raw)),true);assert.equal(h.c.proposal().draft.panels.lyrics.cues[0].text,'\uFEFF字');
+});
+test('SRT stale asynchronous result after target edit retains edit and rejects proposal',async()=>{
+  const h=harness(),work=h.c.read(file('source.srt',srt));await Promise.resolve();h.value.panels.lyrics.cues[0].text='較晚的編修';h.resolve(domain('lyrics',{title:'校時測試',content:srt,suffix:'.srt',duration:10}));
+  assert.equal(await work,false);assert.equal(h.c.proposal(),null);assert.equal(h.value.panels.lyrics.cues[0].text,'較晚的編修');assert.match(h.errors.at(-1),/目前內容保留/);
+});
 function appAdapter(){
   const source=fs.readFileSync(path.join(root,'web/app.js'),'utf8'),a=source.indexOf("$('lyrics-file').onchange="),b=source.indexOf("$('cue-add').onclick=",a);
   assert.ok(a>=0&&b>a);const h=harness(async(op,payload)=>domain(op,payload)),nodes={'lyrics-file':{value:'selected'},'lyrics-import':{}},notices=[];

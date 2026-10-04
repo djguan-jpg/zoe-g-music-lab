@@ -1,9 +1,9 @@
 # SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
-import re
 from .common import number
 from .lyric_timing import milliseconds, normalized_seconds, seconds_from_milliseconds
 from .lyrics_package import (PACKAGE_FORMAT, PACKAGE_SCHEMA_VERSION, decode_document, package_files)
 from .lyrics_lrc import parse_lrc
+from .lyrics_srt import parse_srt
 
 
 def validate_cues(cues, duration=None):
@@ -40,28 +40,6 @@ def validate_cues(cues, duration=None):
         if cue["end"] > duration:
             raise ValueError("歌詞結束超過歌曲時長")
     return cleaned, duration, inferred
-
-
-def parse_srt(content):
-    cues = []
-    timing = re.compile(r"(\d{2,}):(\d{2}):(\d{2})[,.](\d{3})")
-    def seconds(value):
-        match = timing.fullmatch(value.strip())
-        if not match:
-            raise ValueError("SRT 時間格式錯誤")
-        h, m, s, ms = map(int, match.groups())
-        if m >= 60 or s >= 60:
-            raise ValueError("SRT 分鐘／秒數需小於 60")
-        return h * 3600 + m * 60 + s + ms / 1000
-    for block in re.split(r"\n\s*\n", content.strip().replace("\r\n", "\n")):
-        lines = block.splitlines()
-        if lines and lines[0].strip().isdigit():
-            lines.pop(0)
-        if len(lines) < 2 or " --> " not in lines[0]:
-            raise ValueError("SRT 段落缺少時間或文字")
-        start, end = lines[0].split(" --> ", 1)
-        cues.append({"start": seconds(start), "end": seconds(end), "text": " / ".join(lines[1:])})
-    return cues
 
 
 def read_cues(content, suffix):
