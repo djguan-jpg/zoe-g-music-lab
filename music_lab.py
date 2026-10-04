@@ -43,7 +43,8 @@ def main(argv=None):
             sub.add_argument("--set", action="append", default=[])
             sub.add_argument("--text", action="append", default=[])
         if name == "audio":
-            sub.add_argument("--profile", choices=["distribution", "video"], default="distribution")
+            sub.add_argument("--acceptance-draft", help="明確選定接受條件草稿 JSON；不能與 profile／rates／bits／channels 混用")
+            sub.add_argument("--profile", choices=["distribution", "video"])
             for setting in ("rates", "bits", "channels"):
                 sub.add_argument(f"--{setting}", type=int, nargs="+")
         if name == 'storyboard-seed':
@@ -154,7 +155,12 @@ def main(argv=None):
                 if args.text: payload['text_changes'] = args.text
             bundle = build('lyrics', payload).files
         else:
-            options = {name: getattr(args, name) for name in ("profile", "rates", "bits", "channels")}
+            options = {name: getattr(args, name) for name in ("profile", "rates", "bits", "channels") if getattr(args, name) is not None}
+            if args.acceptance_draft:
+                if options: raise ValueError('--acceptance-draft 不能與 --profile／--rates／--bits／--channels 混用')
+                from musiclab.audio_acceptance import decode, MAX_BYTES
+                with Path(args.acceptance_draft).open('rb') as source:
+                    options = {'acceptance_draft': decode(source.read(MAX_BYTES + 1))}
             result = build("audio", options, audio_source=args.input)
             bundle = result.files
             status = 2 if result.needs_review else 0

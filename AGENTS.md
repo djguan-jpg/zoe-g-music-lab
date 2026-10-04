@@ -91,3 +91,9 @@
 
 - delivery-navigation純DTO／注入controller與DOM adapter分層；只讀scope／names／busy／dirty／message／error。導覽不進draft3、成果或Agent wire，完成不自動搶焦點。
 - show／back明確操作前重查；busy停用，dirty仍可閱讀上一份且保持原下載停用，換台清舊返回目標。成果清空返回目前可操作build，避免聚焦disabled／hidden控制。literal text、aria關聯與auto捲動；新增asset不擴大Agent／HTTP operation權限。
+
+## v0.37 接受條件草稿
+
+- audio_acceptance獨立schema1原值模型／application／四adapter，64KiB／每欄1024字元／64值／safe integer；精確十進位整數，不因float捨入接受小數。shape可保存未完成欄位，active prepare才驗證數值；未知／額外／互斥拒絕。原profile及直接清單保持，10／15 tools與draft3保持。
+- browser純原值／注入capture-read-replace-events controller／DOM；選檔先preview，read及apply重查token／target原文／native audio identity／busy。條件另存checkpoint與下載明確確認獨立，beforeunload不是自動保存。整份project載入deactivate自訂但保留raw，其他panel與媒體限定套用保持。
+- inspect先驗有效條件、後revision／File／raw source，再實際acceptance／echo draft／report JSON-data／檔名核對才提交。未知／不符／late保留原成果與編修；dirty停下載。原音檔與legal4保持，未完成原值不冒充接受或實聽通過。

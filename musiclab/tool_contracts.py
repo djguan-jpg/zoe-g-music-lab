@@ -195,10 +195,19 @@ def payload_schema(operation):
     if operation == "audio":
         limits = {"anyOf": [array_schema({"type": "integer", "minimum": 1}, 1), {"type": "null"}],
                   "description": "Accepted positive integers; null uses the profile default. Booleans are rejected."}
+        from .audio_acceptance import FORMAT, MAX_FIELD
+        fields = {key: {'type': 'string', 'maxLength': MAX_FIELD} for key in ('rates', 'bits', 'channels')}
+        draft = object_schema({'format': {'const': FORMAT}, 'schema_version': {'type': 'integer', 'const': 1},
+                               'profile': {'enum': ['distribution', 'video']}, 'custom': {'type': 'boolean'},
+                               'fields': object_schema(fields, fields.keys(), additionalProperties=False)},
+                              ['format', 'schema_version', 'profile', 'custom', 'fields'], additionalProperties=False)
         return object_schema({"profile": {"type": "string", "enum": ["distribution", "video"], "default": "distribution"},
                               "rates": deepcopy(limits), "bits": deepcopy(limits), "channels": deepcopy(limits),
+                              'acceptance_draft': draft,
                               "display_name": text("Display filename only; does not select media", blank=True)},
-                             **{"not": {"anyOf": [{"required": [key]} for key in ("path", "input", "audio_source", "filename")]}})
+                             additionalProperties=False,
+                             **{'not': {'allOf': [{'required': ['acceptance_draft']},
+                                        {'anyOf': [{'required': [key]} for key in ('profile', 'rates', 'bits', 'channels')]}]}})
     raise ValueError("Unknown operation")
 
 

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 'use strict';
 const $ = id => document.getElementById(id);
-const state = {tab:'music', examples:null, files:{}, bundles:{}, revisions:{}, music:[], shots:[], cues:[], audioUrl:null, audioContext:null, waveform:null, busy:false,deliveryNavigation:null};
+const state = {tab:'music', examples:null, files:{}, bundles:{}, revisions:{}, music:[], shots:[], cues:[], audioUrl:null, audioContext:null, waveform:null, busy:false,deliveryNavigation:null,audioAcceptance:null};
 const rawFields=MusicRawFieldsDom.createAdapter(document);
 const readValue=control=>rawFields.read(control);
 const writeValue=(control,value)=>rawFields.write(control,value);
@@ -94,19 +94,19 @@ function undoDeletion(scope){
   $(scope+'-delete-select').onchange=()=>refreshDeletionButton(scope);
 });
 const waveTask = MusicEditor.createLatestTask();
-function say(message,error=false){$('status').textContent=message;$('status').className=error?'error':'';state.deliveryNavigation?.refresh();if(state.tab==='storyboard'){$('shot-status').textContent=message;$('shot-status').classList.toggle('error',error);}}
+function say(message,error=false){$('status').textContent=message;$('status').className=error?'error':'';state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();if(state.tab==='storyboard'){$('shot-status').textContent=message;$('shot-status').classList.toggle('error',error);}}
 function esc(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function field(value,label,type='text',wide=false){return `<input type="text" value="${esc(value)}" aria-label="${esc(label)}" class="${wide?'wide':''}" ${type==='number'?'inputmode="decimal" data-raw-number="true"':''}>`;}
 async function api(route,data,binary=false){const response=await fetch(route,{method:'POST',headers:{'Content-Type':binary?'application/octet-stream':'application/json'},body:binary?data:JSON.stringify(data)});const result=await response.json();if(!response.ok){const error=Error(result.error||'操作未完成');error.status=response.status;throw error;}return result;}
 async function run(button,task,scope=state.tab){
   if(state.busy)return;
   const tab=state.tab,revision=state.revisions[scope]||0,current=()=>state.tab===tab&&(state.revisions[scope]||0)===revision;
-  say('處理中，請稍候');state.busy=true;button.disabled=true;timingControls();state.deliveryNavigation?.refresh();
+  say('處理中，請稍候');state.busy=true;button.disabled=true;timingControls();state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();
   try{await task(current);}catch(error){if(current())say(error.message,true);}
-  finally{if(!current()){markDirty(scope);say('處理期間輸入有修改，請重新建立成果');}state.busy=false;button.disabled=false;timingControls();state.deliveryNavigation?.refresh();}
+  finally{if(!current()){markDirty(scope);say('處理期間輸入有修改，請重新建立成果');}state.busy=false;button.disabled=false;timingControls();state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();}
 }
-function setFiles(files,note,dirty=false,inputIndependent=false){state.files=files;state.bundles[state.tab]={files,note,dirty,inputIndependent};const select=$('output-file');select.replaceChildren();Object.keys(files).forEach(name=>{const option=document.createElement('option');option.value=name;option.textContent=name;select.append(option);});select.disabled=false;$('download').disabled=dirty;$('output-note').textContent=note+(dirty?'（有修改尚未重新驗證）':'');previewOutput();state.deliveryNavigation?.refresh();}
-function markDirty(tab){draftRetention.refresh(tab);if(tab==='music'){arrangementController?.refresh();musicReadyController?.refresh();}if(tab==='storyboard'){storyboardDurationController?.refresh();storyboardReadyController?.refresh();storyboardTimingController?.refresh();}if(['music','storyboard'].includes(tab))stalePlanningReview(tab);if(tab==='audio')staleAudioReview();if(tab==='lyrics'){staleLyricsReview();lyricsReviewController?.invalidate();lyricsMediaController?.refresh();const pending=timingReading||timingReady;timingController?.invalidate();if(pending)timingSay('歌詞有修改，請重新預覽整批校時。');}state.revisions[tab]=(state.revisions[tab]||0)+1;const saved=state.bundles[tab];if(!saved||saved.inputIndependent){state.deliveryNavigation?.refresh();return;}saved.dirty=true;if(state.tab===tab){$('download').disabled=true;$('output-note').textContent=saved.note+'（有修改尚未重新驗證）';}state.deliveryNavigation?.refresh();}
+function setFiles(files,note,dirty=false,inputIndependent=false){state.files=files;state.bundles[state.tab]={files,note,dirty,inputIndependent};const select=$('output-file');select.replaceChildren();Object.keys(files).forEach(name=>{const option=document.createElement('option');option.value=name;option.textContent=name;select.append(option);});select.disabled=false;$('download').disabled=dirty;$('output-note').textContent=note+(dirty?'（有修改尚未重新驗證）':'');previewOutput();state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();}
+function markDirty(tab){draftRetention.refresh(tab);if(tab==='music'){arrangementController?.refresh();musicReadyController?.refresh();}if(tab==='storyboard'){storyboardDurationController?.refresh();storyboardReadyController?.refresh();storyboardTimingController?.refresh();}if(['music','storyboard'].includes(tab))stalePlanningReview(tab);if(tab==='audio')staleAudioReview();if(tab==='lyrics'){staleLyricsReview();lyricsReviewController?.invalidate();lyricsMediaController?.refresh();const pending=timingReading||timingReady;timingController?.invalidate();if(pending)timingSay('歌詞有修改，請重新預覽整批校時。');}state.revisions[tab]=(state.revisions[tab]||0)+1;const saved=state.bundles[tab];if(!saved||saved.inputIndependent){state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();return;}saved.dirty=true;if(state.tab===tab){$('download').disabled=true;$('output-note').textContent=saved.note+'（有修改尚未重新驗證）';}state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();}
 document.querySelector('.editor').addEventListener('input',event=>{
   if(event.target.dataset.viewControl||event.target.id==='lyrics-file')return;
   const panel=event.target.closest('.panel');if(!panel)return;
@@ -115,7 +115,7 @@ document.querySelector('.editor').addEventListener('input',event=>{
   if(['lyrics-source','lyrics-format'].includes(event.target.id))lyricsImportController?.cancel();
   if(panel.id==='lyrics'&&event.target.closest('#cues'))tick();
 });
-function clearOutput(){state.files={};$('output-file').replaceChildren(new Option('尚無檔案',''));$('output-file').disabled=true;$('download').disabled=true;$('output-content').value='';$('output-note').textContent='建立工作包後，實際成果會出現在這裡。';state.deliveryNavigation?.refresh();}
+function clearOutput(){state.files={};$('output-file').replaceChildren(new Option('尚無檔案',''));$('output-file').disabled=true;$('download').disabled=true;$('output-content').value='';$('output-note').textContent='建立工作包後，實際成果會出現在這裡。';state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();}
 function previewOutput(){const name=$('output-file').value;$('output-content').value=state.files[name]??'';$('export-name').value=name;$('export-content').value=state.files[name]??'';}
 $('output-file').onchange=previewOutput;
 $('export-form').onsubmit=()=>{say('已送出本機下載，請確認瀏覽器保存的檔案。');};
@@ -617,7 +617,7 @@ function renderAudioReview(d){
   const box=$('audio-visual');box.classList.remove('stale');
   box.innerHTML=`<div class="audio-review-heading"><h3>檢查摘要</h3><span data-audio-status class="audio-outcome ${d.needsReview?'needs-review':'passed'}">${esc(d.status)}</span></div>
     <p id="audio-review-stale" class="audio-stale-note" role="status" hidden>這是上一份報告，輸入已修改；請重新分析，才能代表目前的選擇。</p>
-    <p class="audio-source-name">${esc(d.file)}</p><p class="hint">${d.bytes.toLocaleString()} bytes · ${d.profile==='video'?'影片交付示範':'音樂交付示範'}；請以實際收件需求為準。</p>
+    <p class="audio-source-name">${esc(d.file)}</p><p class="hint">${d.bytes.toLocaleString()} bytes · ${d.custom?'自訂接受值':d.profile==='video'?'影片交付示範':'音樂交付示範'}；請以實際收件需求為準。</p>
     <div class="table-wrap"><table aria-label="本次接受條件"><thead><tr><th>項目</th><th>實際值</th><th>接受值</th><th>結果</th></tr></thead><tbody>${d.specifications.map(s=>`<tr><th scope="row">${esc(s.label)}</th><td>${esc(s.observed)}</td><td>${esc(s.accepted)}</td><td class="${s.passed?'check-pass':'check-fail'}">${s.passed?'符合':'不符'}</td></tr>`).join('')}</tbody></table></div>
     <div class="facts"><div class="fact"><strong>${d.duration}s</strong><span>音檔時長</span></div><div class="fact"><strong>${esc(d.correlation)}</strong><span>立體聲相關性；不可測不是通過</span></div><div class="fact"><strong>${d.leading}s</strong><span>頭部安靜段，門檻 -60 dBFS</span></div><div class="fact"><strong>${d.trailing}s</strong><span>尾部安靜段，門檻 -60 dBFS</span></div></div>
     <div class="table-wrap"><table aria-label="每聲道量測"><thead><tr><th>聲道</th><th>Sample peak</th><th>RMS</th><th>DC offset</th><th>滿刻度樣本</th></tr></thead><tbody>${d.channels.map(c=>`<tr><th scope="row">${c.number}</th><td>${esc(c.peak)}</td><td>${esc(c.rms)}</td><td>${esc(c.dc)}</td><td>${c.fullScale}</td></tr>`).join('')}</tbody></table></div>
@@ -629,8 +629,8 @@ function renderAudioReview(d){
   hash.className='hash';hash.textContent='SHA-256 '+d.sha256;evidence.append(summary,note,hash);box.append(evidence);box.hidden=false;
 }
 $('audio-build').onclick=()=>run($('audio-build'),isCurrent=>MusicAudio.inspect({
-  selected:()=>({file:$('audio-file').files[0],profile:readValue($('audio-profile'))}),isCurrent,
-  request:({file,profile})=>api('/api/audio?'+new URLSearchParams({name:file.name,profile}),file,true),
+  selected:()=>({file:$('audio-file').files[0],profile:readValue($('audio-profile')),acceptanceDraft:state.audioAcceptance?.capture()}),isCurrent,
+  request:({file,profile,acceptanceDraft})=>api('/api/audio?'+new URLSearchParams({name:file.name,...(acceptanceDraft?{acceptance_draft:JSON.stringify(acceptanceDraft)}:{profile})}),file,true),
   onResult:(result,review)=>{renderAudioReview(review);setFiles(result.files,'音檔檢查 · '+review.status);say(review.needsReview?`檢查已完成，有 ${review.warnings.length} 項需確認`:'本次技術條件通過；報告已建立');}
 }));
 const draftTask=MusicEditor.createLatestTask();
@@ -666,7 +666,7 @@ function capturePanel(panel){
 }
 function captureDraft(){
   const panels=Object.fromEntries(Object.keys(MusicEditor.draftFields).map(panel=>[panel,capturePanel(panel)]));
-  return {format:'zoe-music-lab-draft',schema_version:3,tool_version:'0.36.0',saved_at:new Date().toISOString(),tab:state.tab,panels};
+  return {format:'zoe-music-lab-draft',schema_version:3,tool_version:'0.37.0',saved_at:new Date().toISOString(),tab:state.tab,panels};
 }
 function applyDraft(draft){
   storyboardDurationController?.clear();
@@ -681,6 +681,7 @@ function applyDraft(draft){
   $('lyrics-file').value='';
   Object.values(draft.panels).forEach(panel=>Object.entries(panel.fields).forEach(([id,value])=>writeValue($(id),value)));
   renderSections(draft.panels.music.sections);renderRequirements('music-avoid',draft.panels.music.avoid,'避免事項');renderRequirements('music-deliverables',draft.panels.music.deliverables,'交付項目');renderMotifs(draft.panels.storyboard.motifs);renderShots(draft.panels.storyboard.shots);renderCues(draft.panels.lyrics.cues);
+  state.audioAcceptance?.projectLoaded();
   resetAudio();$('audio-file').value='';state.bundles={};state.files={};
   Object.keys(MusicEditor.draftFields).forEach(markDirty);
   ['music-visual','mv-visual','audio-visual'].forEach(id=>$(id).hidden=true);
@@ -1000,6 +1001,7 @@ async function setupLibrary(){
   }catch(error){librarySay(error.message,true);libraryControls();}
 }
 state.deliveryNavigation=MusicDeliveryNavigationDom.createAdapter(document,()=>({scope:state.tab,names:Object.keys(state.files),busy:state.busy,dirty:!!state.bundles[state.tab]?.dirty,message:$('status').textContent,error:$('status').classList.contains('error')}));
+state.audioAcceptance=MusicAudioAcceptanceDom.createAdapter(document,{readValue,writeValue,events:window,allowed:()=>!state.busy,onChange:()=>markDirty('audio'),onError:error=>say(error.message,true)});
 async function initialize(){draftRetention.initialize(captureDraft());try{const response=await fetch('/api/examples');if(!response.ok)throw Error('範例讀取失敗');state.examples=await response.json();
   if(draftRetention.status().atInitial){loadMusic();loadMv();writeValue($('lyrics-source'),'[00:00.000]空房剩一圈淡色的牆\n[00:04.000]紙箱裡裝不下那句話\n[00:08.000]我把聲音留在樓梯上\n[00:12.000]這次換我回答');draftRetention.initialize(captureDraft());say('已載入本次原創合成範例，修改後開始');}
   else say('載入期間的編修已保留；需要範例時可明確按「載入原創範例」。');drawWave();setupLibrary();}catch(e){say(e.message,true);}}

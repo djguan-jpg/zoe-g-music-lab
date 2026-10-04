@@ -47,6 +47,8 @@ ASSETS = {"/": ("web/index.html", "text/html"), "/app.js": ("web/app.js", "text/
           "/lyrics-timing.js": ("web/lyrics-timing.js", "text/javascript"),
           "/lyrics-media.js": ("musiclab/assets/lyrics-media.js", "text/javascript"),
           "/lyrics-review.js": ("musiclab/assets/lyrics-review.js", "text/javascript"),
+          "/audio-acceptance.js": ("web/audio-acceptance.js", "text/javascript"),
+          "/audio-acceptance-dom.js": ("web/audio-acceptance-dom.js", "text/javascript"),
           "/audio-review.js": ("web/audio-review.js", "text/javascript"),
           "/planning-review.js": ("web/planning-review.js", "text/javascript"),
           "/planning-source.js": ("web/planning-source.js", "text/javascript"),
@@ -163,15 +165,21 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
                     raise ValueError("匯出檔名格式錯誤")
                 return self.reply(200, content, "application/octet-stream", name)
             if audio:
-                query = urllib.parse.parse_qs(route.query)
-                profile = query.get("profile", ["distribution"])[0]
-                if profile not in ("distribution", "video"):
-                    raise ValueError("未知接受條件")
+                query = urllib.parse.parse_qs(route.query, keep_blank_values=True)
+                if set(query) - {'name', 'profile', 'acceptance_draft'} or any(len(values) != 1 for values in query.values()):
+                    raise ValueError('音檔接受條件 query 欄位錯誤或重複')
+                options = {'display_name': query.get('name', ['selected.wav'])[0]}
+                if 'acceptance_draft' in query:
+                    if 'profile' in query: raise ValueError('接受條件草稿不能與 profile 混用')
+                    from musiclab.audio_acceptance import decode
+                    options['acceptance_draft'] = decode(query['acceptance_draft'][0].encode('utf-8'))
+                else:
+                    options['profile'] = query.get('profile', ['distribution'])[0]
                 # Only the explicitly selected bytes are analyzed; no arbitrary path parameter.
                 with tempfile.TemporaryDirectory(prefix="zoe-audio-") as folder:
                     path = Path(folder) / "selected.wav"
                     path.write_bytes(raw)
-                    result = build("audio", {"profile": profile, "display_name": query.get("name", ["selected.wav"])[0]},
+                    result = build("audio", options,
                                    audio_source=path)
                 return self.reply(200, json_text(result.wire()))
             data = load_request(raw.decode("utf-8"))

@@ -2,9 +2,9 @@
 
 交付檢查可自訂接受值，原文字另存獨立schema1條件草稿；完整專案draft3只保存profile。選檔先preview，明確限定apply／cancel保留原媒體及其他panel；整份project載入deactivate custom且保留raw。另存checkpoint與下載明確確認分開管理，離頁提醒不取代保存。CLI／HTTP／Agent／MCP共用原shape及prepare，音檔仍由adapter選定，10／15工具保持。
 
-純Python原值／精確整數／legacy normalize→application互斥及來源bundle→adapter；browser model／注入controller／DOM分層，audio-review先確認current，再核對實際acceptance／原草稿／report JSON-data／檔名。未完成active條件分析拒絕，unknown／不符／late保留舊成果及新編修。見[契約](docs/AUDIO-ACCEPTANCE.md)。
+純Python原值／精確整數／legacy normalize→application互斥及來源bundle→adapter；browser model／注入controller／DOM分層，audio-review先確認current，再核對實際acceptance／原草稿／report JSON-data／檔名。未完成active條件分析拒絕，unknown／不符／late保留舊成果及新編修。見[契約](AUDIO-ACCEPTANCE.md)。
 
-312Python／460JS／4Skill／37語法及diff；原生真下載、原值／媒體保留、未知及來源拒絕、4秒late／500、390px鍵盤與1366px新版行為確認。完整source及封裝接受、限制見[QA](docs/QA-v0.37.0.md)。無正式媒體／實聽／完整視覺／特定Host／平台創始人接受，rolling active。
+312Python／460JS／4Skill／37語法及diff；原生真下載、原值／媒體保留、未知及來源拒絕、4秒late／500、390px鍵盤與1366px新版行為確認。完整source及封裝接受、限制見[QA](QA-v0.37.0.md)。無正式媒體／實聽／完整視覺／特定Host／平台創始人接受，rolling active。
 
 ## 分支、指定提交與還原
 

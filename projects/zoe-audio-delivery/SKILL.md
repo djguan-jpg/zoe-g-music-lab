@@ -8,7 +8,7 @@ license: PolyForm-Noncommercial-1.0.0
 
 ZOE. G 發起的原創交付檢查工具。接受格式與數值定義見 [工具說明](README.md)。
 
-先取得收件方的實際接受條件。工具內的 distribution／video 是示範設定，不代表所有平台的標準。可用 CLI 的 rates／bits／channels 覆寫本次接受條件。
+先取得收件方的實際接受條件。工具內的 distribution／video 是示範設定，不代表所有平台的標準。工作台可填自訂接受值，或用 CLI 的 rates／bits／channels 指定本次接受條件。
 
 僅分析使用者選定的 PCM WAV，保留原音檔。回報規格、每聲道 sample peak、RMS、DC、滿刻度樣本、頭尾安靜段、整段立體聲相關性、獨立 LUFS 整合響度與 SHA-256。
 
@@ -29,3 +29,7 @@ python music_lab.py audio --input selected.wav --profile video --rates 48000 --b
 ## 工作台草稿另存（v0.21）
 
 上方狀態核對四個工作台的完整草稿內容。Agent建包／送出下載不表示目前編修已保存；下載後先核對本機檔再明確確認，或明確啟用草稿庫並保存。晚到保存只確認當時的快照，後來編修仍需另存。已驗證現代檔案／庫版本須明確載入，legacy轉換需另存v3。預覽與取消不更改目前狀態，撤回後依內容判定。音檔與成果另存；離頁提醒受瀏覽器互動／裝置限制，不能取代主動保存，沒有自動寫檔或模型呼叫。
+
+## 原值條件草稿（v0.37）
+
+工作台另存接受條件schema1，未填完原文可下載並先預覽再載入；自訂欄位不在project draft3中。先核對收件要求，再明確套用；原音檔／其他panel保持。整份專案載入回到示範條件但保留本頁自訂原文。條件下載須核對檔案再確認，後續編修另存。CLI使用 --acceptance-draft selected.json，Agent audio／MCP audio_report嵌入acceptance_draft；與直接profile／rates／bits／channels互斥，JSON不能選路徑。未知／不符／晚回應不替換成果。詳見[完整契約](../../docs/AUDIO-ACCEPTANCE.md)。

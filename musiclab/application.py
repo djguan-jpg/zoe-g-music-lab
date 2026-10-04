@@ -11,6 +11,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from . import __version__
 from .audio import analyze_wav, audio_bundle
+from .audio_acceptance import validate as validate_acceptance, prepare as prepare_acceptance, descriptor as acceptance_descriptor
+from .common import json_text
 from .loudness import descriptor as loudness_descriptor
 from .storyboard_frames import descriptor as frames_descriptor
 from .creative import music_bundle, storyboard_bundle
@@ -92,6 +94,7 @@ def capabilities(draft_library=None, backup_source=None):
             "music_review": music_review_descriptor(),
             "storyboard_review": storyboard_review_descriptor(),
             "storyboard_timing_review": storyboard_timing_review_descriptor(),
+            "audio_acceptance_draft": acceptance_descriptor(),
             "audio_loudness": loudness_descriptor(),
             "storyboard_frames": frames_descriptor(),
             "input_schemas": {operation: payload_schema(operation) for operation in operations},
@@ -190,14 +193,27 @@ def build(operation, payload, *, audio_source=None, draft_library=None, backup_s
             raise ValueError("音訊操作需要由啟動參數或上傳選定 WAV，JSON 不能指定路徑")
         if {"path", "input", "audio_source", "filename"}.intersection(payload):
             raise ValueError("JSON 不能指定音檔路徑")
-        data = analyze_wav(audio_source, payload.get("profile", "distribution"),
-                           payload.get("rates"), payload.get("bits"), payload.get("channels"))
+        document = None
+        if 'acceptance_draft' in payload:
+            if set(payload) - {'acceptance_draft', 'display_name'}:
+                raise ValueError('接受條件草稿不能與 profile／rates／bits／channels 或額外欄位混用')
+            document = validate_acceptance(payload['acceptance_draft'])
+            profile, limits = prepare_acceptance(document)
+            data = analyze_wav(audio_source, profile, **limits)
+            data['acceptance_draft'] = document
+        else:
+            if set(payload) - {'profile', 'rates', 'bits', 'channels', 'display_name'}:
+                raise ValueError('音檔接受條件含不支援的欄位')
+            data = analyze_wav(audio_source, payload.get("profile", "distribution"),
+                               payload.get("rates"), payload.get("bits"), payload.get("channels"))
         if "display_name" in payload:
             name = payload["display_name"]
             if not isinstance(name, str):
                 raise ValueError("檔名需為文字")
             data["file"] = Path(name.replace("\\", "/")).name[:200] or "selected.wav"
         files = audio_bundle(data)
+        if document is not None:
+            files["audio-acceptance-draft.json"] = json_text(document)
     review = bool(data.get("review_notes") or data.get("warnings") or data.get("duration_estimated"))
     if operation in ('lyrics_review', 'music_review', 'storyboard_review', 'storyboard_timing_review'):
         review = True  # Diagnostic readiness never proves performance synchronization.
