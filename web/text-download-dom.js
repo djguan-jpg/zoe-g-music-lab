@@ -16,11 +16,12 @@
    finally{anchor?.remove();}
   }
   const send=(name,content)=>sendPrepared(root.MusicTextDownload.prepare({name,content}));
-  function bind(form,options){const controller=root.MusicTextDownload.createController({...options,send:sendPrepared});form.onsubmit=event=>{event.preventDefault();return controller.download();};return controller;}
+  function createController(options){return root.MusicTextDownload.createController({...options,send:sendPrepared});}
+  function bind(form,options){const controller=createController(options);form.onsubmit=event=>{event.preventDefault();return controller.download();};return controller;}
   function pageHide(){for(const key of [...pending.keys()])release(key);}
   function dispose(){pageHide();disposed=true;events.removeEventListener('pagehide',pageHide);}
   events.addEventListener('pagehide',pageHide);
-  return {send,bind,dispose,pending:()=>pending.size};
+  return {send,createController,bind,dispose,pending:()=>pending.size};
  }
  root.MusicTextDownloadDom={createAdapter};
 })(typeof globalThis==='object'?globalThis:this);

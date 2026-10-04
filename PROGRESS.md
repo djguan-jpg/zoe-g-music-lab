@@ -1,4 +1,8 @@
-# 進度：目前 v0.56.0
+# 進度：目前 v0.57.0
+
+## v0.57.0
+
+2026-10-04：獨立歌詞預覽共用文字下載處理，點擊或排程失敗可回收資源並重試；快速連點有界，離頁只回收下載。三格式用 lyrics.* 可攜檔名，作品名称與完整歷史保存在 JSON；訊息明確表示交給瀏覽器，保存位置另確認。純格式準備／共享控制器／原生傳輸分層，舊 LRC／SRT／JSON 內容保持。467 Python／723 JavaScript／61語法／4 Skills、原生驗收與v56 ZIP465／713還原通過。 產品57／來源明確38–57、13／18工具、Agent1／draft3／review1／source1／template1保持。原生tab99／100關閉、viewport reset、server原handle正常exit0；新HTML仍走完整外框核對。private exact-source發布／遠端核對／latest57／56／55依收據；瀏覽器download事件10秒逾時，保存檔未驗證。正式媒體／實聽／完整視覺／特定Host／FreeTWAI仍待，rolling active。
 
 ## v0.56.0
 

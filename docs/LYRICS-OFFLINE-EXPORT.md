@@ -17,3 +17,8 @@ Python固定preview_contract嵌入既有LRC grammar／export規則與兩新模�
 ## 範圍
 
 獨立區是当前格式提示，没有SHA来源报告下載功能；完整可保存report沿工作台／CLI／Agent原入口。模型／實聽同步、任意播放器、作者與版權、瀏覽器實際saved files另驗。合成fixture原生在loopback執行自有HTML；無WebCrypto能力由純browser VM驗證，未宣稱每種瀏覽器的file URL媒體／下載驗收。見[QA](QA-v0.56.0.md)／[交接](HANDOFF-v0.56.0.md)。
+
+
+## v0.57 下載接續
+
+下載仍先套用目前編修並更新格式提醒，接著沿共享文字下載模型及DOM adapter送出；不改原格式風險規則或強制阻擋提醒。三格式固定lyrics.*檔名，完整JSON保留作品名稱與歷史；native送出與saved file分開。詳見[契約](LYRICS-DOWNLOAD.md)。

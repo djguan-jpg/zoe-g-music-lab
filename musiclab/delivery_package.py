@@ -87,7 +87,7 @@ class PreparedDelivery:
 
 def prepare(payload, *, tool_version=None):
     tool_version = __version__ if tool_version is None else tool_version
-    if tool_version not in ("0.38.0","0.39.0","0.40.0","0.41.0","0.42.0","0.43.0","0.44.0","0.45.0","0.46.0","0.47.0","0.48.0","0.49.0","0.50.0","0.51.0","0.52.0","0.53.0","0.54.0","0.55.0","0.56.0"): raise ValueError("不支援的交付工具版本")
+    if tool_version not in ("0.38.0","0.39.0","0.40.0","0.41.0","0.42.0","0.43.0","0.44.0","0.45.0","0.46.0","0.47.0","0.48.0","0.49.0","0.50.0","0.51.0","0.52.0","0.53.0","0.54.0","0.55.0","0.56.0","0.57.0"): raise ValueError("不支援的交付工具版本")
     source = validate(payload)
     records = []; encoded = {}
     for name, content in source['files'].items():

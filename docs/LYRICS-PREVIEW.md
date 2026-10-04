@@ -28,3 +28,8 @@ web/lyrics-result.js checkedResult 對原 data／JSON／LRC／SRT核對後用 in
 ## v0.56 範本內容更新
 
 固定package_js另嵌入既有LRC文法／export規則及新的離線提示controller／presenter；結構仍為template1精確五欄，來源2MiB／encoded12MiB／HTML16MiB／contract256KiB保持，整份HTML核對包含新程式。v55三模組與bytes相同的說明為歷史證據；本輪範本有明確功能變更。詳見[獨立提示](LYRICS-OFFLINE-EXPORT.md)。
+
+
+## v0.57 下載模組更新
+
+固定package_js另嵌入lyrics-download純格式準備與既有web/text-download模型／DOM adapter，獨立頁共用有界送出與回收；template1精確五欄与256KiB契約／2MiB來源／12MiBencoded／16MiBHTML上限保持。整份外框核對包含新模組與送出訊息，變造仍拒絕。見[下載契約](LYRICS-DOWNLOAD.md)。
