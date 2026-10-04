@@ -59,7 +59,7 @@ class SrtTests(unittest.TestCase):
               {'jsonrpc':'2.0','method':'notifications/initialized'},{'jsonrpc':'2.0','id':2,'method':'tools/list'},
               {'jsonrpc':'2.0','id':3,'method':'tools/call','params':{'name':'lyrics_validate','arguments':{'payload':PAYLOAD}}}]
         replies=[json.loads(line) for line in run([sys.executable,'-X','utf8','music_lab_mcp.py'],(''.join(json.dumps(r)+'\n' for r in rows)).encode()).splitlines()]
-        self.assertEqual(len(replies[1]['result']['tools']),12);self.assertEqual(replies[2]['result']['structuredContent'],build('lyrics',PAYLOAD).wire())
+        self.assertEqual(len(replies[1]['result']['tools']),13);self.assertEqual(replies[2]['result']['structuredContent'],build('lyrics',PAYLOAD).wire())
     def test_actual_http_static_script_order_and_source_response(self):
         with WorkbenchServer(('127.0.0.1',0),WorkbenchHandler) as server:
             server.draft_library=None;t=threading.Thread(target=server.serve_forever,daemon=True);t.start()

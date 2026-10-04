@@ -91,3 +91,8 @@ ZIP核對後可切目前成果／ZIP原文逐段閱讀，原文下載仍是全�
 ## v0.52 歌詞建立與回讀來源
 
 校時建立從本次送出的 cues／總長或完整 package 派生期望，核對完整回應、時間來源／歷史說明、嚴格JSON及字面LRC／SRT後才替換表格與成果。純 lyrics-result 共用建立及所有帶時間匯入；錯來源／損壞／不完整保留原編修、上一份成果及待套用校時。raw JSON也核對原句，seed保持。HTML只核對存在與字串、不完整語義驗證；wire／schemas／12／17 tools不變。產品0.52／交付來源38–52，原schema與Agent操作保持；不是模型或實聽驗證。
+
+
+## v0.53 匯出格式保留
+
+建立歌詞包會顯示格式提醒；也可按「建立格式檢查報告」另存 JSON／Markdown。句首含時間標籤的原歌詞用完整 lyrics.json 保存；ASCII空白／tab句亦如此。LRC缺句尾，LRC／SRT缺作品總長與歷史；零提醒也請保存完整JSON。提醒只定位當前表格原句，作者自行決定修改，原文與音檔保持。唯讀 Agent／MCP lyrics_export_review 接受精確 {package:現代完整包}；CLI lyrics-export-review --input lyrics.json --out outputs/format-review。CLI2是提醒報告已輸出、0是已查欄位无提醒、1是拒絕；預設不覆寫。基本13／啟庫18，新report1／source1與Agent1／draft3分開。見[契約](../../docs/LYRICS-EXPORT-REVIEW.md)。

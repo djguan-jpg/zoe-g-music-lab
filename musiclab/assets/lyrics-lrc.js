@@ -3,6 +3,8 @@
 (function(root){
   const node=typeof module==='object'&&module.exports;
   const T=node?require('./lyric-time.js'):root.LyricTime,maximum=9007199254740991n;
+  const timestampSource='\\[([0-9]+):([0-9]{2})(?:\\.([0-9]{1,3}))?\\]',leadingTimestamp=new RegExp('^'+timestampSource);
+  const startsWithTimestamp=text=>typeof text==='string'&&leadingTimestamp.test(text);
   function integer(value){
     const negative=value.startsWith('-'),digits=value.replace(/^[+-]/,'').replace(/^0+/,'')||'0';
     if(digits.length>16)throw Error('LRC 時間超過毫秒整數精度範圍');
@@ -13,7 +15,7 @@
     if(typeof content!=='string')throw Error('LRC 原文需為文字');
     const lines=content.replace(/^\uFEFF/,'').split(/\r\n|\r|\n/);let offset=0n;const cues=[];
     for(const line of lines){const m=/^[ \t]*\[offset:([+-]?[0-9]+)\][ \t]*$/i.exec(line);if(m)offset=integer(m[1]);}
-    const tag=/\[([0-9]+):([0-9]{2})(?:\.([0-9]{1,3}))?\]/y;
+    const tag=new RegExp(timestampSource,'y');
     for(const line of lines){
       let position=/^[ \t]*/.exec(line)[0].length;const starts=[];
       while(true){
@@ -29,5 +31,5 @@
     }
     return cues;
   }
-  const api={parse};if(node)module.exports=api;else root.MusicLyricsLrc=api;
+  const api={parse,startsWithTimestamp};if(node)module.exports=api;else root.MusicLyricsLrc=api;
 })(typeof globalThis==='object'?globalThis:this);

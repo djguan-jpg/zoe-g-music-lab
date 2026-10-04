@@ -1,3 +1,9 @@
+# v0.53.0 · 2026-10-04
+
+新增歌詞匯出格式保留檢查：句首時間標籤的 LRC 歧義與 ASCII 空白／tab 句的 SRT 遺失可定位原表格；完整 JSON 保存句尾、作品總長與校時歷史。唯讀報告用完整 package 的 SHA-256 核對來源，錯回應保留編修與成果；建立歌詞包會自動顯示提醒。新 review1 與 Agent1／draft3 分開，基本13／啟庫18工具；產品53與明確交付來源38–53同步。451 Python／683 JavaScript／57語法／4 Skills、原生三寬度及 v52 ZIP442／672還原通過。
+
+修正提醒句號與未排序表格不一致：wire 保持按時間排序的 package 句號，介面以穩定 row ID 顯示及定位目前表格句號。沒有改寫、跳脫、抑制匯出或猜測時間；提醒為零仍不代表完整 metadata、實聽或他人播放器驗證。詳見 docs/QA-v0.53.0.md 與 docs/HANDOFF-v0.53.0.md。
+
 # v0.52.0 · 2026-10-04
 
 校時建立從本次送出的 cues／總長或完整 package 派生期望，核對完整回應、時間來源／歷史說明、嚴格JSON及字面LRC／SRT後才替換表格與成果。純 lyrics-result 共用建立及所有帶時間匯入；錯來源／損壞／不完整保留原編修、上一份成果及待套用校時。raw JSON也核對原句，seed保持。HTML只核對存在與字串、不完整語義驗證；wire／schemas／12／17 tools不變。442／672／55 syntax／4 Skills與v51指定ZIP還原通過。見docs/QA-v0.52.0.md及docs/HANDOFF-v0.52.0.md；封裝／private遠端依本輪收據。
