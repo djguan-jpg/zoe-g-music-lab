@@ -1,8 +1,8 @@
 # ZOE. G Music Lab
 
-目前版本 **v0.59.0**：交付版本改由一份固定白名單管理，Python、瀏覽器封裝／回讀／差異報告及 Agent 使用同一規則；產品版本、草稿標示也取自同一契約。未知版本明確拒絕，不猜測範圍或靜默遷移。479 Python／736 JavaScript／62 語法／四份 Skill 通過，84 個歷史 ZIP bytes 保持。 見[契約](docs/DELIVERY-VERSIONS.md)、[QA](docs/QA-v0.59.0.md)、[交接](docs/HANDOFF-v0.59.0.md)。
+目前版本 **v0.60.0**：ZIP核對失敗原因保留在選檔區，可清除訊息或重新選檔；編修表單保持提示，清除不取消既有撤回。純控制器的有界失敗metadata、DOM literal狀態與介面樣式分層，舊回應不能恢復已取消的錯誤。481 Python／743 JavaScript／62語法／四份Skill通過，88個歷史ZIP bytes保持。 見[使用與分層](docs/DELIVERY-FEEDBACK.md)、[QA](docs/QA-v0.60.0.md)、[交接](docs/HANDOFF-v0.60.0.md)。
 
-上一輪 v0.58.0：完整歌詞包在編修與匯出前一致驗證 Unicode 名稱、每句原文及歷史說明，避免下載無法回讀的 JSON；合法文字保留。v58 封裝解壓重跑 472 Python／730 JavaScript 通過。見[QA](docs/QA-v0.58.0.md)。
+上一輪 v0.59.0：五處交付版本清單改用固定共用契約，Python／browser／Agent一致拒絕未知版本。v59指定ZIP独立解壓重跑479Python／736JavaScript通過。見[QA](docs/QA-v0.59.0.md)。
 
 ## ZIP原文與差異（v0.40）
 

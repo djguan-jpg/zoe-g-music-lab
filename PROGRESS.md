@@ -1,4 +1,8 @@
-# 進度：目前 v0.59.0
+# 進度：目前 v0.60.0
+
+## v0.60.0
+
+2026-10-04：ZIP核對失敗原因保留在選檔區，可清除訊息或重新選檔；編修表單保持提示，清除不取消既有撤回。純控制器的有界失敗metadata、DOM literal狀態與介面樣式分層，舊回應不能恢復已取消的錯誤。481 Python／743 JavaScript／62語法／四份Skill通過，88個歷史ZIP bytes保持。 原生tab104確認unknown99理由、BPM編修／clear／undo保持、依表單變更停用舊下載、直接重新選檔清除錯誤、成功預覽cancel保持重建成果；五actualHTTPwire200/400/200/400/200，logs0／390px提示幾何通過。tab關閉／viewportreset／server19483 exit0／staging未建立。v59ZIP還原479／736、指定source封裝／privatePR／Release／遠端與latest60／59／58依終收據；Agent1／draft3與13／18工具、legal4/private/not_submitted保持，rolling active。
 
 ## v0.59.0
 
