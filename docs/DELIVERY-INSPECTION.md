@@ -1,5 +1,7 @@
 # 接續文字交付 ZIP（v0.39）
 
+目前v0.48明確支持來源工具0.38–0.48，未知版本拒絕。畫面已改用[輕量來源與view](DELIVERY-SOURCE.md)，完整ZIP／逐檔CRC／SHA核對、原文預覽、明確Apply與限定Undo保持；以下歷史版敘述不表示v48仍反覆傳遞完整proposal到DOM。
+
 ## v0.47 命中前後文
 
 搜尋清單改以原文鄰近文字辨認重複句，選擇後顯示唯讀片段並定位原文。context1每側最多64 UTF-8 bytes、不拆字元，單項最多1152 bytes；清單標示換行／控制符號、整理側邊連續空格及120字元摘錄，原文DTO與片段仍保留原值。Agent／MCP明確include_context=true、CLI --match-context才提供；預設位置回覆與12／17工具保持，source SHA與current source失效保護沿既有搜尋。產品47、來源明確38–47，未知拒絕。見[前後文契約](DELIVERY-CONTEXT.md)。下方保留較早迭代。

@@ -1,6 +1,6 @@
 # ZOE. G Music Lab
 
-目前版本 **v0.47.0**：搜尋結果顯示命中前後文，能辨認重複句並直接定位原文。四工作台唯讀片段、CLI／Agent／MCP明確opt-in，預設位置回覆保持；純UTF8模型、controller與DOM分層，單buffer／原文／表單／媒體保持。416 Python／602 JavaScript／51 syntax／4 Skill通過。見[使用](docs/DELIVERY-CONTEXT.md)、[QA](docs/QA-v0.47.0.md)、[交接](docs/HANDOFF-v0.47.0.md)。
+目前版本 **v0.48.0**：大份文字成果的來源核對與畫面刷新改用輕量狀態，閱讀／搜尋不再反覆複製及序列化全文；原文精確比對、編修失效保護與限定撤回保持。416 Python／619 JavaScript／52 syntax／4 Skill通過，四工作台與近8MiB雙來源翻頁／尾端定位已操作核對。見[分層與限制](docs/DELIVERY-SOURCE.md)、[QA](docs/QA-v0.48.0.md)、[交接](docs/HANDOFF-v0.48.0.md)。
 
 ## ZIP原文與差異（v0.40）
 
