@@ -1,5 +1,9 @@
 # 本機 Agent 接口 v1
 
+## v0.54 報告與完整歌詞包
+
+lyrics_export_review 新增可選 strict boolean include_package。省略／false仍回兩個報告，true另附完整 lyrics.json；JSON-lines／MCP／HTTP共用應用層，CLI明確 --include-package。report／source SHA與預設wire保持，13／18工具、Agent1／draft3及report1不變。見[契約](LYRICS-EXPORT-BUNDLE.md)。以下為歷史迭代記錄。
+
 ## v0.53 歌詞匯出格式保留
 
 新增歌詞匯出格式保留檢查：句首時間標籤的 LRC 歧義與 ASCII 空白／tab 句的 SRT 遺失可定位原表格；完整 JSON 保存句尾、作品總長與校時歷史。唯讀報告用完整 package 的 SHA-256 核對來源，錯回應保留編修與成果；建立歌詞包會自動顯示提醒。新 review1 與 Agent1／draft3 分開，基本13／啟庫18工具；產品53與明確交付來源38–53同步。451 Python／683 JavaScript／57語法／4 Skills、原生三寬度及 v52 ZIP442／672還原通過。 見[契約](LYRICS-EXPORT-REVIEW.md)。以下工具數與來源範圍為各歷史迭代。

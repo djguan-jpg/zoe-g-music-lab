@@ -1,3 +1,9 @@
+# v0.54.0 · 2026-10-04
+
+格式報告可明確附帶對應的完整 lyrics.json，保留目前歌詞包全部值與校時歷史；預設 API／Agent 仍只有兩個精簡報告。瀏覽器單獨檢查產生三檔，建立歌詞包產生六檔，核對完整來源後才替換成果；錯來源／漏檔保留原編修。修正窄螢幕格式提醒按鈕溢出。457 Python／691 JavaScript／57 語法／4 Skills、原生三寬度與 v53 ZIP451／683還原通過。產品54／明確交付來源38–54，13／18工具、Agent1／draft3／review1／source1保持。
+
+新增 strict boolean include_package 與 CLI --include-package；true 從同一份已驗證來源加入完整歌詞 JSON，report／來源 SHA 保持。完整 JSON 保存資料值，不保證原 JSON 排版 bytes。格式提醒按鈕限寬換行；表格保留自身水平捲動。編修後重建依既有規則保留原 review note、加入改稿說明並移除舊 shift 主張，不把舊來源歷史說成目前校時證據。詳見本輪 QA／HANDOFF。
+
 # v0.53.0 · 2026-10-04
 
 新增歌詞匯出格式保留檢查：句首時間標籤的 LRC 歧義與 ASCII 空白／tab 句的 SRT 遺失可定位原表格；完整 JSON 保存句尾、作品總長與校時歷史。唯讀報告用完整 package 的 SHA-256 核對來源，錯回應保留編修與成果；建立歌詞包會自動顯示提醒。新 review1 與 Agent1／draft3 分開，基本13／啟庫18工具；產品53與明確交付來源38–53同步。451 Python／683 JavaScript／57語法／4 Skills、原生三寬度及 v52 ZIP442／672還原通過。

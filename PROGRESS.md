@@ -1,4 +1,8 @@
-# 進度：目前 v0.53.0
+# 進度：目前 v0.54.0
+
+## v0.54.0
+
+2026-10-04：格式報告可明確附帶對應的完整 lyrics.json，保留目前歌詞包全部值與校時歷史；預設 API／Agent 仍只有兩個精簡報告。瀏覽器單獨檢查產生三檔，建立歌詞包產生六檔，核對完整來源後才替換成果；錯來源／漏檔保留原編修。修正窄螢幕格式提醒按鈕溢出。457 Python／691 JavaScript／57 語法／4 Skills、原生三寬度與 v53 ZIP451／683還原通過。產品54／明確交付來源38–54，13／18工具、Agent1／draft3／review1／source1保持。 tab90–93關閉、viewport reset、server原handle exit0、lazy staging未建立。private exact-source封裝／遠端／latest54／53／52依收據；正式媒體、實聽、完整視覺、特定Host、瀏覽器保存及FreeTWAI仍待，rolling active。
 
 ## v0.53.0
 

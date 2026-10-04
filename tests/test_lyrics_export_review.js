@@ -53,3 +53,35 @@ test('actual DOM adapter labels and focuses the original unsorted table row, and
   const button=list.children[0].children[0];assert.match(button.textContent,/表格第 1 句 · LRC/);button.onclick();assert.equal(focused,'tag');
   focused=null;box.dataset.stale='true';button.onclick();assert.equal(focused,null);
 });
+
+test('explicit included source preserves all package values with identical compact report and false default',async()=>{
+  const p={package:structuredClone(source),include_package:true},wire=domain(p),before=structuredClone(p);
+  const r=await R.inspect(wire,p);assert.deepEqual(r,reply.data);assert.deepEqual(p,before);assert.deepEqual(JSON.parse(wire.files['lyrics.json']),source);
+  assert.deepEqual(await R.review({package:source,include_package:false}),r);assert.deepEqual(domain({package:source,include_package:false}),reply);
+  const files=R.files(r,p);assert.deepEqual(JSON.parse(files['lyrics.json']),source);assert.equal(files['lyrics-export-review.md'],reply.files['lyrics-export-review.md']);
+});
+test('include package is strict boolean and extra options refuse in native source model',async()=>{
+  for(const value of [null,0,1,'true',[],{}])await assert.rejects(R.review({package:source,include_package:value}));
+  await assert.rejects(R.review({package:source,include_package:true,path:'bad'}));
+});
+test('missing source, unexpected source and independently changed full package are all rejected',async()=>{
+  const p={package:source,include_package:true},wire=domain(p);
+  for(const mutate of [w=>delete w.files['lyrics.json'],w=>w.files['lyrics.json']='broken',w=>w.files['lyrics.json']=w.files['lyrics.json'].replace('{','{"format":"shadow",'),w=>{const v=JSON.parse(w.files['lyrics.json']);v.review_notes.push('other history');w.files['lyrics.json']=JSON.stringify(v);},w=>{const v=JSON.parse(w.files['lyrics.json']);v.cues[2].text='其他';w.files['lyrics.json']=JSON.stringify(v);},w=>w.files['lyrics.json']=' '.repeat(2*1024*1024+1)]){const w=structuredClone(wire);mutate(w);await assert.rejects(R.inspect(w,p));}
+  await assert.rejects(R.inspect(wire,{package:source}));
+});
+test('included package key order is semantic, report pin and source history remain checked',async()=>{
+  const p={package:source,include_package:true},wire=domain(p),v=JSON.parse(wire.files['lyrics.json']);wire.files['lyrics.json']=JSON.stringify(Object.fromEntries(Object.entries(v).reverse()));assert.deepEqual(await R.inspect(wire,p),reply.data);
+  const changed=structuredClone(v);changed.timing.applied_shift_seconds=-.125;wire.files['lyrics.json']=JSON.stringify(changed);await assert.rejects(R.inspect(wire,p),/完整歌詞包/);
+});
+test('included source corruption preserves snapshot and prior callback output, normal retry works',async()=>{
+  const h=harness();h.snapshot.payload.include_package=true;const before=structuredClone(h.snapshot),wire=domain(h.snapshot.payload),bad=structuredClone(wire);bad.files['lyrics.json']='{}';
+  let work=h.c.check();h.jobs[0].resolve(bad);assert.equal(await work,false);assert.equal(h.reports.length,0);assert.deepEqual(h.snapshot,before);
+  work=h.c.check();h.jobs[1].resolve(wire);assert.equal(await work,true);assert.equal(h.reports.length,1);assert.deepEqual(JSON.parse(h.reports[0].files['lyrics.json']),source);
+});
+test('included source still respects row edits, ID reorder and cancellation during pending reply',async()=>{
+  for(const change of [h=>h.snapshot.payload.package.cues[2].text='後改',h=>h.snapshot.ids.reverse(),h=>h.c.invalidate()]){const h=harness();h.snapshot.payload.include_package=true;const wire=domain(h.snapshot.payload),work=h.c.check();change(h);h.jobs[0].resolve(wire);assert.equal(await work,false);assert.equal(h.reports.length,0);}
+});
+test('large included source is complete and fixed report remains small, without hidden cue excerpts',async()=>{
+  const p=structuredClone(source);p.cues[2].text='原\t  '.repeat(100000);const payload={package:p,include_package:true},wire=domain(payload);await R.inspect(wire,payload);
+  assert.deepEqual(JSON.parse(wire.files['lyrics.json']),p);assert.ok(Buffer.byteLength(wire.files['lyrics.json'])<2*1024*1024);assert.ok(Buffer.byteLength(wire.files['lyrics-export-review.json']+wire.files['lyrics-export-review.md'])<256*1024);
+});

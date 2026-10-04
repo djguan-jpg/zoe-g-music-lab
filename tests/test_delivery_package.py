@@ -96,8 +96,8 @@ class DeliveryHTTPTests(unittest.TestCase):
  def setUp(self):
   self.server=WorkbenchServer(('127.0.0.1',0),WorkbenchHandler);self.thread=threading.Thread(target=self.server.serve_forever);self.thread.start()
  def tearDown(self):self.server.shutdown();self.thread.join(5);self.server.server_close();self.assertFalse(self.thread.is_alive())
- def request(self,path,p=None,headers=None):
-  c=http.client.HTTPConnection('127.0.0.1',self.server.server_port,timeout=5);raw=None if p is None else json.dumps(p,ensure_ascii=False).encode();c.request('GET' if p is None else 'POST',path,body=raw,headers=headers or {});r=c.getresponse();status=r.status;data=r.read();h=dict(r.getheaders());c.close();return status,data,h
+ def request(self,path,p=None,headers=None,method=None):
+  c=http.client.HTTPConnection('127.0.0.1',self.server.server_port,timeout=5);raw=None if p is None else json.dumps(p,ensure_ascii=False).encode();c.request(method or ('GET' if p is None else 'POST'),path,body=raw,headers=headers or {});r=c.getresponse();status=r.status;data=r.read();h=dict(r.getheaders());c.close();return status,data,h
  def test_prepare_download_all_exact_bytes_and_take_once(self):
   status,data,_=self.request('/api/delivery-package/prepare',payload());self.assertEqual(status,200);reply=json.loads(data)
   status,raw,headers=self.request(reply['download_url']);self.assertEqual(status,200);self.assertEqual(raw,prepare(payload()).archive);self.assertEqual(hashlib.sha256(raw).hexdigest(),reply['sha256']);self.assertIn('zoe-delivery.zip',headers['Content-Disposition']);self.assertEqual(self.request(reply['download_url'])[0],400)
@@ -107,6 +107,7 @@ class DeliveryHTTPTests(unittest.TestCase):
   self.server.shutdown();self.thread.join(5);self.server.server_close();self.assertFalse(root.exists())
  def test_wrong_origin_shape_and_query_are_refused(self):
   for path,p in [('/api/delivery-package/prepare?path=x',payload()),('/api/delivery-package/prepare',{**payload(),'include_archive':False}),('/api/delivery-package/prepare',{**payload(),'path':'private'}),('/api/delivery-package/discard',{'id':'../x'})]:self.assertEqual(self.request(path,p)[0],400)
-  self.assertEqual(self.request('/api/delivery-package/prepare',payload(),{'Origin':'https://foreign.example'})[0],403)
-  self.assertEqual(self.request('/api/delivery-package/prepare',payload(),{'Host':'foreign.example'})[0],403)
+  # Keep actual POST/403 assertions, with no unread body when rejected early.
+  self.assertEqual(self.request('/api/delivery-package/prepare',headers={'Origin':'https://foreign.example'},method='POST')[0],403)
+  self.assertEqual(self.request('/api/delivery-package/prepare',headers={'Host':'foreign.example'},method='POST')[0],403)
 if __name__=='__main__':unittest.main()

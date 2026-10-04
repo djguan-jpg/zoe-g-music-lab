@@ -4,6 +4,7 @@ import hashlib,json,re
 from .lyrics_package import validate_package
 from .lyrics_lrc import TIMESTAMP
 from .lyric_timing import milliseconds
+from .common import json_text
 
 SCHEMA_VERSION=1
 MAX_ISSUES=200
@@ -15,11 +16,14 @@ NOTES=['LRC只保存開始與文字，結束時間回讀時會重新推估。',
 
 def descriptor():
     return {'schema_version':1,'max_cues':10000,'max_issue_details':MAX_ISSUES,'max_package_bytes':2*1024*1024,
-            'read_only':True,'source_hash':'SHA256 canonical UTF8 JSON with integer milliseconds; export-source1','media_generated':False}
+            'read_only':True,'source_hash':'SHA256 canonical UTF8 JSON with integer milliseconds; export-source1','media_generated':False,
+            'include_package':'Explicit boolean; default false keeps compact report, true adds checked complete lyrics.json (2 MiB maximum)'}
 
 def checked_source(payload):
-    if not isinstance(payload,dict) or set(payload)!={'package'}:
+    if not isinstance(payload,dict) or not {'package'}<=set(payload) or set(payload)-{'package','include_package'}:
         raise ValueError('格式檢查只接受完整package；不接受路徑、原文或額外欄位')
+    if 'include_package' in payload and type(payload['include_package']) is not bool:
+        raise ValueError('include_package需為明確布林值')
     return validate_package(payload['package'])
 
 def source_bytes(data):
@@ -33,7 +37,10 @@ def source_bytes(data):
     except UnicodeError:raise ValueError('格式檢查來源含無效Unicode') from None
 
 def review(payload):
-    data=checked_source(payload);digest=hashlib.sha256(source_bytes(data)).hexdigest()
+    return _review(checked_source(payload))
+
+def _review(data):
+    digest=hashlib.sha256(source_bytes(data)).hexdigest()
     counts={'lrc':0,'srt':0};issues=[]
     for row,cue in enumerate(data['cues'],1):
         for ext,code,risk in [('lrc','leading_time_tag',bool(TIMESTAMP.match(cue['text']))),('srt','blank_srt_line',bool(re.fullmatch(r'[ \t]*',cue['text'])))]:
@@ -57,5 +64,7 @@ def markdown(data):
     return '\n'.join(lines+['',*data['review_notes'],''])
 
 def review_bundle(payload):
-    data=review(payload)
-    return {'lyrics-export-review.json':json.dumps(data,ensure_ascii=False,indent=2,allow_nan=False)+'\n','lyrics-export-review.md':markdown(data)}
+    source=checked_source(payload);data=_review(source)
+    files={'lyrics-export-review.json':json_text(data),'lyrics-export-review.md':markdown(data)}
+    if payload.get('include_package',False):files['lyrics.json']=json_text(source)
+    return files

@@ -311,7 +311,8 @@ class BackupTests(unittest.TestCase):
                     connection=http.client.HTTPConnection('127.0.0.1',server.server_port);connection.request(method,path,body,headers or {})
                     response=connection.getresponse();data=response.read();result=(response.status,dict(response.getheaders()),data);connection.close();return result
                 try:
-                    self.assertEqual(request('POST','/api/drafts/backup/inspect',raw,{'Origin':'https://outside.invalid'})[0],403)
+                    # The early 403 must precede body validation; no unread ZIP.
+                    self.assertEqual(request('POST','/api/drafts/backup/inspect',None,{'Origin':'https://outside.invalid'})[0],403)
                     self.assertFalse(target.root.exists())
                     damaged=bytearray(raw);name_len,extra_len=struct.unpack_from('<HH',damaged,26);damaged[30+name_len+extra_len]=0x06
                     self.assertEqual(request('POST','/api/drafts/backup/inspect',bytes(damaged))[0],400)

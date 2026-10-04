@@ -9,7 +9,11 @@
   const exact=(v,keys)=>v&&typeof v==='object'&&!Array.isArray(v)&&Object.keys(v).length===keys.length&&keys.every(k=>Object.hasOwn(v,k));
   const canonical=v=>Array.isArray(v)?v.map(canonical):v&&typeof v==='object'?Object.fromEntries(Object.keys(v).sort().map(k=>[k,canonical(v[k])])):v;
   const equal=(a,b)=>JSON.stringify(canonical(a))===JSON.stringify(canonical(b));
-  function checkedSource(payload){if(!exact(payload,['package']))throw Error('格式檢查只接受完整package');return P.validate(payload.package);}
+  function checkedSource(payload){
+    if(!exact(payload,['package'])&&!exact(payload,['package','include_package']))throw Error('格式檢查只接受完整package及明確include_package');
+    if(Object.hasOwn(payload,'include_package')&&typeof payload.include_package!=='boolean')throw Error('include_package需為明確布林值');
+    return P.validate(payload.package);
+  }
   function sourceBytes(data){
     const timing=Object.fromEntries(['duration_source','inferred_end_count','tail_end_inferred'].map(k=>[k,data.timing[k]]));
     if(Object.hasOwn(data.timing,'applied_shift_seconds'))timing.applied_shift_ms=T.milliseconds(data.timing.applied_shift_seconds);
@@ -28,10 +32,17 @@
     const lines=['# 歌詞匯出格式檢查','',`共${data.source.cue_count}句；格式提醒${data.issue_count}項。`,`來源SHA-256：${data.source.sha256}`,'','建議保存完整lyrics.json；以下格式檢查不改寫原資料。',''];
     for(const i of data.issues)lines.push(`- 第${i.row}句 · ${i.format.toUpperCase()}：${i.message}`);if(data.details_truncated)lines.push(`- 明細僅列前${maxIssues}項；全部句子已檢查。`);return [...lines,'',...data.review_notes,''].join('\n');
   }
+  function files(data,payload){
+    const source=checkedSource(payload),result={'lyrics-export-review.json':JSON.stringify(data,null,2)+'\n','lyrics-export-review.md':markdown(data)};
+    if(payload.include_package===true){result['lyrics.json']=JSON.stringify(source,null,2)+'\n';J.parse(result['lyrics.json'],{maxBytes:2*1024*1024,label:'完整歌詞包'});}
+    return result;
+  }
   async function inspect(reply,payload){
-    const expected=await review(payload);
-    if(!exact(reply,['data','files','meta'])||!exact(reply.meta,['version','protocol_version','needs_review'])||reply.meta.protocol_version!==1||reply.meta.needs_review!==true||typeof reply.meta.version!=='string'||!reply.meta.version||!equal(reply.data,expected)||!exact(reply.files,['lyrics-export-review.json','lyrics-export-review.md'])||!equal(J.parse(reply.files['lyrics-export-review.json'],{maxBytes:256*1024,label:'格式檢查報告'}),expected)||reply.files['lyrics-export-review.md']!==markdown(expected))throw Error('格式檢查報告與本次來源不一致；目前內容保留');
+    const source=checkedSource(payload),include=payload.include_package===true,expected=await review({package:source});
+    const names=['lyrics-export-review.json','lyrics-export-review.md',...(include?['lyrics.json']:[])];
+    if(!exact(reply,['data','files','meta'])||!exact(reply.meta,['version','protocol_version','needs_review'])||reply.meta.protocol_version!==1||reply.meta.needs_review!==true||typeof reply.meta.version!=='string'||!reply.meta.version||!equal(reply.data,expected)||!exact(reply.files,names)||!equal(J.parse(reply.files['lyrics-export-review.json'],{maxBytes:256*1024,label:'格式檢查報告'}),expected)||reply.files['lyrics-export-review.md']!==markdown(expected))throw Error('格式檢查報告與本次來源不一致；目前內容保留');
+    if(include&&!equal(J.parse(reply.files['lyrics.json'],{maxBytes:2*1024*1024,label:'完整歌詞包'}),source))throw Error('格式報告附帶的完整歌詞包與本次來源不一致；目前內容保留');
     return structuredClone(expected);
   }
-  const api={review,markdown,inspect,sourceBytes};if(node)module.exports=api;else root.MusicLyricsExportReview=api;
+  const api={review,markdown,files,inspect,sourceBytes};if(node)module.exports=api;else root.MusicLyricsExportReview=api;
 })(typeof globalThis==='object'?globalThis:this);

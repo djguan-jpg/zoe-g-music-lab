@@ -112,7 +112,8 @@ class LyricTimingTests(unittest.TestCase):
                 payload={'cues':CUES,'duration':10,'shift_seconds':0.5};status,raw=request('POST','/api/lyrics',json.dumps(payload));self.assertEqual(status,200)
                 self.assertEqual(json.loads(raw),build('lyrics',payload).wire())
                 self.assertEqual(request('GET','/lyric-time.js')[1],(ROOT/'musiclab/assets/lyric-time.js').read_bytes())
-                self.assertEqual(request('POST','/api/lyrics',json.dumps(payload),{'Origin':'https://outside.invalid'})[0],403)
+                # Avoid unread-body Windows resets while asserting the early 403.
+                self.assertEqual(request('POST','/api/lyrics',None,{'Origin':'https://outside.invalid'})[0],403)
                 self.assertEqual(request('POST','/api/lyrics',json.dumps({'cues':CUES,'shift_seconds':-2}))[0],400)
             finally:server.shutdown();thread.join(timeout=5)
 

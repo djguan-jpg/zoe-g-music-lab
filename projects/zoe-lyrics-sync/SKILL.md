@@ -96,3 +96,7 @@ ZIP核對後可切目前成果／ZIP原文逐段閱讀，原文下載仍是全�
 ## v0.53 匯出格式保留
 
 建立歌詞包會顯示格式提醒；也可按「建立格式檢查報告」另存 JSON／Markdown。句首含時間標籤的原歌詞用完整 lyrics.json 保存；ASCII空白／tab句亦如此。LRC缺句尾，LRC／SRT缺作品總長與歷史；零提醒也請保存完整JSON。提醒只定位當前表格原句，作者自行決定修改，原文與音檔保持。唯讀 Agent／MCP lyrics_export_review 接受精確 {package:現代完整包}；CLI lyrics-export-review --input lyrics.json --out outputs/format-review。CLI2是提醒報告已輸出、0是已查欄位无提醒、1是拒絕；預設不覆寫。基本13／啟庫18，新report1／source1與Agent1／draft3分開。見[契約](../../docs/LYRICS-EXPORT-REVIEW.md)。
+
+## v0.54 一起保存報告與完整歌詞
+
+按「建立格式報告與歌詞包」產生報告JSON／Markdown與完整lyrics.json；按「驗證並建立歌詞包」產生原四個歌詞檔及兩報告，可一起另存本輪ZIP。只保存目前已驗證來源的值，原JSON排版另保留。Agent／MCP lyrics_export_review {package:完整包,include_package:true} 明確取完整附檔；省略／false只兩報告。CLI `python music_lab.py lyrics-export-review --input lyrics.json --include-package --out outputs/format-review`；0無已查提醒／2有提醒且報告已寫／1拒絕，預設不覆寫，明確--overwrite才替換指定輸出。提醒仍需實聽核對，不改歌詞或時間。見[契約](../../docs/LYRICS-EXPORT-BUNDLE.md)。

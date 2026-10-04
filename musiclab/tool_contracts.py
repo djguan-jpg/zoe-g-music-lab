@@ -73,7 +73,7 @@ def seed_schema():
 
 def payload_schema(operation):
     if operation == 'lyrics_export_review':
-        return object_schema({'package': lyrics_package_schema()},['package'],additionalProperties=False)
+        return object_schema({'package': lyrics_package_schema(),'include_package':{'type':'boolean','description':'Explicitly include checked complete lyrics.json with report; default false keeps compact report'}},['package'],additionalProperties=False)
     if operation == 'storyboard_timing_review':
         def exact(properties): return object_schema(properties, properties.keys(), additionalProperties=False)
         raw = {'type': 'string', 'description': 'Original clock text, including empty or invalid decimal strings; never guessed'}
