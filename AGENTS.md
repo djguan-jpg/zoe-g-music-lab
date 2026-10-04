@@ -1,5 +1,9 @@
 # ZOE. G Music Lab
 
+## v0.48 輕量來源核對
+
+delivery-source純internal plain bundle隔離容器／精確值比較，current核對原scope／revision／resultRevision／bundle及File身份，不只信任revision或共享object；不JSON序列化／clone全文。delivery-import full status／legacy onState保持，新view／onView／refreshView只含metadata；DOM明確走輕量路徑。單份雙側excerpt32768units／完整line counts快取，換檔／新ZIP／cancel／apply／undo清除。wire與12／17tools不變，產品48／明確來源38–48，未知拒絕。見[分層](docs/DELIVERY-SOURCE.md)。
+
 在此工作區維護四個新專案，功能與狀態以 `projects.json`、`README.md`、`PROGRESS.md` 為準。
 
 - 創辦署名 ZOE. G；GitHub 帳號 djguan-jpg；AI 協作範圍記錄在 FOUNDER-RECORD.md。

@@ -1,5 +1,12 @@
 # 迭代說明
 
+## v0.48.0 — 2026-10-04
+
+- 把內部成果來源的隔離snapshot／精確比對移到純delivery-source層，複製容器、保留不可變字串值；每次current仍核對全部原值及原生media身份，不能只依revision或object identity。
+- 新增metadata-only view／refreshView／onView；工作台畫面不用完整proposal，完整status／legacy onState／refresh仍提供隔離資料。單份32768-unit雙側excerpt及全文換行計數快取，換檔／新ZIP／cancel／apply／undo釋放。
+- 約8MiB原文30次Node讀取／刷新：14,060.47ms→0.99ms，JSON序列化2,516,606,400 chars→0；不是瀏覽器延遲／heap／所有搜尋速度保證。新增17個有意義回歸案例，416 Python／619 JS／52 syntax／4 Skill與四台原生操作通過。
+- 產品48與明確來源38–48同步；沒有新wire/schema／tool／依賴／Agent權限，legal4保持。v47指定ZIP還原416／602通過；本輪private exact-source、actual remote及latest3維護依收據。
+
 ## v0.47.0 — 2026-10-04
 
 - 用有界原文前後文區分重複搜尋字，選擇後顯示readonly片段並定位。清單標示控制符號、側邊空格縮合／120字元省略；原文與query空格不變。

@@ -1,6 +1,6 @@
 # v0.48.0 交接與可逆
 
-pure delivery-source internal container snapshot／原值current → delivery-import metadata view／full status與單份preview cache → DOM輕量刷新；reader／search原單buffer與完整ZIP驗證保持。416 Python／619 JS／52 syntax／4 Skill及四台原生操作、近8MiB雙來源翻頁／tail／Apply／後續編修與Undo通過。見[契約](docs/DELIVERY-SOURCE.md)、[QA](docs/QA-v0.48.0.md)。
+pure delivery-source internal container snapshot／原值current → delivery-import metadata view／full status與單份preview cache → DOM輕量刷新；reader／search原單buffer與完整ZIP驗證保持。416 Python／619 JS／52 syntax／4 Skill及四台原生操作、近8MiB雙來源翻頁／tail／Apply／後續編修與Undo通過。見[契約](DELIVERY-SOURCE.md)、[QA](QA-v0.48.0.md)。
 
 branch codex/iteration-v0.48.0，restore-v0.47.0-before-v0.48.0指向起點6354706eebaa02af2351377e7a6447109cb04cf8。還原前先保存未提交創作，再用git switch -c recover-v0.47 restore-v0.47.0-before-v0.48.0另開分支。指定source ZIP／SHA、private PR／Release與actual remote核對依本輪收據，main tree需同source；v47 ZIP416／602已還原測試，限定暫存移除。
 

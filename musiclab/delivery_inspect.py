@@ -10,7 +10,7 @@ from .delivery_package import MAX_ARCHIVE_BYTES, MAX_FILES, MAX_SOURCE_BYTES, MA
 from .json_document import decode_json
 MAX_MANIFEST_BYTES=32768
 from .delivery_selection import MAX_INLINE_FILES_BYTES
-SUPPORTED_TOOL_VERSIONS=('0.38.0','0.39.0','0.40.0','0.41.0','0.42.0','0.43.0','0.44.0','0.45.0','0.46.0','0.47.0')
+SUPPORTED_TOOL_VERSIONS=('0.38.0','0.39.0','0.40.0','0.41.0','0.42.0','0.43.0','0.44.0','0.45.0','0.46.0','0.47.0','0.48.0')
 INSPECTION_SCHEMA_VERSION=1
 
 def descriptor():

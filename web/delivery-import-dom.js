@@ -18,7 +18,7 @@
    reader?.refresh();searcher?.refresh();
   };
   const render=s=>{
-   originalState={pending:s.pending,canApply:s.canApply,names:new Set(Object.keys(s.proposal?.files||{})),records:new Map((s.comparison?.files||[]).map(f=>[f.name,f])),sha:s.proposal?.data.archive_sha256||''};
+   originalState={pending:s.pending,canApply:s.canApply,names:new Set((s.source?.manifest.files||[]).map(f=>f.name)),records:new Map((s.comparison?.files||[]).map(f=>[f.name,f])),sha:s.source?.archive_sha256||''};
    $('delivery-import-file').disabled=!!options.capture().busy;
    $('delivery-import-preview').hidden=!s.pending;
    $('delivery-import-cancel').disabled=!s.reading&&!s.pending;
@@ -28,7 +28,7 @@
    const list=$('delivery-import-files');list.replaceChildren();
    const select=$('delivery-review-file'),old=select.value;select.replaceChildren();select.disabled=!s.comparison;
    $('delivery-review-summary').textContent='';
-   if(s.proposal){const d=s.proposal.data,m=d.manifest;$('delivery-import-source').textContent=`${m.scope} · 工具${m.tool_version} · ${m.file_count}個文字檔 · ${d.archive_bytes} bytes\n${m.label}\nZIP SHA-256 ${d.archive_sha256}`;
+   if(s.source){const d=s.source,m=d.manifest;$('delivery-import-source').textContent=`${m.scope} · 工具${m.tool_version} · ${m.file_count}個文字檔 · ${d.archive_bytes} bytes\n${m.label}\nZIP SHA-256 ${d.archive_sha256}`;
     for(const f of m.files){const li=document.createElement('li');li.textContent=`${f.name} · ${f.bytes} bytes · SHA-256 ${f.sha256}`;list.append(li);}}
    if(s.comparison){const c=s.comparison.counts;$('delivery-review-summary').textContent=`比較目前成果：新增${c.added}／變更${c.changed}／移除${c.removed}／相同${c.unchanged}。載入會取代本工作台全部成果。`;
     for(const f of s.comparison.files){const option=document.createElement('option');option.value=f.name;option.textContent=`${f.name} · ${names[f.status]}`;select.append(option);}
@@ -36,7 +36,7 @@
    }
    showContent();
   };
-  controller=root.MusicDeliveryImport.createController({...options,onState:render});
+  controller=root.MusicDeliveryImport.createController({...options,onState:undefined,onView:render});
   const originalSource=()=>{const name=$('delivery-review-file').value,side=$('delivery-reader-side').value,record=originalState.records.get(name)?.[side];return {key:[originalState.sha,name,side,record?.sha256||''].join('|'),canRead:originalState.canApply&&!!record,pending:originalState.pending,message:!originalState.pending?'核對ZIP後可逐段閱讀原文。':!originalState.canApply?'來源已有修改，請重新核對ZIP。':'所選來源沒有這個檔案；空檔會另行標示。'};};
   reader=root.MusicDeliveryTextDom.createAdapter(document,{source:originalSource,
    read:start=>controller.textWindow($('delivery-review-file').value,$('delivery-reader-side').value,start),onError:options.onError,onReset:()=>controller.clearTextWindow()
@@ -53,7 +53,7 @@
   for(const [id,name] of [['delivery-report-json','delivery-comparison.json'],['delivery-report-md','delivery-comparison.md']]){
    $(id).onclick=()=>{try{const files=controller.report();if(!files)return false;if(options.downloadText(name,files[name])!==true)throw Error('報告下載未送出');return true;}catch(error){options.onError?.(error);return false;}};
   }
-  controller.refresh();return controller;
+  controller.refreshView();return {...controller,refresh:controller.refreshView};
  }
  root.MusicDeliveryImportDom={createAdapter};
 })(typeof globalThis==='object'?globalThis:this);
