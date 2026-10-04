@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 'use strict';
 (function(root){
+  const acceptance=typeof module==='object'&&module.exports?require('./audio-acceptance.js'):root.MusicAudioAcceptance;
+  const json=typeof module==='object'&&module.exports?require('../musiclab/assets/json-document.js'):root.MusicJsonDocument;
+  const same=(a,b)=>typeof a===typeof b&&(a===null||typeof a!=='object'?a===b:Array.isArray(a)?Array.isArray(b)&&a.length===b.length&&a.every((v,i)=>same(v,b[i])):b!==null&&!Array.isArray(b)&&Object.keys(a).length===Object.keys(b).length&&Object.keys(a).every(k=>Object.hasOwn(b,k)&&same(a[k],b[k])));
+
   function buildLoudness(report){
     const invalid=()=>{throw Error('響度報告不完整或版本不支援，沒有替換目前結果');};
     const m=report.loudness,finite=v=>typeof v==='number'&&Number.isFinite(v);
@@ -82,7 +86,7 @@
     const needsReview=report.warnings.length>0;
     if(report.status!==(needsReview?'needs_review':'technical_checks_passed')||
       specifications.some(s=>!s.passed)&&!needsReview)invalid();
-    return {file:report.file,bytes:source.bytes,sha256:report.sha256,profile:report.profile,
+    return {file:report.file,bytes:source.bytes,sha256:report.sha256,profile:report.profile,custom:report.acceptance_draft?.custom===true,
       needsReview,status:needsReview?'有待確認項目':'本次技術條件通過',
       specifications,channels,warnings:structuredClone(report.warnings),duration:report.duration_seconds,
       leading:quiet.leading_seconds,trailing:quiet.trailing_seconds,quietRatio:quiet.quiet_frame_ratio,
@@ -93,12 +97,25 @@
     const selection=selected(),file=selection.file,profile=selection.profile;
     if(!file)throw Error('先選擇 PCM WAV');
     if(!Number.isSafeInteger(file.size)||file.size<=0||file.size>64*1024*1024)throw Error('音檔需介於 1 byte 與 64 MiB');
-    const current=()=>{const latest=selected();return isCurrent()&&latest.file===file&&latest.profile===profile;};
+    const document=selection.acceptanceDraft===undefined?null:acceptance.validate(selection.acceptanceDraft);
+    if(document&&document.profile!==profile)throw Error('接受條件與這次示範選擇不同');
+    const expected=acceptance.prepare(document||{format:acceptance.format,schema_version:1,profile,custom:false,fields:{rates:'',bits:'',channels:''}});
+    const key=document?acceptance.fingerprint(document):null;
+    const current=()=>{try{const latest=selected();return isCurrent()&&latest.file===file&&latest.profile===profile&&
+      (latest.acceptanceDraft===undefined?key===null:acceptance.fingerprint(latest.acceptanceDraft)===key);}catch{return false;}};
     try{
-      const result=await request({file,profile});
+      const result=await request({file,profile,...(document?{acceptanceDraft:document}:{})});
       if(!current())return false;
       const review=buildReview(result.data);
-      if(review.bytes!==file.size||review.profile!==profile)throw Error('音檔報告與這次選擇不一致，沒有替換結果');
+      if(review.bytes!==file.size||review.profile!==profile||!same(result.data.acceptance,expected.acceptance))throw Error('音檔報告與這次選擇或接受值不一致，沒有替換結果');
+      if(document){
+        const echoed=acceptance.validate(result.data.acceptance_draft);
+        const source=acceptance.validate(json.parse(result.files?.['audio-acceptance-draft.json'],{maxBytes:acceptance.maxBytes,label:'接受條件回覆'}));
+        const stored=json.parse(result.files?.['report.json'],{maxBytes:8*1024*1024,label:'音檔報告'});
+        const filename=Array.from(file.name.replaceAll('\\','/').replace(/\/+$/,'').split('/').filter(p=>p!=='.').at(-1)||'selected.wav').slice(0,200).join('');
+        if(acceptance.fingerprint(echoed)!==key||acceptance.fingerprint(source)!==key||!same(stored,result.data)||result.data.file!==filename)
+          throw Error('報告來源或條件草稿不一致，沒有替換结果');
+      }
       onResult(result,review);return true;
     }catch(error){if(current())throw error;return false;}
   }

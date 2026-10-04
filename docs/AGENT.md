@@ -309,3 +309,7 @@ validate_seed精確核對source段落與BPM／拍數／bars推得時間、所有
 CLI `storyboard-seed --seed 起稿.json --out 新目錄`檢查並輸出兩檔，不能覆蓋FPS或每鏡小節設定；原檔保留，重跑預設拒絕覆寫。瀏覽器用「接續Agent／CLI起稿」選JSON，預覽後才套用；不要求目前歌曲與檔案同名，保留目前歌曲及其他panel／音檔。目標分鏡修改後重新預覽，沒有靜默覆蓋。
 
 本輪真正MCP stdio產生→CLI同bytes→IAB讀回→下載JSON／draft3與撤回、錯誤恢復已驗；特定Agent host／模型仍未接入，沒有擴大權限。數字格式／換行可重新排版，保留JSON語義，沒有原檔bytes不變的下載宣稱。
+
+## v0.37 原接受條件接續
+
+`audio`／`audio_report` payload 可嵌入 acceptance_draft schema1；不能與 profile／rates／bits／channels 混用。discovery新增 audio_acceptance_draft descriptor及input schema；基本10／啟庫15工具、Agent1及MCP版本保持。media仍由啟動參數選定。report會交回原條件JSON與實際acceptance；未完成原值可以保存，但分析拒絕。詳見[AUDIO-ACCEPTANCE](AUDIO-ACCEPTANCE.md)。

@@ -1,6 +1,10 @@
 # ZOE. G Music Lab
 
-目前版本 **v0.36.0**：四工作台建立按鈕旁新增狀態與「查看本輪成果」，明確前往成果標題並返回原工作台；清空成果返回建立按鈕。處理中暫停導覽，修改後明示上一份且保持下載停用，晚回應保留新內容與焦點。純presentation／controller／DOM分層，導覽不進draft3／Agent。見[使用與分層](docs/DELIVERY-NAVIGATION.md)、[QA](docs/QA-v0.36.0.md)、[交接](docs/HANDOFF-v0.36.0.md)。
+目前版本 **v0.37.0**：交付檢查可自訂接受取樣率／位元深度／聲道數，原值另存獨立條件草稿，未完成也能下載、預覽載入後繼續。CLI／Agent／MCP共用同一契約，工作台核對回覆實際條件及來源後才接收；晚回應保留後續編修。原音檔保持，專案draft3與條件草稿1分開，10／15工具保持。見[使用與分層](docs/AUDIO-ACCEPTANCE.md)、[QA](docs/QA-v0.37.0.md)、[交接](docs/HANDOFF-v0.37.0.md)。
+
+## 成果查看與返回（v0.36）
+
+v0.36.0：四工作台建立按鈕旁新增狀態與「查看本輪成果」，明確前往成果標題並返回原工作台；清空成果返回建立按鈕。處理中暫停導覽，修改後明示上一份且保持下載停用，晚回應保留新內容與焦點。純presentation／controller／DOM分層，導覽不進draft3／Agent。見[使用與分層](docs/DELIVERY-NAVIGATION.md)、[QA](docs/QA-v0.36.0.md)、[交接](docs/HANDOFF-v0.36.0.md)。
 
 ## 迭代維護（v0.35）
 

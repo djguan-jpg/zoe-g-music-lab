@@ -1,5 +1,11 @@
 # 迭代說明
 
+## v0.37.0 — 2026-10-04
+
+- 補齊工作台與CLI／Agent之間的自訂接受值差異：Hz／bit／聲道數，原值獨立schema1條件草稿，未完成可另存，preview／apply／cancel與自己的另存checkpoint。
+- 純shape／精確整數／既有直接清單normalize、application、四adapter與browser model／controller／DOM分層。長小數不因float捨入接受；原值、限定target及media身份／busy／late保護，回覆實際清單／來源／report JSON-data核對後才提交。原draft3保持、整份project載入deactivate自訂且保留raw；10／15 tools保持。
+- 312Python／460JS／4Skill／37syntax與diff、12新Python／17新JS；四入口實際來源一致、長Unicode HTTP界限、native report／未完成／換行原值及project3下載回讀、390px鍵盤／1366px／500／4秒late／其他panel及media保持。v36 ZIP300／443還原通過；指定commit封裝／privatePR／Release及遠端bytes、latest3／限定程序／維護依收據。PolyForm非商用／legal4／署名保持，平台not_submitted。
+
 ## v0.36.0 — 2026-10-04
 
 - 修正窄螢幕建立後成功訊息與成果在視窗下方難尋找：四工作台建立旁狀態及明確查看／返回，聚焦成果標題再返回原控制。清空成果則返回可操作的build，換台清舊目標。
