@@ -1,6 +1,6 @@
 # v0.45.0 交接與可逆
 
-程序稽核從native精確reader、probe1純解碼、限定PID的本機CIM adapter與純identity政策分層。只有native unavailable補查；成功明確null才absent，±9 ticks內仍unverified，明確不同才pid_reused且保留目前外部程序。見[契約](docs/PROCESS-PROBE.md)、[QA](docs/QA-v0.45.0.md)。398 Python／582 JavaScript／48 syntax／4 Skill與diff通過。
+程序稽核從native精確reader、probe1純解碼、限定PID的本機CIM adapter與純identity政策分層。只有native unavailable補查；成功明確null才absent，±9 ticks內仍unverified，明確不同才pid_reused且保留目前外部程序。見[契約](PROCESS-PROBE.md)、[QA](QA-v0.45.0.md)。398 Python／582 JavaScript／48 syntax／4 Skill與diff通過。
 
 branch `codex/iteration-v0.45.0`；restore `restore-v0.44.0-before-v0.45.0` 指向main起點 `941c60e2680aa5eb212bd4a5f9045beabb9c701d`。還原從restore另開分支，先保留未提交創作。指定source commit的ZIP／SHA與manifest、private PR／Release／actual remote assets依本輪收據，main tree需同source。
 

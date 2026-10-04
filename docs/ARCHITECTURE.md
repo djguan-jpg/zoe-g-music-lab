@@ -314,3 +314,7 @@ delivery-navigation.js純DTO／注入controller只讀檔名與scope／busy／dir
 ## v0.37 接受條件草稿
 
 獨立schema1原值／精確整數模型→application互斥與來源bundle→CLI／HTTP／JSON-lines／MCP adapter；browser純模型／注入controller／DOM分離。原profile與draft3保持，自訂條件獨立保存及離頁checkpoint。read／apply核對token、target原文和原生media身份；audio-review沿revision保護，實際接受值／source／data／JSON一致才提交。沒有新tool或路徑權限，見[契約](AUDIO-ACCEPTANCE.md)。
+
+## v0.45
+
+v0.45維護新增process_probe純probe1解碼與process_probe_windows限定PID本機adapter，原生run_identity只在unavailable路由補查；maintenance純政策保留CIM ±9 ticks不確定範圍，不把近似identity當精確ownership。filesystem/CLI沿既有完整稽核/preview token/journal，不進Agent/HTTP。見[契約](PROCESS-PROBE.md)。

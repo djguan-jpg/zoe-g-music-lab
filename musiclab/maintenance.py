@@ -8,6 +8,9 @@ import re
 DAY = 86400
 KEEP_VERSIONS = 3
 MIN_AGE_DAYS = 7
+CIM_SOURCE = 'windows-cim-process-v1'
+# CIM datetime exposes microseconds; preserve uncertainty around its 100ns tick value.
+CIM_CREATION_MARGIN = 9
 
 
 def version_key(value):
@@ -47,19 +50,38 @@ def classify_run(record, observation):
     if not isinstance(observation, dict) or type(observation.get('pid')) is not int or observation.get('pid') != record['identity']['pid']:
         raise ValueError('Process observation must refer to the exact recorded PID')
     state = observation.get('state')
+    source = observation.get('source')
+    if source is not None and source != CIM_SOURCE:
+        raise ValueError('Unknown process observation source')
     if state == 'absent':
         status = 'stopped'
     elif state == 'unavailable':
         status = 'unverified'
     elif state == 'running':
+        if source == CIM_SOURCE:
+            raise ValueError('CIM evidence cannot establish exact running identity')
         observed = validate_identity(observation.get('identity'))
         expected = record['identity']
         same = observed['pid'] == expected['pid'] and observed['platform'] == expected['platform'] and observed['creation_ticks'] == expected['creation_ticks'] and observed['image'].casefold() == expected['image'].casefold()
         status = 'running' if same else 'pid_reused'
+    elif state == 'limited':
+        if source != CIM_SOURCE or set(observation) != {'pid', 'state', 'source', 'identity', 'creation_margin_ticks'} or type(observation['creation_margin_ticks']) is not int or observation['creation_margin_ticks'] != CIM_CREATION_MARGIN:
+            raise ValueError('Unknown limited process evidence')
+        observed = validate_identity(observation['identity']);expected = record['identity']
+        if observed['pid'] != expected['pid'] or int(observed['creation_ticks']) % 10:
+            raise ValueError('Limited process identity or precision is invalid')
+        separated = abs(int(observed['creation_ticks']) - int(expected['creation_ticks'])) > CIM_CREATION_MARGIN
+        different_image = observed['image'].casefold() != expected['image'].casefold()
+        status = 'pid_reused' if separated or different_image else 'unverified'
     else:
         raise ValueError('Unknown process observation state')
-    return {'job': record['job'], 'pid': record['identity']['pid'], 'status': status,
-            'action': 'preserved', 'original_run_terminal': status in ('stopped', 'pid_reused')}
+    result = {'job': record['job'], 'pid': record['identity']['pid'], 'status': status,
+              'action': 'preserved', 'original_run_terminal': status in ('stopped', 'pid_reused')}
+    if source == CIM_SOURCE:
+        result['evidence'] = {'source': source, 'state': state}
+        if state == 'limited':
+            result['evidence'].update(identity=observed, creation_margin_ticks=CIM_CREATION_MARGIN)
+    return result
 
 
 def retention_plan(packages, now):
