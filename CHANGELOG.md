@@ -1,5 +1,12 @@
 # 迭代說明
 
+## v0.46.0 — 2026-10-04
+
+- 搜尋完整原文並跳到命中位置，解決長文只能逐段翻頁的缺口。browser ZIP／保留成果每批20筆，Enter／下拉與下一批；來源或query改變清除舊結果。
+- text-search1純UTF8 literal位置、完整ZIP／SHA pin application與CLI／Agent／MCP分層；純KMP／controller／DOM與reader共用單8MiB cache，不重新編碼全文；16KiB頁面與原文下載保持。
+- query最多1024 UTF8 bytes／Agent1–50，非重疊、one-lookahead、非零起點必須SHA；未知、字元中間、source改變、未選CRC或混用模式拒絕。產品46／明確來源38–46；12／17工具與legal4保持。
+- 408 Python／594 JS／50 syntax／4 Skills；四台真瀏覽器、8MiB尾端、保留來源、空／缺／literal、Enterfocus、三寬度DOM、Apply／Undo與前v45 ZIP398／582還原通過。本輪下載保存事件未確認，正式媒體／實聽／完整視覺／Host／FreeTWAI仍待。
+
 ## v0.45.0
 
 - 修正 Windows 原生 identity unavailable 導致已退出工作留在未確認狀態；只補查同一PID的本機三欄CIM。

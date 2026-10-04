@@ -11,7 +11,7 @@
   if(!exact(wire,['files','data','meta'])||!exact(wire.meta,['version','protocol_version','needs_review'])||wire.meta.version!==pack.version||wire.meta.protocol_version!==1||wire.meta.needs_review!==true)throw Error('交付核對回覆版本不支援');
   const d=wire.data;
   if(!exact(d,['format','schema_version','archive_bytes','archive_sha256','manifest'])||d.format!=='zoe-delivery-inspection'||d.schema_version!==1||!Number.isSafeInteger(d.archive_bytes)||d.archive_bytes<=0||d.archive_bytes>pack.maxArchive||d.archive_bytes!==selected.bytes||typeof d.archive_sha256!=='string'||!/^[0-9a-f]{64}$/.test(d.archive_sha256)||d.archive_sha256!==selected.sha256)throw Error('交付回覆與選定ZIP不符；目前成果保留');
-  if(!d.manifest||!['0.38.0','0.39.0','0.40.0','0.41.0','0.42.0','0.43.0','0.44.0','0.45.0'].includes(d.manifest.tool_version))throw Error('來源工具版本不支援；沒有遷移');
+  if(!d.manifest||!['0.38.0','0.39.0','0.40.0','0.41.0','0.42.0','0.43.0','0.44.0','0.45.0','0.46.0'].includes(d.manifest.tool_version))throw Error('來源工具版本不支援；沒有遷移');
   const source={scope:d.manifest.scope,label:d.manifest.label,files:wire.files};
   const expected=await pack.manifest(source,hash,d.manifest.tool_version);
   try{pack.checkedManifest(d.manifest,expected);pack.checkedManifest(selected.manifest,expected);}catch{throw Error('ZIP原始清單、回覆或文字成果不一致；目前成果保留');}
@@ -26,18 +26,20 @@
   const undoCurrent=()=>{if(!undoState)return false;const now=capture();return !now.busy&&now.scope===undoState.after.scope&&now.resultRevision===undoState.after.resultRevision;};
   function status(){return {reading,pending:!!pending,canApply:!!pending&&!reading&&!applying&&current(),canUndo:!reading&&!applying&&undoCurrent(),proposal:pending?structuredClone(pending):null,comparison:pending?structuredClone(comparison):null};}
   const publish=()=>onState(status());
+  function readText(name,side,readPart){
+   if(reading||applying||!pending||!current()){textSource=null;onError(Error('原文來源已變更；請重新核對ZIP'));return null;}
+   if(!['before','incoming'].includes(side)||!comparison?.files.some(f=>f.name===name)){onError(Error('原文來源或檔名無效'));return null;}
+   const files=side==='incoming'?pending.files:job.before.bundle?.files||{};
+   if(!Object.hasOwn(files,name))return null;
+   if(!textSource||textSource.name!==name||textSource.side!==side)textSource={name,side,value:text.prepare(files[name])};
+   const part=readPart(textSource.value);
+   if(!current()){textSource=null;onError(Error('原文來源已有修改；沒有提交舊結果'));return null;}
+   return part;
+  }
   return {status,
    clearTextWindow(){textSource=null;},
-   textWindow(name,side,start_byte=0){
-    if(reading||applying||!pending||!current()){textSource=null;onError(Error('原文來源已變更；請重新核對ZIP'));return null;}
-    if(!['before','incoming'].includes(side)||!comparison?.files.some(f=>f.name===name)){onError(Error('原文來源或檔名無效'));return null;}
-    const files=side==='incoming'?pending.files:job.before.bundle?.files||{};
-    if(!Object.hasOwn(files,name))return null;
-    if(!textSource||textSource.name!==name||textSource.side!==side)textSource={name,side,value:text.prepare(files[name])};
-    const part=textSource.value.window(start_byte);
-    if(!current()){textSource=null;onError(Error('原文來源已有修改；沒有提交舊段落'));return null;}
-    return part;
-   },
+   textWindow:(name,side,start_byte=0)=>readText(name,side,prepared=>prepared.window(start_byte)),
+   textSearch:(name,side,request)=>readText(name,side,prepared=>prepared.search(request)),
    originalFile(name){
     if(reading||applying||!pending||!current()){onError(Error('ZIP來源已變更或尚未完成；請重新選ZIP再下載原文'));return null;}
     if(!Object.hasOwn(pending.files,name)){onError(Error('ZIP沒有這個原文檔案；沒有下載'));return null;}
