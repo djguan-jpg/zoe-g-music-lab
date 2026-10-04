@@ -6,7 +6,7 @@
 
 按LRC／SRT／JSON下載先檢查已知格式，再執行既有Apply：完整Package.revise與時間排序、render、格式提示更新，然後才準備目前完整來源。無效時間等Apply錯誤保留原valid package及待修正表格，尚未配置下載Blob。成功Apply是目前編修的提交，即使後續送出失敗仍保留已套用內容，可直接重試；不偷偷撤回。
 
-lyrics-download.js純select(source,format)只接受lrc／srt／json，完整package沿現有schema驗證并隔離。沿LyricTime輸出相同LRC與SRT；JSON沿原完整key/value与兩格縮排，仍保持獨立頁原無尾換行規則。application產生的lyrics.json／lrc／srt逐bytes與基線相同，預覽HTML因功能更新而不同。JSON保存title、duration、estimated、cues、timing、review_notes；原Unicode、空格與歷史不靠檔名推測。JSON.stringify對lone surrogate的escape保持原JS值，未靜默取代；無效raw UTF8文字沿共享encoder拒絕。
+lyrics-download.js純select(source,format)只接受lrc／srt／json，完整package沿現有schema驗證并隔離。沿LyricTime輸出相同LRC與SRT；JSON沿原完整key/value与兩格縮排，仍保持獨立頁原無尾換行規則。application產生的lyrics.json／lrc／srt逐bytes與基線相同，預覽HTML因功能更新而不同。JSON保存title、duration、estimated、cues、timing、review_notes；原Unicode、空格與歷史不靠檔名推測。v57曾容許JSON.stringify逃脫lone surrogate保留JS值，但該JSON不能沿strict讀取器回讀；v58在完整package來源層拒絕這類非法Unicode，三下載格式都不送出，也不靜默取代。合法文字與JSON bytes保持。
 
 三個下載檔名固定lyrics.lrc／lyrics.srt／lyrics.json，與工作台產物名稱一致；避免保留裝置名、路徑／控制字元或長標題成為保存檔名。介面提前明示，作品名稱仍在完整JSON。沒有任意目的路徑、覆寫選項或自動寫檔權限。
 
@@ -23,3 +23,8 @@ Python固定preview_contract嵌入新formatter與web兩共享原生模組，不�
 ## 實測範圍
 
 純測試抽取真生成runtime，注入native boundary重現四失敗／重試／有界連點／pagehide／media隔離與bytes；不是將注入失敗冒稱真瀏覽器故障。原生loopback页确认三格式送出訊息、錯時間拒絕、修好重試及字元歷史保持，主工作台完整六檔與兩次實際wire全外框核對通過。download事件等10秒沒有saved path，無保存完成宣稱。無WebCrypto／fetch路徑由純browser VM確認；完整file URL媒體、其他瀏覽器、實聽、作者／版權另驗。見[QA](QA-v0.57.0.md)／[交接](HANDOFF-v0.57.0.md)。
+
+
+## v0.58 合法來源要求
+
+名稱／每句／history也沿共享Unicode helper驗證；JSON escape不能把非法字元當成有效package。先Apply的失敗保留原valid data與待修正表格，不配置下載；修好再重試。原有bounded transport／pagehide／portable names与保存證據界線保持。見[契約](LYRICS-UNICODE.md)。

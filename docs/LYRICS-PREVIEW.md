@@ -33,3 +33,8 @@ web/lyrics-result.js checkedResult 對原 data／JSON／LRC／SRT核對後用 in
 ## v0.57 下載模組更新
 
 固定package_js另嵌入lyrics-download純格式準備與既有web/text-download模型／DOM adapter，獨立頁共用有界送出與回收；template1精確五欄与256KiB契約／2MiB來源／12MiBencoded／16MiBHTML上限保持。整份外框核對包含新模組與送出訊息，變造仍拒絕。見[下載契約](LYRICS-DOWNLOAD.md)。
+
+
+## v0.58 Unicode來源核對
+
+固定共用JSON helper與package validator新增物件來源文字核對，whole-envelope包含新內容，template1與原容量／完整來源核對保持。非法名稱／cue／note在Apply前拒絕，valid文字不修改。見[契約](LYRICS-UNICODE.md)。

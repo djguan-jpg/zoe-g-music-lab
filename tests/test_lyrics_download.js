@@ -33,7 +33,7 @@ test('unknown formats, schemas, fields and invalid Unicode never reach browser h
  for(const ext of ['',null,'JSON','../json','exe'])assert.throws(()=>L.select(source,ext));
  for(const p of [null,{...source,schema_version:2},{...source,extra:1},{...source,cues:[{start:2,end:1,text:'bad'}]},{...source,cues:[{...source.cues[0],extra:1}]}])assert.throws(()=>L.select(p,'json'));
  assert.throws(()=>D.prepare(L.select({...source,cues:[{start:1,end:2,text:'bad\ud800'}]},'lrc')));
- assert.equal(JSON.parse(L.select({...source,title:'bad\ud800'},'json').content).title,'bad\ud800');
+ assert.throws(()=>L.select({...source,title:'bad\ud800'},'json'),/Unicode/);
  const s=setup();assert.equal(s.context.download('unknown'),false);assert.equal(s.applied(),0);assert.equal(s.live.size,0);assert.equal(s.sent.length,0);s.adapter.dispose();
 });
 test('actual generated download runtime releases URLs and anchors for URL append click and timer failures',()=>{

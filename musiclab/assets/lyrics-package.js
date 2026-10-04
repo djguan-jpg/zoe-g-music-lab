@@ -27,8 +27,11 @@
     const last=document.cues.at(-1);
     if(document.duration_estimated&&(document.duration!==last.end||t.tail_end_inferred&&T.milliseconds(document.duration)!==T.milliseconds(last.start)+3000))fail();
     if(Object.hasOwn(t,'applied_shift_seconds')&&(typeof t.applied_shift_seconds!=='number'||T.normalize(t.applied_shift_seconds)!==t.applied_shift_seconds))fail();
-    if(!Array.isArray(document.review_notes)||document.review_notes.length>20||document.review_notes.some(n=>typeof n!=='string'||blank(n)||Array.from(n).length>400)||
-        new TextEncoder().encode(JSON.stringify(document,null,2)+'\n').length>maxBytes)fail();
+    if(!Array.isArray(document.review_notes)||document.review_notes.length>20||document.review_notes.some(n=>typeof n!=='string'||blank(n)||Array.from(n).length>400))fail();
+    J.assertUnicode(document.title,'歌詞包名稱');
+    for(const cue of document.cues)J.assertUnicode(cue.text,'歌詞包歌詞');
+    for(const note of document.review_notes)J.assertUnicode(note,'歌詞包待確認說明');
+    if(new TextEncoder().encode(JSON.stringify(document,null,2)+'\n').length>maxBytes)fail();
     return structuredClone(document);
   }
   function fromLegacy(document){

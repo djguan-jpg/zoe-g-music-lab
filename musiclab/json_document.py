@@ -8,6 +8,16 @@ MAX_JSON_BYTES = 2 * 1024 * 1024
 MAX_JSON_DEPTH = 64
 
 
+def utf8_bytes(text, *, label='文字'):
+    """Encode valid Unicode without replacement; reusable by object-domain validation."""
+    if not isinstance(text, str):
+        raise ValueError(f'{label} 需為文字')
+    try:
+        return text.encode('utf-8')
+    except UnicodeError:
+        raise ValueError(f'{label} 含無效 Unicode 文字') from None
+
+
 def decode_json(content, *, max_bytes=MAX_JSON_BYTES, label='JSON', allow_bom=False):
     if isinstance(content, bytes):
         if len(content) > max_bytes:
@@ -18,11 +28,8 @@ def decode_json(content, *, max_bytes=MAX_JSON_BYTES, label='JSON', allow_bom=Fa
             raise ValueError(f'{label} 不是有效的 UTF-8；原檔與目前內容保留') from None
     if not isinstance(content, str):
         raise ValueError(f'{label} 需為 UTF-8 JSON 文字')
-    try:
-        if len(content.encode('utf-8')) > max_bytes:
-            raise ValueError(f'{label} 超過讀取上限')
-    except UnicodeError:
-        raise ValueError(f'{label} 含無效 Unicode 文字') from None
+    if len(utf8_bytes(content, label=label)) > max_bytes:
+        raise ValueError(f'{label} 超過讀取上限')
     if allow_bom and content.startswith('\ufeff'):
         content = content[1:]
 
@@ -65,8 +72,5 @@ def decode_json(content, *, max_bytes=MAX_JSON_BYTES, label='JSON', allow_bom=Fa
         elif isinstance(value, list):
             pending.append((iter(value), depth + 1))
         elif isinstance(value, str):
-            try:
-                value.encode('utf-8')
-            except UnicodeError:
-                raise ValueError(f'{label} 含無效 Unicode 文字') from None
+            utf8_bytes(value, label=label)
     return data
