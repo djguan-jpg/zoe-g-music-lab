@@ -667,7 +667,7 @@ function capturePanel(panel){
 }
 function captureDraft(){
   const panels=Object.fromEntries(Object.keys(MusicEditor.draftFields).map(panel=>[panel,capturePanel(panel)]));
-  return {format:'zoe-music-lab-draft',schema_version:3,tool_version:'0.50.0',saved_at:new Date().toISOString(),tab:state.tab,panels};
+  return {format:'zoe-music-lab-draft',schema_version:3,tool_version:'0.51.0',saved_at:new Date().toISOString(),tab:state.tab,panels};
 }
 function applyDraft(draft){
   storyboardDurationController?.clear();
@@ -857,7 +857,7 @@ lyricsImportController=MusicLyricsImport.createImport({
   },
   onError:error=>say(error.message,true),
   onReady:view=>{
-    $('lyrics-import-note').textContent=`${view.name} · 「${view.title}」共${view.count}句。${view.notice} ${view.packageImport?'歌詞包總長'+view.durationText+'；名稱與時間來源保留。'+(view.durationEstimated?'估計值不填入時長欄，目前時長保留。':'未填時長會接續來源的宣告值。'):'目前時長保留。'} 套用會替換校時名稱、原文／格式及全部句子；音檔與其他工作台保留。${view.convertedText?'純文字轉存為保留原文的起稿JSON，時間留白。':''}${view.multilineSrt?' SRT多行將以 / 合為單行，原文仍保留。':''}${view.legacyTimed?'這是舊格式完整歌詞包；明確轉換後另存版本1 JSON，原檔保留。':''}${view.reviewNotes.length?' 待確認：'+view.reviewNotes.join('；'):''}`;
+    $('lyrics-import-note').textContent=`${view.name} · 「${view.title}」共${view.count}句。${view.notice} ${view.packageImport?'歌詞包總長'+view.durationText+'；名稱與時間來源保留。'+(view.durationEstimated?'估計值不填入時長欄，目前時長保留。':'未填時長會接續來源的宣告值。'):'目前時長保留。'} 套用會替換校時名稱、原文／格式及全部句子；音檔與其他工作台保留。${view.convertedText?'純文字轉存為保留原文的起稿JSON，時間留白。':''}${view.multilineSrt?' SRT多行以 / 合成單句，每行原字元保留；原排版另存，匯入原文仍保留。':''}${view.legacyTimed?'這是舊格式完整歌詞包；明確轉換後另存版本1 JSON，原檔保留。':''}${view.reviewNotes.length?' 待確認：'+view.reviewNotes.join('；'):''}`;
     $('lyrics-import-apply').textContent=view.legacyTimed?'轉換舊歌詞包並套用':'套用這份歌詞';
     $('lyrics-import-source').value=view.source;$('lyrics-import-count').textContent=`預覽前${view.rows.length}句，共${view.count}句；其餘內容保留，套用不截短。`;
     const body=$('lyrics-import-rows');body.replaceChildren();

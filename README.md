@@ -1,6 +1,6 @@
 # ZOE. G Music Lab
 
-目前版本 **v0.50.0**：LRC 保留時間標籤後的空白、句中標籤與 Unicode 原文；offset 只在獨立一行生效。瀏覽器核對回應的歌詞／時間／推得來源及 LRC／SRT 輸出，拒絕與原文不符的替換。428 Python／641 JavaScript／53 syntax／4 Skills、原生預覽／套用／撤回及 v49 ZIP 還原通過。行首連續時間標籤仍有格式歧義，這類字面歌詞請以版本1 JSON保存。見[契約](docs/LYRICS-LRC.md)、[QA](docs/QA-v0.50.0.md)、[交接](docs/HANDOFF-v0.50.0.md)。
+目前版本 **v0.51.0**：SRT 保留每行空白與 Unicode 原字元，實際多行仍明確以 / 合成單句；原排版保留原檔，空白句用版本1 JSON保存。獨立解析層以整數毫秒核對時鐘，瀏覽器從 LRC／SRT 原文核對回應與文字輸出。441 Python／654 JavaScript／54 syntax／4 Skills、原生預覽／套用／撤回／匯出及 v50 ZIP 還原通過。見[契約](docs/LYRICS-SRT.md)、[QA](docs/QA-v0.51.0.md)、[交接](docs/HANDOFF-v0.51.0.md)。
 
 ## ZIP原文與差異（v0.40）
 

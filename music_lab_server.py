@@ -89,6 +89,7 @@ ASSETS = {"/delivery-report.js": ("web/delivery-report.js","text/javascript"),"/
           "/json-document.js": ("musiclab/assets/json-document.js", "text/javascript"),
           "/lyrics-package.js": ("musiclab/assets/lyrics-package.js", "text/javascript"),
           "/lyrics-lrc.js": ("musiclab/assets/lyrics-lrc.js", "text/javascript"),
+          "/lyrics-srt.js": ("musiclab/assets/lyrics-srt.js", "text/javascript"),
           "/cue-stamp.js": ("web/cue-stamp.js", "text/javascript"),
           "/license": ("LICENSE", "text/plain"), "/notice": ("NOTICE", "text/plain")}
 
