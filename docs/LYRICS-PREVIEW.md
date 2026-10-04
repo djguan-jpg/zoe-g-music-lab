@@ -23,3 +23,8 @@ web/lyrics-result.js checkedResult 對原 data／JSON／LRC／SRT核對後用 in
 這是對本安裝固定範本與完整來源的相符檢查，不是數位簽章、通用任意HTML安全掃描、作者／版權／實聽驗收。不同範本或模組的舊HTML不作新lyrics操作回應接受；匯入旧完整JSON會重新產生目前HTML。交付ZIP檢查仍只把HTML當原文檔，不執行它；本輪未更改其策略。離線頁面本身編修UI／runtime內容保持，合成樣本render與v54逐bytes相同；原生只執行自有正確合成預覽，沒有執行被改動的測試回應。
 
 見[實測](QA-v0.55.0.md)及[可逆交接](HANDOFF-v0.55.0.md)。
+
+
+## v0.56 範本內容更新
+
+固定package_js另嵌入既有LRC文法／export規則及新的離線提示controller／presenter；結構仍為template1精確五欄，來源2MiB／encoded12MiB／HTML16MiB／contract256KiB保持，整份HTML核對包含新程式。v55三模組與bytes相同的說明為歷史證據；本輪範本有明確功能變更。詳見[獨立提示](LYRICS-OFFLINE-EXPORT.md)。

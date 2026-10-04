@@ -1,4 +1,8 @@
-# 進度：目前 v0.55.0
+# 進度：目前 v0.56.0
+
+## v0.56.0
+
+2026-10-04：獨立 preview.html 現在沿用工作台的格式保留規則，提醒 LRC 句首時間標籤與 SRT 空白句風險，按提醒可定位目前歌詞。編修、刪除、新增、播放位置及總長調整會停用舊定位；套用後重新檢查。全部句子計數、畫面前20項明示截斷，零提醒也建議保存完整 JSON。同步純規則／控制器／DOM分層，沒有網路或WebCrypto依賴。修正差異報告漏接受v54來源；四工作台真ZIP覆蓋明確來源38–56。465 Python／713 JavaScript／60語法／4 Skills、原生驗收與v55 ZIP463／704還原通過。 產品56／來源38–56、13／18工具、Agent1／draft3／review1／source1／template1保持。tab96／97／98已關閉、viewport reset、server原handle exit0／lazy staging未建立。private exact-source發布／遠端核對／latest56／55／54依收據；正式媒體、實聽、完整視覺、特定Host、瀏覽器保存與FreeTWAI仍待，rolling active。
 
 ## v0.55.0
 
