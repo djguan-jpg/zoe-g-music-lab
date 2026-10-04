@@ -1,4 +1,12 @@
-# v0.56.0 · 2026-10-04
+# v0.57.0 · 2026-10-04
+
+獨立歌詞預覽共用文字下載處理，點擊或排程失敗可回收資源並重試；快速連點有界，離頁只回收下載。三格式用 lyrics.* 可攜檔名，作品名称與完整歷史保存在 JSON；訊息明確表示交給瀏覽器，保存位置另確認。純格式準備／共享控制器／原生傳輸分層，舊 LRC／SRT／JSON 內容保持。467 Python／723 JavaScript／61語法／4 Skills、原生驗收與v56 ZIP465／713還原通過。
+
+基線真生成HTML抽取runtime重現：click失敗留下URL與anchor，timer失敗留下URL，CON標題產生CON.json。固定pure lyrics-download驗證完整source後只準備三種文字；既有text-download模型核對單層檔名／UTF8／8MiB，DOM adapter新增共享controller factory，原form bind改沿同factory。預覽沿既有Apply與格式提醒後送出，錯誤目前時間不配置資源；成功套用不因後续送出失敗自動撤回。兩個待送URL上限／1000ms回收／pagehide沿既有adapter，音檔URL分開。初次UI會說明檔名與保存位置，送出不冒稱保存。
+
+原工作台四檔application bytes保持，完整JSON來源／Unicode／review note原值保持；新範本固定嵌入格式模組與原兩下載模組，template1全外框核對覆蓋新程式。無模型／依賴／外網／Agent權限或HTTP/auth/media核心變動。
+
+## v0.56.0 · 2026-10-04
 
 獨立 preview.html 現在沿用工作台的格式保留規則，提醒 LRC 句首時間標籤與 SRT 空白句風險，按提醒可定位目前歌詞。編修、刪除、新增、播放位置及總長調整會停用舊定位；套用後重新檢查。全部句子計數、畫面前20項明示截斷，零提醒也建議保存完整 JSON。同步純規則／控制器／DOM分層，沒有網路或WebCrypto依賴。修正差異報告漏接受v54來源；四工作台真ZIP覆蓋明確來源38–56。465 Python／713 JavaScript／60語法／4 Skills、原生驗收與v55 ZIP463／704還原通過。
 

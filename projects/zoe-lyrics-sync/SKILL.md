@@ -6,6 +6,11 @@ license: PolyForm-Noncommercial-1.0.0
 
 # ZOE Lyrics Sync
 
+## v0.57 獨立預覽下載
+
+下載LRC／SRT／JSON會先套用目前編修；錯誤時間會提示修正，修好可重試。三種檔名為lyrics.lrc／lyrics.srt／lyrics.json，作品名稱與全部時間來源／歷史保存在完整JSON。畫面會顯示已交給瀏覽器，請確認保存位置；關頁前保存完整JSON及音檔。見[下載契約](../../docs/LYRICS-DOWNLOAD.md)。
+
+
 ## v0.56 獨立預覽也會提醒格式遺失
 
 另存preview.html後，格式保留區會標示LRC句首時間標籤與SRT空白句，按提醒到目前歌詞。修改後舊提醒不可定位，按「套用編修」重新檢查；刪除／新增／時間或總長變動亦如此。全部句子計數，頁面前20項明示截斷。沒有提醒仍先保存完整JSON，LRC缺句尾、LRC／SRT缺總長与歷史；仍需實聽核對。獨立提示在瀏覽器本機同步運作，不需要服務或模型。見[契約](../../docs/LYRICS-OFFLINE-EXPORT.md)。
