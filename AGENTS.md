@@ -97,3 +97,10 @@
 - audio_acceptance獨立schema1原值模型／application／四adapter，64KiB／每欄1024字元／64值／safe integer；精確十進位整數，不因float捨入接受小數。shape可保存未完成欄位，active prepare才驗證數值；未知／額外／互斥拒絕。原profile及直接清單保持，10／15 tools與draft3保持。
 - browser純原值／注入capture-read-replace-events controller／DOM；選檔先preview，read及apply重查token／target原文／native audio identity／busy。條件另存checkpoint與下載明確確認獨立，beforeunload不是自動保存。整份project載入deactivate自訂但保留raw，其他panel與媒體限定套用保持。
 - inspect先驗有效條件、後revision／File／raw source，再實際acceptance／echo draft／report JSON-data／檔名核對才提交。未知／不符／late保留原成果與編修；dirty停下載。原音檔與legal4保持，未完成原值不冒充接受或實聽通過。
+
+
+## v0.38 本輪文字交付
+
+- delivery_package純來源／manifest1／確定性ZIP、application、CLI排他filesystem／HTTP有界staging／Agent-MCP及browser controller／DOM分層。1–64檔、8MiB文字、32MiB封套，平面可攜text names；不新增媒體／路徑／模型／自動寫檔能力。
+- Agent預設metadata；明確include_archive且ZIP≤512KiB才inline，傳輸行2MiB保持，基本11／啟庫16工具。needs_review=true；封裝不冒充創作／媒體／權利接受，product0.38／交付schema1／protocol1／draft3獨立。
+- browser完整source／revision／scope／dirty核對及逐檔摘要，未知／不符／late拒絕並取消自身有效ID；busy停用、原輸入／其他台／媒體保持，清單不進草稿。HTTP每類最多2slot／60秒／take一次／SHA，discard／expire／close只清自身檔且保留未知檔；不新增auth或常駐程序。CLI默认拒覆寫，--overwrite才替換明確目的ZIP。

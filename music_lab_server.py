@@ -9,9 +9,10 @@ import urllib.parse
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from musiclab.common import json_text
-from musiclab.application import build, capabilities, load_request, MAX_REQUEST_BYTES, export_library_backup
+from musiclab.application import build, capabilities, load_request, MAX_REQUEST_BYTES, export_library_backup, prepare_delivery
 from musiclab.draft_backup import MAX_BACKUP_BYTES
 from musiclab.backup_downloads import BackupDownloads
+from musiclab.delivery_package import MAX_ARCHIVE_BYTES as MAX_DELIVERY_ARCHIVE, MAX_REQUEST_BYTES as MAX_DELIVERY_REQUEST, decode as decode_delivery
 from musiclab.draft_contract import browser_contract
 from musiclab.draft_library import DraftLibrary
 
@@ -26,15 +27,27 @@ def backup_downloads(server):
         return server.backup_downloads
 
 
+def delivery_downloads(server):
+    with DOWNLOAD_INIT_LOCK:
+        if not hasattr(server,'delivery_downloads'):
+            server.delivery_downloads=BackupDownloads(max_bytes=MAX_DELIVERY_ARCHIVE,prefix='zoe-delivery-download-',download_path='/api/delivery-package/download/',hash_key='sha256',label='交付')
+        return server.delivery_downloads
+
+
 class WorkbenchServer(ThreadingHTTPServer):
     def server_close(self):
         try:super().server_close()
         finally:
-            if hasattr(self,'backup_downloads'):self.backup_downloads.close()
+            try:
+                if hasattr(self,'backup_downloads'):self.backup_downloads.close()
+            finally:
+                if hasattr(self,'delivery_downloads'):self.delivery_downloads.close()
 MAX_AUDIO = 64 * 1024 * 1024
 MAX_TEXT = MAX_REQUEST_BYTES
 ASSETS = {"/": ("web/index.html", "text/html"), "/app.js": ("web/app.js", "text/javascript"),
           "/style.css": ("web/style.css", "text/css"),
+          "/delivery-package.js": ("web/delivery-package.js", "text/javascript"),
+          "/delivery-package-dom.js": ("web/delivery-package-dom.js", "text/javascript"),
           "/delivery-navigation.js": ("web/delivery-navigation.js", "text/javascript"),
           "/delivery-navigation-dom.js": ("web/delivery-navigation-dom.js", "text/javascript"),
           "/editor-state.js": ("web/editor-state.js", "text/javascript"),
@@ -124,6 +137,14 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
                 return self.reply(200,raw,'application/octet-stream','zoe-music-lab-backup.zip')
             except (ValueError,OSError):
                 return self.reply(400,'{"error":"下載未完成或已逾時，請重新建立備份"}')
+        if path.startswith('/api/delivery-package/download/'):
+            if urllib.parse.urlsplit(self.path).query or not re.fullmatch(r'/api/delivery-package/download/[0-9a-f]{32}',path):
+                return self.reply(400,'{"error":"交付下載識別格式錯誤"}')
+            try:
+                raw=delivery_downloads(self.server).take(path.rsplit('/',1)[-1])
+                return self.reply(200,raw,'application/octet-stream','zoe-delivery.zip')
+            except (ValueError,OSError):
+                return self.reply(400,'{"error":"交付下載未完成或逾時；請重新按下載所有檔案"}')
         if path == "/draft-contract.js":
             return self.reply(200, browser_contract(), "text/javascript")
         if path == "/api/examples":
@@ -138,7 +159,7 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
         route = urllib.parse.urlsplit(self.path)
         audio = route.path == "/api/audio"
         backup = route.path in ("/api/drafts/backup/inspect", "/api/drafts/backup/restore")
-        maximum = MAX_AUDIO if audio else MAX_BACKUP_BYTES if backup else MAX_TEXT
+        maximum = MAX_AUDIO if audio else MAX_BACKUP_BYTES if backup else MAX_DELIVERY_REQUEST if route.path == "/api/delivery-package/prepare" else MAX_TEXT
         try:
             size = int(self.headers.get("Content-Length", "0"))
             if not 0 < size <= maximum:
@@ -147,6 +168,15 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
             raw = self.rfile.read(size)
             if len(raw) != size:
                 raise ValueError("內容未完整傳入")
+            if route.path in ('/api/delivery-package/prepare','/api/delivery-package/discard'):
+                if route.query:raise ValueError('交付下載不接受 query 或路徑選擇')
+                payload=decode_delivery(raw)
+                if route.path.endswith('/discard'):
+                    if not isinstance(payload,dict) or set(payload)!={'id'}:raise ValueError('取消只接受本輪下載識別')
+                    return self.reply(200,json_text({'discarded':delivery_downloads(self.server).discard(payload['id'])}))
+                if not isinstance(payload,dict) or 'include_archive' in payload:raise ValueError('工作台下載不使用 inline ZIP')
+                prepared=prepare_delivery(payload)
+                return self.reply(200,json_text(delivery_downloads(self.server).prepare(prepared.archive,prepared.summary())))
             if backup:
                 query = urllib.parse.parse_qs(route.query, keep_blank_values=True)
                 restoring = route.path.endswith('/restore')

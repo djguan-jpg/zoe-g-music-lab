@@ -11,6 +11,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from . import __version__
 from .audio import analyze_wav, audio_bundle
+from .delivery_package import prepare as prepare_delivery, descriptor as delivery_descriptor
 from .audio_acceptance import validate as validate_acceptance, prepare as prepare_acceptance, descriptor as acceptance_descriptor
 from .common import json_text
 from .loudness import descriptor as loudness_descriptor
@@ -35,6 +36,7 @@ from .draft_backup import (BACKUP_SCHEMA_VERSION, MAX_BACKUP_BYTES, MAX_EXPANDED
 PROTOCOL_VERSION = 1
 MAX_REQUEST_BYTES = MAX_JSON_BYTES
 OPERATIONS = {
+    "delivery_package": "Package explicitly provided text files with a SHA-256 manifest; metadata by default, archive_base64 only when include_archive=true and ZIP<=512 KiB; no source paths, media, creative acceptance or model",
     "music": "Song planning and AI task packaging; no model invocation",
     "music_review": "Locate incomplete raw song draft fields and numeric ranges; read-only; no content filling, complete plan acceptance or model",
     "storyboard": "Shot timing and motif continuity; no media rendering",
@@ -94,6 +96,7 @@ def capabilities(draft_library=None, backup_source=None):
             "music_review": music_review_descriptor(),
             "storyboard_review": storyboard_review_descriptor(),
             "storyboard_timing_review": storyboard_timing_review_descriptor(),
+            "delivery_package": {**delivery_descriptor(), "agent_max_request_bytes": MAX_REQUEST_BYTES},
             "audio_acceptance_draft": acceptance_descriptor(),
             "audio_loudness": loudness_descriptor(),
             "storyboard_frames": frames_descriptor(),
@@ -114,7 +117,7 @@ def build(operation, payload, *, audio_source=None, draft_library=None, backup_s
     if operation in LIBRARY_OPERATIONS and draft_library is None:
         raise ValueError("草稿庫未啟用；請在啟動時明確指定 --draft-library 目錄")
     if operation not in available_operations(draft_library):
-        raise ValueError("未知操作；請使用 music、music_review、storyboard、storyboard_review、storyboard_timing_review、lyrics、audio、storyboard_seed、lyrics_seed 或 lyrics_review")
+        raise ValueError("未知操作；請使用 music、music_review、storyboard、storyboard_review、storyboard_timing_review、lyrics、audio、storyboard_seed、lyrics_seed、lyrics_review 或 delivery_package")
     if not isinstance(payload, dict):
         raise ValueError("輸入需為 JSON 物件")
     if operation in LIBRARY_OPERATIONS:
@@ -135,6 +138,8 @@ def build(operation, payload, *, audio_source=None, draft_library=None, backup_s
         else:
             data = restore_backup(draft_library, backup_source, payload['backup_sha256'])
         return Result({}, data, operation != 'draft_list')
+    if operation == "delivery_package":
+        return Result({}, prepare_delivery(payload).summary(payload.get("include_archive", False)), True)
     if operation == "music_review":
         files = music_review_bundle(payload)
         data = json.loads(files["music-review.json"])

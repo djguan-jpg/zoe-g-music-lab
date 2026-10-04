@@ -192,6 +192,14 @@ def payload_schema(operation):
                                     {"required": ["content"], "not": {"anyOf": [{"required": [key]} for key in ('cues', 'package', 'allow_legacy')]}},
                                     object_schema({'package': {'anyOf': [lyrics_package_schema(), lyrics_package_schema(legacy=True)]},
                                                    'allow_legacy': {'type': 'boolean'}}, ['package'], additionalProperties=False)])
+    if operation == 'delivery_package':
+        return object_schema({'scope': {'enum': ['music','storyboard','lyrics','audio']},
+                              'label': {'type':'string','maxLength':200},
+                              'files': {'type':'object','minProperties':1,'maxProperties':64,
+                                        'additionalProperties':{'type':'string'},
+                                        'description':'Flat portable text names only, 8 MiB total UTF-8; no paths or media; DELIVERY-MANIFEST.json reserved'},
+                              'include_archive': {'type':'boolean','default':False,'description':'Explicit Base64 ZIP only up to 512 KiB; default returns SHA/bytes/manifest without archive bytes'}},
+                             ['scope','files'],additionalProperties=False)
     if operation == "audio":
         limits = {"anyOf": [array_schema({"type": "integer", "minimum": 1}, 1), {"type": "null"}],
                   "description": "Accepted positive integers; null uses the profile default. Booleans are rejected."}

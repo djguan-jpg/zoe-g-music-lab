@@ -1,5 +1,9 @@
 # 本機 Agent 接口 v1
 
+## v0.38 完整文字交付
+
+新增唯讀 delivery_package；基本11／明確啟庫16工具，需重新discovery。預設摘要清單，include_archive=true才回傳不超過512KiB的ZIP base64，Agent行2MiB仍保持；無路徑／自動寫檔／網路／模型新增。needs_review始終true，交付schema1與Agent1／draft3獨立。見[契約](DELIVERY-PACKAGE.md)。後續章節工具數為歷史版本。
+
 ## v0.34 原分鏡時間診斷
 
 新唯讀 operation／MCP tool `storyboard_timing_review` 只接受 `{panel:{fields:{"mv-duration":原字串,"mv-fps":原字串},shots:[{start:原字串,end:原字串}]}}`。沒有創作或路徑欄位；最多1000鏡，全數計數／前200明細／原鏡號與 related_row（前鏡）保留。零待辦仍 meta.needs_review=true；時間report1獨立，舊創作report1、Agent1／MCP2025-11-25／draft3保持。重新 discovery 為基本10、明確啟庫15工具；下方章節工具數為各歷史版本。

@@ -30,3 +30,8 @@ python music_lab.py audio --input '自己的歌曲.wav' --profile video --out ou
 ## 接受條件草稿（v0.37）
 
 工作台填自訂Hz／bit／聲道數，原值另存schema1條件JSON，未完成也可保存與先預覽再載入。完整專案draft3只保存profile，載入後回到示範條件、原自訂欄位保留在本頁。CLI --acceptance-draft selected.json 與 Agent／MCP嵌入同一文件；草稿模式回交 report.json／report.md／audio-acceptance-draft.json，並核對實際使用值和來源；直接模式維持兩檔。見[操作與限制](../../docs/AUDIO-ACCEPTANCE.md)。
+
+
+## v0.38 完整文字交付
+
+完成本工作台後可下載本輪所有文字成果ZIP與逐檔SHA清單，CLI／Agent／MCP共用 delivery_package。Agent預設摘要，小型ZIP需明確include_archive；不自動寫檔，封裝不等於實聽或實際畫面接受。基本11／啟庫16工具，Agent1／draft3保持。見[共用契約](../../docs/DELIVERY-PACKAGE.md)。

@@ -1,5 +1,11 @@
 # 迭代說明
 
+## v0.38.0 — 2026-10-04
+
+- 補齊逐檔下載容易漏掉附檔的交付流程：目前工作台所有文字成果ZIP及完整逐檔SHA清單，修改後停用、重建後再下載；不自行收集音檔、草稿或其他素材。
+- 純來源／manifest1／確定性ZIP、application、CLI排他寫檔及HTTP有界staging、Agent／MCP adapter、browser純controller／DOM分層。1–64檔／8MiB文字／32MiB封套；Agent預設摘要、明確小型inline上限512KiB，11／16工具及Agent1／draft3保持。
+- 完整來源／scope／revision及逐檔清單回覆核對，未知／不符／晚回應取消自身暫存。328Python／491JS／4Skill／39syntax，16新Python／31新JS；四台5次原生下載及全部bytes／SHA讀回、4秒晚回應未逾時取消、390px鍵盤／1366px無頁面橫溢、原合成WAV保留。v37指定ZIP312／460還原通過；private PR／指定commit封裝／Release及遠端bytes／latest3維護依本輪收據。兩次舊工具數量斷言失敗的診斷留在outputs，本輪最終完整檢查通過。
+
 ## v0.37.0 — 2026-10-04
 
 - 補齊工作台與CLI／Agent之間的自訂接受值差異：Hz／bit／聲道數，原值獨立schema1條件草稿，未完成可另存，preview／apply／cancel與自己的另存checkpoint。

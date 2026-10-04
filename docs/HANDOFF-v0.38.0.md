@@ -1,6 +1,6 @@
 # v0.38.0 交接與可逆
 
-四工作台「下載本輪所有檔案ZIP」包含目前全部文字成果及逐檔SHA清單，修改後需重新建立。CLI／Agent／MCP共用純封裝；Agent預設摘要、小型inline需明確選擇，基本11／啟庫16。封裝不判斷創作或媒體品質，原音檔保留。見[使用／契約／分層](docs/DELIVERY-PACKAGE.md)及[QA](docs/QA-v0.38.0.md)。
+四工作台「下載本輪所有檔案ZIP」包含目前全部文字成果及逐檔SHA清單，修改後需重新建立。CLI／Agent／MCP共用純封裝；Agent預設摘要、小型inline需明確選擇，基本11／啟庫16。封裝不判斷創作或媒體品質，原音檔保留。見[使用／契約／分層](DELIVERY-PACKAGE.md)及[QA](QA-v0.38.0.md)。
 
 328Python／491JS／4Skill／39syntax及diff通過，原生四工作台5次真ZIP下載／全部SHA／CRC／server摘要、4秒late與TTL前取消、390px鍵盤及1366pxDOM幾何核對。v37指定ZIP312／460還原通過。正式媒體／實聽／完整視覺／特定Host／FreeTWAI待驗證，rolling active。
 
