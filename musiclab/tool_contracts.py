@@ -194,6 +194,7 @@ def payload_schema(operation):
                                                    'allow_legacy': {'type': 'boolean'}}, ['package'], additionalProperties=False)])
     if operation == 'delivery_inspect':
         return {"type":"object","additionalProperties":False,"properties":{
+            "baseline":{"type":"object","additionalProperties":False,"required":["scope","files"],"properties":{"scope":{"type":"string","enum":["music","storyboard","lyrics","audio"]},"files":{"type":"object","maxProperties":64,"additionalProperties":{"type":"string"}}},"description":"Optional explicit baseline text; compare exact names/UTF-8 without editing, merging or selecting paths"},
             "include_files":{"type":"boolean","default":False,"description":"Return original text files only when serialized file JSON <=512 KiB; no extraction or automatic write"}}}
     if operation == 'delivery_package':
         return object_schema({'scope': {'enum': ['music','storyboard','lyrics','audio']},

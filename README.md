@@ -1,6 +1,10 @@
 # ZOE. G Music Lab
 
-目前版本 **v0.39.0**：四個工作台可載入本工具的文字交付ZIP，先核對原清單與文字，再明確套用成果；表單及已選音檔保留，可限定撤回。CLI／Agent／MCP共用檢查，基本12／啟庫17工具；inspection1／交付schema1／Agent1／draft3分別管理。340Python／531JS及四工作台實際下載核對通過。見[使用與分層](docs/DELIVERY-INSPECTION.md)、[QA](docs/QA-v0.39.0.md)、[交接](docs/HANDOFF-v0.39.0.md)。
+目前版本 **v0.40.0**：ZIP載入前可審閱新增／變更／移除／相同與兩份原文，原始換行計數與有界摘錄，載入與下載保留全文。CLI／Agent／MCP明確baseline取得同一差異摘要；12／17工具保持，comparison1／inspection1／package1／Agent1／draft3分開。349Python／546JS及原生四工作台對照、五包真下載逐bytes相同通過。見[契約與分層](docs/DELIVERY-COMPARISON.md)、[QA](docs/QA-v0.40.0.md)、[交接](docs/HANDOFF-v0.40.0.md)。
+
+## 接續文字ZIP（v0.39）
+
+v0.39.0：四個工作台可載入本工具的文字交付ZIP，先核對原清單與文字，再明確套用成果；表單及已選音檔保留，可限定撤回。CLI／Agent／MCP共用檢查，基本12／啟庫17工具；inspection1／交付schema1／Agent1／draft3分別管理。340Python／531JS及四工作台實際下載核對通過。見[使用與分層](docs/DELIVERY-INSPECTION.md)、[QA](docs/QA-v0.39.0.md)、[交接](docs/HANDOFF-v0.39.0.md)。
 
 ## 全部文字交付（v0.38）
 

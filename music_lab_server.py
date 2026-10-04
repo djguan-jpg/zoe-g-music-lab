@@ -45,7 +45,7 @@ class WorkbenchServer(ThreadingHTTPServer):
                 if hasattr(self,'delivery_downloads'):self.delivery_downloads.close()
 MAX_AUDIO = 64 * 1024 * 1024
 MAX_TEXT = MAX_REQUEST_BYTES
-ASSETS = {"/delivery-archive.js": ("web/delivery-archive.js","text/javascript"),"/delivery-import.js": ("web/delivery-import.js","text/javascript"),
+ASSETS = {"/delivery-review.js": ("web/delivery-review.js","text/javascript"),"/delivery-archive.js": ("web/delivery-archive.js","text/javascript"),"/delivery-import.js": ("web/delivery-import.js","text/javascript"),
           "/delivery-import-dom.js": ("web/delivery-import-dom.js","text/javascript"),"/": ("web/index.html", "text/html"), "/app.js": ("web/app.js", "text/javascript"),
           "/style.css": ("web/style.css", "text/css"),
           "/delivery-package.js": ("web/delivery-package.js", "text/javascript"),

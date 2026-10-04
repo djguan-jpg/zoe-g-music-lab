@@ -112,3 +112,11 @@
 - delivery_inspect共用pure bounded canonical reader，不解壓／不執行HTML；CLI只寫指定摘要，Agent／MCP啟動時--delivery-zip選來源，JSON不得選路徑。預設metadata，include_files明確選擇且序列化JSON UTF8≤512KiB。
 - browser先讀選定ZIP原清單，與自身bytes／SHA及server完整逐檔回覆核對；probe不冒充完整CRC核對。選檔→預覽→明確載入成果，表單／media保留，限定undo不覆蓋後續結果。原label與display note分開。
 - inspection1／package1／Agent1／draft3獨立；基本12／啟庫17。只接受明確工具38／39，升產品版本先同步producer／inspector／browser支援表與契約測試，不自動接受未知版本。SHA／清單不驗證作者、權利或平台創始身分。
+
+
+## v0.40 原文差異審閱
+
+- 以下新規補充v39：delivery_inspect baseline明確scope／files，不可路徑；0–64檔／8MiB，聯集128，原檔名／UTF8精確比較，不合併。application服務CLI／Agent／MCP，HTTP原binary inspection保持，browser同契約經跨語言測試。
+- comparison1與inspection1／package1／Agent1／draft3獨立，12／17工具保持。本版明確支持producer／inspector／browser工具38／39／40，未知拒絕；升版同步支持表與測試。
+- 比較候選留局部，token與target再核對後才提交；不得讓舊async比較改新摘要。excerpt最多32768 UTF16且不拆surrogate pair；換行計數讀完整原文，textarea顯示不冒充原bytes。預覽與計數不進原wire/files，載入／下载保持全文。
+- DOM literal text、readonly與缺檔／空檔分開，container width≥640px才雙欄，窄側欄上下；沿既有scope／revision／result／media／busy及限定undo保護。

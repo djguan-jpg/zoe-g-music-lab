@@ -1,0 +1,8 @@
+{
+  "scope": "music",
+  "files": {
+    "task.md": "上一輪合成任務原文。\r\n",
+    "brief.json": "{}\n",
+    "old-note.txt": "這份合成舊註記將被移除。\n"
+  }
+}

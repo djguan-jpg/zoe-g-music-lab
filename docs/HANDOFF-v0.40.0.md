@@ -2,7 +2,7 @@
 
 ZIP載入前可審閱新增／變更／移除／相同與兩份原文，原始換行計數區分文字框顯示，長檔有界摘錄但載入／下載保留全文。依面板實際寬度排版；明確Apply／限定Undo／取消／晚回應保持編修與音檔。CLI／Agent／MCP delivery_inspect可明確baseline取得同一comparison1；基本12／啟庫17保持，與inspection1／package1／Agent1／draft3分開。
 
-見[契約與分層](docs/DELIVERY-COMPARISON.md)、[QA](docs/QA-v0.40.0.md)。349Python／546JS／43syntax／4Skill及diff，四scope原生差異與五次真ZIP下載逐bytes相同、40000字全文／換行／原WAV SHA、Enter載入撤回／390／1024／1800px通過；v39指定ZIP340／531還原通過。正式媒體／實聽／完整視覺／Host／FreeTWAI仍待，rolling active。
+見[契約與分層](DELIVERY-COMPARISON.md)、[QA](QA-v0.40.0.md)。349Python／546JS／43syntax／4Skill及diff，四scope原生差異與五次真ZIP下載逐bytes相同、40000字全文／換行／原WAV SHA、Enter載入撤回／390／1024／1800px通過；v39指定ZIP340／531還原通過。正式媒體／實聽／完整視覺／Host／FreeTWAI仍待，rolling active。
 
 ## Git與恢復
 

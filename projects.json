@@ -1,6 +1,6 @@
 {
   "suite": "ZOE. G Music Lab",
-  "version": "0.39.0",
+  "version": "0.40.0",
   "created_on": "2026-10-01",
   "founder": {
     "display_name": "ZOE. G",
@@ -9,7 +9,7 @@
   "ai_collaboration": "Codex assisted with scope, original skill text, implementation and validation",
   "publication": "github_private",
   "repository": "https://github.com/djguan-jpg/zoe-g-music-lab",
-  "release_version": "v0.39.0",
+  "release_version": "v0.40.0",
   "platform_claim": "not_submitted",
   "projects": [
     {
@@ -61,5 +61,6 @@
   "iteration_recovery_schema_version": 1,
   "audio_acceptance_draft_schema_version": 1,
   "delivery_package_schema_version": 1,
-  "delivery_inspection_schema_version": 1
+  "delivery_inspection_schema_version": 1,
+  "delivery_comparison_schema_version": 1
 }
