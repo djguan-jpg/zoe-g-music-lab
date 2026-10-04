@@ -1,6 +1,6 @@
 # ZOE. G Music Lab
 
-目前版本 **v0.57.0**：獨立歌詞預覽共用文字下載處理，點擊或排程失敗可回收資源並重試；快速連點有界，離頁只回收下載。三格式用 lyrics.* 可攜檔名，作品名称與完整歷史保存在 JSON；訊息明確表示交給瀏覽器，保存位置另確認。純格式準備／共享控制器／原生傳輸分層，舊 LRC／SRT／JSON 內容保持。467 Python／723 JavaScript／61語法／4 Skills、原生驗收與v56 ZIP465／713還原通過。 見[契約](docs/LYRICS-DOWNLOAD.md)、[QA](docs/QA-v0.57.0.md)、[交接](docs/HANDOFF-v0.57.0.md)。
+目前版本 **v0.58.0**：完整歌詞包共用Unicode文字邊界，名稱、每句文字與歷史說明在套用或匯出前一致驗證，拒絕不完整字元，避免產生無法再載入的JSON；原有效內容與待修正編修保持，修好可重試。Python／原生JS／application／Agent与固定預覽分層，合法emoji與原Unicode／控制字元不正規化。472 Python／730 JavaScript／61語法／4 Skills及原生驗收通過。 見[契約](docs/LYRICS-UNICODE.md)、[QA](docs/QA-v0.58.0.md)、[交接](docs/HANDOFF-v0.58.0.md)。
 
 上一輪 v0.51.0：SRT 保留每行空白與 Unicode 原字元，實際多行仍明確以 / 合成單句；原排版保留原檔，空白句用版本1 JSON保存。獨立解析層以整數毫秒核對時鐘，瀏覽器從 LRC／SRT 原文核對回應與文字輸出。441 Python／654 JavaScript／54 syntax／4 Skills、原生預覽／套用／撤回／匯出及 v50 ZIP 還原通過。見[契約](docs/LYRICS-SRT.md)、[QA](docs/QA-v0.51.0.md)、[交接](docs/HANDOFF-v0.51.0.md)。
 

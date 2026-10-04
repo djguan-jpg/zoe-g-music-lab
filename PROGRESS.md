@@ -1,4 +1,8 @@
-# 進度：目前 v0.57.0
+# 進度：目前 v0.58.0
+
+## v0.58.0
+
+2026-10-04：完整歌詞包共用Unicode文字邊界，名稱、每句文字與歷史說明在套用或匯出前一致驗證，拒絕不完整字元，避免產生無法再載入的JSON；原有效內容與待修正編修保持，修好可重試。Python／原生JS／application／Agent与固定預覽分層，合法emoji與原Unicode／控制字元不正規化。472 Python／730 JavaScript／61語法／4 Skills及原生驗收通過。 產品58／來源明確38–58、13／18工具、Agent1／draft3／review1／source1／template1保持。tab101／102關閉、viewport reset、server原handle exit0，staging未建立；四次實際合法HTTPwire通過完整新HTML核對。v57 ZIP還原、指定source封裝與private PR／遠端核對／latest58／57／56依收據；savedfiles／正式media／實聽／完整視覺／特定Host／FreeTWAI仍待，rolling active。
 
 ## v0.57.0
 

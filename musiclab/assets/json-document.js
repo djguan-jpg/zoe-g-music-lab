@@ -2,7 +2,7 @@
 'use strict';
 (function(root){
   const maxBytes=2*1024*1024,maxDepth=64;
-  const unicode=(text,label)=>{for(const char of text){const code=char.codePointAt(0);if(code>=0xd800&&code<=0xdfff)throw Error(`${label} 含無效 Unicode 文字`);}};
+  const unicode=(text,label='文字')=>{if(typeof text!=='string')throw Error(`${label} 需為文字`);for(const char of text){const code=char.codePointAt(0);if(code>=0xd800&&code<=0xdfff)throw Error(`${label} 含無效 Unicode 文字`);}};
   function parse(content,{maxBytes:limit=maxBytes,label='JSON',allowBOM=false}={}){
     if(typeof content!=='string')throw Error(`${label} 需為 UTF-8 JSON 文字`);
     unicode(content,label);
@@ -44,6 +44,6 @@
     catch{throw Error(`${label} 不是有效的 UTF-8；請另存 UTF-8，原檔與目前內容保留`);}
     return parse(content,{maxBytes:limit,label,allowBOM});
   }
-  const api={maxBytes,maxDepth,parse,decode};
+  const api={maxBytes,maxDepth,parse,decode,assertUnicode:unicode};
   if(typeof module==='object'&&module.exports)module.exports=api;else root.MusicJsonDocument=api;
 })(typeof globalThis==='object'?globalThis:this);

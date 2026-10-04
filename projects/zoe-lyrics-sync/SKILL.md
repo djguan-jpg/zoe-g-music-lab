@@ -6,6 +6,11 @@ license: PolyForm-Noncommercial-1.0.0
 
 # ZOE Lyrics Sync
 
+## v0.58 原文能一致保存與回讀
+
+完整JSON會保留名稱、文字與歷史。若名稱／歌詞／說明含不完整Unicode字元，請修正來源後重試；程式不會改成替代字或匯出無法再載入的JSON。合法emoji、空格與原字元保持；錯來源不覆寫原表格與上一份成果，修好後重新驗證建立。見[契約](../../docs/LYRICS-UNICODE.md)。
+
+
 ## v0.57 獨立預覽下載
 
 下載LRC／SRT／JSON會先套用目前編修；錯誤時間會提示修正，修好可重試。三種檔名為lyrics.lrc／lyrics.srt／lyrics.json，作品名稱與全部時間來源／歷史保存在完整JSON。畫面會顯示已交給瀏覽器，請確認保存位置；關頁前保存完整JSON及音檔。見[下載契約](../../docs/LYRICS-DOWNLOAD.md)。

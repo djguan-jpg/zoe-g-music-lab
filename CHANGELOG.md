@@ -1,4 +1,12 @@
-# v0.57.0 · 2026-10-04
+# v0.58.0 · 2026-10-04
+
+完整歌詞包共用Unicode文字邊界，名稱、每句文字與歷史說明在套用或匯出前一致驗證，拒絕不完整字元，避免產生無法再載入的JSON；原有效內容與待修正編修保持，修好可重試。Python／原生JS／application／Agent与固定預覽分層，合法emoji與原Unicode／控制字元不正規化。472 Python／730 JavaScript／61語法／4 Skills及原生驗收通過。
+
+基線同一真application完整來源，六個高／低單獨surrogate分別放名稱、cue、note：原native驗證與JSON下載接受，strict reimport全部拒絕；Python原domain只在最末encode冒出UnicodeEncodeError。JSON共享層公開assertUnicode／utf8_bytes，decoder沿同原規則；完整package在來源文字欄位檢查後才做大小核對與提交。revise／legacy轉換／格式提示／三下載格式沿同package層，未知schemas与容量／時間規則保持。
+
+有效JSON／LRC／SRT application bytes保持，固定preview內嵌更新後helper／validator，whole-envelope涵蓋變更。v57測試容許JSON stringify逃脫非法Unicode的斷言已改為提交前拒絕；歷史證據保留。無依賴／模型／外網／HTTP/auth/media或Agent權限擴張。
+
+## v0.57.0 · 2026-10-04
 
 獨立歌詞預覽共用文字下載處理，點擊或排程失敗可回收資源並重試；快速連點有界，離頁只回收下載。三格式用 lyrics.* 可攜檔名，作品名称與完整歷史保存在 JSON；訊息明確表示交給瀏覽器，保存位置另確認。純格式準備／共享控制器／原生傳輸分層，舊 LRC／SRT／JSON 內容保持。467 Python／723 JavaScript／61語法／4 Skills、原生驗收與v56 ZIP465／713還原通過。
 

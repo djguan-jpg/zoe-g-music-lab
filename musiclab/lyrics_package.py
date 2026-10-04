@@ -2,7 +2,7 @@
 """Versioned timed lyrics and declared timing provenance; never infer on inspect."""
 import copy
 from .common import json_text
-from .json_document import decode_json
+from .json_document import decode_json, utf8_bytes
 from .lyric_timing import normalized_seconds, milliseconds
 
 PACKAGE_FORMAT = 'zoe-lyrics-package'
@@ -77,6 +77,11 @@ def validate_package(document, *, allow_legacy=False):
     if not isinstance(notes, list) or len(notes) > 20 or any(
             not isinstance(n, str) or not n.strip() or len(n) > 400 for n in notes):
         raise ValueError('歌詞包待確認說明需為最多20項、每項1–400字')
+    utf8_bytes(title, label='歌詞包名稱')
+    for cue in cues:
+        utf8_bytes(cue['text'], label='歌詞包歌詞')
+    for note in notes:
+        utf8_bytes(note, label='歌詞包待確認說明')
     if len(json_text(data).encode('utf-8')) > MAX_PACKAGE_BYTES:
         raise ValueError('歌詞包最多2 MiB')
     return data
