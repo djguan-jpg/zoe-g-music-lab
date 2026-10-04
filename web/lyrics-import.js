@@ -10,6 +10,7 @@
   const P=node?require('../musiclab/assets/lyrics-package.js'):root.MusicLyricsPackage;
   const L=node?require('../musiclab/assets/lyrics-lrc.js'):root.MusicLyricsLrc;
   const V=node?require('../musiclab/assets/lyrics-srt.js'):root.MusicLyricsSrt;
+  const G=node?require('./lyrics-result.js'):root.MusicLyricsResult;
   const exact=(value,keys)=>value&&typeof value==='object'&&!Array.isArray(value)&&Object.keys(value).length===keys.length&&keys.every(k=>Object.hasOwn(value,k));
   const fail=()=>{throw Error('歌詞檢查回應不完整或與來源不一致；目前內容保留');};
   function sourceRequest(content,suffix,fields){
@@ -37,20 +38,20 @@
       if(!result.meta.needs_review||('seed' in selected.payload?U.fingerprint(data)!==U.fingerprint(selected.payload.seed):
           data.source_text!==selected.payload.text||data.title!==S.titleText(selected.payload.title)))fail();
     }else{
-      P.validate(data);if(result.meta.needs_review!==P.needsReview(data))fail();
+      let expected;
       if(selected.packageImport){
-        const expected=selected.legacyTimed?P.fromLegacy(selected.payload.package):P.validate(selected.payload.package);
-        if(U.fingerprint(data)!==U.fingerprint(expected))fail();
-      }else if(data.title!==selected.payload.title||data.duration_estimated!==(selected.payload.duration===null)||
-          selected.payload.duration!==null&&selected.payload.duration!==data.duration)fail();
-      if(['.lrc','.srt'].includes(selected.suffix)){
-        const expected=T.normalizeCues((selected.suffix==='.lrc'?L:V).parse(selected.content),selected.payload.duration);
-        for(const key of ['cues','duration','duration_estimated','timing'])if(U.fingerprint(data[key])!==U.fingerprint(expected[key]))fail();
-        if(data.review_notes.length)fail();
-        const lrc=expected.cues.map(c=>`[${T.timecode(c.start)}]${c.text}`).join('\n')+'\n';
-        const srt=expected.cues.map((c,i)=>`${i+1}\n${T.timecode(c.start,true)} --> ${T.timecode(c.end,true)}\n${c.text}`).join('\n\n')+'\n';
-        if(result.files['lyrics.lrc']!==lrc||result.files['lyrics.srt']!==srt)fail();
+        expected=selected.legacyTimed?P.fromLegacy(selected.payload.package):P.validate(selected.payload.package);
+      }else{
+        let cues;
+        if(['.lrc','.srt'].includes(selected.suffix))cues=(selected.suffix==='.lrc'?L:V).parse(selected.content);
+        else{
+          const document=P.parseDocument(selected.content);
+          if(!Array.isArray(document)&&!exact(document,['cues']))fail();
+          cues=Array.isArray(document)?document:document.cues;
+        }
+        expected=G.expectedBuild({title:selected.payload.title,cues,duration:selected.payload.duration});
       }
+      return G.checkedResult(expected,result);
     }
     if(U.fingerprint(JSON.parse(result.files[seed?'lyrics-seed.json':'lyrics.json']))!==U.fingerprint(data))fail();
     return structuredClone(result);

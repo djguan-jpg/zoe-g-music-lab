@@ -361,3 +361,8 @@ CLI `storyboard-seed --seed 起稿.json --out 新目錄`檢查並輸出兩檔，
 ## v0.45
 
 v0.45產品與明確交付來源38–45同步，12／17工具、Agent1／draft3及交付schema保持。限定PID程序補查只供開發維護CLI，沒有新增Agent／MCP程序或清除權限。見[維護契約](PROCESS-PROBE.md)。
+
+
+## v0.52 歌詞建立與回讀來源
+
+校時建立從本次送出的 cues／總長或完整 package 派生期望，核對完整回應、時間來源／歷史說明、嚴格JSON及字面LRC／SRT後才替換表格與成果。純 lyrics-result 共用建立及所有帶時間匯入；錯來源／損壞／不完整保留原編修、上一份成果及待套用校時。raw JSON也核對原句，seed保持。HTML只核對存在與字串、不完整語義驗證；wire／schemas／12／17 tools不變。產品0.52／交付來源38–52，原schema與Agent操作保持；不是模型或實聽驗證。

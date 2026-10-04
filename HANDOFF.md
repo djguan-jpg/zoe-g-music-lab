@@ -1,3 +1,7 @@
+# 目前交接 v0.52.0
+
+見[本輪可逆與未驗證範圍](docs/HANDOFF-v0.52.0.md)。
+
 # v0.51.0 交接與可逆
 
 SRT syntax／physical lyric lines 純模型 → lyrics edits／validate／package → application HTTP／CLI／Agent／MCP；原生JS SRT＋共享timed-source guard → preview／explicit Apply／scope Undo／raw-fields。尾空白與Unicode改字、direct BOM／wrong-source回應修正；真多行 / 保持、原排版原檔／空白cue JSON、HTML preview未完整語義驗證。441 Python／654 JS／54 syntax／4 Skills及原生／v50還原通過。見[契約](docs/LYRICS-SRT.md)、[QA](docs/QA-v0.51.0.md)。

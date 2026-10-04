@@ -27,6 +27,22 @@ function harness(request){
     onReady:view=>ready.push(view),onClear:()=>{},onError:e=>errors.push(e.message),onState:s=>states.push(s)});
   return {value,ready,errors,states,requests,jobs,c,resolve:data=>jobs.at(-1).resolve(structuredClone(data||timed))};
 }
+test('plain cue JSON response is checked against original cues rather than only the returned JSON',async()=>{
+  const original=JSON.stringify({cues:[{start:1,end:2,text:' JSON 原句\t '}]}),wrong=domain('lyrics',{title:'校時測試',cues:[{start:1,end:2,text:'其他句'}],duration:10});
+  const h=harness(async()=>wrong),before=structuredClone(h.value);assert.equal(await h.c.read(file('source.json',original)),false);
+  assert.deepEqual(h.value,before);assert.equal(h.c.proposal(),null);assert.match(h.errors.at(-1),/來源/);
+});
+test('complete package import refuses independent text-export corruption and duplicate response JSON keys',async()=>{
+  for(const mutate of [r=>r.files['lyrics.lrc']+='改字',r=>r.files['lyrics.srt']+='改字',r=>r.files['lyrics.json']=r.files['lyrics.json'].replace('{','{"title":"shadow",')]){
+    const wrong=structuredClone(timed);mutate(wrong);const h=harness(async()=>wrong),before=structuredClone(h.value);
+    assert.equal(await h.c.read(file('package.json',timed.files['lyrics.json'])),false);assert.deepEqual(h.value,before);assert.equal(h.c.proposal(),null);
+  }
+});
+test('plain cue JSON array retains original strings and checked timing inference before explicit proposal',async()=>{
+  const original=JSON.stringify([{start:4.125,text:'\t 尾句  '},{start:1.125,end:2.5,text:'前句 <b>'}]),h=harness(async(op,p)=>domain(op,p)),before=structuredClone(h.value);
+  assert.equal(await h.c.read(file('source.json',original)),true);assert.deepEqual(h.value,before);
+  const p=h.c.proposal();assert.equal(p.draft.panels.lyrics.fields['lyrics-source'],original);assert.equal(p.draft.panels.lyrics.cues[1].text,'\t 尾句  ');assert.equal(p.draft.panels.lyrics.cues[1].end,'10');
+});
 test('real Python LRC response is only a preview until proposal; current source, cues and audio condition remain',async()=>{
   const h=harness(),before=structuredClone(h.value),work=h.c.read(file('source.lrc',lrc));await Promise.resolve();h.resolve();assert.equal(await work,true);
   assert.deepEqual(h.value,before);assert.equal(h.ready[0].count,2);assert.match(h.ready[0].notice,/2 句結束/);assert.equal(h.ready[0].name,'source.lrc');

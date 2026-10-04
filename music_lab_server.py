@@ -85,6 +85,7 @@ ASSETS = {"/delivery-report.js": ("web/delivery-report.js","text/javascript"),"/
           "/draft-undo.js": ("web/draft-undo.js", "text/javascript"),
           "/replacement-preview.js": ("web/replacement-preview.js", "text/javascript"),
           "/lyrics-seed.js": ("web/lyrics-seed.js", "text/javascript"),
+          "/lyrics-result.js": ("web/lyrics-result.js", "text/javascript"),
           "/lyrics-import.js": ("web/lyrics-import.js", "text/javascript"),
           "/json-document.js": ("musiclab/assets/json-document.js", "text/javascript"),
           "/lyrics-package.js": ("musiclab/assets/lyrics-package.js", "text/javascript"),
