@@ -1,6 +1,6 @@
 # ZOE. G Music Lab
 
-目前版本 **v0.48.0**：大份文字成果的來源核對與畫面刷新改用輕量狀態，閱讀／搜尋不再反覆複製及序列化全文；原文精確比對、編修失效保護與限定撤回保持。416 Python／619 JavaScript／52 syntax／4 Skill通過，四工作台與近8MiB雙來源翻頁／尾端定位已操作核對。見[分層與限制](docs/DELIVERY-SOURCE.md)、[QA](docs/QA-v0.48.0.md)、[交接](docs/HANDOFF-v0.48.0.md)。
+目前版本 **v0.49.0**：原文搜尋可返回上一批，顯示本批序號範圍；只留最近512批返回位置，全文仍能向前搜尋。來源／query失效清空紀錄，批次與回呼核對保護舊選取；邊界鍵盤焦點接到可用按鈕。416 Python／629 JavaScript／52 syntax／4 Skill通過，四台原生操作及前版還原核對。見[契約](docs/DELIVERY-SEARCH-NAVIGATION.md)、[QA](docs/QA-v0.49.0.md)、[交接](docs/HANDOFF-v0.49.0.md)。
 
 ## ZIP原文與差異（v0.40）
 

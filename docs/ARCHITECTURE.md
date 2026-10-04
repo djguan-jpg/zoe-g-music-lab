@@ -1,5 +1,7 @@
 # 分層與版本契約
 
+v0.49搜尋上一批：controller私有最多512對cursor與command generation，單batch／context保持；返回回讀原位置及序號，前進仍可全文接續。DOM範圍／邊界焦點、來源／query失效及retry分層；wire／schemas與12／17tools保持，明確來源38–49。見[導航契約](DELIVERY-SEARCH-NAVIGATION.md)。下方保留歷史迭代。
+
 v0.48：內部plain bundle的snapshot／精確current移到[delivery-source純層](DELIVERY-SOURCE.md)，複製容器但不序列化全文。delivery-import區分metadata view與明確full status，DOM只訂閱onView並用refreshView；單份preview cache保持原文與完整換行計數，read/search原單buffer保持。source mutation／media／scope／revision／result／busy完整保護，12／17 tools與wire schemas保持。
 
 ## v0.44 原文分段閱讀

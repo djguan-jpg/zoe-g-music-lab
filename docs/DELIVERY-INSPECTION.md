@@ -1,5 +1,7 @@
 # 接續文字交付 ZIP（v0.39）
 
+v0.49搜尋上一批：controller私有最多512對cursor與command generation，單batch／context保持；返回回讀原位置及序號，前進仍可全文接續。DOM範圍／邊界焦點、來源／query失效及retry分層；wire／schemas與12／17tools保持，明確來源38–49。見[導航契約](DELIVERY-SEARCH-NAVIGATION.md)。下方保留歷史迭代。
+
 目前v0.48明確支持來源工具0.38–0.48，未知版本拒絕。畫面已改用[輕量來源與view](DELIVERY-SOURCE.md)，完整ZIP／逐檔CRC／SHA核對、原文預覽、明確Apply與限定Undo保持；以下歷史版敘述不表示v48仍反覆傳遞完整proposal到DOM。
 
 ## v0.47 命中前後文

@@ -1,5 +1,7 @@
 # 本機 Agent 接口 v1
 
+v0.49搜尋上一批：controller私有最多512對cursor與command generation，單batch／context保持；返回回讀原位置及序號，前進仍可全文接續。DOM範圍／邊界焦點、來源／query失效及retry分層；wire／schemas與12／17tools保持，明確來源38–49。見[導航契約](DELIVERY-SEARCH-NAVIGATION.md)。下方保留歷史迭代。
+
 v0.48產品版本與delivery producer支援同步至0.38–0.48。本輪source snapshot／metadata view是瀏覽器內部分層，不新增Agent工具或wire schema；基本12／明確啟庫17、Agent1／draft3與所有交付schemas保持。詳見[DELIVERY-SOURCE](DELIVERY-SOURCE.md)。
 
 ## v0.47 命中前後文

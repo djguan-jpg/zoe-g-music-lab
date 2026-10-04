@@ -39,15 +39,24 @@
   return structuredClone(v);
  }
  function createSearcher({source,read,onSelect=()=>true,onState=()=>{},onError=()=>{},includeContext=false}){
-  let key=null,query='',batch=null,selected=-1,offset=0;
-  function sync(){const s=source();if(!s.canRead||s.key!==key){key=s.key;batch=null;selected=-1;offset=0;}return s;}
-  function status(){const s=sync();return {canRead:!!s.canRead,query,batch:batch?structuredClone(batch):null,selected,offset};}
+  let key=null,query='',batch=null,selected=-1,offset=0,back=[],limited=false,generation=0;
+  function reset(){generation++;batch=null;selected=-1;offset=0;back=[];limited=false;}
+  function sync(){const s=source();if(!s.canRead||s.key!==key){key=s.key;reset();}return s;}
+  function status(){const s=sync();return {canRead:!!s.canRead,query,batch:batch?structuredClone(batch):null,selected,offset,canPrevious:!!s.canRead&&back.length>0,historyLimited:limited};}
   const publish=()=>{const s=status();onState(s);return s;};
-  function load(start,nextOffset){const s=sync();if(!s.canRead)return false;const selectedKey=s.key,request={query,start_byte:start,max_matches:20,...(includeContext?{include_context:true}:{})};
-   try{const result=checked(read(request),request);const now=source();if(!now.canRead||now.key!==selectedKey||query!==request.query){publish();return false;}batch=result;selected=-1;offset=nextOffset;publish();return true;}
-   catch(error){onError(error);publish();return false;}
+  function load(start,nextOffset,history,historyLimited){const s=sync();if(!s.canRead)return false;const selectedKey=s.key,token=++generation,request={query,start_byte:start,max_matches:20,...(includeContext?{include_context:true}:{})};
+   const isCurrent=()=>{const now=source();return now.canRead&&now.key===selectedKey&&query===request.query&&generation===token;};
+   try{const raw=read(request);if(!isCurrent()){publish();return false;}const result=checked(raw,request);if(!isCurrent()){publish();return false;}batch=result;selected=-1;offset=nextOffset;back=history;limited=historyLimited;publish();return true;}
+   catch(error){if(isCurrent())onError(error);publish();return false;}
   }
-  return {status,refresh:publish,setQuery(value){if(value!==query){query=value;batch=null;selected=-1;offset=0;}publish();},find:()=>load(0,0),more(){const s=status();return s.canRead&&batch?.next_byte!==null&&batch?load(batch.next_byte,offset+batch.matches.length):false;},select(index){const s=status();if(!s.canRead||!batch||!Number.isSafeInteger(index)||index<0||index>=batch.matches.length)return false;const selectedKey=key,start=batch.matches[index].start_byte;if(onSelect(start)!==true)return false;const now=source();if(!now.canRead||now.key!==selectedKey){publish();return false;}selected=index;publish();return true;}};
+  return {status,refresh:publish,setQuery(value){if(value!==query){query=value;reset();}publish();},find:()=>load(0,0,[],false),
+   more(){const s=status();if(!s.canRead||!batch||batch.next_byte===null)return false;const history=[...back,{start:batch.start_byte,offset}];return load(batch.next_byte,offset+batch.matches.length,history.slice(-512),limited||history.length>512);},
+   previous(){const s=status();if(!s.canPrevious)return false;const cursor=back[back.length-1];return load(cursor.start,cursor.offset,back.slice(0,-1),limited);},
+   select(index){const s=status();if(!s.canRead||!batch||!Number.isSafeInteger(index)||index<0||index>=batch.matches.length)return false;const selectedKey=key,selectedBatch=batch,selectedQuery=query,token=++generation,start=batch.matches[index].start_byte;
+    const isCurrent=()=>{const now=source();return now.canRead&&now.key===selectedKey&&query===selectedQuery&&batch===selectedBatch&&generation===token;};
+    try{if(onSelect(start)!==true||!isCurrent()){publish();return false;}selected=index;publish();return true;}
+    catch(error){if(isCurrent())onError(error);publish();return false;}
+   }};
  }
  const api={options,search,searchBytes,checked,createSearcher};if(typeof module==='object'&&module.exports)module.exports=api;else root.MusicDeliverySearch=api;
 })(typeof globalThis==='object'?globalThis:this);

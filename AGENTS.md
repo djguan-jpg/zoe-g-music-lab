@@ -1,5 +1,7 @@
 # ZOE. G Music Lab
 
+v0.49搜尋上一批：controller私有最多512對cursor與command generation，單batch／context保持；返回回讀原位置及序號，前進仍可全文接續。DOM範圍／邊界焦點、來源／query失效及retry分層；wire／schemas與12／17tools保持，明確來源38–49。見[導航契約](docs/DELIVERY-SEARCH-NAVIGATION.md)。下方保留歷史迭代。
+
 ## v0.48 輕量來源核對
 
 delivery-source純internal plain bundle隔離容器／精確值比較，current核對原scope／revision／resultRevision／bundle及File身份，不只信任revision或共享object；不JSON序列化／clone全文。delivery-import full status／legacy onState保持，新view／onView／refreshView只含metadata；DOM明確走輕量路徑。單份雙側excerpt32768units／完整line counts快取，換檔／新ZIP／cancel／apply／undo清除。wire與12／17tools不變，產品48／明確來源38–48，未知拒絕。見[分層](docs/DELIVERY-SOURCE.md)。
