@@ -1,5 +1,12 @@
 # 迭代說明
 
+## v0.44.0 — 2026-10-04
+
+- 完整核對ZIP後明確原文分段，Agent／MCP／CLI讀長檔不擴大512KiB files cap。非零起點pin前次archive SHA，變更來源、UTF-8字元中間與缺檔拒絕；片段明示位置與來源，不冒充完整原檔。
+- Browser獨立唯讀reader可選目前成果／ZIP原文、前後段與回開頭，empty／missing分開，原下載及Apply／Undo保持。單buffer最多8MiB、頁面16KiB、history512，失效清除，不重複編碼全文。
+- 純text-window1／application／adapter與純JS模型／隔離source key的controller／DOM分層；12／17與Agent1／draft3保持，來源38–44，新增兩靜態JS。
+- 387Python／582JS／48syntax／4Skill；新增10Python／10JS、8MiB全模型拼回、實際CLI／Agent／MCP，四台20段顯示與4檔完整下載同來源、保留原WAV／後續編修、鍵盤／取消晚回應／三寬度及前版v43 ZIP377／572還原通過。私有發布與維護依收據。
+
 ## v0.43.0 — 2026-10-04
 
 - 先完整核對 ZIP，再按明確原檔名選取，解決大封裝無法只取小檔。Agent／MCP維持512 KiB files JSON上限，CLI明確輸出沿8 MiB來源，缺檔與未選取檔損壞都拒絕。
