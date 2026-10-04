@@ -1,6 +1,8 @@
 # ZOE. G Music Lab
 
-目前版本 **v0.51.0**：SRT 保留每行空白與 Unicode 原字元，實際多行仍明確以 / 合成單句；原排版保留原檔，空白句用版本1 JSON保存。獨立解析層以整數毫秒核對時鐘，瀏覽器從 LRC／SRT 原文核對回應與文字輸出。441 Python／654 JavaScript／54 syntax／4 Skills、原生預覽／套用／撤回／匯出及 v50 ZIP 還原通過。見[契約](docs/LYRICS-SRT.md)、[QA](docs/QA-v0.51.0.md)、[交接](docs/HANDOFF-v0.51.0.md)。
+目前版本 **v0.52.0**：校時建立從本次送出的 cues／總長或完整 package 派生期望，核對完整回應、時間來源／歷史說明、嚴格JSON及字面LRC／SRT後才替換表格與成果。純 lyrics-result 共用建立及所有帶時間匯入；錯來源／損壞／不完整保留原編修、上一份成果及待套用校時。raw JSON也核對原句，seed保持。HTML只核對存在與字串、不完整語義驗證；wire／schemas／12／17 tools不變。442 Python／672 JavaScript／55 syntax／4 Skills及v51封裝還原通過。見[契約](docs/LYRICS-RESULT.md)、[QA](docs/QA-v0.52.0.md)、[交接](docs/HANDOFF-v0.52.0.md)。
+
+上一輪 v0.51.0：SRT 保留每行空白與 Unicode 原字元，實際多行仍明確以 / 合成單句；原排版保留原檔，空白句用版本1 JSON保存。獨立解析層以整數毫秒核對時鐘，瀏覽器從 LRC／SRT 原文核對回應與文字輸出。441 Python／654 JavaScript／54 syntax／4 Skills、原生預覽／套用／撤回／匯出及 v50 ZIP 還原通過。見[契約](docs/LYRICS-SRT.md)、[QA](docs/QA-v0.51.0.md)、[交接](docs/HANDOFF-v0.51.0.md)。
 
 ## ZIP原文與差異（v0.40）
 
