@@ -1,8 +1,8 @@
 # ZOE. G Music Lab
 
-目前版本 **v0.61.0**：音檔報告新增獨立 PCM 數值核對：拒絕正值 sample peak、RMS 高於 peak、滿刻度樣本超過影格、安靜段超過時長及非立體聲相關值等矛盾回覆。原報告、表單與音檔保留，可重新分析；全安靜音檔兩端全長與四捨五入保持有效。484 Python／751 JavaScript／63 語法／四份 Skill 通過，83 份實際合成音檔與92個歷史ZIP bytes保持。 見[使用與分層](docs/AUDIO-STATISTICS.md)、[QA](docs/QA-v0.61.0.md)、[交接](docs/HANDOFF-v0.61.0.md)。
+目前版本 **v0.62.0**：音檔報告 SHA-256 綁定實際選定 File 位元組，拒絕同名同大小錯來源；示範條件與條件草稿都核對完整回覆、產品／協定版本與嚴格報告 JSON。原成果保持，雜湊期間改選取消上傳，合法重試及自訂規格提醒正常。486 Python／767 JavaScript／65 語法／四份 Skill 通過，83 份真 File PCM 與96個歷史ZIP bytes保持。 見[來源與分層](docs/AUDIO-RESULT.md)、[QA](docs/QA-v0.62.0.md)、[交接](docs/HANDOFF-v0.62.0.md)。
 
-上一輪 v0.60.0：ZIP核對失敗原因保留在選檔區，清除／重選不取消既有撤回。v60指定ZIP獨立解壓重跑481 Python／743 JavaScript通過。見[QA](docs/QA-v0.60.0.md)。
+上一輪 v0.61.0：獨立PCM數值檢查拒絕矛盾回覆，原成果與音檔保留。v61指定ZIP獨立還原484 Python／751 JavaScript通過。見[QA](docs/QA-v0.61.0.md)。
 
 ## ZIP原文與差異（v0.40）
 

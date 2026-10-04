@@ -2,6 +2,7 @@
 'use strict';
 const test=require('node:test'),assert=require('node:assert/strict');
 const MusicAudio=require('../web/audio-review.js');
+const fixture=require('./audio_result_fixture.js');
 function report(){return {version:'0.22.0',file:'original.wav',profile:'distribution',sha256:'a'.repeat(64),
   sample_rate:48000,bit_depth:16,channels:1,frames:48000,duration_seconds:1,
   acceptance:{rates:[44100,48000],bits:[16,24],channels:[1,2]},checks:{sample_rate:true,bit_depth:true,channels:true},
@@ -75,10 +76,10 @@ test('inconsistent missing source and unsafe frame count refuse before rendering
   }
 });
 test('invalid late measurement never replaces output, current measurement error remains actionable',async()=>{
-  let current=true,resolve,outputs=0;const file={size:96044};
-  const args={selected:()=>({file,profile:'distribution'}),isCurrent:()=>current,
+  let current=true,resolve,outputs=0;const file={name:'original.wav',size:96044};
+  const args={hashFile:fixture.hashFile,selected:()=>({file,profile:'distribution'}),isCurrent:()=>current,
     request:()=>new Promise(r=>{resolve=r;}),onResult:()=>outputs++};
-  const stale=MusicAudio.inspect(args);current=false;const bad=report();bad.loudness.schema_version=999;resolve({data:bad});
+  const stale=MusicAudio.inspect(args);await Promise.resolve();current=false;const bad=report();bad.loudness.schema_version=999;resolve(fixture.wire(bad));
   assert.equal(await stale,false);assert.equal(outputs,0);
-  current=true;const active=MusicAudio.inspect(args);resolve({data:bad});await assert.rejects(active,/響度報告/);assert.equal(outputs,0);
+  current=true;const active=MusicAudio.inspect(args);await Promise.resolve();resolve(fixture.wire(bad));await assert.rejects(active,/響度報告/);assert.equal(outputs,0);
 });

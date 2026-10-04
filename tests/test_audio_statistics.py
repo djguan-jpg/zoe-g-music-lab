@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 """Real PCM producers must remain consumable by the independent browser bounds."""
 import copy
+import base64
 import hashlib
 import http.client
 import io
@@ -53,15 +54,15 @@ class AudioStatisticsTests(unittest.TestCase):
                         channels = (1, 2, 3)[index % 3]
                         raw = pcm(width, rate, channels, pattern); path.write_bytes(raw)
                         wire = build('audio', {'acceptance_draft': DRAFT, 'display_name': path.name}, audio_source=path).wire()
-                        rows.append(wire)
+                        rows.append({'wire': wire, 'source': base64.b64encode(raw).decode()})
                         self.assertEqual(path.read_bytes(), raw)
                         self.assertEqual(wire['data']['sha256'], hashlib.sha256(raw).hexdigest())
             for rate, frames in ((192000, 1), (11025, 13337), (48000, 48000)):
                 raw = pcm(2, rate, 1, 'silence' if frames == 1 else 'alternating', frames); path.write_bytes(raw)
-                rows.append(build('audio', {'acceptance_draft': DRAFT, 'display_name': path.name}, audio_source=path).wire())
+                rows.append({'wire': build('audio', {'acceptance_draft': DRAFT, 'display_name': path.name}, audio_source=path).wire(), 'source': base64.b64encode(raw).decode()})
                 self.assertEqual(path.read_bytes(), raw)
         code = """const fs=require('fs'),audio=require('./web/audio-review.js');const rows=JSON.parse(fs.readFileSync(0,'utf8'));
-        (async()=>{let accepted=0;for(const wire of rows){const before=JSON.stringify(wire),file={name:wire.data.file,size:wire.data.source_evidence.bytes};
+        (async()=>{let accepted=0;for(const row of rows){const wire=row.wire,before=JSON.stringify(wire),file=new File([Buffer.from(row.source,'base64')],wire.data.file);
         const selected={file,profile:wire.data.profile,acceptanceDraft:wire.data.acceptance_draft};
         if(!await audio.inspect({selected:()=>selected,isCurrent:()=>true,request:async()=>wire,onResult:()=>accepted++}))throw Error('not accepted');
         if(JSON.stringify(wire)!==before)throw Error('mutated input');}console.log(JSON.stringify({accepted}));})().catch(e=>{console.error(e);process.exitCode=1});"""
@@ -72,15 +73,15 @@ class AudioStatisticsTests(unittest.TestCase):
             path = Path(folder) / 'synthetic.wav'; raw = pcm(2, 48000, 1, 'alternating'); path.write_bytes(raw)
             original = build('audio', {'acceptance_draft': DRAFT, 'display_name': path.name}, audio_source=path).wire()
             before = copy.deepcopy(original)
-            code = """const fs=require('fs'),audio=require('./web/audio-review.js'),original=JSON.parse(fs.readFileSync(0,'utf8'));
+            code = """const fs=require('fs'),audio=require('./web/audio-review.js'),row=JSON.parse(fs.readFileSync(0,'utf8')),original=row.wire;
             const changes=[r=>r.per_channel[0].peak_dbfs=6,r=>r.per_channel[0].rms_dbfs=0,
              r=>r.per_channel[0].full_scale_samples=r.frames+1,r=>r.quiet_regions.leading_seconds=r.duration_seconds+5,r=>r.stereo_correlation=.5];
             (async()=>{let refused=0,writes=0;for(const change of changes){const wire=structuredClone(original);change(wire.data);wire.files['report.json']=JSON.stringify(wire.data);
-             const file={name:wire.data.file,size:wire.data.source_evidence.bytes},selection={file,profile:wire.data.profile,acceptanceDraft:wire.data.acceptance_draft};
+             const file=new File([Buffer.from(row.source,'base64')],wire.data.file),selection={file,profile:wire.data.profile,acceptanceDraft:wire.data.acceptance_draft};
              try{await audio.inspect({selected:()=>selection,isCurrent:()=>true,request:async()=>wire,onResult:()=>writes++});throw Error('accepted contradiction');}
              catch(e){if(!e.message.includes('數值互相矛盾'))throw e;refused++;}}
              console.log(JSON.stringify({refused,writes}));})().catch(e=>{console.error(e);process.exitCode=1});"""
-            self.assertEqual(browser(original, code), {'refused': 5, 'writes': 0})
+            self.assertEqual(browser({'wire': original, 'source': base64.b64encode(raw).decode()}, code), {'refused': 5, 'writes': 0})
             self.assertEqual(original, before); self.assertEqual(path.read_bytes(), raw)
 
     def test_fixed_native_asset_and_real_http_agent_mcp_cli_reports_keep_same_domain_data(self):

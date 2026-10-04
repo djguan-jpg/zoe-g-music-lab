@@ -2,6 +2,7 @@
 'use strict';
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const MusicAudio=require('../web/audio-review.js');
+const fixture=require('./audio_result_fixture.js');
 function report(){return {file:'first.wav',profile:'distribution',sha256:'a'.repeat(64),sample_rate:48000,bit_depth:16,
   channels:2,frames:48000,duration_seconds:1,acceptance:{rates:[44100,48000],bits:[16,24],channels:[1,2]},
   checks:{sample_rate:true,bit_depth:true,channels:true},warnings:[],status:'technical_checks_passed',
@@ -11,8 +12,8 @@ function report(){return {file:'first.wav',profile:'distribution',sha256:'a'.rep
 function setup(){
   let selection={file:{name:'first.wav',size:192044},profile:'distribution'},valid=true;
   let resolve,reject,calls=0;const results=[],pending=new Promise((r,j)=>{resolve=r;reject=j;});
-  const options={selected:()=>selection,isCurrent:()=>valid,request:()=>{calls++;return pending;},onResult:(result,review)=>results.push({result,review})};
-  return {options,resolve:()=>resolve({data:report(),files:{'report.json':'checked'}}),resolveWith:r=>resolve(r),reject,
+  const options={hashFile:fixture.hashFile,selected:()=>selection,isCurrent:()=>valid,request:()=>{calls++;return pending;},onResult:(result,review)=>results.push({result,review})};
+  return {options,resolve:()=>resolve(fixture.wire(report())),resolveWith:r=>resolve(r),reject,
     select:value=>selection=value,invalidate:()=>valid=false,selection:()=>selection,results,calls:()=>calls};
 }
 test('review includes explicit source, acceptance, both quiet edges and every channel without mutating report',()=>{
@@ -48,7 +49,7 @@ test('later acceptance or revision change prevents every result write',async()=>
   }
 });
 test('late errors are ignored but current errors remain actionable',async()=>{
-  const a=setup(),work=MusicAudio.inspect(a.options);a.invalidate();a.reject(Error('old error'));
+  const a=setup(),work=MusicAudio.inspect(a.options);await Promise.resolve();a.invalidate();a.reject(Error('old error'));
   assert.equal(await work,false);assert.equal(a.results.length,0);
   const b=setup(),current=MusicAudio.inspect(b.options);b.reject(Error('current error'));
   await assert.rejects(current,/current error/);assert.equal(b.results.length,0);
@@ -70,19 +71,19 @@ function adapter(){
   assert.ok(start>=0&&end>start&&runStart>=0&&runEnd>runStart);
   const state={tab:'audio',revisions:{audio:0},busy:false},nodes={'audio-build':{disabled:false},'audio-file':{files:[{name:'first.wav',size:192044}]},'audio-profile':{value:'distribution'}};
   let resolve,reject,rendered=0,files=0;const notices=[];
-  const context={readValue:control=>control.value,state,$:id=>nodes[id],MusicAudio,URLSearchParams,timingControls:()=>{},say:m=>notices.push(m),markDirty:()=>{},
+  const context={readValue:control=>control.value,state,$:id=>nodes[id],MusicAudio:{...MusicAudio,inspect:options=>MusicAudio.inspect({...options,hashFile:fixture.hashFile})},URLSearchParams,timingControls:()=>{},say:m=>notices.push(m),markDirty:()=>{},
     api:()=>new Promise((r,j)=>{resolve=r;reject=j;}),renderAudioReview:()=>rendered++,setFiles:()=>files++};
   vm.runInNewContext(source.slice(runStart,runEnd),context);vm.runInNewContext(source.slice(start,end),context);
-  return {state,nodes,notices,start:()=>nodes['audio-build'].onclick(),resolve:()=>resolve({data:report(),files:{'report.json':'checked'}}),reject:error=>reject(error),
+  return {state,nodes,notices,start:()=>nodes['audio-build'].onclick(),resolve:()=>queueMicrotask(()=>resolve(fixture.wire(report()))),reject:error=>queueMicrotask(()=>reject(error)),
     counts:()=>({rendered,files}),replace:()=>{nodes['audio-file'].files=[{name:'other.wav',size:1000}];state.revisions.audio++;}};
 }
 test('real run and audio event adapter discard a replaced selection and restore controls',async()=>{
-  const a=adapter(),work=a.start();assert.equal(a.state.busy,true);a.replace();a.resolve();await work;
+  const a=adapter(),work=a.start();assert.equal(a.state.busy,true);await Promise.resolve();a.replace();a.resolve();await work;
   assert.deepEqual(a.counts(),{rendered:0,files:0});assert.equal(a.state.busy,false);assert.equal(a.nodes['audio-build'].disabled,false);
   assert.match(a.notices.at(-1),/處理期間輸入有修改/);
 });
 test('real audio event applies a current result and does not show a stale error for replacement',async()=>{
   const a=adapter(),work=a.start();a.resolve();await work;assert.deepEqual(a.counts(),{rendered:1,files:1});
-  const b=adapter(),old=b.start();b.replace();b.reject(Error('old failure'));await old;
+  const b=adapter(),old=b.start();await Promise.resolve();b.replace();b.reject(Error('old failure'));await old;
   assert.deepEqual(b.counts(),{rendered:0,files:0});assert.ok(!b.notices.includes('old failure'));assert.equal(b.state.busy,false);
 });

@@ -2,6 +2,7 @@
 'use strict';
 const test=require('node:test'),assert=require('node:assert/strict');
 const model=require('../web/audio-acceptance.js'),audio=require('../web/audio-review.js');
+const fixture=require('./audio_result_fixture.js');
 const draft=(fields={})=>({format:model.format,schema_version:1,profile:'video',custom:true,fields:{rates:'48000',bits:'16',channels:'2',...fields}});
 const encoded=d=>new TextEncoder().encode(JSON.stringify(d)).buffer;
 function controller(){
@@ -79,10 +80,10 @@ function report(d){return {file:'first.wav',profile:d.profile,acceptance_draft:s
   quiet_regions:{threshold_dbfs:-60,leading_seconds:0,trailing_seconds:0,quiet_frame_ratio:0},stereo_correlation:null,
   source_evidence:{bytes:192044,analysis_source:'copied_bytes',wave_format_tag:1,block_align:4,average_bytes_per_second:192000},
   per_channel:[1,2].map(channel=>({channel,peak_dbfs:-12,rms_dbfs:-20,dc_offset:0,full_scale_samples:0}))};}
-const reply=d=>{const data=report(d);return {data,files:{'report.json':JSON.stringify(data),'audio-acceptance-draft.json':JSON.stringify(d)}};};
+const reply=d=>fixture.wire(report(d));
 function inspection(){let selection={file:{name:'first.wav',size:192044},profile:'video',acceptanceDraft:draft()},resolve,reject,calls=0;const results=[];
   const pending=new Promise((r,j)=>{resolve=r;reject=j;});return {selection:()=>selection,set:d=>selection.acceptanceDraft=d,resolve,reject,results,calls:()=>calls,
-    options:{selected:()=>selection,isCurrent:()=>true,request:()=>{calls++;return pending;},onResult:(r,v)=>results.push(v)}};}
+    options:{hashFile:fixture.hashFile,selected:()=>selection,isCurrent:()=>true,request:()=>{calls++;return pending;},onResult:(r,v)=>results.push(v)}};}
 test('exact report conditions, embedded raw source and exported JSON are bound to current selection',async()=>{
   const a=inspection(),work=audio.inspect(a.options);a.resolve(reply(draft()));assert.equal(await work,true);assert.equal(a.results[0].custom,true);
 });
@@ -94,10 +95,11 @@ test('same-profile wrong numeric conditions, altered raw source, report JSON or 
 });
 test('unfinished values prevent upload and semantically equal raw edits still invalidate late success/error',async()=>{
   const a=inspection();a.set(draft({bits:''}));await assert.rejects(audio.inspect(a.options));assert.equal(a.calls(),0);
-  for(const failure of [false,true]){const a=inspection(),work=audio.inspect(a.options);a.set(draft({rates:'48_000'}));
+  for(const failure of [false,true]){const a=inspection(),work=audio.inspect(a.options);await Promise.resolve();a.set(draft({rates:'48_000'}));
     if(failure)a.reject(Error('late'));else a.resolve(reply(draft()));assert.equal(await work,false);assert.equal(a.results.length,0);}
 });
 test('preset inspection also rejects returned limits different from preset despite a valid report',async()=>{
   const d={...draft(),custom:false},file={name:'first.wav',size:192044},r=reply(d);r.data.acceptance.rates=[44100,48000];
-  await assert.rejects(audio.inspect({selected:()=>({file,profile:'video'}),isCurrent:()=>true,request:async()=>r,onResult:()=>assert.fail('should refuse')}));
+  delete r.data.acceptance_draft;delete r.files['audio-acceptance-draft.json'];r.files['report.json']=JSON.stringify(r.data);
+  await assert.rejects(audio.inspect({hashFile:fixture.hashFile,selected:()=>({file,profile:'video'}),isCurrent:()=>true,request:async()=>r,onResult:()=>assert.fail('should refuse')}));
 });
