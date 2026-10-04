@@ -21,12 +21,18 @@
       cues:data.cues.map(c=>({start_ms:T.milliseconds(c.start),end_ms:T.milliseconds(c.end),text:c.text})),timing,review_notes:data.review_notes};
     const raw=JSON.stringify(value);J.parse(raw,{maxBytes:4*1024*1024,label:'格式檢查來源'});return new TextEncoder().encode(raw);
   }
-  async function review(payload){
-    const data=checkedSource(payload),counts={lrc:0,srt:0},issues=[];
+  function analyzeSource(data){
+    const counts={lrc:0,srt:0},issues=[];
     for(let i=0;i<data.cues.length;i++)for(const [ext,code,risk] of [['lrc','leading_time_tag',L.startsWithTimestamp(data.cues[i].text)],['srt','blank_srt_line',!/[^ \t]/.test(data.cues[i].text)]])if(risk){counts[ext]++;if(issues.length<maxIssues)issues.push({row:i+1,format:ext,code,message:messages[code]});}
-    const sha256=[...new Uint8Array(await cryptoApi.subtle.digest('SHA-256',sourceBytes(data)))].map(n=>n.toString(16).padStart(2,'0')).join(''),total=counts.lrc+counts.srt;
+    const total=counts.lrc+counts.srt;
     const formats=Object.fromEntries([['json',['start','end','text']],['lrc',['start','text']],['srt',['start','end','text']]].map(([ext,fields])=>[ext,{checked_cue_fields:fields,checked_cue_fields_preserved:(counts[ext]||0)===0,end_times_encoded:ext!=='lrc',package_metadata_preserved:ext==='json',issue_count:counts[ext]||0}]));
-    return {format:'zoe-lyrics-export-review',schema_version:1,status:total?'needs_attention':'checked_cue_fields',source:{title:data.title,duration_ms:T.milliseconds(data.duration),duration_estimated:data.duration_estimated,cue_count:data.cues.length,sha256},formats,issue_count:total,issues,details_truncated:total>issues.length,recommended_preservation:'lyrics.json',review_notes:[...notes]};
+    return {formats,issue_count:total,issues,details_truncated:total>issues.length,recommended_preservation:'lyrics.json',review_notes:[...notes]};
+  }
+  function analyze(payload){return analyzeSource(checkedSource(payload));}
+  async function review(payload){
+    const data=checkedSource(payload),result=analyzeSource(data);
+    const sha256=[...new Uint8Array(await cryptoApi.subtle.digest('SHA-256',sourceBytes(data)))].map(n=>n.toString(16).padStart(2,'0')).join('');
+    return {format:'zoe-lyrics-export-review',schema_version:1,status:result.issue_count?'needs_attention':'checked_cue_fields',source:{title:data.title,duration_ms:T.milliseconds(data.duration),duration_estimated:data.duration_estimated,cue_count:data.cues.length,sha256},...result};
   }
   function markdown(data){
     const lines=['# 歌詞匯出格式檢查','',`共${data.source.cue_count}句；格式提醒${data.issue_count}項。`,`來源SHA-256：${data.source.sha256}`,'','建議保存完整lyrics.json；以下格式檢查不改寫原資料。',''];
@@ -44,5 +50,5 @@
     if(include&&!equal(J.parse(reply.files['lyrics.json'],{maxBytes:2*1024*1024,label:'完整歌詞包'}),source))throw Error('格式報告附帶的完整歌詞包與本次來源不一致；目前內容保留');
     return structuredClone(expected);
   }
-  const api={review,markdown,files,inspect,sourceBytes};if(node)module.exports=api;else root.MusicLyricsExportReview=api;
+  const api={analyze,review,markdown,files,inspect,sourceBytes};if(node)module.exports=api;else root.MusicLyricsExportReview=api;
 })(typeof globalThis==='object'?globalThis:this);

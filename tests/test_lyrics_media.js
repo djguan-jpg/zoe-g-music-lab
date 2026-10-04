@@ -119,6 +119,7 @@ function standalone(data=provided.data){
   const nodes=new Map(),node=id=>{if(!nodes.has(id))nodes.set(id,{value:'',textContent:'',disabled:false,classList:{toggle:()=>{}}});return nodes.get(id);};
   const context={data:structuredClone(data),MusicLyricsMedia:Media,MusicLyricsPackage:Package,LyricTime:require('../musiclab/assets/lyric-time.js'),
     document:{getElementById:node},rows:{addEventListener:()=>{}},collect:()=>context.data.cues,render:()=>{},tick:()=>{},message:()=>{}};
+  context.exportController=require('../musiclab/assets/lyrics-offline-export.js').createController({onView:()=>{},focus:()=>false});context.exportController.accept(context.data);
   vm.createContext(context);vm.runInContext(preview.slice(start,end),context);
   const a=preview.indexOf('function apply(){'),b=preview.indexOf('function tick()',a);vm.runInContext(preview.slice(a,b),context);
   return {context,nodes,controller:vm.runInContext('media',context),duration:node('duration')};
@@ -129,7 +130,7 @@ test('actual standalone comparison and apply preserve provided package despite d
   assert.match(h.nodes.get('media-note').textContent,/不同/);
 });
 test('actual standalone explicit adoption and duration undo preserve cue data through apply',()=>{
-  const h=standalone();h.controller.select('blob:a');h.controller.loaded('blob:a',4);h.controller.adopt();h.context.apply();
+  const h=standalone();h.controller.select('blob:a');h.controller.loaded('blob:a',4);h.controller.adopt();assert.equal(h.context.exportController.view().stale,true);h.context.apply();assert.equal(h.context.exportController.view().stale,false);
   assert.equal(h.context.data.duration,4);assert.deepEqual(h.context.data.cues,provided.data.cues);assert.match(h.context.data.review_notes[0],/總長已更改/);
   h.controller.undo();h.context.apply();assert.equal(h.context.data.duration,10);assert.deepEqual(h.context.data.cues,provided.data.cues);
 });

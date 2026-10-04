@@ -1,6 +1,6 @@
 # ZOE. G Music Lab
 
-目前版本 **v0.55.0**：歌詞建立與帶時間匯入現在核對完整 preview.html：內嵌來源、标题、樣式、共用模組及執行程式必須符合本次完整歌詞與目前安裝的固定範本。錯來源／空預覽／程式改動拒絕，保留原表格與成果，正常重試可完成。Python 與瀏覽器共用同一範本，合成樣本輸出與 v54 逐 bytes 相同。463 Python／704 JavaScript／58 語法／4 Skills、原生三寬度與 v54 ZIP457／691還原通過。產品55／明確交付來源38–55，13／18工具、Agent1／draft3／review1／source1保持；內部 preview-template1 獨立。 見[契約](docs/LYRICS-PREVIEW.md)、[QA](docs/QA-v0.55.0.md)、[交接](docs/HANDOFF-v0.55.0.md)。
+目前版本 **v0.56.0**：獨立 preview.html 現在沿用工作台的格式保留規則，提醒 LRC 句首時間標籤與 SRT 空白句風險，按提醒可定位目前歌詞。編修、刪除、新增、播放位置及總長調整會停用舊定位；套用後重新檢查。全部句子計數、畫面前20項明示截斷，零提醒也建議保存完整 JSON。同步純規則／控制器／DOM分層，沒有網路或WebCrypto依賴。修正差異報告漏接受v54來源；四工作台真ZIP覆蓋明確來源38–56。465 Python／713 JavaScript／60語法／4 Skills、原生驗收與v55 ZIP463／704還原通過。 見[契約](docs/LYRICS-OFFLINE-EXPORT.md)、[QA](docs/QA-v0.56.0.md)、[交接](docs/HANDOFF-v0.56.0.md)。
 
 上一輪 v0.51.0：SRT 保留每行空白與 Unicode 原字元，實際多行仍明確以 / 合成單句；原排版保留原檔，空白句用版本1 JSON保存。獨立解析層以整數毫秒核對時鐘，瀏覽器從 LRC／SRT 原文核對回應與文字輸出。441 Python／654 JavaScript／54 syntax／4 Skills、原生預覽／套用／撤回／匯出及 v50 ZIP 還原通過。見[契約](docs/LYRICS-SRT.md)、[QA](docs/QA-v0.51.0.md)、[交接](docs/HANDOFF-v0.51.0.md)。
 
