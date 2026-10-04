@@ -1,5 +1,9 @@
 # 分層與版本契約
 
+## v0.40 精確文字比較與有界預覽
+
+delivery_review pure validation／exact-name-byte比較與SHA→application→CLI／JSON-lines／MCP；HTTP binary inspection沿既有入口。browser delivery-review.js同契約，以真Python fixture核對；controller局部候選在非同步比較後查最新token／scope／revision／result epoch／media才發布。DOM只顯示兩份原文、缺檔、換行計數與有界摘錄，原wire／files保持。container width640px才並排，側欄上下；比較不合併或改表單。comparison1獨立、12／17 tools保持，明確producer／inspector／browser支持38／39／40，未知拒絕。見[契約](DELIVERY-COMPARISON.md)。
+
 ## v0.39 文字交付回讀與限定撤回
 
 純delivery_inspect限制bytes／中央目錄後讀原文字，重用原版本delivery_package producer精確重建核對，不解壓、不執行HTML。application供CLI／固定啟動來源Agent／MCP與binary HTTP；Agent預設metadata、明確小型files JSON≤512KiB。browser有界原清單probe＋完整回覆／來源／SHA核對controller→DOM；app只接bundle／revision／media。原label與display note分開，撤回只保存必要舊bundle並以結果epoch防止覆蓋後續成果。12／17 tools、inspection1／package1／Agent1／draft3獨立；known工具38／39明確枚舉，未來升版同步producer／inspector／browser與測試。見[契約](DELIVERY-INSPECTION.md)。

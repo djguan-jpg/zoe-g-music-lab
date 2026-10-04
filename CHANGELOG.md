@@ -1,5 +1,11 @@
 # 迭代說明
 
+## v0.40.0 — 2026-10-04
+
+- ZIP替換前新增精確文字差異／新增變更移除相同／兩份原文與原換行計數；長檔有界摘錄但載入下載全文，按實際面板寬度排版，表單與音檔保持。
+- pure Python比較／application／CLI、JSON-lines與MCP；browser同契約model／最新候選controller／literal DOM，HTTP既有inspection核對保持。baseline明確提供scope／files，0–64檔／8MiB、聯集128；comparison1與inspection1／package1／Agent1／draft3獨立，12／17工具保持。
+- 349Python／546JS／43syntax／4Skill及diff，新增9Python／15JS；四scope真fixture／Agent／MCP、原生五包下载逐bytes相同、原WAV SHA／40000字全文／Enter撤回與390／1024／1800px通過。v39指定ZIP340／531還原；private PR／指定source封裝／Release／遠端bytes與latest3／typed run維護依收據。
+
 ## v0.39.0 — 2026-10-04
 
 - 補齊下載ZIP後無法接回工作台的缺口：四scope原文字ZIP核對／预覽／明確載入／限定撤回，表單與已選音檔保持。讀取中取消、晚回應與跨scope保護，200字原說明再封裝。
