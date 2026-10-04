@@ -101,6 +101,14 @@
 
 ## v0.38 本輪文字交付
 
+以下v38章節為當輪契約；v39新增delivery_inspect後基本12／啟庫17。
+
 - delivery_package純來源／manifest1／確定性ZIP、application、CLI排他filesystem／HTTP有界staging／Agent-MCP及browser controller／DOM分層。1–64檔、8MiB文字、32MiB封套，平面可攜text names；不新增媒體／路徑／模型／自動寫檔能力。
 - Agent預設metadata；明確include_archive且ZIP≤512KiB才inline，傳輸行2MiB保持，基本11／啟庫16工具。needs_review=true；封裝不冒充創作／媒體／權利接受，product0.38／交付schema1／protocol1／draft3獨立。
-- browser完整source／revision／scope／dirty核對及逐檔摘要，未知／不符／late拒絕並取消自身有效ID；busy停用、原輸入／其他台／媒體保持，清單不進草稿。HTTP每類最多2slot／60秒／take一次／SHA，discard／expire／close只清自身檔且保留未知檔；不新增auth或常駐程序。CLI默认拒覆寫，--overwrite才替換明確目的ZIP。
+- browser完整source／revision／scope／dirty核對及逐檔摘要，未知／不符／late拒絕並取消自身有效ID；busy停用、原輸入／其他台／媒體保持，清單不進草稿。HTTP每類最多2slot／60秒／take一次／SHA，discard／expire／close只清自身檔且保留未知檔；不新增auth或常駐程序。CLI預設拒覆寫，--overwrite才替換明確目的ZIP。
+
+## v0.39 文字ZIP接續
+
+- delivery_inspect共用pure bounded canonical reader，不解壓／不執行HTML；CLI只寫指定摘要，Agent／MCP啟動時--delivery-zip選來源，JSON不得選路徑。預設metadata，include_files明確選擇且序列化JSON UTF8≤512KiB。
+- browser先讀選定ZIP原清單，與自身bytes／SHA及server完整逐檔回覆核對；probe不冒充完整CRC核對。選檔→預覽→明確載入成果，表單／media保留，限定undo不覆蓋後續結果。原label與display note分開。
+- inspection1／package1／Agent1／draft3獨立；基本12／啟庫17。只接受明確工具38／39，升產品版本先同步producer／inspector／browser支援表與契約測試，不自動接受未知版本。SHA／清單不驗證作者、權利或平台創始身分。

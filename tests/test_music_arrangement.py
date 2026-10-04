@@ -52,6 +52,6 @@ class MusicArrangementTests(unittest.TestCase):
             self.assertEqual(response.status,200);self.assertEqual(response.read(),(ROOT/'web/music-arrangement.js').read_bytes())
             c.request('GET','/');response=c.getresponse();html=response.read().decode('utf-8')
             self.assertLess(html.index('/music-arrangement.js'),html.index('/app.js'))
-            self.assertIn('id="section-order"',html);c.close();self.assertEqual(len(available_operations()),11)
+            self.assertIn('id="section-order"',html);c.close();self.assertEqual(len(available_operations()),12)
         finally:
             server.shutdown();thread.join(5);server.server_close();self.assertFalse(thread.is_alive())

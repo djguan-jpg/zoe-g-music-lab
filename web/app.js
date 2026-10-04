@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 'use strict';
 const $ = id => document.getElementById(id);
-const state = {tab:'music', examples:null, files:{}, bundles:{}, revisions:{}, music:[], shots:[], cues:[], audioUrl:null, audioContext:null, waveform:null, busy:false,deliveryPackage:null,deliveryNavigation:null,audioAcceptance:null};
+const state = {tab:'music', examples:null, files:{}, bundles:{}, revisions:{}, music:[], shots:[], cues:[], audioUrl:null, audioContext:null, waveform:null, busy:false,resultRevisions:{},deliveryImport:null,deliveryPackage:null,deliveryNavigation:null,audioAcceptance:null};
 const rawFields=MusicRawFieldsDom.createAdapter(document);
 const readValue=control=>rawFields.read(control);
 const writeValue=(control,value)=>rawFields.write(control,value);
@@ -94,19 +94,19 @@ function undoDeletion(scope){
   $(scope+'-delete-select').onchange=()=>refreshDeletionButton(scope);
 });
 const waveTask = MusicEditor.createLatestTask();
-function say(message,error=false){$('status').textContent=message;$('status').className=error?'error':'';state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();state.deliveryPackage?.refresh();if(state.tab==='storyboard'){$('shot-status').textContent=message;$('shot-status').classList.toggle('error',error);}}
+function say(message,error=false){$('status').textContent=message;$('status').className=error?'error':'';state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();state.deliveryPackage?.refresh();state.deliveryImport?.refresh();if(state.tab==='storyboard'){$('shot-status').textContent=message;$('shot-status').classList.toggle('error',error);}}
 function esc(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function field(value,label,type='text',wide=false){return `<input type="text" value="${esc(value)}" aria-label="${esc(label)}" class="${wide?'wide':''}" ${type==='number'?'inputmode="decimal" data-raw-number="true"':''}>`;}
 async function api(route,data,binary=false){const response=await fetch(route,{method:'POST',headers:{'Content-Type':binary?'application/octet-stream':'application/json'},body:binary?data:JSON.stringify(data)});const result=await response.json();if(!response.ok){const error=Error(result.error||'操作未完成');error.status=response.status;throw error;}return result;}
 async function run(button,task,scope=state.tab){
   if(state.busy)return;
   const tab=state.tab,revision=state.revisions[scope]||0,current=()=>state.tab===tab&&(state.revisions[scope]||0)===revision;
-  say('處理中，請稍候');state.busy=true;button.disabled=true;timingControls();state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();state.deliveryPackage?.refresh();
+  say('處理中，請稍候');state.busy=true;button.disabled=true;timingControls();state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();state.deliveryPackage?.refresh();state.deliveryImport?.refresh();
   try{await task(current);}catch(error){if(current())say(error.message,true);}
-  finally{if(!current()){markDirty(scope);say('處理期間輸入有修改，請重新建立成果');}state.busy=false;button.disabled=false;timingControls();state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();state.deliveryPackage?.refresh();}
+  finally{if(!current()){markDirty(scope);say('處理期間輸入有修改，請重新建立成果');}state.busy=false;button.disabled=false;timingControls();state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();state.deliveryPackage?.refresh();state.deliveryImport?.refresh();}
 }
-function setFiles(files,note,dirty=false,inputIndependent=false){state.files=files;state.bundles[state.tab]={files,note,dirty,inputIndependent};const select=$('output-file');select.replaceChildren();Object.keys(files).forEach(name=>{const option=document.createElement('option');option.value=name;option.textContent=name;select.append(option);});select.disabled=false;$('download').disabled=dirty;$('output-note').textContent=note+(dirty?'（有修改尚未重新驗證）':'');previewOutput();state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();state.deliveryPackage?.refresh();}
-function markDirty(tab){draftRetention.refresh(tab);if(tab==='music'){arrangementController?.refresh();musicReadyController?.refresh();}if(tab==='storyboard'){storyboardDurationController?.refresh();storyboardReadyController?.refresh();storyboardTimingController?.refresh();}if(['music','storyboard'].includes(tab))stalePlanningReview(tab);if(tab==='audio')staleAudioReview();if(tab==='lyrics'){staleLyricsReview();lyricsReviewController?.invalidate();lyricsMediaController?.refresh();const pending=timingReading||timingReady;timingController?.invalidate();if(pending)timingSay('歌詞有修改，請重新預覽整批校時。');}state.revisions[tab]=(state.revisions[tab]||0)+1;const saved=state.bundles[tab];if(!saved||saved.inputIndependent){state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();state.deliveryPackage?.refresh();return;}saved.dirty=true;if(state.tab===tab){$('download').disabled=true;$('output-note').textContent=saved.note+'（有修改尚未重新驗證）';}state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();state.deliveryPackage?.refresh();}
+function setFiles(files,note,dirty=false,inputIndependent=false,deliveryLabel=null){state.resultRevisions[state.tab]=(state.resultRevisions[state.tab]||0)+1;state.files=files;state.bundles[state.tab]={files,note,dirty,inputIndependent,...(deliveryLabel===null?{}:{deliveryLabel})};const select=$('output-file');select.replaceChildren();Object.keys(files).forEach(name=>{const option=document.createElement('option');option.value=name;option.textContent=name;select.append(option);});select.disabled=false;$('download').disabled=dirty;$('output-note').textContent=note+(dirty?'（有修改尚未重新驗證）':'');previewOutput();state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();state.deliveryPackage?.refresh();state.deliveryImport?.refresh();}
+function markDirty(tab){draftRetention.refresh(tab);if(tab==='music'){arrangementController?.refresh();musicReadyController?.refresh();}if(tab==='storyboard'){storyboardDurationController?.refresh();storyboardReadyController?.refresh();storyboardTimingController?.refresh();}if(['music','storyboard'].includes(tab))stalePlanningReview(tab);if(tab==='audio')staleAudioReview();if(tab==='lyrics'){staleLyricsReview();lyricsReviewController?.invalidate();lyricsMediaController?.refresh();const pending=timingReading||timingReady;timingController?.invalidate();if(pending)timingSay('歌詞有修改，請重新預覽整批校時。');}state.revisions[tab]=(state.revisions[tab]||0)+1;const saved=state.bundles[tab];if(!saved||saved.inputIndependent){state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();state.deliveryPackage?.refresh();state.deliveryImport?.refresh();return;}saved.dirty=true;if(state.tab===tab){$('download').disabled=true;$('output-note').textContent=saved.note+'（有修改尚未重新驗證）';}state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();state.deliveryPackage?.refresh();state.deliveryImport?.refresh();}
 document.querySelector('.editor').addEventListener('input',event=>{
   if(event.target.dataset.viewControl||event.target.id==='lyrics-file')return;
   const panel=event.target.closest('.panel');if(!panel)return;
@@ -115,11 +115,11 @@ document.querySelector('.editor').addEventListener('input',event=>{
   if(['lyrics-source','lyrics-format'].includes(event.target.id))lyricsImportController?.cancel();
   if(panel.id==='lyrics'&&event.target.closest('#cues'))tick();
 });
-function clearOutput(){state.files={};$('output-file').replaceChildren(new Option('尚無檔案',''));$('output-file').disabled=true;$('download').disabled=true;$('output-content').value='';$('output-note').textContent='建立工作包後，實際成果會出現在這裡。';state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();state.deliveryPackage?.refresh();}
+function clearOutput(){state.resultRevisions[state.tab]=(state.resultRevisions[state.tab]||0)+1;state.files={};$('output-file').replaceChildren(new Option('尚無檔案',''));$('output-file').disabled=true;$('download').disabled=true;$('output-content').value='';$('output-note').textContent='建立工作包後，實際成果會出現在這裡。';state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();state.deliveryPackage?.refresh();state.deliveryImport?.refresh();}
 function previewOutput(){const name=$('output-file').value;$('output-content').value=state.files[name]??'';$('export-name').value=name;$('export-content').value=state.files[name]??'';}
 $('output-file').onchange=previewOutput;
 $('export-form').onsubmit=()=>{say('已送出本機下載，請確認瀏覽器保存的檔案。');};
-document.querySelectorAll('[data-tab]').forEach(button=>button.onclick=()=>{if(state.busy){say('目前操作尚未完成，請稍候');return;}state.tab=button.dataset.tab;document.querySelectorAll('.panel').forEach(section=>section.hidden=section.id!==state.tab);document.querySelectorAll('[data-tab]').forEach(b=>{b.classList.toggle('active',b===button);if(b===button)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});const saved=state.bundles[state.tab];if(saved)setFiles(saved.files,saved.note,saved.dirty,saved.inputIndependent);else clearOutput();say(saved?.dirty?'有修改尚未重新驗證，請重新建立成果':'準備開始');});
+document.querySelectorAll('[data-tab]').forEach(button=>button.onclick=()=>{if(state.busy){say('目前操作尚未完成，請稍候');return;}state.tab=button.dataset.tab;document.querySelectorAll('.panel').forEach(section=>section.hidden=section.id!==state.tab);document.querySelectorAll('[data-tab]').forEach(b=>{b.classList.toggle('active',b===button);if(b===button)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});const saved=state.bundles[state.tab];if(saved)setFiles(saved.files,saved.note,saved.dirty,saved.inputIndependent,saved.deliveryLabel);else clearOutput();say(saved?.dirty?'有修改尚未重新驗證，請重新建立成果':'準備開始');});
 function renderSections(sections,ids){const keys=rowIds(sections,ids);$('arrangement').innerHTML=sections.map((s,i)=>`<tr data-history-id="${esc(keys[i])}"><td>${field(s.name,`段落 ${i+1} 名稱`)}</td><td>${field(s.bars,`段落 ${i+1} 小節`,'number')}</td><td>${field(s.energy,`段落 ${i+1} 能量`,'number')}</td><td>${field(s.focus,`段落 ${i+1} 任務`,'text',true)}</td><td>${field(s.texture,`段落 ${i+1} 聲音`,'text',true)}</td><td><button type="button" data-remove-section="${i}" aria-label="刪除段落 ${i+1}">刪除</button></td></tr>`).join('');[...$('arrangement').children].forEach((row,i)=>['name','bars','energy','focus','texture'].forEach((key,j)=>writeValue(row.querySelectorAll('input')[j],sections[i][key])));$('arrangement').querySelectorAll('[data-remove-section]').forEach((b,i)=>b.onclick=()=>deleteEntry('arrangement',i));arrangementController?.refresh();}
 function requirementValues(id){return [...$(id).querySelectorAll('textarea')].map(input=>readValue(input));}
 function clearRequirementError(id){
@@ -666,7 +666,7 @@ function capturePanel(panel){
 }
 function captureDraft(){
   const panels=Object.fromEntries(Object.keys(MusicEditor.draftFields).map(panel=>[panel,capturePanel(panel)]));
-  return {format:'zoe-music-lab-draft',schema_version:3,tool_version:'0.38.0',saved_at:new Date().toISOString(),tab:state.tab,panels};
+  return {format:'zoe-music-lab-draft',schema_version:3,tool_version:'0.39.0',saved_at:new Date().toISOString(),tab:state.tab,panels};
 }
 function applyDraft(draft){
   storyboardDurationController?.clear();
@@ -1002,7 +1002,14 @@ async function setupLibrary(){
 }
 state.deliveryNavigation=MusicDeliveryNavigationDom.createAdapter(document,()=>({scope:state.tab,names:Object.keys(state.files),busy:state.busy,dirty:!!state.bundles[state.tab]?.dirty,message:$('status').textContent,error:$('status').classList.contains('error')}));
 state.audioAcceptance=MusicAudioAcceptanceDom.createAdapter(document,{readValue,writeValue,events:window,allowed:()=>!state.busy,onChange:()=>markDirty('audio'),onError:error=>say(error.message,true)});
-state.deliveryPackage=MusicDeliveryPackageDom.createAdapter(document,{capture:()=>({scope:state.tab,label:state.bundles[state.tab]?.note||'',files:state.files,busy:state.busy,dirty:!!state.bundles[state.tab]?.dirty}),run,request:payload=>api('/api/delivery-package/prepare',payload),discard:id=>api('/api/delivery-package/discard',{id}),say});
+state.deliveryPackage=MusicDeliveryPackageDom.createAdapter(document,{capture:()=>({scope:state.tab,label:state.bundles[state.tab]?.deliveryLabel??state.bundles[state.tab]?.note??'',files:state.files,busy:state.busy,dirty:!!state.bundles[state.tab]?.dirty}),run,request:payload=>api('/api/delivery-package/prepare',payload),discard:id=>api('/api/delivery-package/discard',{id}),say});
+state.deliveryImport=MusicDeliveryImportDom.createAdapter(document,{
+  capture:()=>({scope:state.tab,revision:state.revisions[state.tab]||0,resultRevision:state.resultRevisions[state.tab]||0,bundle:state.bundles[state.tab]||null,busy:state.busy,media:[$('audio-file').files[0]||null,$('lyrics-audio').files[0]||null]}),
+  read:async file=>{const raw=await file.arrayBuffer();if(raw.byteLength!==file.size||raw.byteLength>MusicDeliveryPackage.maxArchive)throw Error('選定ZIP大小不符');const digest=new Uint8Array(await crypto.subtle.digest('SHA-256',raw));const sha256=Array.from(digest,v=>v.toString(16).padStart(2,'0')).join('');return {selected:{bytes:raw.byteLength,sha256,manifest:MusicDeliveryArchive.manifest(raw)},wire:await api('/api/delivery-inspect',raw,true)};},
+  replace:wire=>{const m=wire.data.manifest;setFiles(wire.files,`匯入ZIP · ${m.label||m.scope} · 僅核對文字檔案，表單保持`,false,true,m.label);say('已載入ZIP文字成果；表單與音檔保持，創作及媒體尚待驗收。');},
+  restore:(bundle,revision)=>{if(bundle)setFiles(bundle.files,bundle.note,bundle.dirty||(!bundle.inputIndependent&&(state.revisions[state.tab]||0)!==revision),bundle.inputIndependent,bundle.deliveryLabel);else{delete state.bundles[state.tab];clearOutput();}say('已撤回成果匯入；後續表單編修與音檔保持。');},
+  onError:error=>say(error.message,true),onReady:()=>say('ZIP核對完成；尚未載入，請確認文字成果與來源。')
+});
 async function initialize(){draftRetention.initialize(captureDraft());try{const response=await fetch('/api/examples');if(!response.ok)throw Error('範例讀取失敗');state.examples=await response.json();
   if(draftRetention.status().atInitial){loadMusic();loadMv();writeValue($('lyrics-source'),'[00:00.000]空房剩一圈淡色的牆\n[00:04.000]紙箱裡裝不下那句話\n[00:08.000]我把聲音留在樓梯上\n[00:12.000]這次換我回答');draftRetention.initialize(captureDraft());say('已載入本次原創合成範例，修改後開始');}
   else say('載入期間的編修已保留；需要範例時可明確按「載入原創範例」。');drawWave();setupLibrary();}catch(e){say(e.message,true);}}

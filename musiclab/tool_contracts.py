@@ -192,6 +192,9 @@ def payload_schema(operation):
                                     {"required": ["content"], "not": {"anyOf": [{"required": [key]} for key in ('cues', 'package', 'allow_legacy')]}},
                                     object_schema({'package': {'anyOf': [lyrics_package_schema(), lyrics_package_schema(legacy=True)]},
                                                    'allow_legacy': {'type': 'boolean'}}, ['package'], additionalProperties=False)])
+    if operation == 'delivery_inspect':
+        return {"type":"object","additionalProperties":False,"properties":{
+            "include_files":{"type":"boolean","default":False,"description":"Return original text files only when serialized file JSON <=512 KiB; no extraction or automatic write"}}}
     if operation == 'delivery_package':
         return object_schema({'scope': {'enum': ['music','storyboard','lyrics','audio']},
                               'label': {'type':'string','maxLength':200},

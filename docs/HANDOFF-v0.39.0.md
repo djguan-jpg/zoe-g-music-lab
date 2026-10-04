@@ -2,7 +2,7 @@
 
 四工作台可接續本工具v38／v39文字交付ZIP：選檔核對原清單與全部文字，預覽後明確載入，只替換成果。限定撤回保留後續表單與音檔，取消／晚回應／跨scope保持目前內容。CLI／Agent／MCP共用有界不解壓的inspector，基本12／啟庫17工具，metadata預設、原文include_files明確選擇。交付schema1／inspection1／Agent1／draft3獨立，未呼叫AI。
 
-見[使用與分層](docs/DELIVERY-INSPECTION.md)及[QA](docs/QA-v0.39.0.md)。340Python／531JS／4Skill／42syntax及diff通過；四scope舊ZIP→載入→真ZIP下載逐檔相同，另200字原label，共5包CRC／SHA核對；原合成WAV／表單保持、4秒late／取消／錯誤label／跨scope、390px Enter與1366px可見清單DOM核對。v38指定ZIP328／491還原通過。
+見[使用與分層](DELIVERY-INSPECTION.md)及[QA](QA-v0.39.0.md)。340Python／531JS／4Skill／42syntax及diff通過；四scope舊ZIP→載入→真ZIP下載逐檔相同，另200字原label，共5包CRC／SHA核對；原合成WAV／表單保持、4秒late／取消／錯誤label／跨scope、390px Enter與1366px可見清單DOM核對。v38指定ZIP328／491還原通過。
 
 ## 分支與恢復
 

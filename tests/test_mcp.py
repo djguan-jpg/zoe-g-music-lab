@@ -56,7 +56,7 @@ class MCPTests(unittest.TestCase):
             self.assertIn("接入測試", replies[1]["result"]["structuredContent"]["files"]["lyrics.lrc"])
             self.assertEqual(list(Path(folder).iterdir()), [])
 
-    def test_real_subprocess_eleven_tools_match_application_and_exit_on_eof(self):
+    def test_real_subprocess_twelve_tools_match_application_and_exit_on_eof(self):
         with tempfile.TemporaryDirectory() as folder:
             source = Path(folder) / "synthetic.wav"
             with wave.open(str(source), "wb") as wav:
@@ -65,6 +65,8 @@ class MCPTests(unittest.TestCase):
                 wav.setframerate(48000)
                 wav.writeframes(b"\x00\x10" * 480)
             original = hashlib.sha256(source.read_bytes()).hexdigest()
+            from musiclab.delivery_package import prepare
+            delivery=Path(folder)/'selected-delivery.zip';delivery.write_bytes(prepare({'scope':'music','files':{'plan.md':'原創文字'}}).archive)
             cases = [("music_plan", "music", json.loads((ROOT / "examples/first-light-music.json").read_text(encoding="utf-8"))),
                      ("storyboard_plan", "storyboard", json.loads((ROOT / "examples/first-light-mv.json").read_text(encoding="utf-8"))),
                      ("lyrics_validate", "lyrics", {"cues": [{"start": 0, "end": 3, "text": "原創"}]}),
@@ -75,11 +77,12 @@ class MCPTests(unittest.TestCase):
                      ("music_review", "music_review", json.loads((ROOT / "examples/unfinished-song-review.json").read_text(encoding="utf-8"))),
                      ("storyboard_review", "storyboard_review", json.loads((ROOT / "examples/unfinished-storyboard-review.json").read_text(encoding="utf-8"))),
                      ("storyboard_timing_review", "storyboard_timing_review", json.loads((ROOT / "examples/unfinished-storyboard-timing-review.json").read_text(encoding="utf-8"))),
-                     ("delivery_package", "delivery_package", {"scope":"music","files":{"plan.md":"原創文字"}})]
+                     ("delivery_package", "delivery_package", {"scope":"music","files":{"plan.md":"原創文字"}}),
+                     ("delivery_inspect", "delivery_inspect", {})]
             requests = [initialize(), {"jsonrpc": "2.0", "method": "notifications/initialized"},
                         message("tools/list", request_id=2)]
             requests.extend(call(name, payload, i + 3) for i, (name, _, payload) in enumerate(cases))
-            process = subprocess.run([sys.executable, "-X", "utf8", str(ROOT / "music_lab_mcp.py"), "--audio", str(source)],
+            process = subprocess.run([sys.executable, "-X", "utf8", str(ROOT / "music_lab_mcp.py"), "--audio", str(source), "--delivery-zip", str(delivery)],
                                      input="".join(json.dumps(item, ensure_ascii=False) + "\n" for item in requests),
                                      capture_output=True, encoding="utf-8", cwd=folder, timeout=30)
             self.assertEqual(process.returncode, 0, process.stderr)
@@ -92,10 +95,10 @@ class MCPTests(unittest.TestCase):
             for reply, (_, operation, payload) in zip(replies[2:], cases):
                 self.assertFalse(reply["result"]["isError"])
                 data = reply["result"]["structuredContent"]
-                self.assertEqual(data, build(operation, payload, audio_source=source).wire())
+                self.assertEqual(data, build(operation, payload, audio_source=source, delivery_source=delivery).wire())
                 self.assertEqual(json.loads(reply["result"]["content"][0]["text"]), data)
             self.assertEqual(hashlib.sha256(source.read_bytes()).hexdigest(), original)
-            self.assertEqual([file.name for file in Path(folder).iterdir()], ["synthetic.wav"])
+            self.assertEqual(sorted(file.name for file in Path(folder).iterdir()), ["selected-delivery.zip", "synthetic.wav"])
 
     def test_unknown_version_rejects_and_can_retry_supported_version(self):
         session = Session()

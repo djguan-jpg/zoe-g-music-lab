@@ -77,3 +77,5 @@ td input[data-raw-number]{width:63px}.raw-value-note{display:block;font-size:.78
 
 /* Complete text delivery is distinct from the selected-file action. */
 #delivery-package-download{width:100%;margin-top:16px;white-space:normal;text-align:left;line-height:1.6}#delivery-package-note{overflow-wrap:anywhere;margin:8px 0 16px}
+
+.delivery-import{margin:18px 0;padding:14px;border:1px solid var(--line);border-radius:8px;min-width:0}.delivery-import h3{font-size:15px;margin-top:0}.delivery-import .actions{display:flex;gap:8px;flex-wrap:wrap}.delivery-import button{max-width:100%;white-space:normal}.delivery-import ul{padding-left:18px;max-height:220px;overflow:auto;font-size:12px;line-height:1.65;overflow-wrap:anywhere}#delivery-import-source{white-space:pre-wrap;overflow-wrap:anywhere}.delivery-import input{max-width:100%;min-width:0}
