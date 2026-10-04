@@ -22,4 +22,5 @@ class ReportDownloadTests(unittest.TestCase):
    self.assertEqual(self.post(fields)[0],400)
  def test_legacy_export_remains_literal_and_report_asset_is_allowlisted(self):
   text='literal "quoted"\r\n';self.assertEqual(self.post({'name':'old.md','content':text}),(200,text.encode()))
-  with urllib.request.urlopen(self.url+'/delivery-report.js',timeout=10) as response:self.assertEqual(response.status,200);self.assertIn(b'MusicDeliveryReport',response.read())
+  for name,marker in [('delivery-report.js',b'MusicDeliveryReport'),('text-download.js',b'MusicTextDownload'),('text-download-dom.js',b'MusicTextDownloadDom')]:
+   with urllib.request.urlopen(self.url+'/'+name,timeout=10) as response:self.assertEqual(response.status,200);self.assertIn(marker,response.read())

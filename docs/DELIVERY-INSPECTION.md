@@ -1,5 +1,7 @@
 # 接續文字交付 ZIP（v0.39）
 
+v0.42成果預覽有界但原文下載與ZIP保持全文，browser共用native bytes；來源工具明確38–42，未知拒絕，Agent契約及上限保持。見[目前下載契約](TEXT-DOWNLOAD.md)。
+
 v0.41 include_report明確要求baseline、互斥include_files；CLI與browser可保存差異報告，launcher可帶--delivery-zip／--audio。來源工具明確支援38／39／40／41。見[報告契約](DELIVERY-REPORT.md)。
 
 v0.40新增載入前原文／精確差異審閱與CLI／Agent／MCP明確baseline，工具支援38／39／40。見[目前比較契約](DELIVERY-COMPARISON.md)；下方保留v39初次回讀契約。

@@ -6,7 +6,7 @@ const fixtures=JSON.parse(execFileSync('python',['-X','utf8','-c',`import base64
 from musiclab.delivery_package import prepare,MANIFEST_NAME
 rows=[]
 for scope in ['music','storyboard','lyrics','audio']:
- for version in ['0.38.0','0.39.0','0.40.0','0.41.0']:
+ for version in ['0.38.0','0.39.0','0.40.0','0.41.0','0.42.0']:
   p=prepare({'scope':scope,'label':'來源<label>\\n原文','files':{'source.md':'甲\\n乙'}},tool_version=version)
   rows.append({'raw':base64.b64encode(p.archive).decode(),'manifest':p.manifest})
 p=prepare({'scope':'music','files':{'source.md':'甲'}})

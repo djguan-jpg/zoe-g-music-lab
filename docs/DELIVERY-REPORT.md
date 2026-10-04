@@ -1,5 +1,7 @@
 # 可保存的交付差異報告（v0.41）
 
+v0.42 browser報告改用共用native UTF-8 bytes，不再提交hidden form；舊HTTP json-string transport仍相容。下載保持current pending來源，CLI／Agent include_report契約保持，明確來源38–42。見[原文下載](TEXT-DOWNLOAD.md)；以下v41為初版契約。
+
 選取文字交付 ZIP，核對完成後可按「下載差異 JSON」或「下載差異 Markdown」，保存載入前的審閱摘要。報告包含來源 ZIP 的 bytes／SHA-256、原始 manifest、完整差異計數與每檔兩側 bytes／SHA；不含成果原文、音檔、來源路徑或時間戳。報告不修改表單或套用成果，仍須另外明確載入。修改表單／成果、更換媒體、切換工作台、取消或更換選檔後，舊報告下載停用；重新選 ZIP 核對。
 
 JSON 保留來源說明原字串；Markdown 將 HTML、Markdown 語法與控制字元顯示為字面文字。來源的說明與檔名仍可能含使用者提供的資訊，分享前請自己確認。檔案摘要不代表作者、素材權利、實唱／實聽或媒體品質驗收。

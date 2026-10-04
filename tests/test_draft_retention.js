@@ -101,22 +101,25 @@ test('production startup keeps edits made while examples load, including an alre
   vm.runInNewContext(source.slice(start,end)+'\nthis.init=initialize;',context);const pending=context.init();h.set(draft('載入期間自寫'));h.guard.refresh('music');h.guard.retain(h.current(),{kind:'library'});
   resolve({ok:true,json:async()=>({music:{}})});await pending;assert.equal(loaded,0);assert.equal(h.current().panels.music.fields['music-title'],'載入期間自寫');assert.match(notice,/編修已保留/);
 });
-test('native downloads stay in a dedicated frame and retention assets load before the app',()=>{
+test('native text download and retention assets load before the app; binary frame stays isolated',()=>{
   const html=fs.readFileSync(require.resolve('../web/index.html'),'utf8');
-  for(const name of ['draft-export','library-export','export-form'])assert.match(html,new RegExp('<form id="'+name+'"[^>]*target="export-delivery"'));
+  for(const name of ['draft-export','library-export','export-form'])assert.match(html,new RegExp('<form id="'+name+'">'));
   assert.match(html,/<iframe name="export-delivery"[^>]*hidden/);assert.match(html,/id="draft-confirm-download" type="button"/);
   assert.ok(html.indexOf('/draft-library.js')<html.indexOf('/draft-retention.js'));assert.ok(html.indexOf('/draft-retention.js')<html.indexOf('/app.js'));
+  assert.ok(html.indexOf('/text-download.js')<html.indexOf('/text-download-dom.js'));assert.ok(html.indexOf('/text-download-dom.js')<html.indexOf('/app.js'));
 });
 test('actual draft export records a submitted snapshot, while an oversized refusal creates no confirmation',()=>{
-  const source=fs.readFileSync(require.resolve('../web/app.js'),'utf8'),start=source.indexOf("$('draft-export').onsubmit="),end=source.indexOf("$('draft-open').onchange=",start);
-  for(const oversized of [false,true]){
+  const source=fs.readFileSync(require.resolve('../web/app.js'),'utf8'),start=source.indexOf("textDownloader.bind($('draft-export')"),end=source.indexOf("$('draft-open').onchange=",start);
+  for(const failure of ['none','oversized','send']){
+    const oversized=failure==='oversized',download=require('../web/text-download.js'),sent=[];
     const h=harness();h.set(draft(oversized?'x'.repeat(1024*1024):'download click'));h.guard.refresh();
     const nodes={'draft-export':{},'draft-content':{value:''},'draft-confirm-download':{}},notes=[];
-    vm.runInNewContext(source.slice(start,end),{$:id=>nodes[id],state:{busy:false},MusicEditor:Editor,captureDraft:h.current,draftRetention:h.guard,TextEncoder,say:message=>notes.push(message)});
+    const textDownloader={bind:(form,options)=>{const c=download.createController({...options,send:prepared=>{if(failure==='send')throw Error('synthetic send refusal');sent.push(Buffer.from(prepared.bytes).toString('utf8'));return true;}});form.onsubmit=event=>{event.preventDefault();return c.download();};}};
+    vm.runInNewContext(source.slice(start,end),{$:id=>nodes[id],state:{busy:false},MusicEditor:Editor,captureDraft:h.current,draftRetention:h.guard,TextEncoder,textDownloader,say:message=>notes.push(message)});
     let refused=false;nodes['draft-export'].onsubmit({preventDefault:()=>refused=true});
-    assert.equal(refused,oversized);assert.equal(h.guard.status().pendingDownload,!oversized);assert.equal(h.guard.status().dirty,true);
-    if(!oversized)assert.equal(JSON.parse(nodes['draft-content'].value).panels.music.fields['music-title'],'download click');
-    else assert.match(notes[0],/超過/);
+    assert.equal(refused,true);assert.equal(h.guard.status().pendingDownload,failure==='none');assert.equal(h.guard.status().dirty,true);
+    if(failure==='none')assert.equal(JSON.parse(sent[0]).panels.music.fields['music-title'],'download click');
+    else assert.match(notes[0],oversized?/超過/:/refusal/);
   }
 });
 test('startup fetch failure still tracks subsequent draft edits instead of disabling retention',async()=>{

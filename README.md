@@ -1,6 +1,6 @@
 # ZOE. G Music Lab
 
-目前版本 **v0.41.0**：ZIP載入前可下載有來源SHA的JSON／Markdown差異報告，下載保持原成果，編修後舊報告停用。CLI／Agent／MCP明確report選項，啟動設定完整帶入選定WAV／ZIP；修正預設寫檔競態與原生form換行。365Python／554JS，四工作台8份真報告下載逐bytes同源通過。見[使用與分層](docs/DELIVERY-REPORT.md)、[QA](docs/QA-v0.41.0.md)、[交接](docs/HANDOFF-v0.41.0.md)。
+目前版本 **v0.42.0**：成果、草稿、保存版本、接受條件與差異報告共用本機原文下載，保持 UTF-8 與換行；8 MiB 成果完整保存，長文預覽有界且明示。365 Python／565 JS、四台13份真原文下載及8 MiB邊界逐 bytes 同來源通過。見[使用與分層](docs/TEXT-DOWNLOAD.md)、[QA](docs/QA-v0.42.0.md)、[交接](docs/HANDOFF-v0.42.0.md)。
 
 ## ZIP原文與差異（v0.40）
 

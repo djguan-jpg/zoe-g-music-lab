@@ -1,6 +1,6 @@
 # v0.42.0 交接與可逆
 
-一般原文下載改為共用 native UTF-8 bytes，修正 form 換行改寫與 2 MiB body 阻止完整成果。五種文字入口不再從 hidden fields／textarea 取原文；成果預覽有界，8 MiB 全文保留。見 [使用與分層](docs/TEXT-DOWNLOAD.md)、[QA](docs/QA-v0.42.0.md)。365 Python／565 JS／46 syntax／4 Skill；前版 v41 ZIP365／554還原通過。
+一般原文下載改為共用 native UTF-8 bytes，修正 form 換行改寫與 2 MiB body 阻止完整成果。五種文字入口不再從 hidden fields／textarea 取原文；成果預覽有界，8 MiB 全文保留。見 [使用與分層](TEXT-DOWNLOAD.md)、[QA](QA-v0.42.0.md)。365 Python／565 JS／46 syntax／4 Skill；前版 v41 ZIP365／554還原通過。
 
 ## 還原與發布
 

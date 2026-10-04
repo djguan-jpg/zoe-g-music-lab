@@ -1,5 +1,9 @@
 # 本機 Agent 接口 v1
 
+## v0.42 Browser 原文下載
+
+Browser文字入口改native UTF-8 bytes，與Agent／MCP分層：沒有新增工具或自動寫檔／路徑／網路能力。12／17與所有schema／inline512KiB／行2MiB保持，producer／inspector／browser來源版本明確38–42，未知拒絕。原文8MiB可由工作台下載或CLI明確ZIP輸出；不因此擴大Agent回覆。見[下載契約](TEXT-DOWNLOAD.md)。
+
 ## v0.41 可保存報告與完整啟動選檔
 
 delivery_inspect payload新增include_report嚴格布林，要求baseline且不能include_files=true；files回兩個固定報告，data保留來源與comparison。report schema1／256KiB合計／128列，不帶成果原文或媒體；default wire與12／17保持，重新discovery。launcher新增--audio／--delivery-zip，只列印絕對設定並驗副檔名，不讀寫／啟動Host；另一cwd真MCP兩工具同源接受，特定Host仍未驗證。CLI --comparison-report寫三檔，default exclusive create拒絕raced-in同名檔，多檔可部分輸出。見[契約](DELIVERY-REPORT.md)。
