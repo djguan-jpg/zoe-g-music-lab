@@ -12,6 +12,7 @@ from pathlib import Path
 from . import __version__
 from .audio import analyze_wav, audio_bundle
 from .delivery_package import prepare as prepare_delivery, descriptor as delivery_descriptor
+from .delivery_inspect import read as read_delivery, descriptor as inspection_descriptor, MAX_INLINE_FILES_BYTES
 from .audio_acceptance import validate as validate_acceptance, prepare as prepare_acceptance, descriptor as acceptance_descriptor
 from .common import json_text
 from .loudness import descriptor as loudness_descriptor
@@ -36,6 +37,7 @@ from .draft_backup import (BACKUP_SCHEMA_VERSION, MAX_BACKUP_BYTES, MAX_EXPANDED
 PROTOCOL_VERSION = 1
 MAX_REQUEST_BYTES = MAX_JSON_BYTES
 OPERATIONS = {
+    "delivery_inspect": "Verify the canonical text delivery ZIP selected at launch; metadata by default, include_files requires JSON files <=512 KiB; no extraction, paths, creative acceptance or model",
     "delivery_package": "Package explicitly provided text files with a SHA-256 manifest; metadata by default, archive_base64 only when include_archive=true and ZIP<=512 KiB; no source paths, media, creative acceptance or model",
     "music": "Song planning and AI task packaging; no model invocation",
     "music_review": "Locate incomplete raw song draft fields and numeric ranges; read-only; no content filling, complete plan acceptance or model",
@@ -73,7 +75,7 @@ class Result:
                          "needs_review": self.needs_review}}
 
 
-def capabilities(draft_library=None, backup_source=None):
+def capabilities(draft_library=None, backup_source=None, delivery_source=None):
     operations = available_operations(draft_library)
     return {"protocol_version": PROTOCOL_VERSION, "version": __version__,
             "license": "PolyForm-Noncommercial-1.0.0",
@@ -97,6 +99,7 @@ def capabilities(draft_library=None, backup_source=None):
             "storyboard_review": storyboard_review_descriptor(),
             "storyboard_timing_review": storyboard_timing_review_descriptor(),
             "delivery_package": {**delivery_descriptor(), "agent_max_request_bytes": MAX_REQUEST_BYTES},
+            "delivery_inspection": {**inspection_descriptor(), "source_selected": delivery_source is not None},
             "audio_acceptance_draft": acceptance_descriptor(),
             "audio_loudness": loudness_descriptor(),
             "storyboard_frames": frames_descriptor(),
@@ -113,11 +116,19 @@ def export_library_backup(draft_library, identifiers=None):
     return export_backup(draft_library, identifiers)
 
 
-def build(operation, payload, *, audio_source=None, draft_library=None, backup_source=None):
+def inspect_delivery(source, include_files=False, *, limit_files=True):
+    if type(include_files) is not bool: raise ValueError('include_files需為布林值')
+    result=read_delivery(source)
+    if include_files and limit_files and len(json_text(result.files).encode('utf-8'))>MAX_INLINE_FILES_BYTES:
+        raise ValueError('文字成果JSON超過512KiB；請回傳摘要或在工作台選檔查看')
+    return Result(result.files if include_files else {}, result.data, True)
+
+
+def build(operation, payload, *, audio_source=None, draft_library=None, backup_source=None, delivery_source=None):
     if operation in LIBRARY_OPERATIONS and draft_library is None:
         raise ValueError("草稿庫未啟用；請在啟動時明確指定 --draft-library 目錄")
     if operation not in available_operations(draft_library):
-        raise ValueError("未知操作；請使用 music、music_review、storyboard、storyboard_review、storyboard_timing_review、lyrics、audio、storyboard_seed、lyrics_seed、lyrics_review 或 delivery_package")
+        raise ValueError("未知操作；請使用 music、music_review、storyboard、storyboard_review、storyboard_timing_review、lyrics、audio、storyboard_seed、lyrics_seed、lyrics_review 或 delivery_package、delivery_inspect")
     if not isinstance(payload, dict):
         raise ValueError("輸入需為 JSON 物件")
     if operation in LIBRARY_OPERATIONS:
@@ -138,6 +149,9 @@ def build(operation, payload, *, audio_source=None, draft_library=None, backup_s
         else:
             data = restore_backup(draft_library, backup_source, payload['backup_sha256'])
         return Result({}, data, operation != 'draft_list')
+    if operation == "delivery_inspect":
+        if set(payload)-{'include_files'}:raise ValueError('交付核對不能由JSON指定來源路徑')
+        return inspect_delivery(delivery_source,payload.get('include_files',False))
     if operation == "delivery_package":
         return Result({}, prepare_delivery(payload).summary(payload.get("include_archive", False)), True)
     if operation == "music_review":

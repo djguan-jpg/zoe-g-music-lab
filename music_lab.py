@@ -14,7 +14,7 @@ from musiclab.draft_library import DraftLibrary, revision_id
 def main(argv=None):
     parser = argparse.ArgumentParser(description=f"ZOE. G Music Lab · 本機 v{__version__}")
     commands = parser.add_subparsers(dest="command", required=True)
-    for name in ("music", "storyboard", "lyrics", "audio", "storyboard-seed", "lyrics-seed", "lyrics-review", "music-review", "storyboard-review", "storyboard-timing-review", "delivery-package"):
+    for name in ("music", "storyboard", "lyrics", "audio", "storyboard-seed", "lyrics-seed", "lyrics-review", "music-review", "storyboard-review", "storyboard-timing-review", "delivery-package", "delivery-inspect"):
         sub = commands.add_parser(name)
         sub.add_argument("--out", required=True, help="指定本輪輸出資料夾")
         sub.add_argument("--overwrite", action="store_true", help="明確替換此輸出目錄的同名成果")
@@ -74,6 +74,11 @@ def main(argv=None):
     args = parser.parse_args(argv)
     status = 0
     try:
+        if args.command == 'delivery-inspect':
+            from musiclab.common import json_text
+            result=build('delivery_inspect',{},delivery_source=args.input)
+            paths=write_bundle(args.out,{'delivery-inspection.json':json_text(result.data)},args.overwrite)
+            print('交付ZIP雜湊核對完成；沒有解壓或創作品質驗收：'+paths[0]);return 0
         if args.command == 'delivery-package':
             from musiclab.delivery_package import decode, MAX_REQUEST_BYTES
             from musiclab.delivery_files import write_archive

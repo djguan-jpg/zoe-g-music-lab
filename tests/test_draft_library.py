@@ -200,7 +200,7 @@ class DraftLibraryTests(unittest.TestCase):
 
 class DraftAdapterTests(unittest.TestCase):
     def test_default_transports_do_not_offer_or_execute_draft_writes(self):
-        self.assertFalse(capabilities()['draft_library_enabled']); self.assertEqual(len(capabilities()['operations']), 11)
+        self.assertFalse(capabilities()['draft_library_enabled']); self.assertEqual(len(capabilities()['operations']), 12)
         with self.assertRaisesRegex(ValueError, '未啟用'): build('draft_save', {'draft': draft(), 'id': revision_id(), 'label': '合成'})
         request = {'protocol_version': 1, 'id': 'disabled', 'operation': 'draft_save', 'payload': {'draft': draft(), 'id': revision_id(), 'label': '合成'}}
         result = command([sys.executable, '-X', 'utf8', 'music_lab_agent.py'], input=json.dumps(request)+'\n')
@@ -236,7 +236,7 @@ class DraftAdapterTests(unittest.TestCase):
             result = command([config['command'], *config['args']], cwd=folder, input=''.join(json.dumps(r, ensure_ascii=False)+'\n' for r in requests))
             replies = [json.loads(line) for line in result.stdout.splitlines()]
             tools = {t['name']: t for t in replies[1]['result']['tools']}
-            self.assertEqual(len(tools), 16); self.assertFalse(tools['draft_save']['annotations']['readOnlyHint'])
+            self.assertEqual(len(tools), 17); self.assertFalse(tools['draft_save']['annotations']['readOnlyHint'])
             self.assertTrue(tools['draft_read']['annotations']['readOnlyHint'])
             self.assertEqual(replies[3]['result']['structuredContent']['data']['draft'], draft())
             self.assertFalse(replies[2]['result'].get('isError', False)); self.assertEqual(len([p for p in library.iterdir() if p.is_dir()]), 1)

@@ -89,7 +89,7 @@ class SeedImportTests(unittest.TestCase):
     def test_mcp_inspection_uses_same_boundary_and_discovery_includes_eight_tools(self):
         session=Session();session.response(json.dumps({'jsonrpc':'2.0','id':1,'method':'initialize','params':{'protocolVersion':MCP_VERSION,'capabilities':{},'clientInfo':{'name':'seed-import-test','version':'1'}}}))
         session.response('{"jsonrpc":"2.0","method":"notifications/initialized"}')
-        listed=session.response('{"jsonrpc":"2.0","id":2,"method":"tools/list"}')['result']['tools'];self.assertEqual(len(listed),11)
+        listed=session.response('{"jsonrpc":"2.0","id":2,"method":"tools/list"}')['result']['tools'];self.assertEqual(len(listed),12)
         tool={t['name']:t for t in listed}['storyboard_seed'];self.assertIn('seed',tool['inputSchema']['properties']['payload']['properties'])
         data=seed();result=session.response(json.dumps({'jsonrpc':'2.0','id':3,'method':'tools/call','params':{'name':'storyboard_seed','arguments':{'payload':{'seed':data}}}}))
         self.assertEqual(result['result']['structuredContent'],build('storyboard_seed',{'seed':data}).wire())
@@ -101,7 +101,7 @@ class SeedImportTests(unittest.TestCase):
             process=subprocess.run([sys.executable,'-X','utf8',str(ROOT/'music_lab_mcp.py')],cwd=temp,
                 input=''.join(json.dumps(r)+'\n' for r in requests),capture_output=True,encoding='utf-8',timeout=10)
             self.assertEqual(process.returncode,0,process.stderr);replies=[json.loads(line) for line in process.stdout.splitlines()]
-            self.assertEqual(len(replies),3);self.assertEqual(len(replies[1]['result']['tools']),11)
+            self.assertEqual(len(replies),3);self.assertEqual(len(replies[1]['result']['tools']),12)
             self.assertEqual(replies[2]['result']['structuredContent'],build('storyboard_seed',{'seed':data}).wire())
             self.assertEqual(list(Path(temp).iterdir()),[])
 

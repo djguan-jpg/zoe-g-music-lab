@@ -1,6 +1,10 @@
 # ZOE. G Music Lab
 
-目前版本 **v0.38.0**：四個工作台可一次下載本輪全部文字成果ZIP，附逐檔大小與SHA-256清單；修改後需重新建立，晚回應取消並保留編修。CLI／Agent／MCP共用封裝，Agent預設摘要、小型ZIP明確選擇內嵌。獨立交付schema1，Agent1／draft3保持，基本11／啟庫16工具。見[使用與分層](docs/DELIVERY-PACKAGE.md)、[QA](docs/QA-v0.38.0.md)、[交接](docs/HANDOFF-v0.38.0.md)。
+目前版本 **v0.39.0**：四個工作台可載入本工具的文字交付ZIP，先核對原清單與文字，再明確套用成果；表單及已選音檔保留，可限定撤回。CLI／Agent／MCP共用檢查，基本12／啟庫17工具；inspection1／交付schema1／Agent1／draft3分別管理。340Python／531JS及四工作台實際下載核對通過。見[使用與分層](docs/DELIVERY-INSPECTION.md)、[QA](docs/QA-v0.39.0.md)、[交接](docs/HANDOFF-v0.39.0.md)。
+
+## 全部文字交付（v0.38）
+
+四個工作台可一次下載本輪全部文字成果ZIP，附逐檔大小與SHA-256清單；修改後需重新建立，晚回應取消並保留編修。CLI／Agent／MCP共用封裝，Agent預設摘要、小型ZIP明確選擇內嵌。見[封裝契約](docs/DELIVERY-PACKAGE.md)。
 
 ## 接受條件草稿（v0.37）
 
@@ -262,7 +266,7 @@ python music_lab.py draft restore --library outputs/restored-drafts --input '構
 
 ## Agent 使用
 
-目前預設十種操作（歌曲、分鏡、歌詞、音檔、分鏡起稿、未校時歌詞起稿、校時待辦、歌曲欄位待辦、分鏡創作待辦、分鏡時間待辦）可用 JSON-lines v1 或 MCP stdio adapter。明確選定 `--draft-library` 後共十五種工具；備份檢查／恢復另需啟動時選定 `--draft-backup '構思備份.zip'`，JSON 不能更換路徑。ZIP 匯出使用 CLI 或工作台。MCP 明確支援 `2025-11-25`；只接受該版初始化，不自動轉換未知版本。使用 `python scripts/agent_launch.py` 產生本版 Python／入口的完整路徑設定；加 `--format codex` 可產生 Codex TOML 片段。指令只顯示設定，不安裝或啟動 Agent，移動解壓目錄後需重新產生。已驗證設定從不同目錄啟動 MCP 及實際工具輸出；Codex CLI 只做設定解析，尚未驗證 host 連線／實際 Agent 工具呼叫。操作、錯誤及音檔選擇見 [Agent 文件](docs/AGENT.md)。
+目前預設十二種操作（歌曲、分鏡、歌詞、音檔、分鏡起稿、未校時歌詞起稿、校時待辦、歌曲欄位待辦、分鏡創作待辦、分鏡時間待辦、文字封裝、交付ZIP核對）可用JSON-lines v1或MCP stdio adapter。明確選定 `--draft-library` 後共十七種工具；備份檢查／恢復另需啟動時 `--draft-backup`，交付核對另以 `--delivery-zip` 選定ZIP，JSON不能更換路徑。大ZIP使用CLI或工作台。MCP明確支援 `2025-11-25`；拒絕未知初始化版本。`python scripts/agent_launch.py` 產生本版Python／入口完整路徑設定，`--format codex` 產生TOML片段；只顯示設定，不安裝或啟動Agent。移動解壓目錄後重新產生。已驗證不同目錄啟動MCP與實際工具輸出；特定host連線／實際Agent呼叫尚未驗證。見[Agent文件](docs/AGENT.md)。
 
 ## 專案紀錄
 

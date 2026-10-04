@@ -1,5 +1,9 @@
 # 本機 Agent 接口 v1
 
+## v0.39 文字交付回讀
+
+新增唯讀 delivery_inspect，啟動時明確 --delivery-zip 選定來源；JSON不能傳路徑、URL或ZIP bytes。預設metadata／files={}，include_files=true才回傳原文字集合，序列化JSON UTF8最多512KiB；既有2MiB行界限保持。檢查不解壓、不寫檔、不呼叫模型，needs_review=true。基本12／啟庫17，重新discovery；inspection1／package1／Agent1／draft3各自管理，支援工具38／39，未知拒絕。見[契約與CLI](DELIVERY-INSPECTION.md)；以下工具數為歷史版本。
+
 ## v0.38 完整文字交付
 
 新增唯讀 delivery_package；基本11／明確啟庫16工具，需重新discovery。預設摘要清單，include_archive=true才回傳不超過512KiB的ZIP base64，Agent行2MiB仍保持；無路徑／自動寫檔／網路／模型新增。needs_review始終true，交付schema1與Agent1／draft3獨立。見[契約](DELIVERY-PACKAGE.md)。後續章節工具數為歷史版本。

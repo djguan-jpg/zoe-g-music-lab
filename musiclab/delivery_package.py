@@ -80,13 +80,15 @@ class PreparedDelivery:
         return data
 
 
-def prepare(payload):
+def prepare(payload, *, tool_version=None):
+    tool_version = __version__ if tool_version is None else tool_version
+    if tool_version not in ("0.38.0", "0.39.0"): raise ValueError("不支援的交付工具版本")
     source = validate(payload)
     records = []; encoded = {}
     for name, content in source['files'].items():
         raw = content.encode('utf-8'); encoded[name] = raw
         records.append({'name': name, 'bytes': len(raw), 'sha256': hashlib.sha256(raw).hexdigest()})
-    manifest = {'format': 'zoe-delivery-manifest', 'schema_version': SCHEMA_VERSION, 'tool_version': __version__,
+    manifest = {'format': 'zoe-delivery-manifest', 'schema_version': SCHEMA_VERSION, 'tool_version': tool_version,
                 'scope': source['scope'], 'label': source['label'], 'source_type': 'provided_text_files',
                 'content_validation': 'not_performed', 'file_count': len(records),
                 'source_bytes': sum(item['bytes'] for item in records), 'files': records}

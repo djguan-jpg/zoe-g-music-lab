@@ -17,7 +17,7 @@ from musiclab.tool_contracts import input_schema, output_schema
 MCP_VERSION = "2025-11-25"
 TOOLS = {"music_plan": "music", "storyboard_plan": "storyboard",
          "lyrics_validate": "lyrics", "audio_report": "audio", "storyboard_seed": "storyboard_seed",
-         "lyrics_seed": "lyrics_seed", "lyrics_review": "lyrics_review", "music_review": "music_review", "storyboard_review": "storyboard_review", "storyboard_timing_review": "storyboard_timing_review", "delivery_package": "delivery_package"}
+         "lyrics_seed": "lyrics_seed", "lyrics_review": "lyrics_review", "music_review": "music_review", "storyboard_review": "storyboard_review", "storyboard_timing_review": "storyboard_timing_review", "delivery_package": "delivery_package", "delivery_inspect": "delivery_inspect"}
 
 
 
@@ -48,8 +48,9 @@ def tool_error(message):
 
 
 class Session:
-    def __init__(self, audio_source=None, draft_library=None, backup_source=None):
+    def __init__(self, audio_source=None, draft_library=None, backup_source=None, delivery_source=None):
         self.backup_source = backup_source
+        self.delivery_source = delivery_source
         self.draft_library = draft_library
         self.tools = {**TOOLS, **(LIBRARY_TOOLS if draft_library is not None else {})}
         self.audio_source = audio_source
@@ -114,7 +115,7 @@ class Session:
                 result = tool_error("arguments must contain exactly one object: payload")
             else:
                 try:
-                    data = build(self.tools[name], arguments["payload"], audio_source=self.audio_source, draft_library=self.draft_library, backup_source=self.backup_source).wire()
+                    data = build(self.tools[name], arguments["payload"], audio_source=self.audio_source, draft_library=self.draft_library, backup_source=self.backup_source, delivery_source=self.delivery_source).wire()
                     result = {"content": [{"type": "text", "text": json.dumps(data, ensure_ascii=False, allow_nan=False)}],
                               "structuredContent": data, "isError": False}
                 except (ValueError, TypeError, KeyError, AttributeError, UnicodeError, RecursionError) as error:
@@ -126,8 +127,8 @@ class Session:
         return {"jsonrpc": "2.0", "id": request_id, "result": result}
 
 
-def serve(source, destination, audio_source=None, draft_library=None, backup_source=None):
-    session = Session(audio_source, draft_library, backup_source)
+def serve(source, destination, audio_source=None, draft_library=None, backup_source=None, delivery_source=None):
+    session = Session(audio_source, draft_library, backup_source, delivery_source)
     while True:
         raw = source.readline(MAX_REQUEST_BYTES + 1)
         if not raw:
@@ -156,7 +157,10 @@ def main():
     parser.add_argument("--audio", help="Explicitly selected integer PCM WAV; JSON cannot select a path")
     parser.add_argument("--draft-library", help="Explicit selected directory enables immutable draft tools")
     parser.add_argument("--draft-backup", help="Explicit backup ZIP for preview and immutable restore")
+    parser.add_argument('--delivery-zip',help='Explicit canonical text delivery ZIP for read-only inspection; JSON cannot choose paths')
     args = parser.parse_args()
+    delivery_source=Path(args.delivery_zip) if args.delivery_zip else None
+    if delivery_source is not None and delivery_source.suffix.lower()!='.zip':parser.error('--delivery-zip accepts only .zip')
     if args.draft_backup and not args.draft_library:
         parser.error("--draft-backup requires --draft-library")
     backup_source = Path(args.draft_backup) if args.draft_backup else None
@@ -168,7 +172,7 @@ def main():
     source = Path(args.audio) if args.audio else None
     if source is not None and source.suffix.lower() != ".wav":
         parser.error("--audio accepts only .wav")
-    serve(sys.stdin.buffer, sys.stdout, source, library, backup_source)
+    serve(sys.stdin.buffer, sys.stdout, source, library, backup_source, delivery_source)
     return 0
 
 

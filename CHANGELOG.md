@@ -1,5 +1,11 @@
 # 迭代說明
 
+## v0.39.0 — 2026-10-04
+
+- 補齊下載ZIP後無法接回工作台的缺口：四scope原文字ZIP核對／预覽／明確載入／限定撤回，表單與已選音檔保持。讀取中取消、晚回應與跨scope保護，200字原說明再封裝。
+- 純有界inspector／canonical producer／application／CLI、HTTP、JSON-lines與MCP分層；browser原二進位清單anchor／純controller／DOM防回覆label沿用ZIP SHA。只接受標準工具38／39，未知拒絕、不解壓。metadata預設、明確files JSON≤512KiB；12／17tools，inspection1／package1／Agent1／draft3獨立。
+- 340Python／531JS／4Skill／42syntax及diff，新增12Python／40JS；四scope原生舊ZIP→載入→重下載逐檔相同，長label另包、原WAV SHA／表單保持、4秒late／取消／錯誤来源／390px Enter及1366px可見清單無橫溢。前版v38 ZIP328／491還原通過。指定source封裝／private PR／Release／遠端bytes與限定run／latest3依本輪收據；診斷失敗不當作接受。
+
 ## v0.38.0 — 2026-10-04
 
 - 補齊逐檔下載容易漏掉附檔的交付流程：目前工作台所有文字成果ZIP及完整逐檔SHA清單，修改後停用、重建後再下載；不自行收集音檔、草稿或其他素材。
