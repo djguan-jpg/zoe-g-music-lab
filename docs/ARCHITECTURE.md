@@ -1,5 +1,9 @@
 # 分層與版本契約
 
+## v0.41 可保存比較證據與文字輸出邊界
+
+delivery_report pure metadata驗證／JSON與Markdown→application從真ZIP＋baseline派生→CLI／JSON-lines／MCP；browser同契約由Python fixture核對完整bytes，controller current target→DOM固定格式→HTTP export encoded字串嚴格decode→原UTF8 download。避免HTML form LF→CRLF改寫；legacy route保持，沒有路徑或寫檔新增。filesystem text_outputs default exclusive create修正preflight race，common重匯出既有API，多檔無原子交易假設。launcher選檔獨立，只列印設定。report1獨立、12／17保持，來源版本明確38–41；見[完整契約](DELIVERY-REPORT.md)。
+
 ## v0.40 精確文字比較與有界預覽
 
 delivery_review pure validation／exact-name-byte比較與SHA→application→CLI／JSON-lines／MCP；HTTP binary inspection沿既有入口。browser delivery-review.js同契約，以真Python fixture核對；controller局部候選在非同步比較後查最新token／scope／revision／result epoch／media才發布。DOM只顯示兩份原文、缺檔、換行計數與有界摘錄，原wire／files保持。container width640px才並排，側欄上下；比較不合併或改表單。comparison1獨立、12／17 tools保持，明確producer／inspector／browser支持38／39／40，未知拒絕。見[契約](DELIVERY-COMPARISON.md)。

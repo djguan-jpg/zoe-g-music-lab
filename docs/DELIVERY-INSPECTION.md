@@ -1,5 +1,7 @@
 # 接續文字交付 ZIP（v0.39）
 
+v0.41 include_report明確要求baseline、互斥include_files；CLI與browser可保存差異報告，launcher可帶--delivery-zip／--audio。來源工具明確支援38／39／40／41。見[報告契約](DELIVERY-REPORT.md)。
+
 v0.40新增載入前原文／精確差異審閱與CLI／Agent／MCP明確baseline，工具支援38／39／40。見[目前比較契約](DELIVERY-COMPARISON.md)；下方保留v39初次回讀契約。
 
 在「本輪成果」選取本工具產生的文字交付 ZIP，先看工作台、工具版本、原說明、檔案大小與 SHA-256，再按「載入這份ZIP成果」。只替換目前工作台的文字成果；表單、後續編修、草稿保存狀態及已選音檔保持。這能接續上一輪下載或CLI／Agent交付的成果，並重新下載全部原文。

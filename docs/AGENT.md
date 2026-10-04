@@ -1,5 +1,9 @@
 # 本機 Agent 接口 v1
 
+## v0.41 可保存報告與完整啟動選檔
+
+delivery_inspect payload新增include_report嚴格布林，要求baseline且不能include_files=true；files回兩個固定報告，data保留來源與comparison。report schema1／256KiB合計／128列，不帶成果原文或媒體；default wire與12／17保持，重新discovery。launcher新增--audio／--delivery-zip，只列印絕對設定並驗副檔名，不讀寫／啟動Host；另一cwd真MCP兩工具同源接受，特定Host仍未驗證。CLI --comparison-report寫三檔，default exclusive create拒絕raced-in同名檔，多檔可部分輸出。見[契約](DELIVERY-REPORT.md)。
+
 ## v0.40 明確基準文字比較
 
 delivery_inspect payload可加baseline={scope,files}，只接受原文字、不選路徑；預設files={}，data.comparison帶完整新增／變更／移除／相同及雙側SHA／bytes，needs_review=true。CLI --compare-input明確讀JSON，不寫來源；Agent／MCP仍啟動--delivery-zip，未提供baseline保持v39形狀。基準0–64檔／8MiB、128聯集，既有Agent行2MiB與inline files JSON512KiB保持，12／17工具與舊protocol／schema不變。comparison1獨立，重新discovery。見[契約](DELIVERY-COMPARISON.md)。

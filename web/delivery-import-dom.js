@@ -17,6 +17,8 @@
    $('delivery-import-preview').hidden=!s.pending;
    $('delivery-import-cancel').disabled=!s.reading&&!s.pending;
    $('delivery-import-apply').disabled=!s.canApply;$('delivery-import-undo').disabled=!s.canUndo;
+   $('delivery-report-json').disabled=!s.canApply;$('delivery-report-md').disabled=!s.canApply;
+   if(!s.canApply){$('delivery-report-name').value='';$('delivery-report-content').value='';}
    $('delivery-import-note').textContent=s.reading?'正在核對選定ZIP；目前表單與成果保留。':s.pending?(s.canApply?'雜湊與清單核對通過；確認後只替換本工作台成果。':'目標已有修改，請重新選檔核對。'):'選取本工具交付ZIP，先核對，再明確載入成果；表單與音檔保持。';
    const list=$('delivery-import-files');list.replaceChildren();
    const select=$('delivery-review-file'),old=select.value;select.replaceChildren();select.disabled=!s.comparison;
@@ -33,6 +35,9 @@
   $('delivery-import-file').onchange=event=>{const file=event.target.files[0];event.target.value='';if(file)controller.inspect(file);};
   $('delivery-import-apply').onclick=()=>controller.apply();$('delivery-import-cancel').onclick=()=>controller.cancel();$('delivery-import-undo').onclick=()=>controller.undo();
   $('delivery-review-file').onchange=showContent;
+  for(const [id,name] of [['delivery-report-json','delivery-comparison.json'],['delivery-report-md','delivery-comparison.md']]){
+   $(id).onclick=()=>{try{const files=controller.report();if(!files)return false;$('delivery-report-name').value=name;$('delivery-report-content').value=JSON.stringify(files[name]);$('delivery-report-form').submit();return true;}catch(error){options.onError?.(error);return false;}};
+  }
   controller.refresh();return controller;
  }
  root.MusicDeliveryImportDom={createAdapter};

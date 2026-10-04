@@ -120,3 +120,13 @@
 - comparison1與inspection1／package1／Agent1／draft3獨立，12／17工具保持。本版明確支持producer／inspector／browser工具38／39／40，未知拒絕；升版同步支持表與測試。
 - 比較候選留局部，token與target再核對後才提交；不得讓舊async比較改新摘要。excerpt最多32768 UTF16且不拆surrogate pair；換行計數讀完整原文，textarea顯示不冒充原bytes。預覽與計數不進原wire/files，載入／下载保持全文。
 - DOM literal text、readonly與缺檔／空檔分開，container width≥640px才雙欄，窄側欄上下；沿既有scope／revision／result／media／busy及限定undo保護。
+
+
+## v0.41 可保存報告
+
+- delivery_report純來源metadata／comparison驗證，JSON與Markdown逐UTF8 bytes跨語言相同；report1獨立、256KiB合計、最多128列，不帶成果原文／媒體／來源路徑。application從真ZIP與明確baseline派生，不能接受任意報告取代來源。
+- include_report strict bool，要求baseline、與include_files=true互斥；default wire、12／17工具及其他schema保持。controller只對current pending來源下載；過期／取消／已apply／reading保護與hidden fields清除。
+- HTML form會正規化換行。報告使用encoding=json-string，DOM JSON.stringify全文→HTTP既有嚴格decoder還原字串→下載原UTF8；拒絕未知／額外／重複欄位，勿全域正規化成果原文。
+- launcher明確--audio WAV／--delivery-zip ZIP只列印絕對設定，不能改Host／讀媒體或宣稱Host安裝接受。
+- filesystem text_outputs預設exclusive create，common保留API；預檢後同名新增也拒絕。多檔可部分輸出，錯誤明示，不宣稱交易式回滾、不刪除interloper。
+- 本版producer／inspector／browser package／archive／import／report明確來源工具38／39／40／41，升版同步與測試，未知拒絕。
