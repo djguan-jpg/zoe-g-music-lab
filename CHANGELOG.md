@@ -1,5 +1,12 @@
 # 迭代說明
 
+## v0.49.0 — 2026-10-04
+
+- 新增搜尋「上一批」，回讀同來源cursor重建20筆結果與原序號；每次換批清選取與context，原文reader不自動跳。顯示範圍，最後／第一批停用相應按鈕並讓鍵盤焦點接到另一可用控制。
+- controller只保留最近512個start／offset，超出丟最舊返回位置，前進可繼續；提示重新尋找回開頭。query／source／availability變更與重新find清除；失敗保留當前批次、選取、cursor，可重試。
+- 修正注入回呼換批／query-change-back／nested read後，舊操作仍提交選取或錯誤的重現；generation／來源／query／batch再次核對。實際DOM callback未重現換批，不誇稱普遍UI故障。
+- 十個新JS回歸，416／629／52 syntax／4 Skill及四台原生、三寬度／前版還原通過。產品49／明確來源38–49，wire／schema／12／17tools／legal4保持；private exact-source與maintenance依收據。
+
 ## v0.48.0 — 2026-10-04
 
 - 把內部成果來源的隔離snapshot／精確比對移到純delivery-source層，複製容器、保留不可變字串值；每次current仍核對全部原值及原生media身份，不能只依revision或object identity。
