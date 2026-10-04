@@ -21,6 +21,11 @@ def main(argv=None):
         if name=='delivery-inspect':sub.add_argument('--compare-input',help='明確比較基準JSON，只含scope與files；不合併或寫入原文')
         if name=='delivery-inspect':sub.add_argument('--comparison-report',action='store_true',help='明確比較基準時另輸出JSON與Markdown來源報告')
         if name=='delivery-inspect':sub.add_argument('--file-name',action='append',help='明確輸出此原文檔，可重複；完整核對ZIP後選取，不覆寫，不能與comparison-report混用')
+        if name=='delivery-inspect':
+            sub.add_argument('--text-file',help='明確原檔名；只輸出有來源雜湊與位置的文字分段摘要')
+            sub.add_argument('--start-byte',type=int,help='原文UTF-8字元邊界；非零需archive-sha256')
+            sub.add_argument('--window-bytes',type=int,help='分段最多4–16384 bytes；預設16384')
+            sub.add_argument('--archive-sha256',help='前次核對的ZIP SHA；來源變更拒絕接續')
         if name in ('music-review', 'storyboard-review', 'storyboard-timing-review'):
             source_group = sub.add_mutually_exclusive_group(required=True)
             source_group.add_argument('--input', help='含 panel 的原始工作台欄位 JSON')
@@ -80,6 +85,12 @@ def main(argv=None):
         if args.command == 'delivery-inspect':
             from musiclab.common import json_text
             payload={}
+            if args.text_file is not None:
+                payload['text_window']={'file_name':args.text_file}
+                for key,value in [('start_byte',args.start_byte),('max_bytes',args.window_bytes),('archive_sha256',args.archive_sha256)]:
+                    if value is not None:payload['text_window'][key]=value
+                if args.file_name:raise ValueError('text-file與file-name不可同時選用')
+            elif any(value is not None for value in (args.start_byte,args.window_bytes,args.archive_sha256)):raise ValueError('分段設定需明確text-file')
             if args.comparison_report:payload['include_report']=True
             if args.compare_input:
                 from musiclab.delivery_package import decode, MAX_REQUEST_BYTES

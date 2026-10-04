@@ -146,3 +146,10 @@
 - application／Agent／MCP選定files JSON限512 KiB；CLI --file-name明確輸出沿8 MiB完整來源，拒絕metadata碰撞、預設覆寫及report混用。沒有JSON路徑或自動寫檔權限。
 - Browser originalFile只讀pending current source，重查工作台、表單／成果revision、bundle、busy與media。empty可下載、removed停用，取消／套用後拒絕舊來源；DOM只快取names與可用狀態，沿既有native bytes adapter。
 - selection1獨立於Agent1／draft3及交付schemas，12／17工具保持，來源工具明確38–43，未知拒絕；I/O提示共用operation_errors且不漏私人路徑。見[契約](docs/DELIVERY-SELECTION.md)。
+
+
+## v0.44 原文分段閱讀
+
+- text-window1純請求／UTF-8 byte boundary model → application全份ZIP核對與SHA pin → CLI／Agent／MCP。起點字元中間拒絕、不自動調整；max4–16384，非零需archive_sha256，未選取檔損壞仍拒絕。明示片段不是完整檔案，files保持空、不能混用include_files／file_names／include_report。
+- Browser純UTF-8模型／注入reader／DOM → current pending source；source key隔離原值、讀後重查。單buffer最多8MiB，頁面16KiB，history最多512；換檔／失效／cancel／apply／undo清除，不進status／草稿／wire。empty與missing分開，原下載全文及限定撤回保持。
+- 12／17工具與Agent1／draft3及交付schemas保持，text-window1獨立；來源明確38–44，未知拒絕。只新增兩靜態JS，沒有路徑／寫檔／模型權限擴張。見[契約](docs/DELIVERY-TEXT.md)。
