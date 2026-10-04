@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 'use strict';
 const $ = id => document.getElementById(id);
+const textDownloader=MusicTextDownloadDom.createAdapter(document,{events:window});
 const state = {tab:'music', examples:null, files:{}, bundles:{}, revisions:{}, music:[], shots:[], cues:[], audioUrl:null, audioContext:null, waveform:null, busy:false,resultRevisions:{},deliveryImport:null,deliveryPackage:null,deliveryNavigation:null,audioAcceptance:null};
 const rawFields=MusicRawFieldsDom.createAdapter(document);
 const readValue=control=>rawFields.read(control);
@@ -115,10 +116,10 @@ document.querySelector('.editor').addEventListener('input',event=>{
   if(['lyrics-source','lyrics-format'].includes(event.target.id))lyricsImportController?.cancel();
   if(panel.id==='lyrics'&&event.target.closest('#cues'))tick();
 });
-function clearOutput(){state.resultRevisions[state.tab]=(state.resultRevisions[state.tab]||0)+1;state.files={};$('output-file').replaceChildren(new Option('尚無檔案',''));$('output-file').disabled=true;$('download').disabled=true;$('output-content').value='';$('output-note').textContent='建立工作包後，實際成果會出現在這裡。';state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();state.deliveryPackage?.refresh();state.deliveryImport?.refresh();}
-function previewOutput(){const name=$('output-file').value;$('output-content').value=state.files[name]??'';$('export-name').value=name;$('export-content').value=state.files[name]??'';}
+function clearOutput(){state.resultRevisions[state.tab]=(state.resultRevisions[state.tab]||0)+1;state.files={};$('output-file').replaceChildren(new Option('尚無檔案',''));$('output-file').disabled=true;$('download').disabled=true;$('output-content').value='';$('output-preview-note').textContent='';$('output-note').textContent='建立工作包後，實際成果會出現在這裡。';state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();state.deliveryPackage?.refresh();state.deliveryImport?.refresh();}
+function previewOutput(){const name=$('output-file').value,preview=MusicDeliveryReview.excerpt(Object.hasOwn(state.files,name)?state.files[name]:null);$('output-content').value=preview.text;$('output-preview-note').textContent=!preview.present?'尚無選定檔案':preview.truncated?'內容過長，預覽只顯示開頭；原文下載與 ZIP 保留全文。':'完整文字預覽；文字框只供閱讀，原文下載保持換行。';}
 $('output-file').onchange=previewOutput;
-$('export-form').onsubmit=()=>{say('已送出本機下載，請確認瀏覽器保存的檔案。');};
+textDownloader.bind($('export-form'),{select:()=>{const name=$('output-file').value;if(state.busy)throw Error('目前操作尚未完成，請稍候');if(state.bundles[state.tab]?.dirty)throw Error('輸入有修改，請重新建立成果後下載');if(!Object.hasOwn(state.files,name))throw Error('請先選擇本輪成果檔案');return {name,content:state.files[name]};},onSent:()=>say('已送出原文下載，請確認瀏覽器保存的檔案。'),onError:error=>say(error.message,true)});
 document.querySelectorAll('[data-tab]').forEach(button=>button.onclick=()=>{if(state.busy){say('目前操作尚未完成，請稍候');return;}state.tab=button.dataset.tab;document.querySelectorAll('.panel').forEach(section=>section.hidden=section.id!==state.tab);document.querySelectorAll('[data-tab]').forEach(b=>{b.classList.toggle('active',b===button);if(b===button)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});const saved=state.bundles[state.tab];if(saved)setFiles(saved.files,saved.note,saved.dirty,saved.inputIndependent,saved.deliveryLabel);else clearOutput();say(saved?.dirty?'有修改尚未重新驗證，請重新建立成果':'準備開始');});
 function renderSections(sections,ids){const keys=rowIds(sections,ids);$('arrangement').innerHTML=sections.map((s,i)=>`<tr data-history-id="${esc(keys[i])}"><td>${field(s.name,`段落 ${i+1} 名稱`)}</td><td>${field(s.bars,`段落 ${i+1} 小節`,'number')}</td><td>${field(s.energy,`段落 ${i+1} 能量`,'number')}</td><td>${field(s.focus,`段落 ${i+1} 任務`,'text',true)}</td><td>${field(s.texture,`段落 ${i+1} 聲音`,'text',true)}</td><td><button type="button" data-remove-section="${i}" aria-label="刪除段落 ${i+1}">刪除</button></td></tr>`).join('');[...$('arrangement').children].forEach((row,i)=>['name','bars','energy','focus','texture'].forEach((key,j)=>writeValue(row.querySelectorAll('input')[j],sections[i][key])));$('arrangement').querySelectorAll('[data-remove-section]').forEach((b,i)=>b.onclick=()=>deleteEntry('arrangement',i));arrangementController?.refresh();}
 function requirementValues(id){return [...$(id).querySelectorAll('textarea')].map(input=>readValue(input));}
@@ -666,7 +667,7 @@ function capturePanel(panel){
 }
 function captureDraft(){
   const panels=Object.fromEntries(Object.keys(MusicEditor.draftFields).map(panel=>[panel,capturePanel(panel)]));
-  return {format:'zoe-music-lab-draft',schema_version:3,tool_version:'0.41.0',saved_at:new Date().toISOString(),tab:state.tab,panels};
+  return {format:'zoe-music-lab-draft',schema_version:3,tool_version:'0.42.0',saved_at:new Date().toISOString(),tab:state.tab,panels};
 }
 function applyDraft(draft){
   storyboardDurationController?.clear();
@@ -688,15 +689,13 @@ function applyDraft(draft){
   const tabButton=document.querySelector(`[data-tab="${draft.tab}"]`);
   tabButton.click();clearOutput();tick();tabButton.focus({preventScroll:true});
 }
-$('draft-export').onsubmit=event=>{
-  try{
+textDownloader.bind($('draft-export'),{select:()=>{
     if(state.busy)throw Error('目前操作尚未完成，請稍候再保存');
     const draft=MusicEditor.validateDraft(captureDraft());
     const content=JSON.stringify(draft,null,2)+'\n';
     if(new TextEncoder().encode(content).length>1024*1024)throw Error('草稿超過 1 MiB，請減少內容再保存');
-    $('draft-content').value=content;draftRetention.requestDownload(draft);say('已送出草稿下載；請核對檔案後確認，音檔與成果另存。');
-  }catch(error){event.preventDefault();say(error.message,true);}
-};
+    return {name:'music-lab-draft.json',content};
+  },onSent:selected=>{draftRetention.requestDownload(JSON.parse(selected.content));say('已送出草稿下載；請核對檔案後確認，音檔與成果另存。');},onError:error=>say(error.message,true)});
 $('draft-confirm-download').onclick=()=>{if(draftRetention.confirmDownload())say(draftRetention.status().dirty?'已記錄下載確認；下載後的編修仍需另存。':'已記錄你確認的草稿檔案；音檔與成果另存。');};
 $('draft-open').onchange=async event=>{
   const file=event.target.files[0];event.target.value='';if(!file)return;
@@ -889,7 +888,7 @@ function libraryControls(){
   $('library-retry').hidden=!libraryPending;$('library-retry').disabled=librarySaving;
   $('library-abandon').hidden=!libraryPending;$('library-abandon').disabled=librarySaving;
 }
-function clearLibraryReview(){libraryController.cancelRead();pendingLibraryReview=null;$('library-review').hidden=true;$('library-review-content').value='';$('library-export-content').value='';}
+function clearLibraryReview(){libraryController.cancelRead();pendingLibraryReview=null;$('library-review').hidden=true;$('library-review-content').value='';}
 function librarySelection(){
   const record=libraryRecords.find(r=>r.id===$('library-select').value);
   $('library-selection-note').textContent=record?`${record.label} · ${record.stored_at} · 歌曲：${record.titles.music||'未命名'}／分鏡：${record.titles.storyboard||'未命名'}／歌詞：${record.titles.lyrics||'未命名'}`:'尚無保存版本；先為目前草稿命名並保存。';
@@ -918,7 +917,6 @@ const libraryController=MusicLibrary.createLibraryController({
   onReady:({entry,draft})=>{
     pendingLibraryReview={entry,draft};$('library-review-note').textContent=`「${entry.label}」· ${entry.stored_at} · ${draft.panels.music.sections.length} 段／${draft.panels.storyboard.shots.length} 鏡／${draft.panels.lyrics.cues.length} 句。SHA-256 與草稿 v3 已核對；創作內容尚需重新驗證。`;
     const content=JSON.stringify(draft,null,2)+'\n';$('library-review-content').value=content;
-    $('library-export-name').value=entry.id+'.json';$('library-export-content').value=content;
     $('library-review').hidden=false;librarySay('保存版本已預覽，目前工作台與音檔保留。');
   },
   onError:(error,{retryable})=>librarySay(error.message+(retryable?'；結果尚未確認，重試會使用同一 ID 與原內容，也可先重新整理保存版本。':''),true)
@@ -948,7 +946,7 @@ $('library-apply').onclick=()=>{
   }catch(error){librarySay(error.message,true);}
 };
 $('library-cancel').onclick=()=>{clearLibraryReview();librarySay('已取消版本預覽，目前工作台保留。');};
-$('library-export').onsubmit=event=>{if(!pendingLibraryReview){event.preventDefault();return;}librarySay('已送出保存版本的 JSON 下載；原版本保留。');};
+textDownloader.bind($('library-export'),{select:()=>{if(!libraryAllowed()||!pendingLibraryReview)throw Error('請先預覽保存版本');return {name:pendingLibraryReview.entry.id+'.json',content:JSON.stringify(pendingLibraryReview.draft,null,2)+'\n'};},onSent:()=>librarySay('已送出保存版本的 JSON 下載；原版本保留。'),onError:error=>librarySay(error.message,true)});
 let backupReading=false,backupRestoring=false,backupReady=false,backupCanRestore=false,backupMaximum=32*1024*1024,backupDownloading=false;
 function backupSay(message,error=false){$('backup-status').textContent=message;$('backup-status').classList.toggle('error',error);}
 function backupControls(){
@@ -1001,9 +999,10 @@ async function setupLibrary(){
   }catch(error){librarySay(error.message,true);libraryControls();}
 }
 state.deliveryNavigation=MusicDeliveryNavigationDom.createAdapter(document,()=>({scope:state.tab,names:Object.keys(state.files),busy:state.busy,dirty:!!state.bundles[state.tab]?.dirty,message:$('status').textContent,error:$('status').classList.contains('error')}));
-state.audioAcceptance=MusicAudioAcceptanceDom.createAdapter(document,{readValue,writeValue,events:window,allowed:()=>!state.busy,onChange:()=>markDirty('audio'),onError:error=>say(error.message,true)});
+state.audioAcceptance=MusicAudioAcceptanceDom.createAdapter(document,{readValue,writeValue,events:window,allowed:()=>!state.busy,downloadText:(name,content)=>textDownloader.send(name,content),onChange:()=>markDirty('audio'),onError:error=>say(error.message,true)});
 state.deliveryPackage=MusicDeliveryPackageDom.createAdapter(document,{capture:()=>({scope:state.tab,label:state.bundles[state.tab]?.deliveryLabel??state.bundles[state.tab]?.note??'',files:state.files,busy:state.busy,dirty:!!state.bundles[state.tab]?.dirty}),run,request:payload=>api('/api/delivery-package/prepare',payload),discard:id=>api('/api/delivery-package/discard',{id}),say});
 state.deliveryImport=MusicDeliveryImportDom.createAdapter(document,{
+  downloadText:(name,content)=>textDownloader.send(name,content),
   capture:()=>({scope:state.tab,revision:state.revisions[state.tab]||0,resultRevision:state.resultRevisions[state.tab]||0,bundle:state.bundles[state.tab]||null,busy:state.busy,media:[$('audio-file').files[0]||null,$('lyrics-audio').files[0]||null]}),
   read:async file=>{const raw=await file.arrayBuffer();if(raw.byteLength!==file.size||raw.byteLength>MusicDeliveryPackage.maxArchive)throw Error('選定ZIP大小不符');const digest=new Uint8Array(await crypto.subtle.digest('SHA-256',raw));const sha256=Array.from(digest,v=>v.toString(16).padStart(2,'0')).join('');return {selected:{bytes:raw.byteLength,sha256,manifest:MusicDeliveryArchive.manifest(raw)},wire:await api('/api/delivery-inspect',raw,true)};},
   replace:wire=>{const m=wire.data.manifest;setFiles(wire.files,`匯入ZIP · ${m.label||m.scope} · 僅核對文字檔案，表單保持`,false,true,m.label);say('已載入ZIP文字成果；表單與音檔保持，創作及媒體尚待驗收。');},

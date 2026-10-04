@@ -73,10 +73,10 @@
       if(current()!==preview.key||media()!==preview.source){cancel();onError(Error('預覽後條件或音檔已改動；請重新選檔'));return false;}
       const document=validate(preview.document);replace(document);retained=fingerprint(document);sequence++;preview=null;onChange();refresh();return true;
     }
-    function download(){
+    function download(send=()=>{}){
       if(!allowed())throw Error('目前操作尚未完成，請稍候');
       const document=validate(capture()),content=JSON.stringify(document,null,2)+'\n';
-      pendingDownload={key:fingerprint(document)};refresh();return content;
+      const key=fingerprint(document);send(content);pendingDownload={key};refresh();return content;
     }
     function confirm(){if(!pendingDownload||!allowed())return false;retained=pendingDownload.key;pendingDownload=null;refresh();return true;}
     return {capture:()=>validate(capture()),inspect,apply,cancel,changed,refresh,download,confirm,status,

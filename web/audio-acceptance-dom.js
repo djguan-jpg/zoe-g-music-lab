@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 'use strict';
 (function(root){
-  function createAdapter(document,{readValue,writeValue,events,allowed,onChange,onError}){
+  function createAdapter(document,{readValue,writeValue,events,allowed,downloadText,onChange,onError}){
     const $=id=>document.getElementById(id),model=root.MusicAudioAcceptance,keys=['rates','bits','channels'];
     const capture=()=>({format:model.format,schema_version:1,profile:readValue($('audio-profile')),custom:$('audio-custom').checked,
       fields:Object.fromEntries(keys.map(k=>[k,readValue($('audio-accept-'+k))]))});
@@ -30,7 +30,7 @@
     $('audio-accept-file').onchange=()=>{const file=$('audio-accept-file').files[0];$('audio-accept-file').value='';if(file)controller.inspect(file);};
     $('audio-accept-apply').onclick=()=>controller.apply();$('audio-accept-cancel').onclick=()=>controller.cancel();
     $('audio-accept-confirm').onclick=()=>controller.confirm();
-    $('audio-accept-export').onsubmit=event=>{try{$('audio-accept-content').value=controller.download();}catch(error){event.preventDefault();onError(error);}};
+    $('audio-accept-export').onsubmit=event=>{event.preventDefault();try{controller.download(content=>{if(downloadText('audio-acceptance-draft.json',content)!==true)throw Error('條件草稿下載未送出');});}catch(error){onError(error);}};
     controller.refresh();return controller;
   }
   root.MusicAudioAcceptanceDom={createAdapter};

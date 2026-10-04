@@ -2,7 +2,7 @@
 'use strict';
 (function(root){
   const json=typeof module==='object'&&module.exports?require('../musiclab/assets/json-document.js'):root.MusicJsonDocument;
-  const version='0.41.0',maxSource=8*1024*1024,maxRequest=32*1024*1024,maxArchive=maxSource+65536;
+  const version='0.42.0',maxSource=8*1024*1024,maxRequest=32*1024*1024,maxArchive=maxSource+65536;
   const scopes=['music','storyboard','lyrics','audio'],reserved='delivery-manifest.json';
   const exact=(v,keys)=>v&&typeof v==='object'&&!Array.isArray(v)&&Object.keys(v).length===keys.length&&keys.every(k=>Object.hasOwn(v,k));
   function source(s){
@@ -21,7 +21,7 @@
   const fingerprint=s=>JSON.stringify(source(s));
   async function digest(raw){const bytes=new Uint8Array(await root.crypto.subtle.digest('SHA-256',raw));return Array.from(bytes,v=>v.toString(16).padStart(2,'0')).join('');}
   async function manifest(s,hash=digest,toolVersion=version){
-    if(!['0.38.0','0.39.0','0.40.0','0.41.0'].includes(toolVersion))throw Error('交付工具版本不支援');
+    if(!['0.38.0','0.39.0','0.40.0','0.41.0','0.42.0'].includes(toolVersion))throw Error('交付工具版本不支援');
     s=source(s);const files=[];
     for(const [name,content] of Object.entries(s.files)){const raw=new TextEncoder().encode(content);files.push({name,bytes:raw.length,sha256:await hash(raw)});}
     if(files.some(f=>typeof f.sha256!=='string'||!/^[0-9a-f]{64}$/.test(f.sha256)))throw Error('本機檔案摘要未完成');

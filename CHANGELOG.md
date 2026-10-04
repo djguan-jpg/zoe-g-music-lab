@@ -1,5 +1,12 @@
 # 迭代說明
 
+## v0.42.0 — 2026-10-04
+
+- 五種文字下載共用原生UTF-8 bytes，修正form換行正規化及body上限；保持BOM／CRLF／LF／CR／NUL／emoji／空檔。每次取current canonical source，dirty／busy拒絕，下載失敗不新增保存確認。
+- pure text-download／注入controller／DOM與app分層，最多2個object URL、一秒／失敗／pagehide釋放自有timer與連結；ZIP／備份staging、相容HTTP、12／17工具及schema不變，來源版本明確38–42。
+- 重現8MiB全文textarea拖慢操作，成果預覽重用有界excerpt與aria提示，不拆emoji，下載與ZIP仍全文。
+- 365Python／565JS／46syntax／4Skill；新增11JS，四台13份實際原文與ZIP相同、正好8MiB原文重下載、2份報告／三種保存檔回讀、原WAV SHA／後續編修／三寬度geometry及v41 ZIP365／554還原通過。private封裝／PR／Release／actual remote bytes及latest3維護依本輪收據。
+
 ## v0.41.0 — 2026-10-04
 
 - ZIP預覽可保存完整差異JSON／Markdown，來源ZIP SHA／bytes、manifest與兩側檔案摘要；下載不套用，編修／取消／晚回應保護沿用，報告schema1獨立。CLI --comparison-report／Agent include_report要求baseline、拒絕include_files碰撞，12／17工具保持。

@@ -130,3 +130,11 @@
 - launcher明確--audio WAV／--delivery-zip ZIP只列印絕對設定，不能改Host／讀媒體或宣稱Host安裝接受。
 - filesystem text_outputs預設exclusive create，common保留API；預檢後同名新增也拒絕。多檔可部分輸出，錯誤明示，不宣稱交易式回滾、不刪除interloper。
 - 本版producer／inspector／browser package／archive／import／report明確來源工具38／39／40／41，升版同步與測試，未知拒絕。
+
+
+## v0.42 原文下載
+
+- 五種browser文字入口共用text-download純Unicode／UTF8 bytes／注入controller及native DOM Blob adapter；current canonical source重查busy／dirty／選定名稱，不讀preview或hidden field，不經form正規化。單檔最多8MiB，其他領域原上限保持；未知Unicode／路徑／裝置名拒絕。
+- object URL最多2個，送出後1秒、失敗、pagehide／dispose清理自身URL與timer。sent不冒充保存成功，確認舊snapshot保留後續編修；acceptance send callback先完成，失敗不新增pending。
+- 結果預覽重用excerpt32768UTF16 units、不拆surrogate，aria提示明示摘錄，download與ZIP仍全文。binary staging與v41 HTTP相容保持，沒有Agent路徑／寫檔／網路權限擴張。
+- 明確來源工具38／39／40／41／42，未知拒絕；12／17工具及Agent1／draft3／交付schema保持。v41 browser form段落是歷史實作，現版使用native bytes，HTTP編碼相容仍保留。
