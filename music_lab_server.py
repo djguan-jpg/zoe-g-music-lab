@@ -65,6 +65,8 @@ ASSETS = {"/delivery-report.js": ("web/delivery-report.js","text/javascript"),"/
           "/lyrics-timing.js": ("web/lyrics-timing.js", "text/javascript"),
           "/lyrics-media.js": ("musiclab/assets/lyrics-media.js", "text/javascript"),
           "/lyrics-review.js": ("musiclab/assets/lyrics-review.js", "text/javascript"),
+          "/lyrics-export-review.js": ("musiclab/assets/lyrics-export-review.js", "text/javascript"),
+          "/lyrics-export.js": ("web/lyrics-export.js", "text/javascript"),
           "/audio-acceptance.js": ("web/audio-acceptance.js", "text/javascript"),
           "/audio-acceptance-dom.js": ("web/audio-acceptance-dom.js", "text/javascript"),
           "/audio-review.js": ("web/audio-review.js", "text/javascript"),
@@ -237,7 +239,7 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
                 return self.reply(200,json_text(backup_downloads(self.server).prepare(archive,summary)))
             operations = {"/api/music": "music", "/api/storyboard": "storyboard", "/api/lyrics": "lyrics",
                           "/api/storyboard-seed": "storyboard_seed",
-                          "/api/lyrics-seed": "lyrics_seed", "/api/lyrics-review": "lyrics_review", "/api/music-review": "music_review", "/api/storyboard-review": "storyboard_review", "/api/storyboard-timing-review": "storyboard_timing_review",
+                          "/api/lyrics-seed": "lyrics_seed", "/api/lyrics-review": "lyrics_review", "/api/lyrics-export-review": "lyrics_export_review", "/api/music-review": "music_review", "/api/storyboard-review": "storyboard_review", "/api/storyboard-timing-review": "storyboard_timing_review",
                           "/api/drafts/save": "draft_save", "/api/drafts/list": "draft_list", "/api/drafts/read": "draft_read"}
             if route.path not in operations:
                 return self.reply(404, '{"error":"找不到此操作"}')

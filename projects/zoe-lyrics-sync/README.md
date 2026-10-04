@@ -1,5 +1,9 @@
 # ZOE Lyrics Sync
 
+## v0.53 匯出格式保留
+
+建立歌詞包會顯示格式提醒；也可按「建立格式檢查報告」另存 JSON／Markdown。句首含時間標籤的原歌詞用完整 lyrics.json 保存；ASCII空白／tab句亦如此。LRC缺句尾，LRC／SRT缺作品總長與歷史；零提醒也請保存完整JSON。提醒只定位當前表格原句，作者自行決定修改，原文與音檔保持。唯讀 Agent／MCP lyrics_export_review 接受精確 {package:現代完整包}；CLI lyrics-export-review --input lyrics.json --out outputs/format-review。CLI2是提醒報告已輸出、0是已查欄位无提醒、1是拒絕；預設不覆寫。基本13／啟庫18，新report1／source1與Agent1／draft3分開。見[契約](../../docs/LYRICS-EXPORT-REVIEW.md)。
+
 v0.51：SRT保留每行空白、tab與Unicode原字元，真正多行仍以 / 合句；原排版保存原檔／draft3原文，空白cue用版本1JSON。獨立Python／JS parser與integer clock、單次文首BOM共用adapter；browser從LRC／SRT原文核對cues／time／inference及文字輸出再preview／Apply。末句原結束估總長不填宣告、不宣稱音檔確認。見[契約](../../docs/LYRICS-SRT.md)、[QA](../../docs/QA-v0.51.0.md)。
 
 v0.25「檢查校時進度」可接受時間留白，找出原句缺失／重複開始／跨句重疊／超出宣告的位置，按待辦定位欄位。建立包失敗也定位第一項，原文與音檔保持；編修後舊報告過期、停用定位和下載。JSON／Markdown報告是診斷，不是完成字幕；最多10000句、全部count／前200明細與頁面前20項。Agent／MCP唯讀lyrics_review和CLI lyrics-review沿用同一層，CLI2表示診斷保存且有待修正項目。見[契約](../../docs/LYRICS-REVIEW.md)／[QA](../../docs/QA-v0.25.0.md)。

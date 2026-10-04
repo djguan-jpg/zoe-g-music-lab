@@ -14,7 +14,7 @@ from musiclab.draft_library import DraftLibrary, revision_id
 def main(argv=None):
     parser = argparse.ArgumentParser(description=f"ZOE. G Music Lab · 本機 v{__version__}")
     commands = parser.add_subparsers(dest="command", required=True)
-    for name in ("music", "storyboard", "lyrics", "audio", "storyboard-seed", "lyrics-seed", "lyrics-review", "music-review", "storyboard-review", "storyboard-timing-review", "delivery-package", "delivery-inspect"):
+    for name in ("music", "storyboard", "lyrics", "audio", "storyboard-seed", "lyrics-seed", "lyrics-review", "lyrics-export-review", "music-review", "storyboard-review", "storyboard-timing-review", "delivery-package", "delivery-inspect"):
         sub = commands.add_parser(name)
         sub.add_argument("--out", required=True, help="指定本輪輸出資料夾")
         sub.add_argument("--overwrite", action="store_true", help="明確替換此輸出目錄的同名成果")
@@ -152,8 +152,9 @@ def main(argv=None):
             result = build(args.command.replace('-', '_'), payload)
             bundle = result.files
             status = 2 if result.data['issue_count'] else 0
-        elif args.command == 'lyrics-review':
-            result = build('lyrics_review', read_json(args.input))
+        elif args.command in ('lyrics-review','lyrics-export-review'):
+            payload=read_json(args.input)
+            result = build('lyrics_export_review', {'package':payload}) if args.command=='lyrics-export-review' else build('lyrics_review',payload)
             bundle = result.files
             status = 2 if result.data['issue_count'] else 0
         elif args.command == 'lyrics-seed':
@@ -222,6 +223,7 @@ def main(argv=None):
         print("已完成分鏡欄位檢查；有待修正項目，詳見 storyboard-review.md。" if args.command == 'storyboard-review' else
               "已完成歌曲欄位檢查；有待修正項目，詳見 music-review.md。" if args.command == 'music-review' else
               "已完成校時檢查；有待修正項目，詳見 lyrics-review.md。" if args.command == 'lyrics-review' else
+              "已完成格式檢查；完整 JSON 請另存，詳見 lyrics-export-review.md。" if args.command == 'lyrics-export-review' else
               "已完成分析，有需確認項目；詳見 report.md。")
     return status
 
