@@ -2,7 +2,7 @@
 
 ZIP 預覽新增可下載的 JSON／Markdown 差異報告，帶來源 ZIP SHA／bytes、原 manifest、完整變更清單，原成果文字與媒體另存。下載保持目前結果，後續修改停用舊報告；CLI／Agent／MCP 的明確 report opt-in 與 Python／browser 同契約。修正原生 form 換行正規化，真下載逐 bytes 相同；launcher 可完整列印選定 WAV／ZIP 啟動設定。預設 text writer exclusive create 保留 raced-in 同名檔案，多檔可能部分寫出，沒有回滾假設。
 
-見[使用與分層](docs/DELIVERY-REPORT.md)、[QA](docs/QA-v0.41.0.md)。365 Python／554 JS／44 syntax／4 Skill；四scope8份原生報告完整 bytes 相同、原 WAV SHA 保持、鍵盤下載／Apply／Undo／晚 reply 與三寬度 geometry 通過。v40 ZIP349／546還原通過。特定 Host／正式媒體／實聽／完整視覺／FreeTWAI仍待，rolling active。
+見[使用與分層](DELIVERY-REPORT.md)、[QA](QA-v0.41.0.md)。365 Python／554 JS／44 syntax／4 Skill；四scope8份原生報告完整 bytes 相同、原 WAV SHA 保持、鍵盤下載／Apply／Undo／晚 reply 與三寬度 geometry 通過。v40 ZIP349／546還原通過。特定 Host／正式媒體／實聽／完整視覺／FreeTWAI仍待，rolling active。
 
 ## Git與恢復
 

@@ -3,13 +3,14 @@
 (function(root){
  const pack=typeof module==='object'&&module.exports?require('./delivery-package.js'):root.MusicDeliveryPackage;
  const review=typeof module==='object'&&module.exports?require('./delivery-review.js'):root.MusicDeliveryReview;
+ const reports=typeof module==='object'&&module.exports?require('./delivery-report.js'):root.MusicDeliveryReport;
  const exact=(v,keys)=>v&&typeof v==='object'&&!Array.isArray(v)&&Object.keys(v).length===keys.length&&keys.every(k=>Object.hasOwn(v,k));
  async function checked(wire,selected,hash){
   if(!exact(selected,['bytes','sha256','manifest']))throw Error('選定ZIP摘要未完成');
   if(!exact(wire,['files','data','meta'])||!exact(wire.meta,['version','protocol_version','needs_review'])||wire.meta.version!==pack.version||wire.meta.protocol_version!==1||wire.meta.needs_review!==true)throw Error('交付核對回覆版本不支援');
   const d=wire.data;
   if(!exact(d,['format','schema_version','archive_bytes','archive_sha256','manifest'])||d.format!=='zoe-delivery-inspection'||d.schema_version!==1||!Number.isSafeInteger(d.archive_bytes)||d.archive_bytes<=0||d.archive_bytes>pack.maxArchive||d.archive_bytes!==selected.bytes||typeof d.archive_sha256!=='string'||!/^[0-9a-f]{64}$/.test(d.archive_sha256)||d.archive_sha256!==selected.sha256)throw Error('交付回覆與選定ZIP不符；目前成果保留');
-  if(!d.manifest||!['0.38.0','0.39.0','0.40.0'].includes(d.manifest.tool_version))throw Error('來源工具版本不支援；沒有遷移');
+  if(!d.manifest||!['0.38.0','0.39.0','0.40.0','0.41.0'].includes(d.manifest.tool_version))throw Error('來源工具版本不支援；沒有遷移');
   const source={scope:d.manifest.scope,label:d.manifest.label,files:wire.files};
   const expected=await pack.manifest(source,hash,d.manifest.tool_version);
   try{pack.checkedManifest(d.manifest,expected);pack.checkedManifest(selected.manifest,expected);}catch{throw Error('ZIP原始清單、回覆或文字成果不一致；目前成果保留');}
@@ -25,6 +26,12 @@
   function status(){return {reading,pending:!!pending,canApply:!!pending&&!reading&&!applying&&current(),canUndo:!reading&&!applying&&undoCurrent(),proposal:pending?structuredClone(pending):null,comparison:pending?structuredClone(comparison):null};}
   const publish=()=>onState(status());
   return {status,
+   report(){
+    if(reading||applying||!pending||!current()){onError(Error('比較來源已變更或尚未完成；請重新選ZIP再下載報告'));return null;}
+    const files=reports.files(pending.data,comparison);
+    if(!current()){onError(Error('報告來源已有修改；原成果保留'));return null;}
+    return files;
+   },
    filePreview(name){
     if(!pending||!comparison?.files.some(f=>f.name===name))return null;
     const old=job.before.bundle?.files||{};

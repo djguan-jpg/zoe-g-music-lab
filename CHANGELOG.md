@@ -1,5 +1,12 @@
 # 迭代說明
 
+## v0.41.0 — 2026-10-04
+
+- ZIP預覽可保存完整差異JSON／Markdown，來源ZIP SHA／bytes、manifest與兩側檔案摘要；下載不套用，編修／取消／晚回應保護沿用，報告schema1獨立。CLI --comparison-report／Agent include_report要求baseline、拒絕include_files碰撞，12／17工具保持。
+- Python與browser純報告層、application／adapter分層；原生form明確JSON字串編碼還原原LF／CRLF bytes，未知／重複欄位拒絕；不改legacy export。
+- launcher列印絕對WAV／ZIP選擇，不修改Host；default text writer exclusive create修正另一writer預檢後建立檔案被覆蓋的race，多檔可能部分輸出明示，不刪除回滾。
+- 365Python／554JS／44syntax／4Skill，新增16Python／8JS；原生四scope8報告逐bytes同契約、原WAV SHA／Enter與三寬度geometry、v40 ZIP349／546還原通過。private exact-source封裝／PR／Release、actual remote hashes與latest3／typed run維護依收據。
+
 ## v0.40.0 — 2026-10-04
 
 - ZIP替換前新增精確文字差異／新增變更移除相同／兩份原文與原換行計數；長檔有界摘錄但載入下載全文，按實際面板寬度排版，表單與音檔保持。

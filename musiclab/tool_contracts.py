@@ -193,7 +193,8 @@ def payload_schema(operation):
                                     object_schema({'package': {'anyOf': [lyrics_package_schema(), lyrics_package_schema(legacy=True)]},
                                                    'allow_legacy': {'type': 'boolean'}}, ['package'], additionalProperties=False)])
     if operation == 'delivery_inspect':
-        return {"type":"object","additionalProperties":False,"properties":{
+        return {"type":"object","additionalProperties":False,"allOf":[{"if":{"properties":{"include_report":{"const":True}},"required":["include_report"]},"then":{"required":["baseline"],"not":{"properties":{"include_files":{"const":True}},"required":["include_files"]}}}],"properties":{
+            "include_report":{"type":"boolean","default":False,"description":"Return deterministic comparison JSON/Markdown with explicit baseline; mutually exclusive with include_files; no automatic write"},
             "baseline":{"type":"object","additionalProperties":False,"required":["scope","files"],"properties":{"scope":{"type":"string","enum":["music","storyboard","lyrics","audio"]},"files":{"type":"object","maxProperties":64,"additionalProperties":{"type":"string"}}},"description":"Optional explicit baseline text; compare exact names/UTF-8 without editing, merging or selecting paths"},
             "include_files":{"type":"boolean","default":False,"description":"Return original text files only when serialized file JSON <=512 KiB; no extraction or automatic write"}}}
     if operation == 'delivery_package':

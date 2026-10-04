@@ -33,14 +33,4 @@ def json_text(data):
     return json.dumps(data, ensure_ascii=False, indent=2, allow_nan=False) + "\n"
 
 
-def write_bundle(directory, files, overwrite=False):
-    directory = Path(directory)
-    # Check all targets first, so refusal cannot leave a partially updated bundle.
-    for name in files:
-        target = directory / name
-        if target.exists() and not overwrite:
-            raise ValueError(f"輸出已存在：{target}；請換目錄或明確使用 --overwrite")
-    directory.mkdir(parents=True, exist_ok=True)
-    for name, content in files.items():
-        (directory / name).write_text(content, encoding="utf-8", newline="\n")
-    return [str(directory / name) for name in files]
+from .text_outputs import write_bundle

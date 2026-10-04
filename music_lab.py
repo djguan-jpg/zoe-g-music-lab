@@ -19,6 +19,7 @@ def main(argv=None):
         sub.add_argument("--out", required=True, help="指定本輪輸出資料夾")
         sub.add_argument("--overwrite", action="store_true", help="明確替換此輸出目錄的同名成果")
         if name=='delivery-inspect':sub.add_argument('--compare-input',help='明確比較基準JSON，只含scope與files；不合併或寫入原文')
+        if name=='delivery-inspect':sub.add_argument('--comparison-report',action='store_true',help='明確比較基準時另輸出JSON與Markdown來源報告')
         if name in ('music-review', 'storyboard-review', 'storyboard-timing-review'):
             source_group = sub.add_mutually_exclusive_group(required=True)
             source_group.add_argument('--input', help='含 panel 的原始工作台欄位 JSON')
@@ -78,11 +79,12 @@ def main(argv=None):
         if args.command == 'delivery-inspect':
             from musiclab.common import json_text
             payload={}
+            if args.comparison_report:payload['include_report']=True
             if args.compare_input:
                 from musiclab.delivery_package import decode, MAX_REQUEST_BYTES
                 with Path(args.compare_input).open('rb') as source:payload['baseline']=decode(source.read(MAX_REQUEST_BYTES+1))
             result=build('delivery_inspect',payload,delivery_source=args.input)
-            paths=write_bundle(args.out,{'delivery-inspection.json':json_text(result.data)},args.overwrite)
+            paths=write_bundle(args.out,{'delivery-inspection.json':json_text(result.data),**result.files},args.overwrite)
             print('交付ZIP雜湊核對完成；沒有解壓或創作品質驗收：'+paths[0]);return 0
         if args.command == 'delivery-package':
             from musiclab.delivery_package import decode, MAX_REQUEST_BYTES

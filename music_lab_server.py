@@ -45,7 +45,7 @@ class WorkbenchServer(ThreadingHTTPServer):
                 if hasattr(self,'delivery_downloads'):self.delivery_downloads.close()
 MAX_AUDIO = 64 * 1024 * 1024
 MAX_TEXT = MAX_REQUEST_BYTES
-ASSETS = {"/delivery-review.js": ("web/delivery-review.js","text/javascript"),"/delivery-archive.js": ("web/delivery-archive.js","text/javascript"),"/delivery-import.js": ("web/delivery-import.js","text/javascript"),
+ASSETS = {"/delivery-report.js": ("web/delivery-report.js","text/javascript"),"/delivery-review.js": ("web/delivery-review.js","text/javascript"),"/delivery-archive.js": ("web/delivery-archive.js","text/javascript"),"/delivery-import.js": ("web/delivery-import.js","text/javascript"),
           "/delivery-import-dom.js": ("web/delivery-import-dom.js","text/javascript"),"/": ("web/index.html", "text/html"), "/app.js": ("web/app.js", "text/javascript"),
           "/style.css": ("web/style.css", "text/css"),
           "/delivery-package.js": ("web/delivery-package.js", "text/javascript"),
@@ -196,6 +196,11 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
             if route.path == "/api/export":
                 fields = urllib.parse.parse_qs(raw.decode("utf-8"), keep_blank_values=True)
                 name, content = fields.get("name", [""])[0], fields.get("content", [""])[0]
+                if 'encoding' in fields:
+                    if set(fields)!={'name','content','encoding'} or any(len(v)!=1 for v in fields.values()) or fields['encoding']!=['json-string']:
+                        raise ValueError('匯出文字編碼欄位錯誤或重複')
+                    content=load_request(content)
+                    if not isinstance(content,str):raise ValueError('匯出內容需為JSON字串')
                 if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,99}", name):
                     raise ValueError("匯出檔名格式錯誤")
                 return self.reply(200, content, "application/octet-stream", name)
