@@ -138,3 +138,11 @@
 - object URL最多2個，送出後1秒、失敗、pagehide／dispose清理自身URL與timer。sent不冒充保存成功，確認舊snapshot保留後續編修；acceptance send callback先完成，失敗不新增pending。
 - 結果預覽重用excerpt32768UTF16 units、不拆surrogate，aria提示明示摘錄，download與ZIP仍全文。binary staging與v41 HTTP相容保持，沒有Agent路徑／寫檔／網路權限擴張。
 - 明確來源工具38／39／40／41／42，未知拒絕；12／17工具及Agent1／draft3／交付schema保持。v41 browser form段落是歷史實作，現版使用native bytes，HTTP編碼相容仍保留。
+
+
+## v0.43 指定 ZIP 原文
+
+- 原檔名驗證共用 delivery_package；selection1是已完整核對來源的純選取，不得跳過未選取檔的CRC／hash／canonical核對。明確檔名1–64且大小寫精確，全部存在才回傳。
+- application／Agent／MCP選定files JSON限512 KiB；CLI --file-name明確輸出沿8 MiB完整來源，拒絕metadata碰撞、預設覆寫及report混用。沒有JSON路徑或自動寫檔權限。
+- Browser originalFile只讀pending current source，重查工作台、表單／成果revision、bundle、busy與media。empty可下載、removed停用，取消／套用後拒絕舊來源；DOM只快取names與可用狀態，沿既有native bytes adapter。
+- selection1獨立於Agent1／draft3及交付schemas，12／17工具保持，來源工具明確38–43，未知拒絕；I/O提示共用operation_errors且不漏私人路徑。見[契約](docs/DELIVERY-SELECTION.md)。

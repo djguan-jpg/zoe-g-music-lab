@@ -4,6 +4,7 @@ import argparse
 import json
 import sys
 from pathlib import Path
+from musiclab.operation_errors import io_message
 from musiclab.draft_library import DraftLibrary
 from musiclab.application import (MAX_REQUEST_BYTES, PROTOCOL_VERSION, build,
                                   capabilities, load_request, validate_request)
@@ -25,7 +26,7 @@ def response(raw, audio_source=None, draft_library=None, backup_source=None, del
     except (ValueError, TypeError, KeyError, AttributeError, UnicodeError) as error:
         code, message = "invalid_input", str(error)
     except OSError:
-        code, message = "io_error", "選定音檔或草稿庫無法讀寫"
+        code, message = "io_error", io_message(operation)
     except Exception:
         code, message = "internal_error", "本機操作未完成，請檢查輸入或回報此 request id"
     return {"protocol_version": PROTOCOL_VERSION, "id": request_id, "ok": False,

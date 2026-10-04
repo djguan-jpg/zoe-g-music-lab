@@ -13,6 +13,7 @@ from . import __version__
 from .audio import analyze_wav, audio_bundle
 from .delivery_package import prepare as prepare_delivery, descriptor as delivery_descriptor
 from .delivery_inspect import read as read_delivery, descriptor as inspection_descriptor, MAX_INLINE_FILES_BYTES
+from .delivery_selection import checked_names, select as select_delivery_files, descriptor as selection_descriptor
 from .delivery_review import compare as compare_delivery, descriptor as comparison_descriptor
 from .delivery_report import files as delivery_report_files, descriptor as report_descriptor
 from .audio_acceptance import validate as validate_acceptance, prepare as prepare_acceptance, descriptor as acceptance_descriptor
@@ -39,7 +40,7 @@ from .draft_backup import (BACKUP_SCHEMA_VERSION, MAX_BACKUP_BYTES, MAX_EXPANDED
 PROTOCOL_VERSION = 1
 MAX_REQUEST_BYTES = MAX_JSON_BYTES
 OPERATIONS = {
-    "delivery_inspect": "Verify selected canonical text ZIP; explicit baseline yields comparison; include_report returns bounded JSON/Markdown evidence and excludes include_files; metadata default, inline original files JSON <=512 KiB; no extraction, merging, paths, creative acceptance or model",
+    "delivery_inspect": "Verify the complete selected canonical ZIP; include_files with optional explicit file_names returns only selected original text within 512 KiB serialized JSON; default metadata, optional baseline comparison or exclusive include_report; no paths, merging, automatic writes or model",
     "delivery_package": "Package explicitly provided text files with a SHA-256 manifest; metadata by default, archive_base64 only when include_archive=true and ZIP<=512 KiB; no source paths, media, creative acceptance or model",
     "music": "Song planning and AI task packaging; no model invocation",
     "music_review": "Locate incomplete raw song draft fields and numeric ranges; read-only; no content filling, complete plan acceptance or model",
@@ -102,6 +103,7 @@ def capabilities(draft_library=None, backup_source=None, delivery_source=None):
             "storyboard_timing_review": storyboard_timing_review_descriptor(),
             "delivery_package": {**delivery_descriptor(), "agent_max_request_bytes": MAX_REQUEST_BYTES},
             "delivery_inspection": {**inspection_descriptor(), "source_selected": delivery_source is not None},
+            "delivery_file_selection": selection_descriptor(),
             "delivery_comparison": comparison_descriptor(),
             "delivery_comparison_report": report_descriptor(),
             "audio_acceptance_draft": acceptance_descriptor(),
@@ -120,13 +122,20 @@ def export_library_backup(draft_library, identifiers=None):
     return export_backup(draft_library, identifiers)
 
 
-def inspect_delivery(source, include_files=False, *, limit_files=True, baseline=None, include_report=False):
+def inspect_delivery(source, include_files=False, *, limit_files=True, baseline=None, include_report=False, file_names=None):
     if type(include_files) is not bool: raise ValueError('include_files需為布林值')
     if type(include_report) is not bool or (include_report and (baseline is None or include_files)):raise ValueError('比較報告需明確baseline；include_report與include_files不可同時啟用')
+    if type(limit_files) is not bool:raise ValueError('原文傳輸限制需為布林值')
+    if file_names is not None:
+        checked_names(file_names)
+        if not include_files:raise ValueError('file_names需明確include_files=true')
     result=read_delivery(source)
-    if include_files and limit_files and len(json_text(result.files).encode('utf-8'))>MAX_INLINE_FILES_BYTES:
-        raise ValueError('文字成果JSON超過512KiB；請回傳摘要或在工作台選檔查看')
     files=result.files if include_files else {}
+    if file_names is not None:
+        files,selection=select_delivery_files(result.files,file_names)
+        result.data['selection']=selection
+    if include_files and limit_files and len(json_text(files).encode('utf-8'))>MAX_INLINE_FILES_BYTES:
+        raise ValueError('文字成果JSON超過512KiB；請回傳摘要或在工作台選檔查看')
     if baseline is not None:
         comparison=compare_delivery(baseline,{'scope':result.data['manifest']['scope'],'files':result.files})
         if include_report:files=delivery_report_files(result.data,comparison)
@@ -160,9 +169,10 @@ def build(operation, payload, *, audio_source=None, draft_library=None, backup_s
             data = restore_backup(draft_library, backup_source, payload['backup_sha256'])
         return Result({}, data, operation != 'draft_list')
     if operation == "delivery_inspect":
-        if set(payload)-{'include_files','baseline','include_report'}:raise ValueError('交付核對不能由JSON指定來源路徑')
+        if set(payload)-{'include_files','baseline','include_report','file_names'}:raise ValueError('交付核對不能由JSON指定來源路徑')
         if 'baseline' in payload and payload['baseline'] is None:raise ValueError('比較基準需為scope／files物件')
-        return inspect_delivery(delivery_source,payload.get('include_files',False),baseline=payload.get('baseline'),include_report=payload.get('include_report',False))
+        if 'file_names' in payload:checked_names(payload['file_names'])
+        return inspect_delivery(delivery_source,payload.get('include_files',False),baseline=payload.get('baseline'),include_report=payload.get('include_report',False),file_names=payload.get('file_names'))
     if operation == "delivery_package":
         return Result({}, prepare_delivery(payload).summary(payload.get("include_archive", False)), True)
     if operation == "music_review":

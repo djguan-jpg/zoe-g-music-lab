@@ -1,5 +1,9 @@
 # ZIP 原文與差異審閱（v0.40）
 
+## v0.43 指定 ZIP 原文
+
+完整核對來源後才能選取明確原檔名，pure selection1／application／CLI／Agent／MCP共用；Browser pending current source唯讀下載沿native bytes。512 KiB選定JSON上限、8 MiB完整來源與原文保持；來源明確38–43，12／17工具與Agent1／draft3及既有交付schemas保持。見[目前契約與使用](DELIVERY-SELECTION.md)。以下早期版本段落保留迭代來源。
+
 v0.42成果預覽有界但原文下載與ZIP保持全文，browser共用native bytes；來源工具明確38–42，未知拒絕，Agent契約及上限保持。見[目前下載契約](TEXT-DOWNLOAD.md)。
 
 v0.41可保存來源ZIP SHA及完整差異JSON／Markdown，CLI／Agent明確report選項，來源工具支援38／39／40／41。見[目前報告契約](DELIVERY-REPORT.md)；以下保留v0.40初版比較說明。

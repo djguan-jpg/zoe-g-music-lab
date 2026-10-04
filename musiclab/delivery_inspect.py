@@ -9,8 +9,8 @@ from pathlib import Path
 from .delivery_package import MAX_ARCHIVE_BYTES, MAX_FILES, MAX_SOURCE_BYTES, MANIFEST_NAME, prepare
 from .json_document import decode_json
 MAX_MANIFEST_BYTES=32768
-MAX_INLINE_FILES_BYTES=512*1024
-SUPPORTED_TOOL_VERSIONS=('0.38.0','0.39.0','0.40.0','0.41.0','0.42.0')
+from .delivery_selection import MAX_INLINE_FILES_BYTES
+SUPPORTED_TOOL_VERSIONS=('0.38.0','0.39.0','0.40.0','0.41.0','0.42.0','0.43.0')
 INSPECTION_SCHEMA_VERSION=1
 
 def descriptor():
