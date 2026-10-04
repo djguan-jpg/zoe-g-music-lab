@@ -3,7 +3,7 @@
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const MusicAudio=require('../web/audio-review.js');
 function report(){return {file:'first.wav',profile:'distribution',sha256:'a'.repeat(64),sample_rate:48000,bit_depth:16,
-  channels:2,duration_seconds:1,acceptance:{rates:[44100,48000],bits:[16,24],channels:[1,2]},
+  channels:2,frames:48000,duration_seconds:1,acceptance:{rates:[44100,48000],bits:[16,24],channels:[1,2]},
   checks:{sample_rate:true,bit_depth:true,channels:true},warnings:[],status:'technical_checks_passed',
   quiet_regions:{threshold_dbfs:-60,leading_seconds:.1,trailing_seconds:.2,quiet_frame_ratio:.3},stereo_correlation:null,
   source_evidence:{bytes:192044,analysis_source:'copied_bytes',wave_format_tag:1,block_align:4,average_bytes_per_second:192000,declared_riff_bytes:192044},
@@ -23,7 +23,7 @@ test('review includes explicit source, acceptance, both quiet edges and every ch
   assert.equal(review.needsReview,false);assert.equal(review.status,'本次技術條件通過');
 });
 test('warning result and digital silence retain their meaning instead of becoming numeric zero',()=>{
-  const source=report();source.warnings=['待實聽'];source.status='needs_review';source.per_channel[0].peak_dbfs=null;source.per_channel[0].rms_dbfs=null;
+  const source=report();source.warnings=['待實聽'];source.status='needs_review';source.per_channel[0].peak_dbfs=null;source.per_channel[0].rms_dbfs=null;source.per_channel[0].dc_offset=0;
   const review=MusicAudio.buildReview(source);assert.equal(review.needsReview,true);assert.equal(review.channels[0].peak,'−∞（數位靜音）');
   assert.equal(review.channels[0].rms,'−∞（數位靜音）');review.warnings.push('later');assert.deepEqual(source.warnings,['待實聽']);
 });

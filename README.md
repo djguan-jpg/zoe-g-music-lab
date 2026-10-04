@@ -1,8 +1,8 @@
 # ZOE. G Music Lab
 
-目前版本 **v0.60.0**：ZIP核對失敗原因保留在選檔區，可清除訊息或重新選檔；編修表單保持提示，清除不取消既有撤回。純控制器的有界失敗metadata、DOM literal狀態與介面樣式分層，舊回應不能恢復已取消的錯誤。481 Python／743 JavaScript／62語法／四份Skill通過，88個歷史ZIP bytes保持。 見[使用與分層](docs/DELIVERY-FEEDBACK.md)、[QA](docs/QA-v0.60.0.md)、[交接](docs/HANDOFF-v0.60.0.md)。
+目前版本 **v0.61.0**：音檔報告新增獨立 PCM 數值核對：拒絕正值 sample peak、RMS 高於 peak、滿刻度樣本超過影格、安靜段超過時長及非立體聲相關值等矛盾回覆。原報告、表單與音檔保留，可重新分析；全安靜音檔兩端全長與四捨五入保持有效。484 Python／751 JavaScript／63 語法／四份 Skill 通過，83 份實際合成音檔與92個歷史ZIP bytes保持。 見[使用與分層](docs/AUDIO-STATISTICS.md)、[QA](docs/QA-v0.61.0.md)、[交接](docs/HANDOFF-v0.61.0.md)。
 
-上一輪 v0.59.0：五處交付版本清單改用固定共用契約，Python／browser／Agent一致拒絕未知版本。v59指定ZIP独立解壓重跑479Python／736JavaScript通過。見[QA](docs/QA-v0.59.0.md)。
+上一輪 v0.60.0：ZIP核對失敗原因保留在選檔區，清除／重選不取消既有撤回。v60指定ZIP獨立解壓重跑481 Python／743 JavaScript通過。見[QA](docs/QA-v0.60.0.md)。
 
 ## ZIP原文與差異（v0.40）
 
