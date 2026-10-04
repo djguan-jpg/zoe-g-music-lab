@@ -1,5 +1,11 @@
 # 迭代說明
 
+## v0.36.0 — 2026-10-04
+
+- 修正窄螢幕建立後成功訊息與成果在視窗下方難尋找：四工作台建立旁狀態及明確查看／返回，聚焦成果標題再返回原控制。清空成果則返回可操作的build，換台清舊目標。
+- 純presentation／注入controller／DOM分層；完成不搶焦點，busy停用、dirty明示上一份並保持下載停用，晚回應保留新內容與舊成果。literal文字／鍵盤／auto捲動，導航不進draft或wire；HTTP只新增固定JS assets，10／15工具保持。
+- 300Python／443JS／4Skill／35syntax及diff，12新測試；390px／1366px四工作台往返、busy／500／4秒晚回應、原音檔及實際report／draft3下載讀回、真draft載入清空返回build；v35ZIP300／431還原通過。指定commit封裝／privatePR／Release／遠端bytes依本輪收據。PolyForm非商用、署名保持，FreeTWAI not_submitted。
+
 ## v0.35.0 — 2026-10-04
 
 - 新增獨立開發維護CLI，預設唯讀稽核／exact preview token清除／recovery journal還原。pure policy、Windows identity reader、filesystem-Git adapter分層，未知schema拒絕；創作10／15工具與既有protocol／draft保持。

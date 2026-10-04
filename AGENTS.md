@@ -85,3 +85,9 @@
 - Managed Python job啟動時自我登記PID／creation ticks／image basename，same-host核對；bare PID不判定ownership，重用外部程序保留，unknown不冒充已停止。不枚舉／kill或讀環境、命令列。
 - scripts/iteration_audit.py預設稽核，僅完整direct release manifest／ZIP且latest3之外、嚴格超七天、exact tag／source／現場Git archive SHA才可列候選。prune需exact preview token與無running／unverified記錄，journal先保存；只搬移核對的本專案目錄、unlink兩檔／空目錄；restore拒絕覆寫。未知檔／連結／不完整封裝及草稿／備份／媒體保留。
 - 讀寫有界manifest／journal與ZIP中央目錄，超限在搬移前拒絕。I/O可有部分結果，保留journal／隔離檔人工核對，不宣稱原子交易；Git objects／archive bytes不足不能冒充復原。每輪管理job依原handle正常停止，最終audit不能取代actual session completion。
+
+
+## v0.36 成果查看與返回
+
+- delivery-navigation純DTO／注入controller與DOM adapter分層；只讀scope／names／busy／dirty／message／error。導覽不進draft3、成果或Agent wire，完成不自動搶焦點。
+- show／back明確操作前重查；busy停用，dirty仍可閱讀上一份且保持原下載停用，換台清舊返回目標。成果清空返回目前可操作build，避免聚焦disabled／hidden控制。literal text、aria關聯與auto捲動；新增asset不擴大Agent／HTTP operation權限。
