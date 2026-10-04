@@ -49,3 +49,8 @@ python music_lab.py lyrics-seed --text lyrics.txt --title '作品名稱' --out o
 ## 校時待辦（v0.25）
 
 未完成表格先「檢查校時進度」或Agent／MCP lyrics_review；CLI lyrics-review --input raw-cues.json --out outputs/review。按問題定位原列開始／結束／文字，保留未標記值、不猜時間或裁切。局部已填數量不表示無重疊；修正後重查並以lyrics正式驗證，報告schema1不能當完成字幕。CLI2表示有待修正的報告已保存，meta.needs_review始終true，仍需實聽。原稿／媒體另存，編修後舊報告與定位停用。
+
+
+## v0.38 完整文字交付
+
+完成本工作台後可下載本輪所有文字成果ZIP與逐檔SHA清單，CLI／Agent／MCP共用 delivery_package。Agent預設摘要，小型ZIP需明確include_archive；不自動寫檔，封裝不等於實聽或實際畫面接受。基本11／啟庫16工具，Agent1／draft3保持。見[共用契約](../../docs/DELIVERY-PACKAGE.md)。

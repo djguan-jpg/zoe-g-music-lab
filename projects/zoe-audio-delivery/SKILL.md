@@ -33,3 +33,8 @@ python music_lab.py audio --input selected.wav --profile video --rates 48000 --b
 ## 原值條件草稿（v0.37）
 
 工作台另存接受條件schema1，未填完原文可下載並先預覽再載入；自訂欄位不在project draft3中。先核對收件要求，再明確套用；原音檔／其他panel保持。整份專案載入回到示範條件但保留本頁自訂原文。條件下載須核對檔案再確認，後續編修另存。CLI使用 --acceptance-draft selected.json，Agent audio／MCP audio_report嵌入acceptance_draft；與直接profile／rates／bits／channels互斥，JSON不能選路徑。未知／不符／晚回應不替換成果。詳見[完整契約](../../docs/AUDIO-ACCEPTANCE.md)。
+
+
+## v0.38 完整文字交付
+
+完成本工作台後可下載本輪所有文字成果ZIP與逐檔SHA清單，CLI／Agent／MCP共用 delivery_package。Agent預設摘要，小型ZIP需明確include_archive；不自動寫檔，封裝不等於實聽或實際畫面接受。基本11／啟庫16工具，Agent1／draft3保持。見[共用契約](../../docs/DELIVERY-PACKAGE.md)。

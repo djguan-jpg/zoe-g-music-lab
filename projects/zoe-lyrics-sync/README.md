@@ -43,3 +43,8 @@ python music_lab.py lyrics --input examples/lyrics.lrc --shift 1.25 --set '2=14.
 「整批校時」先預覽再套用，正數延後、負數提前；有明確結束的句長保留。撤回只改時間，後來的歌詞文字、音檔與刪除紀錄保留；任何後續時間改動或句子增刪會拒絕整份撤回，避免蓋掉編修。最近一次校時撤回與調整量只存在本頁，不存進草稿；重新載入逐句內容／草稿會清除。修改後仍需驗證並建立歌詞包。
 
 時間統一至毫秒，半毫秒往遠離零方向捨入；1.2345 秒變成 1.235。負值在捨入前拒絕；重複／重疊／超過指定歌曲總長整份拒絕，沒有自動截斷。--set 保留已有的明確句長，--shift 不改指定 duration。原始來源需為非負時間；shift 後仍以最終校時結果驗證。Agent 同一 payload 可用 shift_seconds、time_changes、text_changes，見根目錄 docs/AGENT.md。
+
+
+## v0.38 完整文字交付
+
+完成本工作台後可下載本輪所有文字成果ZIP與逐檔SHA清單，CLI／Agent／MCP共用 delivery_package。Agent預設摘要，小型ZIP需明確include_archive；不自動寫檔，封裝不等於實聽或實際畫面接受。基本11／啟庫16工具，Agent1／draft3保持。見[共用契約](../../docs/DELIVERY-PACKAGE.md)。

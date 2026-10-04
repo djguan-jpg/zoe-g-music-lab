@@ -57,3 +57,8 @@ python music_lab.py music --brief examples/first-light-music.json --out outputs/
 ## v0.31 歌曲待辦交接
 
 「檢查歌曲待辦」即時定位；「建立待辦報告」產生music-review.json／Markdown並保留原創作。CLI music-review --input接受panel原字串，或--draft讀modern schema3草稿中的歌曲，兩入口互斥、舊版不靜默轉換。診斷未完成內容也能交付，CLI status2表示報告已寫出且有待修正、0表示欄位零、1為失敗；預設拒絕同名輸出。Agent／MCP新增唯讀music_review，8／13工具需重新discovery，其他protocol／schema保持。原報告帶source與原列，不把零待辦當總長、演唱或素材授權通過；完整歌曲仍要建立與實唱／實聽。編修後重查，其他工作台／音檔／另存狀態保持。見../../docs/MUSIC-REVIEW.md。
+
+
+## v0.38 完整文字交付
+
+完成本工作台後可下載本輪所有文字成果ZIP與逐檔SHA清單，CLI／Agent／MCP共用 delivery_package。Agent預設摘要，小型ZIP需明確include_archive；不自動寫檔，封裝不等於實聽或實際畫面接受。基本11／啟庫16工具，Agent1／draft3保持。見[共用契約](../../docs/DELIVERY-PACKAGE.md)。

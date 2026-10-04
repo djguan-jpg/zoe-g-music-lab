@@ -81,3 +81,8 @@ storyboard.json 的 frame_timeline 為獨立 schema1，CSV／提示稿及工作�
 創作欄位補齊後仍需檢查原秒數、FPS與影格。工作台「檢查時間待辦」可定位原欄位；零待辦仍需完整建立與連戲、實際音畫驗證。CLI `python music_lab.py storyboard-timing-review --input examples/unfinished-storyboard-timing-review.json --out outputs/timing-review-run` 或明確 `--draft 已另存modern草稿.json`，保留原字串與順序，不排序、補值或裁切；預設不覆寫，退出0／2／1分別為時間零待辦／已輸出待修正／失敗。
 
 Agent／MCP同一唯讀storyboard_timing_review，基本10／明確啟庫15；新時間report1與既有創作report1、Agent1／draft3分開。時間報告不當成完整分鏡；未知版本或不相同來源拒絕，原成果與媒體保留。見docs/STORYBOARD-TIMING-REVIEW.md。全形有限數值的鏡尾可在核對後明確採用總長、限定撤回；保持原創作。
+
+
+## v0.38 完整文字交付
+
+完成本工作台後可下載本輪所有文字成果ZIP與逐檔SHA清單，CLI／Agent／MCP共用 delivery_package。Agent預設摘要，小型ZIP需明確include_archive；不自動寫檔，封裝不等於實聽或實際畫面接受。基本11／啟庫16工具，Agent1／draft3保持。見[共用契約](../../docs/DELIVERY-PACKAGE.md)。

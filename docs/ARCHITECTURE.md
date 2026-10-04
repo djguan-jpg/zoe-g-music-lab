@@ -1,5 +1,9 @@
 # 分層與版本契約
 
+## v0.38 文字交付與有界下載
+
+純delivery_package來源及確定性ZIP／manifest→application→CLI delivery_files、HTTP有界BackupDownloads實例、Agent／MCP。browser純model／注入controller→DOM adapter；完整檔案來源、schema與逐檔SHA、scope／revision核對，過期回覆取消自身slot。CLI排他發布，HTTP每類2slot／60秒／take一次、server_close清除自身檔；既有backup adapter defaults保持。交付schema1獨立，Agent1／draft3保持，11／16工具。見[分層](DELIVERY-PACKAGE.md)。
+
 ## v0.34 原時間診斷與共用總長檢查
 
 storyboard_timing.py為純部分時鐘診斷，重用有限十進位與storyboard_frames的秒數容差／最近半幀取偶映射；storyboard_timing_review.py負責精確最小原時間source、獨立report1及JSON／Markdown，application供四adapter。完整creative planner維持既有創作／連戲及時間接受；103跨語言／完整clock接受樣本防止兩層規則分歧。

@@ -5,7 +5,7 @@ import json
 import sys
 from pathlib import Path
 from musiclab.common import read_json, write_bundle
-from musiclab.application import build, export_library_backup
+from musiclab.application import build, export_library_backup, prepare_delivery
 from musiclab.backup_files import write_backup
 from musiclab import __version__
 from musiclab.draft_library import DraftLibrary, revision_id
@@ -14,7 +14,7 @@ from musiclab.draft_library import DraftLibrary, revision_id
 def main(argv=None):
     parser = argparse.ArgumentParser(description=f"ZOE. G Music Lab · 本機 v{__version__}")
     commands = parser.add_subparsers(dest="command", required=True)
-    for name in ("music", "storyboard", "lyrics", "audio", "storyboard-seed", "lyrics-seed", "lyrics-review", "music-review", "storyboard-review", "storyboard-timing-review"):
+    for name in ("music", "storyboard", "lyrics", "audio", "storyboard-seed", "lyrics-seed", "lyrics-review", "music-review", "storyboard-review", "storyboard-timing-review", "delivery-package"):
         sub = commands.add_parser(name)
         sub.add_argument("--out", required=True, help="指定本輪輸出資料夾")
         sub.add_argument("--overwrite", action="store_true", help="明確替換此輸出目錄的同名成果")
@@ -74,6 +74,15 @@ def main(argv=None):
     args = parser.parse_args(argv)
     status = 0
     try:
+        if args.command == 'delivery-package':
+            from musiclab.delivery_package import decode, MAX_REQUEST_BYTES
+            from musiclab.delivery_files import write_archive
+            with Path(args.input).open('rb') as source: payload = decode(source.read(MAX_REQUEST_BYTES+1))
+            prepared = prepare_delivery(payload)
+            target = write_archive(args.out, prepared, args.overwrite)
+            print(f'文字成果 ZIP 已建立：{target}；SHA-256 {prepared.summary()["sha256"]}')
+            print('清單核對檔案位元組；不代表創作、媒體或收件接受。')
+            return 0
         if args.command == "draft":
             if hasattr(sys.stdout, "reconfigure"):
                 sys.stdout.reconfigure(encoding="utf-8")
