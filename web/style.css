@@ -41,6 +41,9 @@
 
 .lyric-import-preview table{table-layout:fixed}.lyric-import-preview th:nth-child(-n+2){width:20%}.lyric-import-preview td{vertical-align:top;overflow-wrap:anywhere}.lyric-import-preview td:last-child{white-space:pre-wrap}.lyric-import-preview .table-wrap{margin-bottom:12px}
 
+/* v0.54: export reminders wrap within their panel on narrow viewports. */
+#lyrics-export-issues button{max-width:100%;white-space:normal;text-align:left;overflow-wrap:anywhere}
+
 /* v0.22: loudness is separate from format acceptance and per-channel RMS. */
 .audio-loudness{border-top:1px solid var(--line);padding-top:10px;margin:20px 0}.audio-loudness h4{margin-bottom:6px}.audio-loudness-value{font-size:24px;font-weight:600;line-height:1.4;color:var(--green);margin:4px 0;overflow-wrap:anywhere}
 /* v0.21: draft retention status is distinct from domain validation. */

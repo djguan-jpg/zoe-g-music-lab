@@ -52,7 +52,7 @@ OPERATIONS = {
     "storyboard_timing_review": "Locate raw storyboard numeric, seconds and exclusive-frame coverage issues; read-only; no time edits, complete creative acceptance or media",
     "lyrics": "Manual cue validation and LRC/SRT/JSON exports; no ASR",
     "lyrics_review": "Locate incomplete lyric rows, duplicate starts, overlap and declared-duration limits; read-only; no guessed times or ASR",
-    "lyrics_export_review": "Review a complete modern lyric package for LRC leading-tag and SRT blank-line round-trip risks; compact source-pinned report; read-only, no rewrite, paths or media acceptance",
+    "lyrics_export_review": "Review a complete modern lyric package for LRC leading-tag and SRT blank-line round-trip risks; compact source-pinned report by default, explicit include_package adds checked complete lyrics.json; read-only, no rewrite, paths or media acceptance",
     "audio": "Selected integer PCM WAV evidence and gated mono/stereo integrated loudness; source is preserved; no normalization or true peak",
     "storyboard_seed": "Create from a modern song brief or inspect an existing bar-aligned timing seed; incomplete visuals require manual writing; no model or media",
     "lyrics_seed": "Create or inspect untimed lyric lines; preserves source and duplicates; no guessed times, ASR or model",

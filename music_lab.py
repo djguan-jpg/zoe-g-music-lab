@@ -18,6 +18,7 @@ def main(argv=None):
         sub = commands.add_parser(name)
         sub.add_argument("--out", required=True, help="指定本輪輸出資料夾")
         sub.add_argument("--overwrite", action="store_true", help="明確替換此輸出目錄的同名成果")
+        if name=='lyrics-export-review':sub.add_argument('--include-package',action='store_true',help='明確另輸出同來源的完整lyrics.json，與格式報告一起保存')
         if name=='delivery-inspect':sub.add_argument('--compare-input',help='明確比較基準JSON，只含scope與files；不合併或寫入原文')
         if name=='delivery-inspect':sub.add_argument('--comparison-report',action='store_true',help='明確比較基準時另輸出JSON與Markdown來源報告')
         if name=='delivery-inspect':sub.add_argument('--file-name',action='append',help='明確輸出此原文檔，可重複；完整核對ZIP後選取，不覆寫，不能與comparison-report混用')
@@ -154,7 +155,7 @@ def main(argv=None):
             status = 2 if result.data['issue_count'] else 0
         elif args.command in ('lyrics-review','lyrics-export-review'):
             payload=read_json(args.input)
-            result = build('lyrics_export_review', {'package':payload}) if args.command=='lyrics-export-review' else build('lyrics_review',payload)
+            result = build('lyrics_export_review', {'package':payload,**({'include_package':True} if args.include_package else {})}) if args.command=='lyrics-export-review' else build('lyrics_review',payload)
             bundle = result.files
             status = 2 if result.data['issue_count'] else 0
         elif args.command == 'lyrics-seed':

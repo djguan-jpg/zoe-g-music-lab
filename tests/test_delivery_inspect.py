@@ -22,7 +22,7 @@ def request(payload={}):return {'protocol_version':1,'id':'synthetic-inspection'
 class InspectionTests(unittest.TestCase):
  def test_four_scopes_both_versions_preserve_exact_text_and_selected_bytes(self):
   for scope in ['music','storyboard','lyrics','audio']:
-   for version in ['0.38.0','0.39.0','0.40.0','0.41.0','0.42.0','0.43.0','0.44.0','0.45.0','0.46.0','0.47.0','0.48.0','0.49.0','0.50.0','0.51.0','0.52.0','0.53.0']:
+   for version in ['0.38.0','0.39.0','0.40.0','0.41.0','0.42.0','0.43.0','0.44.0','0.45.0','0.46.0','0.47.0','0.48.0','0.49.0','0.50.0','0.51.0','0.52.0','0.53.0','0.54.0']:
     p=source(scope);before=copy.deepcopy(p);prepared=prepare(p,tool_version=version);selected=io.BytesIO(prepared.archive);selected.seek(1);result=read(selected)
     self.assertEqual(result.files,p['files']);self.assertEqual(result.data['manifest'],prepared.manifest);self.assertEqual(result.data['archive_sha256'],hashlib.sha256(prepared.archive).hexdigest());self.assertEqual(p,before);self.assertEqual(selected.getvalue(),prepared.archive)
  def test_no_source_size_empty_and_directory_bound_before_zip_allocations(self):
@@ -107,5 +107,7 @@ class InspectionHTTPTests(unittest.TestCase):
   self.assertFalse(hasattr(self.server,'delivery_downloads'))
  def test_http_invalid_source_queries_and_origin_refuse(self):
   raw=prepare(source()).archive
-  self.assertEqual(self.call(raw,'/api/delivery-inspect?path=x')[0],400);self.assertEqual(self.call(raw,headers={'Origin':'https://foreign.example'})[0],403);self.assertEqual(self.call(b'{}')[0],400)
+  self.assertEqual(self.call(raw,'/api/delivery-inspect?path=x')[0],400)
+  # Test early origin rejection without the Windows unread-body reset race.
+  self.assertEqual(self.call(b'',headers={'Origin':'https://foreign.example'})[0],403);self.assertEqual(self.call(b'{}')[0],400)
 if __name__=='__main__':unittest.main()

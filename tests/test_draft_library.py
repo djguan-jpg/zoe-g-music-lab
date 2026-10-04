@@ -245,16 +245,17 @@ class DraftAdapterTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder:
             server = ThreadingHTTPServer(('127.0.0.1', 0), WorkbenchHandler); server.draft_library = DraftLibrary(folder)
             thread = threading.Thread(target=server.serve_forever, daemon=True); thread.start()
-            def request(path, payload=None, headers=None):
+            def request(path, payload=None, headers=None, method=None):
                 connection = http.client.HTTPConnection('127.0.0.1', server.server_port, timeout=5)
                 try:
-                    connection.request('GET' if payload is None else 'POST', path, None if payload is None else json.dumps(payload).encode(), headers or {})
+                    connection.request(method or ('GET' if payload is None else 'POST'), path, None if payload is None else json.dumps(payload).encode(), headers or {})
                     response = connection.getresponse(); return response.status, response.read()
                 finally: connection.close()
             try:
                 status, raw = request('/draft-contract.js'); self.assertEqual(status, 200); self.assertIn(b'MusicDraftContract', raw)
                 identifier = revision_id(); payload = {'id': identifier, 'label': 'HTTP 合成', 'draft': draft()}
-                self.assertEqual(request('/api/drafts/save', payload, {'Origin': 'https://untrusted.invalid'})[0], 403)
+                # Empty POST verifies the early guard without an unread-body reset.
+                self.assertEqual(request('/api/drafts/save', headers={'Origin': 'https://untrusted.invalid'}, method='POST')[0], 403)
                 self.assertEqual(list(Path(folder).iterdir()), [])
                 status, raw = request('/api/drafts/save', payload); self.assertEqual(status, 200)
                 self.assertTrue(json.loads(raw)['meta']['needs_review'])
