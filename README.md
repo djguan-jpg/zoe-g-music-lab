@@ -1,6 +1,6 @@
 # ZOE. G Music Lab
 
-目前版本 **v0.49.0**：原文搜尋可返回上一批，顯示本批序號範圍；只留最近512批返回位置，全文仍能向前搜尋。來源／query失效清空紀錄，批次與回呼核對保護舊選取；邊界鍵盤焦點接到可用按鈕。416 Python／629 JavaScript／52 syntax／4 Skill通過，四台原生操作及前版還原核對。見[契約](docs/DELIVERY-SEARCH-NAVIGATION.md)、[QA](docs/QA-v0.49.0.md)、[交接](docs/HANDOFF-v0.49.0.md)。
+目前版本 **v0.50.0**：LRC 保留時間標籤後的空白、句中標籤與 Unicode 原文；offset 只在獨立一行生效。瀏覽器核對回應的歌詞／時間／推得來源及 LRC／SRT 輸出，拒絕與原文不符的替換。428 Python／641 JavaScript／53 syntax／4 Skills、原生預覽／套用／撤回及 v49 ZIP 還原通過。行首連續時間標籤仍有格式歧義，這類字面歌詞請以版本1 JSON保存。見[契約](docs/LYRICS-LRC.md)、[QA](docs/QA-v0.50.0.md)、[交接](docs/HANDOFF-v0.50.0.md)。
 
 ## ZIP原文與差異（v0.40）
 
