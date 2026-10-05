@@ -1,4 +1,8 @@
-# 進度：目前 v0.85.0
+# 進度：目前 v0.86.0
+
+## v0.86.0
+
+2026-10-06：新增「核對下載的原文」：明確選回本機檔案，逐 byte 比較目前選定成果的完整 canonical UTF-8 bytes，顯示一致／第一個0起差異與雙方大小；改名不影響核對。pure text-verification→注入 capture/native File read/latest/current controller→literal DOM，8MiB讀前上限、讀後大小與來源核對；切檔/成果/換台/dirty/busy清除過期證明，晚成功/失敗不改後續狀態。不讀textarea摘錄、不改成果/編修/媒體、不解草稿另存警示、不保存核對報告。三固定JS資產；沒有新operation或領域schema，15/22、Agent1/draft3與既有下載保持。564Python67.640秒/1002JS/98syntax/四Skills、2Python+16JS focused、60共用流程回歸、192歷史ZIP/manifests與v85原包562/986還原、actual CLI/Agent/MCP good/bad/good通過。native18觀察含相同/改名/單byte差異/空檔、切檔/編修/換台失效、原值/成果/草稿提示保持、390px Enter選檔與无document橫向超宽。baseline與本輪Page下載事件各確認brief.json 2040bytes completed；回選檔是明示合成fixture，沒有取得實際下載保存路徑/bytes，不混淆兩種證據。初次全測17JS失敗源自共用run的新增free lexical依賴，改用state.textVerification後fresh全通過，失敗紀錄保留；unknown POST測試400誤判修正為原404，native QA比對依目前canonical檔名修正。兩owned tab/兩bounded server正常關閉、viewport reset；完整視覺/screen reader/正式素材實聽未驗證。產品86/來源38–86共49/unknown87、legal4/private/not_submitted與latest86/85/84保持，rolling active。
 
 ## v0.85.0
 
