@@ -118,6 +118,8 @@ ASSETS = {"/delivery-versions.js": ("musiclab/assets/delivery-versions.js","text
           "/cue-stamp-edit-dom.js": ("web/cue-stamp-edit-dom.js", "text/javascript"),
           "/current-cue.js": ("web/current-cue.js", "text/javascript"),
           "/current-cue-dom.js": ("web/current-cue-dom.js", "text/javascript"),
+          "/cue-position.js": ("web/cue-position.js", "text/javascript"),
+          "/cue-position-dom.js": ("web/cue-position-dom.js", "text/javascript"),
           "/wave-position.js": ("web/wave-position.js", "text/javascript"),
           "/wave-position-dom.js": ("web/wave-position-dom.js", "text/javascript"),
           "/license": ("LICENSE", "text/plain"), "/notice": ("NOTICE", "text/plain")}

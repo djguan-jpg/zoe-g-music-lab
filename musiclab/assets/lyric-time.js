@@ -21,8 +21,12 @@
     if(!Number.isSafeInteger(ms))throw Error('時間超過毫秒整數精度範圍');
     const result=ms/1000;if(milliseconds(result)!==ms)throw Error('時間無法以秒數保留毫秒精度');return result;
   }
+  function negativeSource(value,numeric){
+    const raw=typeof value==='string'?value.trim():'';
+    return numeric<0||raw.startsWith('-')&&/[1-9]/.test(raw.split(/[eE]/)[0]);
+  }
   function normalize(value,label='時間',nonnegative=false){
-    const numeric=number(value,label);if(nonnegative&&numeric<0)throw Error(label+' 不能有負時間');
+    const numeric=number(value,label);if(nonnegative&&negativeSource(value,numeric))throw Error(label+' 不能有負時間');
     return seconds(milliseconds(numeric,label));
   }
   function normalizeCues(source,duration=null){
@@ -44,7 +48,7 @@
     return {cues,duration,duration_estimated:inferred,timing};
   }
   function timecode(value,srt=false){
-    if(number(value,'時間')<0)throw Error('時間不能有負時間');
+    if(negativeSource(value,number(value,'時間')))throw Error('時間不能有負時間');
     const ms=milliseconds(value),minutes=Math.floor(ms/60000),secondsPart=Math.floor(ms%60000/1000),fraction=ms%1000;
     if(ms<0)throw Error('時間不能有負時間');
     const pad=(n,width=2)=>String(n).padStart(width,'0');

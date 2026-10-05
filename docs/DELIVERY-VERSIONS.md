@@ -111,3 +111,8 @@ current0.80.0、supported38–80共43項、unknown81拒絕；168歷史ZIP/manife
 ## v0.81
 
 current0.81.0、supported38–81共44項、unknown82拒絕；172歷史ZIP/manifest與v80實際producer bytes一致。projects.version=current、release_version=v+current為預期tag，封裝與實際publication仍各核對。新增目前句導航不改領域wire／Agent1/draft3／14/21，見[分層契約](CURRENT-CUE.md)。
+
+
+## v0.82
+
+current0.82.0、supported38–82共45項、unknown83拒絕；176歷史ZIP／manifest與v81實際producer bytes一致。projects.version=current及release_version=v+current為預期tag，封裝與actual publication各核對。句首定位及共用負時間邊界修正不改領域wire／Agent1/draft3／14/21，見[分層契約](CUE-POSITION.md)。

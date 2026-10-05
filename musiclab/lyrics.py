@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 from .common import number
-from .lyric_timing import milliseconds, normalized_seconds, seconds_from_milliseconds
+from .lyric_timing import milliseconds, normalized_seconds, seconds_from_milliseconds, is_negative
 from .lyrics_package import (PACKAGE_FORMAT, PACKAGE_SCHEMA_VERSION, decode_document, package_files)
 from .lyrics_lrc import parse_lrc
 from .lyrics_srt import parse_srt
@@ -88,7 +88,7 @@ def edits(cues, shift=0, time_changes=(), text_changes=()):
 
 
 def timecode(seconds, srt=False):
-    if number(seconds, '時間') < 0:
+    if is_negative(seconds, '時間'):
         raise ValueError('時間不能有負時間')
     total = milliseconds(seconds)
     minutes, rest = divmod(total, 60000)

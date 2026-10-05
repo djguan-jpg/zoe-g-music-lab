@@ -328,3 +328,8 @@ projects.version及release_version精確等於selected commit policy.current及v
 ## v0.81 目前歌詞原列定位
 
 current-cue純media/rows/visible/busy→既有wave-position/CueStamp/activeCueIndex→注入capture/focus controller→literal DOM與app。最多10000列、ID64、time4096；未知／不可定位媒體清舊句與高亮，busy只讀停focus、hidden等待、gap/exclusive end沿舊規則，部分可播放不等於完整匯出。明確focus雙capture同ID／原目標欄位／media source/current_source/duration，再DOM核對enabled/connected/raw fields並確認activeElement；同句自然前進／其他列編修保持，不自動focus，不改草稿／media／歷史。status只變更時寫入，dispose只清自有listener，沿原drawWave/tick/reset/loadstart/error/tab/busy/render更新、不新增timer。server僅兩固定JS路由，產品81／來源38–81／unknown82／expectedtag81，14/21／Agent1/draft3／領域schemas/legal4/private/not_submitted保持。見docs/CURRENT-CUE.md。
+
+
+## v0.82 原句首播放定位
+
+cue-position純原row／wave-position完整media／LyricTime毫秒→注入readRow/captureMedia/isAllowed/setPosition controller→delegated DOM→app。stable ID／完整raw start/end/text與source/current_source/duration雙讀前核對，寫後第三media核對實際位置±1ms；natural progression可保持，失敗不虛報或承諾media回滾。只currentTime、明確成功focus波形，play/pause／表單／草稿／撤回保持；結束留白可定位不代表完整cue接受。input/render/stamp undo強制refresh，position-only tick沿便宜context不重掃rows，busy/hidden停用，dispose清自身兩listeners，無新timer/URL/decode。共用lyric_timing/lyric-time沿strict decimal原mantissa拒絕負值下溢字串（-1e-999），真正負零與signed shift保持；已轉numeric0無法恢復原字面，不宣稱任意JSON數值精度。server只兩固定JS路由，產品82／來源38–82共45／unknown83／expectedtag82，14/21／Agent1/draft3／領域schemas/legal4/private/not_submitted保持。見docs/CUE-POSITION.md。

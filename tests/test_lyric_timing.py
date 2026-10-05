@@ -26,6 +26,20 @@ def run(args, input=None, cwd=ROOT):
 
 
 class LyricTimingTests(unittest.TestCase):
+    def test_negative_decimal_underflow_rejected_while_true_zero_and_signed_shift_remain_valid(self):
+        for value in ('-1e-999', ' -0.01e-999 ', '-1e-324', '-000.0001E-999', '-1e-100000'):
+            with self.subTest(value=value):
+                with self.assertRaisesRegex(ValueError, '負時間'):
+                    normalized_seconds(value, nonnegative=True)
+                with self.assertRaisesRegex(ValueError, '負時間'):
+                    timecode(value)
+                with self.assertRaisesRegex(ValueError, '負時間'):
+                    validate_cues([{'start': value, 'end': 1, 'text': '合成'}])
+                self.assertEqual(normalized_seconds(value), 0)
+        for value in ('-0e-999', '-0.000E-999', '-0e+999', '1e-999', -0.0):
+            self.assertEqual(normalized_seconds(value, nonnegative=True), 0)
+            self.assertEqual(timecode(value), '00:00.000')
+
     def test_half_milliseconds_carry_identically_and_negative_submillisecond_rejected(self):
         self.assertEqual(normalized_seconds(1.2345),1.235)
         self.assertEqual(normalized_seconds(-0.0005),-0.001)
