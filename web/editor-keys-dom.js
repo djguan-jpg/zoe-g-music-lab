@@ -7,14 +7,16 @@
     const get=id=>document.getElementById(id),listeners=[];let bookmark=null,disposed=false;
     function allowed(list){const container=get(list),panel=get(scopes[list]);return !disposed&&!!container&&!!panel&&container.isConnected&&panel.isConnected&&!panel.hidden&&!busy();}
     function editable(target){return !!target&&target.isConnected&&!target.disabled&&!target.readOnly&&!target.hidden&&(target.tagName==='TEXTAREA'||target.tagName==='INPUT'&&target.type==='text');}
+    function summary(list,row,target){if(list!=='shots'||!target||target.tagName!=='SUMMARY'||!target.isConnected||target.disabled||target.hidden)return false;const details=row?.querySelector('details');return !!details&&details.parentElement===row&&target.parentElement===details&&details.querySelector('summary')===target&&typeof details.open==='boolean';}
     const fields=row=>[...row.querySelectorAll('input,textarea')];
     const controller=P.createController({allowed,capture:list=>({ids:[...get(list).children].map(r=>r.dataset.historyId),visible:allowed(list),busy:busy()}),
-      moveTarget:plan=>!!bookmark&&bookmark.target===document.activeElement&&editable(bookmark.target)&&onMove(plan.list,plan.id,plan.delta)===true,
+      moveTarget:plan=>!!bookmark&&bookmark.target===document.activeElement&&(bookmark.kind==='summary'?summary(plan.list,bookmark.target.closest('[data-history-id]'),bookmark.target)&&bookmark.target.parentElement.open===bookmark.open:editable(bookmark.target))&&onMove(plan.list,plan.id,plan.delta)===true,
       onMoved:plan=>{
-        const row=get(plan.list).children[plan.index],target=row&&fields(row)[bookmark.index];
-        if(!allowed(plan.list)||row?.dataset.historyId!==plan.id||!editable(target)||target.tagName!==bookmark.tag||target.value!==bookmark.display||(document.activeElement!==document.body&&document.activeElement!==bookmark.target))return;
+        const row=get(plan.list).children[plan.index],target=bookmark.kind==='summary'?row?.querySelector('details')?.querySelector('summary'):row&&fields(row)[bookmark.index];
+        const valid=bookmark.kind==='summary'?summary(plan.list,row,target)&&row.querySelector('details').open===bookmark.open:editable(target)&&target.tagName===bookmark.tag&&target.value===bookmark.display;
+        if(!allowed(plan.list)||row?.dataset.historyId!==plan.id||!valid||(document.activeElement!==document.body&&document.activeElement!==bookmark.target))return;
         target.focus();
-        if(document.activeElement===target&&bookmark.selection&&typeof target.setSelectionRange==='function')target.setSelectionRange(...bookmark.selection);
+        if(bookmark.kind==='field'&&document.activeElement===target&&bookmark.selection&&typeof target.setSelectionRange==='function')target.setSelectionRange(...bookmark.selection);
       },onError});
     for(const list of Object.keys(scopes)){
       const container=get(list),listener=event=>{
@@ -22,12 +24,16 @@
         const gesture=Object.fromEntries(['key','altKey','ctrlKey','metaKey','shiftKey','repeat','isComposing','keyCode'].map(k=>[k,event[k]]));
         try{
           if(!P.delta(gesture))return;const target=event.target,row=target?.closest('[data-history-id]');
-          if(!editable(target)||target!==document.activeElement||!row?.isConnected||row.parentElement!==container||!row.contains(target))return;
-          const index=fields(row).indexOf(target);if(index<0||index>=16)return;
-          const display=target.value;if(typeof display!=='string'||display.length>8*1024*1024)return;
-          const start=target.selectionStart,end=target.selectionEnd,direction=target.selectionDirection;
-          const selection=Number.isSafeInteger(start)&&Number.isSafeInteger(end)&&start>=0&&end>=start&&end<=display.length&&['forward','backward','none'].includes(direction)?[start,end,direction]:null;
-          bookmark={target,index,tag:target.tagName,display,selection};
+          if(target!==document.activeElement||!row?.isConnected||row.parentElement!==container||!row.contains(target))return;
+          if(summary(list,row,target))bookmark={kind:'summary',target,open:row.querySelector('details').open};
+          else{
+            if(!editable(target))return;
+            const index=fields(row).indexOf(target);if(index<0||index>=16)return;
+            const display=target.value;if(typeof display!=='string'||display.length>8*1024*1024)return;
+            const start=target.selectionStart,end=target.selectionEnd,direction=target.selectionDirection;
+            const selection=Number.isSafeInteger(start)&&Number.isSafeInteger(end)&&start>=0&&end>=start&&end<=display.length&&['forward','backward','none'].includes(direction)?[start,end,direction]:null;
+            bookmark={kind:'field',target,index,tag:target.tagName,display,selection};
+          }
           try{controller.request(list,row.dataset.historyId,gesture,()=>{event.preventDefault();return event.defaultPrevented===true;});}finally{bookmark=null;}
         }catch(error){onError(error);}
       };
