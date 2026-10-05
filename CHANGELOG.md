@@ -1,5 +1,9 @@
 # v0.77.0 · 2026-10-05
 
+## v0.88.0
+
+修正共用run處理中仍可新增避免事項/交付項目/母題/歌詞句、使本次報告失效的缺口。六清單collections固定add/remove metadata→app共用refreshCollectionControls，busy時停用新增/指定刪除/三台還原選單與按鈕；四缺少guard的新增入口在讀來源或產生ID之前拒絕。成功/失敗/來源過期後沿run finally恢復控制，保留較早還原選擇、原值/ID/歷史；不重建選單或讀全文。原欄位仍可編修，revision/current繼續拒絕舊回覆，上一份成果保持且dirty停下載。domain/pure History/HTTP/CLI/Agent/MCP與schema無改動，無新asset/operation/依賴/權限；15/22、Agent1/draft3保持。564Python65.421秒/1024JS/98syntax/四Skills、107focused（10新busy測試）、200歷史ZIP/manifests與v87原包564/1014還原通過。原生三種完整報告source/data與actual CLI/Agent/MCP/HTTP完全一致，CLI拒覆寫與good/bad/good保持。baseline四種新增問題以QA-only6秒延遲重現；corrected native21觀察含全部busy控制、完成後四入口接續新增、較早還原、原欄位編修/過期回覆、390px Enter報告/還原/新增與原句保留，document375≤390、console0。兩owned tab/兩bounded server正常關閉，viewport reset；完整視覺/screen-reader/正式媒體未驗證。補正v87契約的實際deletion-history.js路徑。產品88/來源38–88共51/unknown89，legal4/private/FreeTWAI not_submitted保持，latest88/87/86保護，rolling active。
+
 ## v0.87.0
 
 修正刪除鏡頭時自動改寫其餘時間：只移除所選鏡頭，其他鏡頭原字串、穩定ID、創作與作品總長保留；負值、留白與短於一影格也不靜默修正。既有時間待辦列出缺口，完整分鏡仍拒絕未修正時間。共用純History.remove/restore→app原生欄位adapter→限定dirty與焦點；新刪除record不含時間patch，還原保留後續時間/文字/總長。固定操作提示與aria-describedby，無新asset/operation/schema；15/22、Agent1/draft3保持。564Python67.047秒/1014JS/98syntax/四Skills、68focused、196歷史ZIP/manifests與v86原包564/1002還原通過；actual CLI/Agent/MCP/HTTP三種時間問題的原source/files一致，good/bad/good與CLI拒覆寫通過。native22觀察含普通缺口/負值/極短時間/尾鏡、待辦定位/報告/完整建立拒絕、上一份成果保留且dirty停下載、還原原值與後續編修、390px Enter刪除/還原且document375≤390。首次focused只有舊測試期待自動前移時間，改以保留原值核對後fresh全測通過，失敗紀錄保留。兩owned tab/兩bounded server正常關閉，viewport reset；未選媒體，完整視覺/screen reader/正式素材未驗證。產品87/來源38–87共50/unknown88，legal4/private/FreeTWAI not_submitted保持，latest87/86/85保護，rolling active。

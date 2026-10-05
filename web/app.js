@@ -20,12 +20,12 @@ let storyboardTimingController=null;
 let rowSequence=0;
 const rowIds=(items,ids)=>ids||items.map(()=>`row-${++rowSequence}`);
 const collections={
-  arrangement:{scope:'music',label:'段落',limit:MusicEditor.draftRows.music.limit},
-  'music-avoid':{scope:'music',label:'避免事項',limit:100},
-  'music-deliverables':{scope:'music',label:'交付項目',limit:100},
-  motifs:{scope:'storyboard',label:'母題',limit:30},
-  shots:{scope:'storyboard',label:'鏡頭',limit:MusicEditor.draftRows.storyboard.limit},
-  cues:{scope:'lyrics',label:'歌詞句',limit:10000}
+  arrangement:{scope:'music',label:'段落',limit:MusicEditor.draftRows.music.limit,add:'section-add',remove:'[data-remove-section]'},
+  'music-avoid':{scope:'music',label:'避免事項',limit:100,add:'avoid-add',remove:'button'},
+  'music-deliverables':{scope:'music',label:'交付項目',limit:100,add:'deliverable-add',remove:'button'},
+  motifs:{scope:'storyboard',label:'母題',limit:30,add:'motif-add',remove:'[data-remove-motif]'},
+  shots:{scope:'storyboard',label:'鏡頭',limit:MusicEditor.draftRows.storyboard.limit,add:'shot-add',remove:'[data-remove-shot]'},
+  cues:{scope:'lyrics',label:'歌詞句',limit:10000,add:'cue-add',remove:'[data-delete-cue]'}
 };
 const editorFocus=MusicEditorFocusDOM.createAdapter(document,{busy:()=>state.busy,onError:error=>say(error.message,true)});
 function entriesFor(list){
@@ -50,16 +50,26 @@ function writeEntries(list,entries){
 function refreshDeletionHistory(scope){
   const records=deletionHistory.entries(scope),record=records.at(-1),select=$(scope+'-delete-select');
   select.replaceChildren();records.forEach((r,i)=>select.append(new Option(`${i+1} · ${r.label}`,String(i))));
-  select.disabled=!record;if(record)select.value=String(records.length-1);
+  select.disabled=state.busy||!record;if(record)select.value=String(records.length-1);
   refreshDeletionButton(scope);
   $(scope+'-delete-note').textContent=record?`本工作台可還原 ${deletionHistory.size(scope)} 次刪除；其他內容的編修保留。`:'本頁最多保留 20 次刪除；載入新內容會清除此工作台紀錄。';
 }
 function refreshDeletionButton(scope){
   const record=deletionHistory.at(scope,Number($(scope+'-delete-select').value)),button=$(scope+'-delete-undo');
-  button.disabled=!record;button.textContent=record?`還原：${record.label}`:'還原最近刪除';
+  button.disabled=state.busy||!record;button.textContent=record?`還原：${record.label}`:'還原最近刪除';
 }
 function clearDeletionHistory(scope){deletionHistory.clear(scope);refreshDeletionHistory(scope);if(scope==='music'){arrangementController?.clear();musicReadyController?.clear();}if(scope==='storyboard')storyboardTimingController?.clear();}
 function focusEntry(list,index,mode='entry'){return editorFocus.focus(list,index,mode);}
+function refreshCollectionControls(){
+  for(const [list,spec] of Object.entries(collections)){
+    $(spec.add).disabled=state.busy;
+    $(list).querySelectorAll(spec.remove).forEach(button=>button.disabled=state.busy);
+  }
+  for(const scope of ['music','storyboard','lyrics']){
+    $(scope+'-delete-select').disabled=state.busy||!deletionHistory.size(scope);
+    refreshDeletionButton(scope);
+  }
+}
 function deleteEntry(list,index){
   if(state.busy){say('目前操作尚未完成，請稍候');return;}
   const spec=collections[list],before=entriesFor(list),removed=MusicHistory.remove(before,index);
@@ -143,7 +153,7 @@ function renderRequirements(id,items,label,ids){
     deleteEntry(id,index);
   });
 }
-function addRequirement(id,label){const items=requirementValues(id);if(items.length>=100){say(`${label}最多 100 項`,true);return;}
+function addRequirement(id,label){if(state.busy){say('目前操作尚未完成，請稍候');return;}const items=requirementValues(id);if(items.length>=100){say(`${label}最多 100 項`,true);return;}
   const ids=entriesFor(id).map(e=>e.id);items.push('');ids.push(`row-${++rowSequence}`);renderRequirements(id,items,label,ids);markDirty('music');focusEntry(id,items.length-1,'new');}
 $('avoid-add').onclick=()=>addRequirement('music-avoid','避免事項');
 $('deliverable-add').onclick=()=>addRequirement('music-deliverables','交付項目');
@@ -299,7 +309,7 @@ function renderMotifs(motifs){
   });
 }
 $('motifs').addEventListener('input',refreshMotifChoices);
-$('motif-add').onclick=()=>{const motifs=getMotifs();if(motifs.length>=30){say('最多可規劃 30 個母題',true);return;}motifs.push({id:MusicEditor.nextMotifId([...motifs,...deletionHistory.reserved('storyboard','motifs').map(id=>({id}))]),name:'',meaning:''});renderMotifs(motifs);refreshMotifChoices();markDirty('storyboard');focusEntry('motifs',motifs.length-1,'new');say('已新增母題，填入意義後可在鏡頭中選擇');};
+$('motif-add').onclick=()=>{if(state.busy){say('目前操作尚未完成，請稍候');return;}const motifs=getMotifs();if(motifs.length>=30){say('最多可規劃 30 個母題',true);return;}motifs.push({id:MusicEditor.nextMotifId([...motifs,...deletionHistory.reserved('storyboard','motifs').map(id=>({id}))]),name:'',meaning:''});renderMotifs(motifs);refreshMotifChoices();markDirty('storyboard');focusEntry('motifs',motifs.length-1,'new');say('已新增母題，填入意義後可在鏡頭中選擇');};
 function shotOpenStates(){return [...$('shots').querySelectorAll('details')].map(details=>details.open);}
 function refreshShotOverview(){
   const overview=MusicEditor.shotOverview(rawShots(),getMotifs()),select=$('shot-jump'),selected=select.value;
@@ -508,7 +518,7 @@ function lyricDuration(){const value=readValue($('lyrics-duration'));return valu
 $('lyrics-import').onclick=()=>run($('lyrics-import'),async isCurrent=>{
   lyricsSeedController?.cancel();await lyricsImportController.inspectCurrent(isCurrent);
 });
-$('cue-add').onclick=()=>{try{const entries=entriesFor('cues');if(entries.length>=10000)throw Error('歌詞最多 10000 列');const last=entries.at(-1)?.value,end=last?.end?.trim(),start=end?LyricTime.normalize(end,'最後一句結束',true):0;if(!Number.isFinite(start))throw Error('最後一句結束時間需為數字');entries.push({id:`row-${++rowSequence}`,value:{start:String(start),end:String(start+3),text:''}});writeEntries('cues',entries);markDirty('lyrics');focusEntry('cues',entries.length-1,'new');say('已新增一句，請填入歌詞；作品宣告與音檔保持。');}catch(e){say(e.message,true);}};
+$('cue-add').onclick=()=>{if(state.busy){say('目前操作尚未完成，請稍候');return;}try{const entries=entriesFor('cues');if(entries.length>=10000)throw Error('歌詞最多 10000 列');const last=entries.at(-1)?.value,end=last?.end?.trim(),start=end?LyricTime.normalize(end,'最後一句結束',true):0;if(!Number.isFinite(start))throw Error('最後一句結束時間需為數字');entries.push({id:`row-${++rowSequence}`,value:{start:String(start),end:String(start+3),text:''}});writeEntries('cues',entries);markDirty('lyrics');focusEntry('cues',entries.length-1,'new');say('已新增一句，請填入歌詞；作品宣告與音檔保持。');}catch(e){say(e.message,true);}};
 function lyricsBuildSource(){
   const sorted=MusicTiming.orderedEntries(entriesFor('cues'));
   const payload=MusicLyricsPackage.buildRequest({title:readValue($('lyrics-title')),cues:sorted.map(e=>({start:LyricTime.normalize(e.value.start,'歌詞開始',true),end:LyricTime.normalize(e.value.end,'歌詞結束',true),text:e.value.text})),duration:lyricDuration(),content:readValue($('lyrics-source')),suffix:readValue($('lyrics-format'))});
@@ -546,12 +556,12 @@ lyricsExportController=MusicLyricsExport.createController({capture:()=>{const so
 $('lyrics-export-check').onclick=()=>run($('lyrics-export-check'),current=>lyricsExportController.check(current));
 function timingSay(message,error=false){$('timing-status').textContent=message;$('timing-status').classList.toggle('error',error);}
 function timingControls(){
+  refreshCollectionControls();
   lyricsSearchController?.refresh();
   arrangementController?.refresh();
   musicReadyController?.refresh();
   $('music-ready-check').disabled=state.busy;
   $('music-ready-report').disabled=state.busy;
-  $('section-add').disabled=state.busy;
   storyboardDurationController?.refresh();
   storyboardReadyController?.refresh();
   $('mv-ready-check').disabled=state.busy;
