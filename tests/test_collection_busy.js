@@ -17,7 +17,7 @@ function setup(){
  function read(list){reads++;return structuredClone(live[list]);}
  function write(list,rows){writes++;live[list]=structuredClone(rows);events.push(['write',list]);}
  const state={busy:false,tab:'music',revisions:{},files:{prior:'原成果'},audioUrl:'owned-blob',media:{position:1.25,paused:true},duration:' 0030.000 '};
- const context={state,MusicEditor:Editor,MusicPlanningValues:require('../web/planning-values.js'),LyricTime:require('../musiclab/assets/lyric-time.js'),rowSequence:10,deletionHistory:history,$:id=>{assert.ok(nodes[id],id);return nodes[id];},
+ const context={state,editorCopy:null,MusicEditor:Editor,MusicPlanningValues:require('../web/planning-values.js'),LyricTime:require('../musiclab/assets/lyric-time.js'),rowSequence:10,deletionHistory:history,$:id=>{assert.ok(nodes[id],id);return nodes[id];},
   entriesFor:read,writeEntries:write,requirementValues:list=>read(list).map(e=>e.value),getMotifs:()=>read('motifs').map(e=>e.value),rawShots:()=>read('shots').map(e=>e.value),shotOpenStates:()=>live.shots.map(e=>e.value.open),
   renderRequirements:(list,values,_label,ids)=>write(list,values.map((value,i)=>({id:ids[i],value}))),renderMotifs:values=>write('motifs',values.map(value=>({id:value.id,value}))),refreshMotifChoices:()=>events.push(['motif-choices']),
   renderShots:(values,opens,ids)=>write('shots',values.map((value,i)=>({id:ids[i],value:{...value,open:opens[i]}}))),markDirty:scope=>events.push(['dirty',scope]),focusEntry:(...args)=>events.push(['focus',...args]),say:(...args)=>events.push(['say',...args])};
