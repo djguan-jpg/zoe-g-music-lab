@@ -28,3 +28,11 @@ test('original timestamp strings and IDs retain lexical pagination order without
 test('fixed native asset loads after strict Unicode and before all timestamp consumers',()=>{
  const html=fs.readFileSync('web/index.html','utf8'),server=fs.readFileSync('music_lab_server.py','utf8');assert.ok(html.indexOf('/json-document.js')<html.indexOf('/utc-timestamp.js'));for(const name of ['library-revision','backup-result'])assert.ok(html.indexOf('/utc-timestamp.js')<html.indexOf('/'+name+'.js'));assert.ok(server.includes('"/utc-timestamp.js": ("musiclab/assets/utc-timestamp.js"'));
 });
+test('raw Unicode codepoint comparison agrees with Python across supplementary and BMP separators',()=>{
+ const a='2026-10-05🎵01+00:00',b='2026-10-05\ue00001+00:00';assert.ok(a<b);assert.equal(T.compare(a,b),1);assert.equal(T.compare(b,a),-1);assert.equal(T.compare(a,a),0);assert.throws(()=>T.compare(a,'bad'));
+ const x=record(a),y={...record(b),id:'draft-'+'2'.repeat(32)},rows={...listing(x),entries:[x,y]};assert.deepEqual(L.checkedList({cursor:null,limit:20},rows).entries,[x,y]);assert.throws(()=>L.checkedList({cursor:null,limit:20},{...rows,entries:[y,x]}));
+});
+test('Unicode search continuation keeps raw timestamp boundary and ASCII ID ordering',()=>{
+ const x=record('2026-10-05🎵01+00:00'),y={...record('2026-10-05\ue00001+00:00'),id:'draft-'+'2'.repeat(32)},next={start_index:1,search_sha256:'a'.repeat(64)},w=search(x);w.data.record_count=w.data.match_count=2;w.data.next_cursor=next;
+ const first=S.checkedResult({query:'保存',cursor:null,limit:1},w),later=search(y);later.data.record_count=later.data.match_count=2;later.data.start_index=1;assert.equal(S.checkedResult({query:'保存',cursor:next,limit:1},later,first).entries[0].id,y.id);assert.throws(()=>S.checkedResult({query:'保存',cursor:next,limit:1},{...later,data:{...later.data,entries:[x]}},first));
+});

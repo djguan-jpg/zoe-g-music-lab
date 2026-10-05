@@ -39,6 +39,16 @@ def changed_backup(raw, *, record_time=None, created_at=None):
     return out.getvalue(),entries
 
 class UtcTimestampTests(unittest.TestCase):
+    def test_actual_library_unicode_raw_order_and_search_continuation_match_browser(self):
+        with tempfile.TemporaryDirectory() as folder:
+            library=DraftLibrary(folder)
+            for n,separator in enumerate(['🎵','\ue000'],1):
+                entry=library.save(draft(),'Unicode 保存 '+str(n),'draft-'+f'{n:032x}')['entry'];path=library.root/entry['id']/'record.json';entry['stored_at']='2026-10-05'+separator+'01+00:00';path.write_text(json.dumps(entry,ensure_ascii=False),encoding='utf-8')
+            listing=build('draft_list',{},draft_library=library).wire();p={'query':'Unicode','limit':1,'cursor':None};first=build('draft_search',p,draft_library=library).wire();next_payload={**p,'cursor':first['data']['next_cursor']};second=build('draft_search',next_payload,draft_library=library).wire()
+            self.assertEqual([r['stored_at'] for r in listing['data']['entries']],['2026-10-05🎵01+00:00','2026-10-05\ue00001+00:00'])
+            code="const L=require('./web/library-result.js'),S=require('./web/library-search.js');let s='';process.stdin.on('data',v=>s+=v);process.stdin.on('end',()=>{const v=JSON.parse(s),f=S.checkedResult(v.p,v.first);console.log(JSON.stringify({list:L.checkedList({limit:20,cursor:null},v.listing),next:S.checkedResult(v.next,v.second,f)}))});"
+            r=subprocess.run(['node','-e',code],cwd=ROOT,input=json.dumps({'listing':listing['data'],'p':p,'first':first,'next':next_payload,'second':second}),capture_output=True,text=True,encoding='utf-8',timeout=10);self.assertEqual(r.returncode,0,r.stderr[-1000:]);value=json.loads(r.stdout);self.assertEqual(value['list'],listing['data']);self.assertEqual(value['next'],second['data'])
+
     def test_calendar_matrix_runtime_independent_unicode_and_exact_source_bridge(self):
         cases=VALID+INVALID+[None,True,42]
         for year in [1,4,100,400,1900,2000,2024,2026,2100,2400,9999]:

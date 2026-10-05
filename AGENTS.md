@@ -305,3 +305,6 @@ pure library_match/原生library-match：完整metadata/strict Unicode/query→�
 ## v0.77 可攜 UTC 時間
 
 pure utc_timestamp與shared native utc-timestamp strict Unicode/最多128codepoints/extended YYYY-MM-DD/任一單codepoint separator/HH可選:MM可選:SS與3或6位秒小數/Z或±00:00可選:00與3或6零小數；year1–9999/Gregorian leap/day/HH0–23/MMSS0–59，unknown/invalid拒絕且不改原字串。library_contract及backup created_at、browser revision/list/search/receipt及backup-result plan共用，無Date.parse/fromisoformat runtime寬鬆接受；producer正常UTC isoformat不變、raw stored_at+ID lexical排序與restore bytes保持，不做timezoneconversion/migration。前版browser-only Z現同Python接受，native3.11額外格式不自動開放。oneUnicode separator沿既有Python契約，controls只以原文展示不執行；不是任意ISO8601/RFC3339或人類時間信任證明。新固定asset1、不增wire/schema/operation/tools/path/write/model/依賴；產品77/來源38–77/unknown78、14/21/Agent1/draft3/library1/backup1/search1/legal4/private/not_submitted保持，見[契約](docs/UTC-TIMESTAMP.md)。
+
+
+v0.77追加：UTC.compare以原始Unicode codepoint比較，list/search沿Python stored_at+ASCII ID排序；不以UTF16比較、Date或locale替代原source順序。完整timestamp驗證與原字串保持，matched tuple/continuation/原schema保持，見UTC-TIMESTAMP契約與QA final收據。

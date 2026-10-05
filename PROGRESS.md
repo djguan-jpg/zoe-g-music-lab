@@ -2,7 +2,7 @@
 
 ## v0.77.0
 
-2026-10-05：保存紀錄與備份共用純 UTC 日期驗證，拒絕不存在曆日與時間溢位；移除瀏覽器自動轉日期，接受合法 Z／小時及單字元分隔的原時間，排序與保存 bytes 保持。544 Python／899 JavaScript／82語法／四份Skill、156歷史ZIP及v76原封裝541／892還原通過；14／21工具與原schema保持。 原browser Date.parse把2月30/4月31/24:00/1900閏日轉成有效日期，Python拒絕，原14-case matrix確認。pure utc_timestamp/utc-timestamp.js→library_contract/backup created_at与browser revision/backup plan→原app/controller；822-case Python/JS matrix含792個曆日native oracle比較。Native tab123共3list/3search/1read/2inspect與9觀察，三種不可能時間reply-copy拒絕，原清單/有效Z預覽/編修/WAV/dirty保持，healthy retry與同backup再次預覽；390px keyboard Home原emoji小時timestamp313px/console0。原3revision bytes保持，server原session10957正常exit0/thread joined/tabclosed/viewportreset/無staging，未執行browser restore。真CLI2/Agent4/MCP4讀取Z及emoji小時原文，unknown path good/bad/good與21工具保持。全套65.578秒固定2worker/120s；v76還原第一次helper替換測試數誤改source SHA、嚴格guard在解壓前拒絕，修正helper新record還原成功。误用v76 stop helper被immutable record擋下且HTTP未執行，改本輪record正常stop。latest77/76/75/legal4/private/not_submitted保持，rolling active。
+2026-10-05：保存紀錄與備份共用純 UTC 日期驗證，拒絕不存在曆日與時間溢位；移除瀏覽器自動轉日期，接受合法 Z／小時及單字元分隔的原時間，排序與保存 bytes 保持。545 Python／901 JavaScript／82語法／四份Skill、156歷史ZIP及v76原封裝541／892還原通過；14／21工具與原schema保持。 原browser Date.parse把2月30/4月31/24:00/1900閏日轉成有效日期，Python拒絕，原14-case matrix確認。pure utc_timestamp/utc-timestamp.js→library_contract/backup created_at与browser revision/backup plan→原app/controller；822-case Python/JS matrix含792個曆日native oracle比較。Native tab123共3list/3search/1read/2inspect與9觀察，三種不可能時間reply-copy拒絕，原清單/有效Z預覽/編修/WAV/dirty保持，healthy retry與同backup再次預覽；390px keyboard Home原emoji小時timestamp313px/console0。原3revision bytes保持，server原session10957正常exit0/thread joined/tabclosed/viewportreset/無staging，未執行browser restore。真CLI2/Agent4/MCP4讀取Z及emoji小時原文，unknown path good/bad/good與21工具保持。全套68.281秒固定2worker/120s；v76還原第一次helper替換測試數誤改source SHA、嚴格guard在解壓前拒絕，修正helper新record還原成功。误用v76 stop helper被immutable record擋下且HTTP未執行，改本輪record正常stop。latest77/76/75/legal4/private/not_submitted保持，rolling active。
 
 ## v0.76.0
 
@@ -342,3 +342,9 @@
 已建立新的 private Repo：<https://github.com/djguan-jpg/zoe-g-music-lab>。第一版上傳保留本次四專案的 Git 歷史，創辦署名 ZOE. G，實際帳號 djguan-jpg，Codex 協作範圍如實記錄。
 
 自由工坊新作品登錄表單要求「公開專案網址」；關係可選原作者，但頁面明示為自行聲明，平台不以此驗證作者或擁有權。Repo 仍 private，尚未送出；投稿資料已整理在 SUBMISSION-PACKET.md。沒有宣稱已取得平台創始人核實，也沒有認領既有手冊的原作者。
+
+
+本輪發布前追加：任意Unicode分隔帶出Python codepoint與JS UTF16 raw order差異。首次source e79b41826f71a5b6b5c53e5607ba3baea88e1e12與通過的ZIP保留，尚未發布。共用UTC.compare先核對兩原stamp，再逐codepoint比較；list/search兩純validator共享，ASCII ID tie-break不變。新增actual保存Unicode pair/list/search continuation bridge與JS order/continuation，Python/JS原始字串同序、不改timestamp為曆時或normalize。第一次gap helper在修正後才執行，已corrected模型使assert失敗；新record讀first source的原L validator重現，兩次紀錄保留。第二次完整suite與封裝以final收據為準。
+
+
+Final驗證：545Python68.281秒／901JS／82syntax／4Skills通過，維持2worker/120s。保留最初544/899/65.578秒收據及first package；新增tab124 actual list1/search1原三ID順序emoji/PUA/ASCII，source bytes/後續編修/dirty保持、console0、tabclosed、second owned server session22548/PID398704正常exit0/threadjoined/no staging。兩個native server都正常停止，共2個自有tab關閉；沒有擴大Agent或process能力。本輪helper共32個immutable identities，以既有單次32上限盤點，不取消較早失敗紀錄。

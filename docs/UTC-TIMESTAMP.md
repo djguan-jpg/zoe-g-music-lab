@@ -27,3 +27,6 @@ browser library-revision及backup-result.plan在原完整metadata/source/counts�
 Native3list/3search/1read/2inspect，三份fault只改reply副本：無效2月日期、24時及1900假閏日均拒絕，清單/有效preview/edit/WAV/dirty保持；healthy retry及同backup再次預覽成功。390px鍵盤選到原emoji小時格式，note313px/anywhere/console0。這不是完整visual/screen-reader、正式媒體、timestamp真實可信、作者/權利或browser實際恢復/保存檔案接受。
 
 產品0.77.0/來源38–77共40項/unknown78拒絕，156份歷史文字ZIP/manifest與v76producer bytes一致。14基本/21啟庫、Agent1/draft3/library1/backup1/search1與原wire/schema保持；無新依賴/model/auth/session/token/任意路徑/寫入/公開權限。PolyForm Noncommercial1.0.0、ZOE. G/djguan-jpg/private、FreeTWAI not_submitted保持。
+
+
+本輪發布前追加：任意Unicode分隔帶出Python codepoint與JS UTF16 raw order差異。首次source e79b41826f71a5b6b5c53e5607ba3baea88e1e12與通過的ZIP保留，尚未發布。共用UTC.compare先核對兩原stamp，再逐codepoint比較；list/search兩純validator共享，ASCII ID tie-break不變。新增actual保存Unicode pair/list/search continuation bridge與JS order/continuation，Python/JS原始字串同序、不改timestamp為曆時或normalize。第一次gap helper在修正後才執行，已corrected模型使assert失敗；新record讀first source的原L validator重現，兩次紀錄保留。第二次完整suite與封裝以final收據為準。

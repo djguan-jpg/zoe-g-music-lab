@@ -2,9 +2,9 @@
 
 原Python3.10.11與browser validator14-case matrix重現：browser Date.parse接受2026-02-30、2026-04-31、24:00、1900-02-29，而Python拒絕；Z/1位小數/小時/單Unicode分隔/零offset秒也有runtime接受差異。新純UTC契約保留extended/calendar/原分隔與精確3/6秒小數、明確zero-offset aliases，拒絕未知格式、不換日或時間戳。
 
-新增3Python/7JS：822-case bridge、792曆日native oracle、年0001/9999/閏世紀、Unicode/上限/原文字串、範圍拒絕與無Date runtime；完整revision/list/search/backup計畫重用guard，原lexical排序保持。actual保存Z與backup created_at Z、原來源record/draft bytes、backup CRC/hash成立但無效record/manifest時間也拒絕restore前全部寫入；target保持空。JS初次list fixture猜錯既有status而被完整契約拒絕，改實際metadata_only後以新registered record重測通過，保留原失敗收據。
+新增4Python/9JS：822-case bridge、792曆日native oracle、年0001/9999/閏世紀、Unicode/上限/原文字串、範圍拒絕與無Date runtime；完整revision/list/search/backup計畫重用guard，原lexical排序保持。actual保存Z與backup created_at Z、原來源record/draft bytes、backup CRC/hash成立但無效record/manifest時間也拒絕restore前全部寫入；target保持空。JS初次list fixture猜錯既有status而被完整契約拒絕，改實際metadata_only後以新registered record重測通過，保留原失敗收據。
 
-完整544Python固定2workers/120秒整體期限、65.578秒；899JS/82syntax/4Skills/diff通過。Actual CLI2/Agent4/MCP4 source只讀，原Z與Unicode小時值、unknown path good/bad/good、21 tools保持，跨非root cwd。156份四scope×歷史38–76文字ZIP/manifest bytes與v76實際producer相同。
+完整545Python固定2workers/120秒整體期限、68.281秒；901JS/82syntax/4Skills/diff通過。Actual CLI2/Agent4/MCP4 source只讀，原Z與Unicode小時值、unknown path good/bad/good、21 tools保持，跨非root cwd。156份四scope×歷史38–76文字ZIP/manifest bytes與v76實際producer相同。
 
 v76指定ZIP1483536B/SHA33f772431ad24b7e1c36af5450895c430d22be719b7775f6804c7c21399a4309/CRC及source01d1ee067696dcfccae571687963c3fdfc6f5594核對。第一次helper全字串替換879→892誤改commit中的數字，strict guard在extract前拒絕，舊record保持；只修helper固定commit以新record重測，原ZIP/原launcher/原碼通過541/892，temporary removed。未修改前版源碼或放鬆guard。
 
@@ -13,3 +13,9 @@ Native tab123 9觀察/3list/3search/1read/2inspect。合成3版含Z與任意Unic
 tab關閉/viewport reset/server原session10957/PID383820正常exit0/contextclosed/deadline threadjoined/no staging。停止前誤用v76 control helper，被已存在immutable run record拒絕且尚未HTTP；改用v77stop新record正常關閉，前版收據沒有覆寫。未停止外部程序。
 
 指定source封裝獨立全套/Agent/MCP metadata、private PR/prerelease、actual遠端download/SHA/digest/CRC/legal4/4refs/tree/cleanmain與latest77/76/75/最終typed-run/outputs盤點依outputs/v77-qa收據。GitHub沒有hosted CI，沒有browser actualrestore/saved-file、完整visual/screen-reader、時間真實可信/作者/權利/正式media或FreeTWAI接受；rolling active。
+
+
+本輪發布前追加：任意Unicode分隔帶出Python codepoint與JS UTF16 raw order差異。首次source e79b41826f71a5b6b5c53e5607ba3baea88e1e12與通過的ZIP保留，尚未發布。共用UTC.compare先核對兩原stamp，再逐codepoint比較；list/search兩純validator共享，ASCII ID tie-break不變。新增actual保存Unicode pair/list/search continuation bridge與JS order/continuation，Python/JS原始字串同序、不改timestamp為曆時或normalize。第一次gap helper在修正後才執行，已corrected模型使assert失敗；新record讀first source的原L validator重現，兩次紀錄保留。第二次完整suite與封裝以final收據為準。
+
+
+Final驗證：545Python68.281秒／901JS／82syntax／4Skills通過，維持2worker/120s。保留最初544/899/65.578秒收據及first package；新增tab124 actual list1/search1原三ID順序emoji/PUA/ASCII，source bytes/後續編修/dirty保持、console0、tabclosed、second owned server session22548/PID398704正常exit0/threadjoined/no staging。兩個native server都正常停止，共2個自有tab關閉；沒有擴大Agent或process能力。本輪全部 immutable identities 每次最多32個分批核對，保留較早失敗紀錄；最終數量以本輪稽核收據為準。

@@ -13,5 +13,10 @@
   if(year<1||year>9999||month<1||month>12||day<1||day>days[month-1]||hour>23||minute>59||second>59)fail();
   return value;
  }
- const api=Object.freeze({checked});if(node)module.exports=api;else root.MusicUtcTimestamp=api;
+ function compare(left,right){
+  checked(left);checked(right);const a=[...left],b=[...right];
+  for(let i=0;i<Math.min(a.length,b.length);i++){const x=a[i].codePointAt(0),y=b[i].codePointAt(0);if(x!==y)return x<y?-1:1;}
+  return a.length===b.length?0:a.length<b.length?-1:1;
+ }
+ const api=Object.freeze({checked,compare});if(node)module.exports=api;else root.MusicUtcTimestamp=api;
 })(typeof globalThis==='object'?globalThis:this);
