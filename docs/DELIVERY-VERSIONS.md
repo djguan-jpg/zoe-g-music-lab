@@ -47,3 +47,7 @@ current與metadata0.63.0，supported明確38–63共26項；validator不變。ac
 ## v0.66
 
 唯一current=0.66.0，明確supported38–66共29項，未知67拒絕。四scope×28舊producer的112份ZIP位元組與manifest保持。
+
+## v0.67
+
+唯一current=0.67.0，明確supported38–67共30項，未知68拒絕。四scope×29舊producer的116份ZIP位元組與manifest保持。

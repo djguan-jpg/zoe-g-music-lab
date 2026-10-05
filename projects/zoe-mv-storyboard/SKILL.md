@@ -114,3 +114,7 @@ Agent／MCP同一唯讀storyboard_timing_review，基本10／明確啟庫15；�
 ## v0.44 原文分段閱讀
 
 ZIP核對後可切目前成果／ZIP原文逐段閱讀，原文下載仍是全文，保持表單與媒體。CLI text-file／Agent-MCP text_window明確讀16KiB原文，後續位置pin前次archive SHA；完整來源先核對，UTF-8字元中間或來源變動拒絕。text-window1獨立、12／17工具與Agent1／draft3保持。見[共用契約](../../docs/DELIVERY-TEXT.md)。
+
+## v0.67 接續分鏡待辦報告
+
+完整 storyboard-review.json 可從工作台「接續歌曲／分鏡需求或待辦報告」選檔。純模型核對全部 source 與 report1，先預覽、再明確載入原始分鏡欄位；留白時間、原文與母題ID保持，其他工作台與音檔保留。不能表示的畫幅／引用／方向拒絕載入，保留原檔；最近一次載入沿既有限定撤回。1MiB 入口、Agent1／draft3／14／19工具保持；報告不表示完整時間、連戲、媒體或平台接受。見[契約](../../docs/PLANNING-REPORT-INPUT.md)。

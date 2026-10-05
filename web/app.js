@@ -787,14 +787,20 @@ function applyPlanningPanel(draft,operation){
 const briefImporter=MusicPlanning.createBriefImport({
   preview:briefPreview,
   validate:async(operation,brief)=>{
+    const selected=MusicPlanningReportInput.inspect(operation,brief);
+    if(selected.kind==='review'){
+      MusicPlanning.panelDraft(captureDraft(),operation,selected.panel);
+      return {...selected,title:selected.panel.fields[operation==='music'?'music-title':'mv-title']};
+    }
     MusicPlanning.planningDraft(captureDraft(),operation,brief);
     const result=await api('/api/'+operation,brief);
     return MusicPlanReview.checkedBrief(operation,brief,result);
   },
   onReady:({operation,result})=>{
-    const proposal={operation,brief:result.brief};
-    pendingBrief=proposal;$('brief-preview').value=JSON.stringify(proposal.brief,null,2);
-    $('brief-review-note').textContent=`${proposal.operation==='music'?'歌曲':'分鏡'}「${proposal.brief.title}」已檢查${result.notes.length?'；'+result.notes.length+' 個創作項目待人工審查':''}。載入只替換該工作台表單，其他工作台與音檔保留。`;
+    const proposal=result.kind==='review'?{operation,kind:'review',panel:result.panel}:{operation,kind:'brief',brief:result.brief};
+    pendingBrief=proposal;$('brief-preview').value=JSON.stringify(proposal.kind==='review'?proposal.panel:proposal.brief,null,2);
+    $('brief-review-note').textContent=proposal.kind==='review'?`${operation==='music'?'歌曲':'分鏡'}待辦報告已完整核對；待辦 ${result.issueCount} 項。預覽的是原始欄位，留白與未完成值保持。載入只替換選定工作台，其他工作台與音檔保留，仍須完整建立驗證。`:
+      `${proposal.operation==='music'?'歌曲':'分鏡'}「${proposal.brief.title}」已檢查${result.notes.length?'；'+result.notes.length+' 個創作項目待人工審查':''}。載入只替換該工作台表單，其他工作台與音檔保留。`;
     $('brief-review-notes').replaceChildren();appendNotes($('brief-review-notes'),result.notes);
     $('brief-review').hidden=false;say('需求已檢查，先看預覽再選擇載入');
   },onError:error=>say(error.message,true)
@@ -813,7 +819,7 @@ $('brief-apply').onclick=()=>{
   if(state.busy){say('目前操作尚未完成，請稍候');return;}if(!pendingBrief)return;
   try{
     const selected=briefPreview.proposal();if(!selected)return;
-    const previous=captureDraft(),operation=selected.operation,proposal=MusicPlanning.planningDraft(previous,operation,selected.result.brief);
+    const previous=captureDraft(),operation=selected.operation,proposal=selected.result.kind==='review'?MusicPlanning.panelDraft(previous,operation,selected.result.panel):MusicPlanning.planningDraft(previous,operation,selected.result.brief);
     applyPlanningPanel(proposal,operation);draftUndo.record(previous,captureDraft(),operation);
     $('draft-undo').disabled=false;draftTask.begin();briefImporter.cancel();clearBriefReview();clearConversion();
     say('需求已載入，可撤回；其他工作台與音檔保留，請重新建立本工作台成果');
