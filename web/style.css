@@ -107,3 +107,5 @@ td input[data-raw-number]{width:63px}.raw-value-note{display:block;font-size:.78
 
 .wave-position{font-variant-numeric:tabular-nums;font-weight:650;margin:.6rem 0;overflow-wrap:anywhere}
 #waveform[data-wave-available="false"]{cursor:default}
+
+.cue-stamp-history{margin:14px 0;padding:12px 14px;border-left:3px solid var(--green);background:#f0f1e7}.cue-stamp-history .hint{margin:8px 0 0;overflow-wrap:anywhere}.cue-stamp-history button{max-width:100%;white-space:normal}

@@ -13,7 +13,7 @@ const draftRetention=MusicDraftRetention.createGuard({capture:captureDraft,captu
 let seedController=null,lyricsSeedController=null,lyricsImportController=null,storyboardDurationController=null,storyboardReadyController=null;
 let timingController=null,timingReading=false,timingReady=false,timingCanUndo=false;
 let lyricsMediaController=null,lyricsReviewController=null,lyricsReviewData=null,lyricsReviewStale=false;
-let lyricsExportController=null;
+let lyricsExportController=null,cueStampEdit=null;
 const deletionHistory=MusicHistory.createHistory(20);
 let arrangementController=null,musicReadyController=null;
 let storyboardTimingController=null;
@@ -104,12 +104,12 @@ async function api(route,data,binary=false){const response=await fetch(route,{me
 async function run(button,task,scope=state.tab){
   if(state.busy)return;
   const tab=state.tab,revision=state.revisions[scope]||0,current=()=>state.tab===tab&&(state.revisions[scope]||0)===revision;
-  say('處理中，請稍候');state.busy=true;button.disabled=true;timingControls();state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();state.audioAcceptanceReview?.refresh();state.deliveryPackage?.refresh();state.deliveryImport?.refresh();
+  say('處理中，請稍候');state.busy=true;button.disabled=true;timingControls();cueStampEdit?.refresh();state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();state.audioAcceptanceReview?.refresh();state.deliveryPackage?.refresh();state.deliveryImport?.refresh();
   try{await task(current);}catch(error){if(current())say(error.message,true);}
-  finally{if(!current()){markDirty(scope);say('處理期間輸入有修改，請重新建立成果');}state.busy=false;button.disabled=false;timingControls();state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();state.audioAcceptanceReview?.refresh();state.deliveryPackage?.refresh();state.deliveryImport?.refresh();}
+  finally{if(!current()){markDirty(scope);say('處理期間輸入有修改，請重新建立成果');}state.busy=false;button.disabled=false;timingControls();cueStampEdit?.refresh();state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();state.audioAcceptanceReview?.refresh();state.deliveryPackage?.refresh();state.deliveryImport?.refresh();}
 }
 function setFiles(files,note,dirty=false,inputIndependent=false,deliveryLabel=null){state.resultRevisions[state.tab]=(state.resultRevisions[state.tab]||0)+1;state.files=files;state.bundles[state.tab]={files,note,dirty,inputIndependent,...(deliveryLabel===null?{}:{deliveryLabel})};const select=$('output-file');select.replaceChildren();Object.keys(files).forEach(name=>{const option=document.createElement('option');option.value=name;option.textContent=name;select.append(option);});select.disabled=false;$('download').disabled=dirty;$('output-note').textContent=note+(dirty?'（有修改尚未重新驗證）':'');previewOutput();state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();state.audioAcceptanceReview?.refresh();state.deliveryPackage?.refresh();state.deliveryImport?.refresh();}
-function markDirty(tab){draftRetention.refresh(tab);if(tab==='music'){arrangementController?.refresh();musicReadyController?.refresh();}if(tab==='storyboard'){storyboardDurationController?.refresh();storyboardReadyController?.refresh();storyboardTimingController?.refresh();}if(['music','storyboard'].includes(tab))stalePlanningReview(tab);if(tab==='audio'){staleAudioReview();state.audioAcceptanceReview?.refresh();}if(tab==='lyrics'){staleLyricsExportReview();lyricsExportController?.invalidate();staleLyricsReview();lyricsReviewController?.invalidate();lyricsMediaController?.refresh();const pending=timingReading||timingReady;timingController?.invalidate();if(pending)timingSay('歌詞有修改，請重新預覽整批校時。');}state.revisions[tab]=(state.revisions[tab]||0)+1;const saved=state.bundles[tab];if(!saved||saved.inputIndependent){state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();state.audioAcceptanceReview?.refresh();state.deliveryPackage?.refresh();state.deliveryImport?.refresh();return;}saved.dirty=true;if(state.tab===tab){$('download').disabled=true;$('output-note').textContent=saved.note+'（有修改尚未重新驗證）';}state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();state.audioAcceptanceReview?.refresh();state.deliveryPackage?.refresh();state.deliveryImport?.refresh();}
+function markDirty(tab){draftRetention.refresh(tab);if(tab==='music'){arrangementController?.refresh();musicReadyController?.refresh();}if(tab==='storyboard'){storyboardDurationController?.refresh();storyboardReadyController?.refresh();storyboardTimingController?.refresh();}if(['music','storyboard'].includes(tab))stalePlanningReview(tab);if(tab==='audio'){staleAudioReview();state.audioAcceptanceReview?.refresh();}if(tab==='lyrics'){cueStampEdit?.refresh();staleLyricsExportReview();lyricsExportController?.invalidate();staleLyricsReview();lyricsReviewController?.invalidate();lyricsMediaController?.refresh();const pending=timingReading||timingReady;timingController?.invalidate();if(pending)timingSay('歌詞有修改，請重新預覽整批校時。');}state.revisions[tab]=(state.revisions[tab]||0)+1;const saved=state.bundles[tab];if(!saved||saved.inputIndependent){state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();state.audioAcceptanceReview?.refresh();state.deliveryPackage?.refresh();state.deliveryImport?.refresh();return;}saved.dirty=true;if(state.tab===tab){$('download').disabled=true;$('output-note').textContent=saved.note+'（有修改尚未重新驗證）';}state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();state.audioAcceptanceReview?.refresh();state.deliveryPackage?.refresh();state.deliveryImport?.refresh();}
 document.querySelector('.editor').addEventListener('input',event=>{
   if(event.target.dataset.viewControl||event.target.id==='lyrics-file')return;
   const panel=event.target.closest('.panel');if(!panel)return;
@@ -475,21 +475,27 @@ function renderLyricsReview(data){
 }
 function cueValues(){return entriesFor('cues').map(e=>{const c=e.value;if(!c.start.trim()||!c.end.trim())throw Error('歌詞開始與結束不可空白');return {start:LyricTime.normalize(c.start,'歌詞開始',true),end:LyricTime.normalize(c.end,'歌詞結束',true),text:c.text};});}
 function renderCues(cues,ids){
-  if(!ids){timingController?.reset();timingSay('新的逐句內容已載入；整批校時撤回紀錄已清除。');}
+  if(!ids){cueStampEdit?.clear();timingController?.reset();timingSay('新的逐句內容已載入；整批校時撤回紀錄已清除。');}
   const keys=rowIds(cues,ids);state.cues=cues;timingControls();
   $('cues').innerHTML=cues.map((c,i)=>`<tr data-history-id="${esc(keys[i])}"><td>${i+1}</td><td>${field(c.start,`歌詞 ${i+1} 開始`,'number')}</td><td>${field(c.end,`歌詞 ${i+1} 結束`,'number')}</td><td><input class="lyric-field" value="${esc(c.text)}" aria-label="歌詞 ${i+1} 文字"></td><td><div class="actions">${[['start','記下開始'],['end','記下結束'],['move','整句移動']].map(([action,label])=>`<button data-stamp="${i}" data-stamp-action="${action}" aria-label="第 ${i+1} 句${label}">${label}</button>`).join('')}<button data-delete-cue="${i}" aria-label="刪除第 ${i+1} 句">刪除</button></div></td></tr>`).join('');
   [...$('cues').children].forEach((row,i)=>['start','end','text'].forEach((key,j)=>writeValue(row.querySelectorAll('input')[j],cues[i][key])));
   $('cues').querySelectorAll('[data-stamp]').forEach(button=>button.onclick=()=>{
-    try{
-      const player=$('lyrics-player');if(!player.src)throw Error('先載入音檔，再記下播放位置');
-      const fields=button.closest('tr').querySelectorAll('input'),action=button.dataset.stampAction;
-      const proposal=MusicCueStamp.stamp({start:readValue(fields[0]),end:readValue(fields[1]),text:readValue(fields[2])},action,player.currentTime,player.duration);
-      writeValue(fields[0],proposal.start);writeValue(fields[1],proposal.end);markDirty('lyrics');tick();
-      fields[action==='end'?1:0].focus({preventScroll:true});say('已記下播放位置；未填完時間的句子保留，全部驗證後才更新成果');
-    }catch(error){say(error.message,true);}
+    const result=cueStampEdit.stamp(button.closest('tr').dataset.historyId,button.dataset.stampAction);
+    if(result&&!result.changed)say('播放位置與目前時間相同；原編修及撤回紀錄保留。');
   });
   $('cues').querySelectorAll('[data-delete-cue]').forEach(button=>button.onclick=()=>deleteEntry('cues',Number(button.dataset.deleteCue)));
+  cueStampEdit?.refresh();
 }
+function cueStampRow(id){return [...$('cues').children].find(row=>row.dataset.historyId===id)||null;}
+function captureLyricPlayer(){const player=$('lyrics-player');return {source:state.audioUrl,current_source:player.currentSrc||null,
+  duration:player.duration,position:player.currentTime,ready:player.readyState>=1&&!player.hidden,error:!!player.error};}
+cueStampEdit=MusicCueStampEditDOM.bind({button:$('cue-stamp-undo'),note:$('cue-stamp-note'),busy:()=>state.busy,
+  position:id=>[...$('cues').children].findIndex(row=>row.dataset.historyId===id)+1,
+  readRow:id=>{const row=cueStampRow(id);if(!row)return null;const f=row.querySelectorAll('input');return {id,start:readValue(f[0]),end:readValue(f[1]),text:readValue(f[2])};},
+  writeTimes:(id,value)=>{const row=cueStampRow(id);if(!row)throw Error('目標句已不存在');const f=row.querySelectorAll('input');writeValue(f[0],value.start);writeValue(f[1],value.end);},
+  captureMedia:captureLyricPlayer,onChanged:value=>{markDirty('lyrics');tick();
+    cueStampRow(value.id)?.querySelectorAll('input')[value.undone||value.action!=='end'?0:1]?.focus({preventScroll:true});
+    say(value.undone?'已撤回最近逐句標記；文字、其他編修與音檔保留，請重新驗證。':'已記下播放位置，可撤回最近逐句標記；全部驗證後才更新成果。');},onError:error=>say(error.message,true)});
 $('lyrics-file').onchange=async event=>{
   const file=event.target.files[0];event.target.value='';if(!file)return;
   if(state.busy){say('目前操作尚未完成，請稍候再選檔',true);return;}
@@ -646,8 +652,7 @@ $('lyrics-player').onloadedmetadata=()=>{const player=$('lyrics-player');if(!sta
 $('lyrics-player').ontimeupdate=tick;$('lyrics-player').onseeked=tick;
 $('lyrics-player').onerror=()=>{const player=$('lyrics-player');if(!state.audioUrl||!player.error)return;if(lyricsMediaController.fail(player.currentSrc||player.src))say('此音檔無法在瀏覽器播放，請改用支援的格式',true);};
 wavePosition=MusicWavePositionDOM.bind({canvas:$('waveform'),readout:$('wave-position'),
-  capture:()=>{const player=$('lyrics-player');return {source:state.audioUrl,current_source:player.currentSrc||null,
-    duration:player.duration,position:player.currentTime,ready:player.readyState>=1&&!player.hidden,error:!!player.error};},
+  capture:captureLyricPlayer,
   setPosition:seconds=>{$('lyrics-player').currentTime=seconds;},onSeek:tick,onError:error=>say('音檔定位未完成：'+error.message,true)});
 ['loadstart','emptied','durationchange','error'].forEach(type=>$('lyrics-player').addEventListener(type,drawWave));
 function staleAudioReview(){

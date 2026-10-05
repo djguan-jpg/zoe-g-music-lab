@@ -313,3 +313,8 @@ v0.77追加：UTC.compare以原始Unicode codepoint比較，list/search沿Python
 ## v0.78 波形定位
 
 pure wave-position完整source/current_source/duration/position/ready/error快照→顯示／鍵盤／滑鼠候選→注入controller套用前重查來源/時長→wave-position-dom literal text/ARIA/owned listeners→原native player/app同view比例畫游標。空／未知／錯／source不符歸零停用、tabindex-1，不攔截不可用鍵；顯示毫秒不改原秒數。方向鍵0.5秒／Shift0.05秒／HomeEnd，組合快捷鍵保持，無timer/URL/新媒體decode。定位不進draft3/wire，原waveTask/時長採用/手動stamp/草稿保持；2fixed assets/產品78/來源38–78/unknown79，14/21及原schema/legal4/private/not_submitted保持。見docs/WAVE-POSITION.md。
+
+
+## v0.79 逐句標記撤回
+
+pure cue-stamp-edit重用既有stamp毫秒及wave-position readiness→注入readRow/writeTimes/captureMedia controller→literal cue-stamp-edit-dom／app。單筆stable ID＋原start/end字串＋actual after，文字不留歷史；套用前核對完整row與source/current_source/duration，natural position前進可保持本次capture。undo先核對target actual after，只寫時間並再核對實際值；目標改時／刪除永久stale，改回／刪句還原不復活，文字／其他row／media改動可保留。同值／錯誤保留原有效record，new lyrics render無ID清除。history不進draft3/wire/Agent/results；busy阻擋、owned click listener dispose，無timer/URL/媒體decode。共用captureLyricPlayer維持原波形路徑。2fixed assets/產品79/來源38–79/unknown80，14/21及原schema/legal4/private/not_submitted保持。見docs/CUE-STAMP-EDIT.md。

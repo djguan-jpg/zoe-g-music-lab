@@ -96,3 +96,8 @@ current0.77.0、明確supported38–77共40項，unknown78拒絕；156個歷史�
 ## v0.78
 
 current0.78.0、明確supported38–78共41項，unknown79拒絕；160歷史文字ZIP/manifest與v77實際producer bytes一致。波形暫態定位不增加wire/schema/操作或工具，14/21及Agent1/draft3保持。
+
+
+## v0.79
+
+current0.79.0、明確supported38–79共42項，unknown80拒絕；164歷史文字ZIP/manifest與v78實際producer bytes一致。逐句標記暫態撤回不增加wire/schema/操作或工具，14/21及Agent1/draft3保持。

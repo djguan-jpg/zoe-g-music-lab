@@ -114,6 +114,8 @@ ASSETS = {"/delivery-versions.js": ("musiclab/assets/delivery-versions.js","text
           "/lyrics-lrc.js": ("musiclab/assets/lyrics-lrc.js", "text/javascript"),
           "/lyrics-srt.js": ("musiclab/assets/lyrics-srt.js", "text/javascript"),
           "/cue-stamp.js": ("web/cue-stamp.js", "text/javascript"),
+          "/cue-stamp-edit.js": ("web/cue-stamp-edit.js", "text/javascript"),
+          "/cue-stamp-edit-dom.js": ("web/cue-stamp-edit-dom.js", "text/javascript"),
           "/wave-position.js": ("web/wave-position.js", "text/javascript"),
           "/wave-position-dom.js": ("web/wave-position-dom.js", "text/javascript"),
           "/license": ("LICENSE", "text/plain"), "/notice": ("NOTICE", "text/plain")}
