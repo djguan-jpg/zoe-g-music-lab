@@ -1,4 +1,8 @@
-# 進度：目前 v0.62.0
+# 進度：目前 v0.63.0
+
+## v0.63.0
+
+2026-10-05：音檔 Markdown 改由獨立 Python／JS 純排版產生並逐字核對；錯作品、錯 SHA、改規格／數值／提醒或新增宣稱均拒絕，原成果及音檔保留，合法重試正常。不可測值明示「不可測」，數字固定顯示位數，JSON 量測保持。490 Python／772 JavaScript／66 語法／四份 Skill 通過，83份真 File PCM 與100個歷史 ZIP bytes保持。 tab107實際四次HTTP200：正常、受控外來MD、受控MD錯hash、鍵盤正常重試；兩錯誤保留visible MD／摘要／三檔名／原音檔input value。390px幾何／console0／owned tab及viewport清理，server20346 exit0／staging未建立。下載僅一次click，UI明示已送出需確認保存；download事件10秒未取得path，不宣稱browser實檔已存。首focused兩測試資料錯誤（Windows檔名< >／超格式範圍vector）修正且保留失敗record/log；新retry33／57、首次full490／772／66／4通過。exact source/private PR/Release/actual remote/latest63/62/61依收據，legal4/private/not_submitted、13/18 tools/Agent1/draft3保持，rolling active。
 
 ## v0.62.0
 

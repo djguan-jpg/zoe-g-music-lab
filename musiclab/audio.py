@@ -3,6 +3,7 @@ import math
 import wave
 from pathlib import Path
 from .common import json_text
+from .audio_report import render as render_report
 from . import __version__
 from .audio_source import copied_audio
 from .loudness import EnergyMeter, measurement, MIN_RATE, MAX_RATE
@@ -121,44 +122,4 @@ def analyze_wav(path, profile="distribution", rates=None, bits=None, channels=No
 
 
 def audio_bundle(report):
-    lines = [f"# {report['file']}：音檔交付檢查\n", f"結果：{report['status']}\n",
-             f"{report['sample_rate']} Hz · {report['bit_depth']}-bit · {report['channels']} 聲道 · {report['duration_seconds']:g} 秒\n",
-             "\n| 聲道 | Sample peak dBFS | RMS dBFS | DC offset | 滿刻度樣本 |\n|---|---|---|---|---|\n"]
-    for state in report["per_channel"]:
-        peak = "-∞（靜音）" if state["peak_dbfs"] is None else state["peak_dbfs"]
-        rms = "-∞（靜音）" if state["rms_dbfs"] is None else state["rms_dbfs"]
-        lines.append(f"| {state['channel']} | {peak} | {rms} | {state['dc_offset']} | {state['full_scale_samples']} |\n")
-    loudness = report['loudness']
-    reasons = {'below_gate': '沒有高於 -70 LUFS 絕對門檻的完整區塊',
-               'insufficient_duration': '音檔不足 400 ms，沒有完整量測區塊',
-               'unsupported_channels': '聲道位置未知；只支援單聲道與立體聲',
-               'unsupported_sample_rate': '響度取樣率範圍為 8000–192000 Hz'}
-    value = f"{loudness['integrated_lufs']} LUFS" if loudness['status'] == 'measured' else f"不可測：{reasons[loudness['status']]}"
-    lines.append(f"\n## 整合響度\n\n{value}。\n")
-    lines.append(f"\n400 ms 區塊／100 ms 步進；完整區塊 {loudness['complete_block_count']}，"
-                 f"絕對門檻後 {loudness['absolute_gate_block_count']}，相對門檻後 {loudness['gated_block_count']}。"
-                 f"相對門檻 {loudness['relative_gate_lufs']} LUFS（不可測為 null）；末尾 {loudness['tail_frames']} 幀未形成下一完整區塊。\n")
-    lines.append("\n獨立實作 ITU-R BS.1770-5 Annex 1 K-weighting 與 -70 LUFS／-10 LU 門檻；"
-                 "未指定平台響度目標、未正規化、未量測 true peak，尚非完整規範認證。響度不可測不更改既有技術接受結果。\n")
-    lines.append("\n## 本次接受條件\n\n| 項目 | 實際值 | 接受值 | 結果 |\n|---|---|---|---|\n")
-    for key, observed, unit in (("sample_rate", report['sample_rate'], 'Hz'),
-                                ("bit_depth", report['bit_depth'], 'bit'),
-                                ("channels", report['channels'], '聲道')):
-        accepted = report['acceptance'][{'sample_rate':'rates', 'bit_depth':'bits', 'channels':'channels'}[key]]
-        lines.append(f"| {key} | {observed} {unit} | {', '.join(map(str, accepted))} {unit} | {'符合' if report['checks'][key] else '不符'} |\n")
-    lines.append("\n## 需確認項目\n\n")
-    lines.extend(f"- {item}\n" for item in report["warnings"])
-    if not report["warnings"]:
-        lines.append("本次技術條件沒有提醒項目。\n")
-    lines.append("\n本工具預設不是平台通用交付標準。RMS 不是 LUFS，sample peak 不是 true peak。滿刻度樣本需聆聽確認；沒有評估音樂品質或授權。\n")
-    lines.append(f"\n來源 SHA-256：`{report['sha256']}`\n")
-    if 'source_evidence' in report:
-        source = report['source_evidence']
-        lines.append(f"\n分析副本：{source['bytes']} bytes；PCM format tag {source['wave_format_tag']}；"
-                     f"block align {source['block_align']} bytes；byte rate {source['average_bytes_per_second']} bytes/s。\n")
-        lines.append("\n雜湊與量測使用同一次複製的位元組；不代表檔案系統的原子快照或著作權證明。\n")
-    if "quiet_regions" in report:
-        quiet = report["quiet_regions"]
-        lines.append(f"\n安靜段（門檻 {quiet['threshold_dbfs']} dBFS）：頭 {quiet['leading_seconds']} 秒，尾 {quiet['trailing_seconds']} 秒。\n")
-        lines.append(f"\n立體聲相關性：{report['stereo_correlation']}（靜音／單聲道等不可測情況為 null；不是音樂品質評分）。\n")
-    return {"report.json": json_text(report), "report.md": "".join(lines)}
+    return {"report.json": json_text(report), "report.md": render_report(report)}

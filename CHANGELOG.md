@@ -1,4 +1,12 @@
-# v0.62.0 · 2026-10-04
+# v0.63.0 · 2026-10-05
+
+音檔 Markdown 改由獨立 Python／JS 純排版產生並逐字核對；錯作品、錯 SHA、改規格／數值／提醒或新增宣稱均拒絕，原成果及音檔保留，合法重試正常。不可測值明示「不可測」，數字固定顯示位數，JSON 量測保持。490 Python／772 JavaScript／66 語法／四份 Skill 通過，83份真 File PCM 與100個歷史 ZIP bytes保持。
+
+基線六個受控MD變更（preset／draft各wrong作品、wronghash、extra claim）皆被接受；新增audio_report.py／audio-report.js純canonical文字層，audio_bundle僅組裝JSON及文字，audio-result逐字比對後才走原PCM／LUFS及presentation。固定asset/index加入依賴。新數字排版採binary64 scale／半值離零至safe integer單位，負零顯示零；peak/RMS3、DC8、時長／LUFS／correlation6位。顯示位數不代表新量測精度，JSON與量測演算法保持。
+
+新增4 Python／5 JS：2057跨語言數字vectors、六種actual PCM涵蓋五響度狀態、逐UTF8 bytes、原數值／Unicode／提醒保持、有界invalid、12完整MD拒絕與2合法重試、current／late、fixed browser formatter。原83 PCM矩陣經新完整guard；PCM矛盾測試同步生成canonical MD後仍必須由數值層拒絕，保留分層coverage。CLI真正MD檔bytes、Agent／MCP／HTTP完整wire及asset核對。首focused錯誤來自測試資料，失敗log保持，fresh retry通過；本輪產品沒有因此改寬界限。
+
+## v0.62.0 · 2026-10-04
 
 音檔報告 SHA-256 綁定實際選定 File 位元組，拒絕同名同大小錯來源；示範條件與條件草稿都核對完整回覆、產品／協定版本與嚴格報告 JSON。原成果保持，雜湊期間改選取消上傳，合法重試及自訂規格提醒正常。486 Python／767 JavaScript／65 語法／四份 Skill 通過，83 份真 File PCM 與96個歷史ZIP bytes保持。
 

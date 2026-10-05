@@ -76,7 +76,7 @@ class AudioStatisticsTests(unittest.TestCase):
             code = """const fs=require('fs'),audio=require('./web/audio-review.js'),row=JSON.parse(fs.readFileSync(0,'utf8')),original=row.wire;
             const changes=[r=>r.per_channel[0].peak_dbfs=6,r=>r.per_channel[0].rms_dbfs=0,
              r=>r.per_channel[0].full_scale_samples=r.frames+1,r=>r.quiet_regions.leading_seconds=r.duration_seconds+5,r=>r.stereo_correlation=.5];
-            (async()=>{let refused=0,writes=0;for(const change of changes){const wire=structuredClone(original);change(wire.data);wire.files['report.json']=JSON.stringify(wire.data);
+            (async()=>{let refused=0,writes=0;for(const change of changes){const wire=structuredClone(original);change(wire.data);wire.files['report.json']=JSON.stringify(wire.data);wire.files['report.md']=require('./web/audio-report.js').render(wire.data);
              const file=new File([Buffer.from(row.source,'base64')],wire.data.file),selection={file,profile:wire.data.profile,acceptanceDraft:wire.data.acceptance_draft};
              try{await audio.inspect({selected:()=>selection,isCurrent:()=>true,request:async()=>wire,onResult:()=>writes++});throw Error('accepted contradiction');}
              catch(e){if(!e.message.includes('數值互相矛盾'))throw e;refused++;}}
