@@ -22,10 +22,7 @@
   function panelDraft(current,operation,panel){
     if(!['music','storyboard'].includes(operation))throw Error('只支援歌曲或分鏡待辦來源');
     const draft=Editor.validateDraft(current);draft.panels[operation]=structuredClone(panel);draft.tab=operation;
-    const checked=Editor.validateDraft(draft);
-    if(operation==='storyboard'&&!['','16:9','9:16','1:1','4:3'].includes(checked.panels.storyboard.fields['mv-ratio']))
-      throw Error('目前工作台無法表示這份報告的畫幅；請保留原檔，來源未載入');
-    return checked;
+    return Editor.validateDraft(draft);
   }
   function planningDraft(current,operation,brief){
     const draft=Editor.validateDraft(current);
@@ -48,7 +45,6 @@
       const panel=draft.panels.storyboard;
       Object.entries(mvSources).forEach(([field,key])=>panel.fields[field]=
         ['duration_seconds','fps'].includes(key)?numeric(brief[key],key):string(brief[key],key));
-      if(!['16:9','9:16','1:1','4:3'].includes(brief.aspect_ratio))throw Error('目前工作台不支援此畫幅，請保留原需求以 CLI 使用');
       const ids=new Map();
       panel.motifs=list(brief.motifs,'母題',30).map((motif,index)=>{
         known(motif,['name','meaning'],'母題');

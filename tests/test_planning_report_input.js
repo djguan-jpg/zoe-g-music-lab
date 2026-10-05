@@ -38,7 +38,7 @@ test('scoped raw panel proposal preserves other panels and refuses unsupported r
   for(const name of Object.keys(current.panels).filter(k=>k!==operation))assert.deepEqual(out.panels[name],current.panels[name]);
   out.panels[operation].fields[Object.keys(source.fields)[0]]='proposal changed';assert.notDeepEqual(out.panels[operation],source);
  }
- for(const mutate of [p=>p.fields['mv-ratio']='2.39:1',p=>p.shots[0].motif_id='motif-999',p=>p.shots[0].screen_direction='']){
+ for(const mutate of [p=>p.shots[0].motif_id='motif-999',p=>p.shots[0].screen_direction='']){
   const source=f.panel('storyboard');mutate(source);const checked=input.inspect('storyboard',models.storyboard.report(source));
   assert.throws(()=>planning.panelDraft(f.draft(),'storyboard',checked.panel));assert.deepEqual(checked.panel,source);
  }

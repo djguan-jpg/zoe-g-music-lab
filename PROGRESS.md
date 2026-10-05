@@ -1,4 +1,8 @@
-# 進度：目前 v0.67.0
+# 進度：目前 v0.68.0
+
+## v0.68.0
+
+2026-10-05：分鏡畫幅可直接輸入，保留四個常用建議；自訂畫幅從完成需求、完整待辦報告或草稿接續時保持原值，沿既有來源核對及限定撤回。空白仍列待辦，不自動補值；素材保持。508 Python／804 JavaScript／70語法／四份Skill與120歷史ZIP核對通過。 指定v67 ZIP506／800獨立還原通過。實際Agent接受2.39:1，但前版需求匯入拒絕，已移除工作台額外四值限制。native tab113直接輸入1.85:1、需求raw 2.39:1及報告raw 3:2 CRLF；四次完成HTTP完整wire／files與明確來源相符，報告HTTP與Agent完全相同。後續畫幅編修阻止Undo／Apply、原after可撤回；空白產生一項待辦，完整建立在HTTP前停止。其他台與native WAV保持；390px input／note16–359、document375無overflow、Tab到mv-style、console0。tab關閉／viewport reset／server31268 exit0／staging未建立。Agent1／draft3／report1／14／19 tools及legal4／private／not_submitted保持，latest68／67／66保護，exact-source及實際遠端驗證依收據，rolling active。
 
 ## v0.67.0
 

@@ -255,3 +255,8 @@ draft-undo.createValueUndo純注入validator／隔離before與after／精確prop
 ## v0.67 歌曲／分鏡報告接續
 
 planning-report-input純strict decode／全部來源診斷→readiness-report精確完整document比較→隔離raw panel；planning-import.panelDraft驗draft3與UI可表示畫幅／引用／方向→既有latest target preview→DOM明確Apply／actual after scopedUndo。1MiB入口保持，report1／Agent1／draft3／14／19 tools無新權限；kind與報告暫態不入草稿。原文／未完成數值／母題ID保持；未知或不符拒絕，來源一致不證明作者／權利。產品67／交付來源38–67，legal4／private／not_submitted保持。見[契約](docs/PLANNING-REPORT-INPUT.md)。
+
+
+## v0.68 分鏡自訂畫幅
+
+原生text／datalist四建議→共用raw-fields→既有draft3／planning-import／target preview／explicit Apply／actual after scopedUndo。Python／Agent原文字契約保持，移除額外四值匯入拒絕；原文／空白／Unicode保持，不解析比例、補值、裁切或改素材。完整plan仍驗非空文字及所有創作／時間／影格。其他unsupported引用／方向拒絕保持；無新schema／工具／權限／依賴。產品68／交付來源38–68、14／19 tools、Agent1／draft3／report1／legal4／private／not_submitted保持，見[契約](docs/STORYBOARD-RATIO.md)。
