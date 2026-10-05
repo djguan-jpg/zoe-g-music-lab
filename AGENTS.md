@@ -333,3 +333,8 @@ current-cue純media/rows/visible/busy→既有wave-position/CueStamp/activeCueIn
 ## v0.82 原句首播放定位
 
 cue-position純原row／wave-position完整media／LyricTime毫秒→注入readRow/captureMedia/isAllowed/setPosition controller→delegated DOM→app。stable ID／完整raw start/end/text與source/current_source/duration雙讀前核對，寫後第三media核對實際位置±1ms；natural progression可保持，失敗不虛報或承諾media回滾。只currentTime、明確成功focus波形，play/pause／表單／草稿／撤回保持；結束留白可定位不代表完整cue接受。input/render/stamp undo強制refresh，position-only tick沿便宜context不重掃rows，busy/hidden停用，dispose清自身兩listeners，無新timer/URL/decode。共用lyric_timing/lyric-time沿strict decimal原mantissa拒絕負值下溢字串（-1e-999），真正負零與signed shift保持；已轉numeric0無法恢復原字面，不宣稱任意JSON數值精度。server只兩固定JS路由，產品82／來源38–82共45／unknown83／expectedtag82，14/21／Agent1/draft3／領域schemas/legal4/private/not_submitted保持。見docs/CUE-POSITION.md。
+
+
+## v0.83 目前歌詞播放資料
+
+current-cue checkedRows／checkedContext／原playableCues與activeCueIndex→private單份prepared rows→注入playback controller→owned DOM高亮／app。input/render/stamp與undo/batch apply與undo明確invalidate，token拒絕讀取中失效；錯rows只嘗試一次，下一次失效或明確fresh focus可重查。position-only只context，hidden/unready初次不讀rows，busy維持唯讀但停focus；media每次核對，原exclusive／last overlap保持，仍O(n)numeric scan。focus沿原createController完整fresh來源雙讀及DOM原欄位核對，顯示cache不替代來源。未發送事件的外部任意value改寫不保證即時display，明確focus仍fresh；single prepared copy有界10000列，invalidate/dispose釋放。高亮僅owned old/new，same connected ID不重resolve或write、detached同ID新node重resolve，dispose清owned listeners/class。無新timer、asset、schema或操作；product83／來源38–83共46／unknown84／expectedtag83，14/21／Agent1/draft3／legal4/private/not_submitted保持。見docs/CURRENT-CUE-PLAYBACK.md。

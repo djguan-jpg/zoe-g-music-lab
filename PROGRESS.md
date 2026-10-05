@@ -1,4 +1,8 @@
-# 進度：目前 v0.82.0
+# 進度：目前 v0.83.0
+
+## v0.83.0
+
+2026-10-05：目前歌詞播放熱路徑新增pure prepared rows／injected playback controller／owned DOM marker／app分層。input、render、stamp/undo及batch apply/undo明確失效；position-only更新保留全部media/context檢查，不再重讀／解析整表，原activeCueIndex最後重疊命中規則保持。明確focus沿原完整fresh雙capture，不信任顯示cache。高亮只移除舊列及加入新列，同ID原node保持、重建後重新解析。實測10000列×120更新，row capture120→1、raw copies1200000→10000，全部120views一致；單次Node基準2267.6433→44.3776ms，不冒充browser FPS。另重現v82actual batch adapter在短media下保留過期enabled，programmatic apply/undo force刷新句首button已修正。554 Python67.953秒／960 JS／90syntax／四Skills、71focus、180歷史ZIP／manifest、v82原包554／948還原、CLI/Agent/MCP bytes與good/bad/good、native25觀察／1022欄位保持／300列／390px鍵盤通過。兩自有tab與bounded servers完成，無新資產/HTTP/Agent操作/timer/依賴/模型；14/21／Agent1/draft3／領域schemas/legal4/private/not_submitted保持，latest83/82/81與rolling active。
 
 ## v0.82.0
 

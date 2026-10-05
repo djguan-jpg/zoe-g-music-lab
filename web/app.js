@@ -484,7 +484,7 @@ function renderCues(cues,ids){
     if(result&&!result.changed)say('播放位置與目前時間相同；原編修及撤回紀錄保留。');
   });
   $('cues').querySelectorAll('[data-delete-cue]').forEach(button=>button.onclick=()=>deleteEntry('cues',Number(button.dataset.deleteCue)));
-  cueStampEdit?.refresh();state.currentCue?.refresh();state.cuePosition?.refresh({force:true});
+  cueStampEdit?.refresh();state.currentCue?.invalidate();state.currentCue?.refresh();state.cuePosition?.refresh({force:true});
 }
 function cueStampRow(id){return [...$('cues').children].find(row=>row.dataset.historyId===id)||null;}
 function captureLyricPlayer(){const player=$('lyrics-player');return {source:state.audioUrl,current_source:player.currentSrc||null,
@@ -493,7 +493,7 @@ cueStampEdit=MusicCueStampEditDOM.bind({button:$('cue-stamp-undo'),note:$('cue-s
   position:id=>[...$('cues').children].findIndex(row=>row.dataset.historyId===id)+1,
   readRow:id=>{const row=cueStampRow(id);if(!row)return null;const f=row.querySelectorAll('input');return {id,start:readValue(f[0]),end:readValue(f[1]),text:readValue(f[2])};},
   writeTimes:(id,value)=>{const row=cueStampRow(id);if(!row)throw Error('目標句已不存在');const f=row.querySelectorAll('input');writeValue(f[0],value.start);writeValue(f[1],value.end);},
-  captureMedia:captureLyricPlayer,onChanged:value=>{markDirty('lyrics');state.cuePosition?.refresh({force:true});tick();
+  captureMedia:captureLyricPlayer,onChanged:value=>{markDirty('lyrics');state.currentCue?.invalidate();state.cuePosition?.refresh({force:true});tick();
     cueStampRow(value.id)?.querySelectorAll('input')[value.undone||value.action!=='end'?0:1]?.focus({preventScroll:true});
     say(value.undone?'已撤回最近逐句標記；文字、其他編修與音檔保留，請重新驗證。':'已記下播放位置，可撤回最近逐句標記；全部驗證後才更新成果。');},onError:error=>say(error.message,true)});
 $('lyrics-file').onchange=async event=>{
@@ -566,7 +566,7 @@ function timingControls(){
 function applyCueTimes(entries){
   const targets=new Map(entries.map(e=>[e.id,e.value]));
   [...$('cues').children].forEach(row=>{const value=targets.get(row.dataset.historyId),fields=row.querySelectorAll('input');writeValue(fields[0],value.start);writeValue(fields[1],value.end);});
-  markDirty('lyrics');tick();
+  markDirty('lyrics');state.currentCue?.invalidate();state.cuePosition?.refresh({force:true});tick();
 }
 timingController=MusicTiming.createTimingController({
   request:async payload=>(await api('/api/lyrics',payload)).data,
@@ -589,9 +589,9 @@ $('timing-cancel').onclick=()=>{timingController.cancel();timingSay('已取消�
 $('lyrics-shift').oninput=()=>{timingController.cancel();timingSay('調整量已修改，請重新預覽。');};
 timingControls();
 let wavePosition=null;
-state.currentCue=MusicCurrentCueDOM.bind({button:$('current-cue-focus'),note:$('current-cue-note'),lyric:$('current-lyric'),
-  capture:()=>({media:captureLyricPlayer(),rows:entriesFor('cues').map(entry=>({id:entry.id,...entry.value})),visible:state.tab==='lyrics',busy:state.busy}),
-  highlight:id=>[...$('cues').children].forEach(row=>row.classList.toggle('playing',id!==null&&row.dataset.historyId===id)),
+state.currentCue=MusicCurrentCueDOM.bindPlayback({button:$('current-cue-focus'),note:$('current-cue-note'),lyric:$('current-lyric'),container:$('cues'),
+  captureContext:()=>({media:captureLyricPlayer(),visible:state.tab==='lyrics',busy:state.busy}),
+  captureRows:()=>entriesFor('cues').map(entry=>({id:entry.id,...entry.value})),resolveRow:cueStampRow,
   focusTarget:(id,expected)=>{if(state.tab!=='lyrics'||state.busy)return false;const row=cueStampRow(id);if(!row)return false;
     const fields=row.querySelectorAll('input');if(fields.length!==3||fields[2].disabled||!fields[2].isConnected)return false;
     if(['start','end','text'].some((key,i)=>readValue(fields[i])!==expected[key]))return false;

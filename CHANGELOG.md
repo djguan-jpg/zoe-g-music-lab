@@ -1,5 +1,9 @@
 # v0.77.0 · 2026-10-05
 
+## v0.83.0
+
+目前歌詞播放熱路徑新增pure prepared rows／injected playback controller／owned DOM marker／app分層。input、render、stamp/undo及batch apply/undo明確失效；position-only更新保留全部media/context檢查，不再重讀／解析整表，原activeCueIndex最後重疊命中規則保持。明確focus沿原完整fresh雙capture，不信任顯示cache。高亮只移除舊列及加入新列，同ID原node保持、重建後重新解析。實測10000列×120更新，row capture120→1、raw copies1200000→10000，全部120views一致；單次Node基準2267.6433→44.3776ms，不冒充browser FPS。另重現v82actual batch adapter在短media下保留過期enabled，programmatic apply/undo force刷新句首button已修正。554 Python67.953秒／960 JS／90syntax／四Skills、71focus、180歷史ZIP／manifest、v82原包554／948還原、CLI/Agent/MCP bytes與good/bad/good、native25觀察／1022欄位保持／300列／390px鍵盤通過。兩自有tab與bounded servers完成，無新資產/HTTP/Agent操作/timer/依賴/模型；14/21／Agent1/draft3／領域schemas/legal4/private/not_submitted保持，latest83/82/81與rolling active。
+
 ## v0.82.0
 
 新增逐句「定位句首」：滑鼠或Enter回到原開始時間，結束留白仍可定位，再沿波形鍵盤細調。pure cue-position／injected controller／delegated DOM／app分層，穩定ID、完整原列與媒體來源／時長重查，寫後核對實際位置；只seek，播放／暫停、原欄位、草稿與標記撤回保持。位置自然更新不逐列重掃，無新timer。另修正共用Python／JS原十進位字串的負值下溢：-1e-999先拒絕，再捨入；真正負零與signed shift保持。554 Python68.859秒／948 JS／90syntax／四Skills、61focus、176歷史ZIP、v81原包553／933還原、最終CLI／Agent／MCP bytes一致、26跨語言數值及Agent／MCP／HTTP good/bad/good／CLI1無輸出、原生31+4觀察／136欄位保持／390px鍵盤通過。兩次數值QA helper失敗為module shadow及CLI oracle寫錯，失敗紀錄保留、fresh helper通過，未改CLI退出契約。三個自有tab／bounded server完成；14/21／Agent1/draft3／領域schemas/legal4/private/not_submitted保持，latest82/81/80與rolling active。
