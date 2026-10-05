@@ -260,3 +260,8 @@ planning-report-input純strict decode／全部來源診斷→readiness-report精
 ## v0.68 分鏡自訂畫幅
 
 原生text／datalist四建議→共用raw-fields→既有draft3／planning-import／target preview／explicit Apply／actual after scopedUndo。Python／Agent原文字契約保持，移除額外四值匯入拒絕；原文／空白／Unicode保持，不解析比例、補值、裁切或改素材。完整plan仍驗非空文字及所有創作／時間／影格。其他unsupported引用／方向拒絕保持；無新schema／工具／權限／依賴。產品68／交付來源38–68、14／19 tools、Agent1／draft3／report1／legal4／private／not_submitted保持，見[契約](docs/STORYBOARD-RATIO.md)。
+
+
+## v0.69 保存回讀核對
+
+pure library-receipt完整data ACK／同ID metadata／全部draft3→注入readonly read→required confirmSave→既有pending controller→DOM／retention。保存ACK後任何回讀錯誤（含4xx）／不符保持原ID與click-time原稿供重試；原save4xx拒絕規則保持。確認前saving仍阻擋放棄／重試，確認後才retain原稿、後續編修保持dirty。backend read核對磁碟bytes／SHA，browser不獨立重算保存bytes或承諾原子／耐久交易。產品69／來源明確38–69、14／19 tools、Agent1／draft3／library1／legal4／private／not_submitted保持，見[契約](docs/LIBRARY-SAVE-RECEIPT.md)。

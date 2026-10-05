@@ -7,21 +7,25 @@
       Object.fromEntries(Object.keys(x).sort().map(key=>[key,stable(x[key])])):x;
     return JSON.stringify(stable(value.panels));
   }
-  function createLibraryController({request,capture,validate,newId,onSaved,onList,onReady,onError,onPending,preview=null}){
+  function createLibraryController({request,capture,validate,newId,confirmSave,onSaved,onList,onReady,onError,onPending,preview=null}){
+    if(typeof confirmSave!=='function')throw Error('保存回讀核對未設定');
     let pending=null,saving=false,listToken=0,readToken=0;
     async function send(){
       if(saving||!pending)return false;
-      const job=pending;saving=true;onPending({pending:true,saving:true});
+      const job=pending;let received=false;saving=true;onPending({pending:true,saving:true});
       try{
-        const result=await request('save',clone(job.payload));
+        const ack=await request('save',clone(job.payload));received=true;
+        if(pending!==job)return false;
+        const result=await confirmSave(clone(job.payload),ack);
         if(pending!==job)return false;
         pending=null;
         onSaved({entry:result.entry,reused:result.reused,draft:clone(job.payload.draft),changed:fingerprint(capture())!==job.fingerprint});
         return true;
       }catch(error){
         if(pending===job){
-          // A transport/5xx failure may follow a successful disk commit. Keep ID and content.
-          if(error.status>=400&&error.status<500)pending=null;
+          // After an acknowledgement, every failed readback is an uncertain save.
+          // Before it, only a definite 4xx refusal releases the original ID and content.
+          if(!received&&error.status>=400&&error.status<500)pending=null;
           onError(error,{retryable:pending!==null});
         }
         return false;

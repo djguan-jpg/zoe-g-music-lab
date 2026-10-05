@@ -1,3 +1,9 @@
+# v0.69.0 · 2026-10-05
+
+草稿保存後先回讀同一 ID，完整核對點擊時草稿與保存回應，才標示已保存。回讀失敗保留原 ID／原稿供重試，後續編修與音檔保持。511 Python／816 JavaScript／71語法／四份Skill、124歷史ZIP及指定v68還原508／804通過。
+
+先前保存controller只相信回應而未回讀，wrong ID／內容仍可解除提醒。新增純library-receipt核對完整data ACK及同ID回讀，必須注入confirmSave。保存ACK後的核對失敗或任何讀取錯誤（含4xx）都保持uncertain pending；原保存4xx拒絕仍沿舊行為釋放pending。確認後才retain點擊時原稿，後續編修保持dirty。見[契約](docs/LIBRARY-SAVE-RECEIPT.md)、[QA](docs/QA-v0.69.0.md)、[交接](docs/HANDOFF-v0.69.0.md)。
+
 # v0.68.0 · 2026-10-05
 
 分鏡畫幅可直接輸入，保留四個常用建議；自訂畫幅從完成需求、完整待辦報告或草稿接續時保持原值，沿既有來源核對及限定撤回。空白仍列待辦，不自動補值；素材保持。508 Python／804 JavaScript／70語法／四份Skill與120歷史ZIP核對通過。

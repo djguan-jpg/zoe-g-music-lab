@@ -94,3 +94,7 @@ ZIP核對後可切目前成果／ZIP原文逐段閱讀，原文下載仍是全�
 ## v0.67 接續歌曲待辦報告
 
 完整 music-review.json 可從工作台「接續歌曲／分鏡需求或待辦報告」選檔。純模型核對全部 source 與 report1，先預覽、再明確載入原始歌曲欄位；留白與未完成數值保持，其他工作台與音檔保留。最近一次載入沿既有限定撤回，後續編修拒絕覆蓋。1MiB 入口、Agent1／draft3／14／19工具保持；報告不表示創作、實聽、權利或平台接受。見[契約](../../docs/PLANNING-REPORT-INPUT.md)。
+
+## v0.69 共用草稿保存
+
+工作台保存會回讀同ID並核對完整原稿後才確認。失敗保留原ID與點擊時草稿供明確重試，不把後續編修代入重試；音檔／成果另存。CLI／Agent既有save與readonly read仍共用Python immutable library，沒有新增JSON路徑／寫檔權限。核對不證明作品品質、作者權利或平台創始接受。見[契約](../../docs/LIBRARY-SAVE-RECEIPT.md)。

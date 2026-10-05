@@ -934,8 +934,9 @@ function librarySelection(){
 const libraryController=MusicLibrary.createLibraryController({
   preview:libraryPreview,
   request:async(action,payload)=>(await api('/api/drafts/'+action,payload)).data,
+  confirmSave:MusicLibraryReceipt.createVerifier({read:async id=>(await api('/api/drafts/read',{id})).data,validate:MusicEditor.validateDraft}),
   capture:captureDraft,validate:MusicEditor.validateDraft,newId:()=> 'draft-'+crypto.randomUUID().replaceAll('-',''),
-  onPending:({pending,saving})=>{libraryPending=pending;librarySaving=saving;libraryControls();},
+  onPending:({pending,saving})=>{libraryPending=pending;librarySaving=saving;libraryControls();if(saving)librarySay('正在保存並回讀核對；完成前保留目前編修。');},
   onSaved:({entry,reused,changed,draft})=>{
     draftRetention.retain(draft,{kind:'library',label:entry.label});
     libraryPreferredId=entry.id;
