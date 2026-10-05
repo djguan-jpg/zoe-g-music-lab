@@ -64,6 +64,8 @@ ASSETS = {"/operation-presentation.js": ("web/operation-presentation.js", "text/
           "/editor-copy.js": ("web/editor-copy.js", "text/javascript"),
           "/editor-copy-dom.js": ("web/editor-copy-dom.js", "text/javascript"),
           "/entry-order.js": ("web/entry-order.js", "text/javascript"),
+          "/editor-selection.js": ("web/editor-selection.js", "text/javascript"),
+          "/editor-selection-dom.js": ("web/editor-selection-dom.js", "text/javascript"),
           "/editor-order.js": ("web/editor-order.js", "text/javascript"),
           "/editor-order-dom.js": ("web/editor-order-dom.js", "text/javascript"),
           "/planning-import.js": ("web/planning-import.js", "text/javascript"),

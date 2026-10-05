@@ -55,6 +55,7 @@ editorCopy=MusicEditorCopyDOM.bind(document,{busy:()=>state.busy,capture:entries
   onCopied:(list,{index})=>{refreshCollectionControls();focusEntry(list,index,'new');say(`已複製${collections[list].label}，放在原列後方；${list==='arrangement'?'原編曲欄位保留，請依目前順序重新建立歌曲包':'開始與結束留白，請人工校時；原列、總長與音檔保留'}`);},
   onError:error=>say(error.message,true)});
 editorOrder=MusicEditorOrderDOM.bind(document,{busy:()=>state.busy,capture:entriesFor,
+  readCaption:(list,row)=>list==='cues'?readValue(row.querySelector('.lyric-field')):(readValue(row.querySelector('[data-key="section"]')).trim()?readValue(row.querySelector('[data-key="section"]')):readValue(row.querySelector('[data-key="purpose"]'))),
   apply:(list,entries)=>{writeEntries(list,entries);markDirty(collections[list].scope);},
   focusRow:(list,index)=>focusEntry(list,index,list==='cues'?'new':'entry'),
   onChanged:(list,result,undo)=>say(`${undo?'已撤回最近一次移動':'已移動'+collections[list].label+' '+(result.from+1)+' → '+(result.to+1)}；原時間與創作保留，請重新檢查與建立成果`),
@@ -72,9 +73,13 @@ function refreshDeletionButton(scope){
 }
 function clearDeletionHistory(scope){deletionHistory.clear(scope);refreshDeletionHistory(scope);if(scope==='music'){arrangementController?.clear();musicReadyController?.clear();}if(scope==='storyboard'){storyboardTimingController?.clear();editorOrder?.clear('shots');}if(scope==='lyrics')editorOrder?.clear('cues');}
 function focusEntry(list,index,mode='entry'){return editorFocus.focus(list,index,mode);}
+const editorSelection=MusicEditorSelectionDOM.bind(document,{busy:()=>state.busy,
+  onSelection:(list,id)=>{if(list!=='arrangement')return editorOrder.select(list,id);$('section-order').value=id;refreshMusicSelection();return $('section-order').value===id;},
+  onError:error=>say(error.message,true)});
 function refreshCollectionControls(){
   editorCopy?.refresh();
   editorOrder?.refresh();
+  editorSelection?.refresh();
   for(const [list,spec] of Object.entries(collections)){
     $(spec.add).disabled=state.busy;
     $(list).querySelectorAll(spec.remove).forEach(button=>button.disabled=state.busy);
@@ -185,17 +190,19 @@ function exampleAllowed(){
   return true;
 }
 $('music-example').onclick=()=>{if(!exampleAllowed())return;loadMusic();markDirty('music');say('已載入本次原創合成範例，可直接修改');};
+function refreshMusicSelection(){
+  const rows=[...$('arrangement').children],selected=$('section-order').value,index=rows.findIndex(row=>row.dataset.historyId===selected);
+  $('section-earlier').disabled=state.busy||index<=0;$('section-later').disabled=state.busy||index<0||index>=rows.length-1;
+  rows.forEach(row=>row.toggleAttribute('data-section-selected',row.dataset.historyId===selected));
+}
 function renderMusicOrder(view){
   const select=$('section-order'),selected=select.value,entries=entriesFor('arrangement');
   select.replaceChildren();entries.forEach((e,i)=>select.append(new Option(`${i+1} · ${e.value.name||'未命名段落'}`,e.id)));
   if(entries.some(e=>e.id===selected))select.value=selected;
   if(!entries.length)select.append(new Option('尚無段落',''));
   select.disabled=state.busy||!entries.length;
-  const index=entries.findIndex(e=>e.id===select.value);
-  $('section-earlier').disabled=state.busy||index<=0;
-  $('section-later').disabled=state.busy||index<0||index>=entries.length-1;
+  refreshMusicSelection();
   $('section-order-undo').disabled=state.busy||!view.canUndo;
-  [...$('arrangement').children].forEach(row=>row.toggleAttribute('data-section-selected',row.dataset.historyId===select.value));
   $('section-order-note').textContent=view.stale?'段落列或順序已改動，先前移動不可撤回；目前編修保留。':view.record?
     `段落 ${view.record.from+1} → ${view.record.to+1}；可撤回最近一次移動，後續欄位編修保留。`:
     '選擇一段再移動；順序依表格由上到下，文字、小節與能量一起保留。';

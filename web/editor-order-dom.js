@@ -3,9 +3,10 @@
 (function(root){
   const P=typeof module==='object'&&module.exports?require('./editor-order.js'):root.MusicEditorOrder;
   const scopes=Object.freeze({shots:'storyboard',cues:'lyrics'}),labels=Object.freeze({shots:'鏡頭',cues:'歌詞'});
-  function bind(document,{busy,capture,apply,focusRow,onChanged=()=>{},onError=()=>{}}){
+  function bind(document,{busy,capture,apply,focusRow,readCaption=(list,row)=>list==='shots'?row.querySelector('[data-key="section"]')?.value||row.querySelector('[data-key="purpose"]')?.value||'':row.querySelector('.lyric-field')?.value||'',onChanged=()=>{},onError=()=>{}}){
     const get=id=>document.getElementById(id),listeners=[],options=new Map();let disposed=false;
-    function caption(list,row,index){const raw=list==='shots'?row.querySelector('[data-shot-caption]')?.textContent||'':row.querySelector('.lyric-field')?.value||'';return `${index+1} · ${Array.from(raw.replace(/\s+/g,' ').trim()).slice(0,24).join('')||'未填內容'}`;}
+    function caption(list,row,index){return `${index+1} · ${Array.from(readCaption(list,row).replace(/\s+/g,' ').trim()).slice(0,24).join('')||'未填內容'}`;}
+    function selectionButtons(list,m,index){const blocked=!m.visible||m.busy;get(list+'-earlier').disabled=blocked||index<=0;get(list+'-later').disabled=blocked||index<0||index>=m.ids.length-1;get(list+'-order-show').disabled=blocked||index<0;}
     function meta(list){const container=get(list),panel=get(scopes[list]);return {ids:[...container.children].map(r=>r.dataset.historyId),visible:container.isConnected&&panel.isConnected&&!panel.hidden,busy:busy()};}
     function allowed(list){const m=meta(list);return m.visible&&!m.busy;}
     const controller=P.createController({allowed,capture:list=>({entries:capture(list),visible:meta(list).visible,busy:busy()}),apply,onError});
@@ -18,7 +19,7 @@
         rows.forEach((row,i)=>{const option=saved.byId.get(row.dataset.historyId),text=caption(list,row,i);if(option.textContent!==text)option.textContent=text;});
         if(m.ids.includes(selected))select.value=selected;
         const index=m.ids.indexOf(select.value),blocked=!m.visible||m.busy;
-        select.disabled=blocked||!rows.length;get(list+'-earlier').disabled=blocked||index<=0;get(list+'-later').disabled=blocked||index<0||index>=rows.length-1;get(list+'-order-undo').disabled=!view.canUndo;get(list+'-order-show').disabled=blocked||index<0;
+        select.disabled=blocked||!rows.length;selectionButtons(list,m,index);get(list+'-order-undo').disabled=!view.canUndo;
         rows.forEach(row=>row.toggleAttribute('data-order-selected',row.dataset.historyId===select.value));
         get(list+'-order-note').textContent=view.stale?'列或順序已改動，先前移動不可撤回；目前編修保留。':view.record?`${labels[list]} ${view.record.from+1} → ${view.record.to+1}；可撤回最近一次移動，後續欄位編修保留。`:'選擇一列再移動；原時間與創作欄位一起保留。';
       }
@@ -31,7 +32,14 @@
       }
       const show=get(list+'-order-show');listen(show,'click',()=>{if(show.disabled||!allowed(list))return;const m=meta(list),index=m.ids.indexOf(get(list+'-order').value);if(index>=0)focusRow(list,index);});
     }
-    return Object.freeze({refresh,clear(list){controller.clear(list);},dispose(){disposed=true;controller.dispose();for(const [element,type,fn] of listeners)element.removeEventListener(type,fn);}});
+    return Object.freeze({refresh,select(list,id){
+      if(disposed||!P.lists.includes(list)||!allowed(list))return false;
+      const m=meta(list),index=m.ids.indexOf(id);if(index<0)return false;
+      const saved=options.get(list);if(!saved||saved.ids.length!==m.ids.length||saved.ids.some((v,i)=>v!==m.ids[i]))refresh();
+      const select=get(list+'-order'),old=m.ids.indexOf(select.value),rows=get(list).children;
+      select.value=id;if(select.value!==id)return false;
+      if(old>=0)rows[old].toggleAttribute('data-order-selected',false);rows[index].toggleAttribute('data-order-selected',true);selectionButtons(list,m,index);return true;
+    },clear(list){controller.clear(list);},dispose(){disposed=true;controller.dispose();for(const [element,type,fn] of listeners)element.removeEventListener(type,fn);}});
   }
   const api=Object.freeze({bind});if(typeof module==='object'&&module.exports)module.exports=api;else root.MusicEditorOrderDOM=api;
 })(typeof globalThis==='object'?globalThis:this);
