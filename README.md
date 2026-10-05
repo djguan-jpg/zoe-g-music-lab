@@ -1,8 +1,8 @@
 # ZOE. G Music Lab
 
-目前版本 **v0.69.0**：草稿保存後先回讀同一 ID，完整核對點擊時草稿與保存回應，才標示已保存。回讀失敗保留原 ID／原稿供重試，後續編修與音檔保持。511 Python／816 JavaScript／71語法／四份Skill、124歷史ZIP及指定v68還原508／804通過。 見[保存契約](docs/LIBRARY-SAVE-RECEIPT.md)、[QA](docs/QA-v0.69.0.md)、[交接](docs/HANDOFF-v0.69.0.md)。
+目前版本 **v0.70.0**：保存版本預覽核對選定 ID 與完整 metadata；讀取完成、套用與匯出前重查目前選擇。不符時保留編修與音檔，切換版本提示重新預覽。514 Python／829 JavaScript／72語法／四份Skill、128歷史ZIP及指定v69還原511／816通過。 見[來源契約](docs/LIBRARY-REVISION.md)、[QA](docs/QA-v0.70.0.md)、[交接](docs/HANDOFF-v0.70.0.md)。
 
-上一輪 v0.68.0：分鏡畫幅可自訂，需求／報告接續保留原始畫幅文字。見[QA](docs/QA-v0.68.0.md)。
+上一輪 v0.69.0：保存後回讀同 ID，完整原稿核對才確認；失敗保留原 ID／原稿供明確重試。見[QA](docs/QA-v0.69.0.md)。
 
 ## ZIP原文與差異（v0.40）
 

@@ -1,4 +1,8 @@
-# 進度：目前 v0.69.0
+# 進度：目前 v0.70.0
+
+## v0.70.0
+
+2026-10-05：保存版本預覽核對選定 ID 與完整 metadata；讀取完成、套用與匯出前重查目前選擇。不符時保留編修與音檔，切換版本提示重新預覽。514 Python／829 JavaScript／72語法／四份Skill、128歷史ZIP及指定v69還原511／816通過。 真immutable library重現要求A卻接受B的缺口。pure library-revision共享save/read metadata與完整draft核對→注入checkRead／初始選擇隔離→既有latest／replacement preview→DOM active selection重查。native tabs115／116、6讀／1存／5清單，僅response副本故障注入；wrong ID／metadata及套用／匯出選擇不符拒絕，原編修／WAV保持。明確全案Apply／Undo沿既有行為清media且提示重選；另存原案回讀確認與新版本預覽正常。首次切換仍顯示舊「已預覽」提示，補明確重新預覽訊息後用新tab／晚回覆測試再驗證。390px提示313px、console0、兩tab關閉／viewport reset／server原session82907 exit0／staging未建立。最新70／69／68保護，legal4／private／not_submitted保持，rolling active。
 
 ## v0.69.0
 
