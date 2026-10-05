@@ -6,20 +6,18 @@ import json
 import re
 from .json_document import utf8_bytes
 from .library_contract import ID_PATTERN, MAX_ENTRIES, MAX_METADATA_BYTES, validate_record
+from .library_match import MAX_QUERY_CHARS, MAX_QUERY_BYTES, checked_query, has_match
 
 FORMAT = 'zoe-draft-library-search'
 SCHEMA_VERSION = 1
 STATUS = 'metadata_only_checksum_verified_on_read'
-MAX_QUERY_CHARS = 200
-MAX_QUERY_BYTES = 800
 
 
 def checked_request(payload):
     if not isinstance(payload, dict) or 'query' not in payload or set(payload) - {'query', 'limit', 'cursor'}:
         raise ValueError('搜尋需明確 query；不能指定路徑或其他欄位')
     query, limit, cursor = payload['query'], payload.get('limit', 20), payload.get('cursor')
-    if not isinstance(query, str) or not 1 <= len(query) <= MAX_QUERY_CHARS or len(utf8_bytes(query)) > MAX_QUERY_BYTES:
-        raise ValueError('搜尋文字需為 1–200 字元、最多 800 UTF-8 bytes；保留大小寫與空白')
+    checked_query(query)
     if type(limit) is not int or not 1 <= limit <= 100:
         raise ValueError('每頁需為 1–100 個版本')
     if cursor is not None and (not isinstance(cursor, dict) or set(cursor) != {'start_index', 'search_sha256'} or
@@ -63,7 +61,7 @@ def prepare(payload, records, issues):
     encoded = json.dumps([FORMAT, SCHEMA_VERSION, query, checked, unreadable],
                          ensure_ascii=True, sort_keys=True, separators=(',', ':')).encode('ascii')
     sha = hashlib.sha256(encoded).hexdigest()
-    matches = [record for record in checked if any(query in text for text in [record['label'], *record['titles'].values()])]
+    matches = [record for record in checked if has_match(record, query)]
     cursor = request['cursor']; start = cursor['start_index'] if cursor else 0
     if cursor and (cursor['search_sha256'] != sha or start >= len(matches)):
         raise ValueError('搜尋文字或保存版本來源已變更；請重新搜尋，原版本保留')

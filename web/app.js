@@ -915,6 +915,13 @@ $('lyrics-import-apply').onclick=()=>{
 let libraryEnabled=false,libraryListJobs=0,libraryReadingId=null,libraryPending=false,librarySaving=false;
 let libraryRecords=[],libraryCursor=null,pendingLibraryReview=null,libraryPreferredId=null;
 let libraryMode='all',librarySearchState={pending:false,stale:false,canContinue:false};
+let librarySearchContext=null,libraryIssueCount=0;
+const libraryPresenter=MusicLibraryPresentationDom.createPresenter(document,{
+  capture:()=>({enabled:libraryEnabled,mode:libraryMode,displayed_count:libraryRecords.length,
+    selected:libraryRecords.find(record=>record.id===$('library-select').value)||null,search:librarySearchContext,
+    issue_count:libraryIssueCount,stale:librarySearchState.stale,pending:librarySearchState.pending}),
+  onError:error=>librarySay(error.message,true)
+});
 function librarySay(message,error=false){$('library-status').textContent=message;$('library-status').classList.toggle('error',error);}
 function libraryControls(){
   backupControls();
@@ -928,13 +935,12 @@ function libraryControls(){
   $('library-preview').disabled=!libraryEnabled||!libraryRecords.length||libraryReadingId===$('library-select').value;
   $('library-retry').hidden=!libraryPending;$('library-retry').disabled=librarySaving;
   $('library-abandon').hidden=!libraryPending;$('library-abandon').disabled=librarySaving;
+  libraryPresenter.update();
 }
 function clearLibraryReview(){libraryController.cancelRead();pendingLibraryReview=null;$('library-review').hidden=true;$('library-review-content').value='';}
 function librarySelection(){
   const choice=$('library-select').value;
   if(libraryReadingId&&libraryReadingId!==choice||pendingLibraryReview&&pendingLibraryReview.entry.id!==choice)clearLibraryReview();
-  const record=libraryRecords.find(r=>r.id===$('library-select').value);
-  $('library-selection-note').textContent=record?`${record.label} · ${record.stored_at} · 歌曲：${record.titles.music||'未命名'}／分鏡：${record.titles.storyboard||'未命名'}／歌詞：${record.titles.lyrics||'未命名'}`:'尚無保存版本；先為目前草稿命名並保存。';
   libraryControls();
 }
 function publishLibraryRecords(result,append){
@@ -949,8 +955,8 @@ const librarySearch=MusicLibrarySearch.createController({
   capture:()=>$('library-search-query').value,request:payload=>api('/api/drafts/search',payload),
   onState:value=>{librarySearchState=value;libraryControls();},
   onReady:(result,append)=>{
+    libraryIssueCount=result.issues.length;librarySearchContext={query:result.query,record_count:result.record_count,match_count:result.match_count,issue_count:libraryIssueCount};
     libraryMode='search';publishLibraryRecords(result,append);
-    $('library-search-status').textContent=`「${result.query}」找到 ${result.match_count}／${result.record_count} 個可讀版本，已顯示 ${libraryRecords.length} 個${result.issues.length?'；另有 '+result.issues.length+' 個版本摘要無法讀取':''}。只搜尋名稱，不代表草稿內容或音檔已驗收。`;
     librarySay('搜尋清單已更新；選定版本後預覽，才會載入。');
   },onError:error=>librarySay(error.message,true)
 });
@@ -969,9 +975,8 @@ const libraryController=MusicLibrary.createLibraryController({
     refreshLibrary(false);
   },
   onList:(result,append)=>{
+    librarySearchContext=null;libraryIssueCount=result.issues.length;
     libraryMode='all';publishLibraryRecords(result,append);
-    $('library-search-status').textContent='目前顯示全部保存版本；可輸入名稱搜尋全庫。';
-    $('library-note').textContent=`本機草稿庫已啟用；已讀取 ${libraryRecords.length} 個版本${result.issues.length?'，另有 '+result.issues.length+' 個版本資料無法讀取':''}。載入時核對摘要；保存不含音檔、成果或刪除還原紀錄。`;
   },
   onReady:({entry,draft})=>{
     pendingLibraryReview={entry,draft};$('library-review-note').textContent=`「${entry.label}」· ${entry.stored_at} · ${draft.panels.music.sections.length} 段／${draft.panels.storyboard.shots.length} 鏡／${draft.panels.lyrics.cues.length} 句。SHA-256 與草稿 v3 已核對；創作內容尚需重新驗證。`;
@@ -994,7 +999,7 @@ $('library-abandon').onclick=()=>{if(libraryController.abandon())librarySay('已
 $('library-refresh').onclick=()=>refreshLibrary();
 $('library-more').onclick=()=>libraryMode==='search'?librarySearch.search(true):refreshLibrary(true,true);
 $('library-search-form').onsubmit=event=>{event.preventDefault();if(!libraryAllowed())return;libraryController.cancelList();librarySearch.search();};
-$('library-search-query').oninput=()=>{librarySearch.invalidate();if(libraryMode==='search')$('library-search-status').textContent='搜尋文字已變更；上一份結果保留，請重新搜尋。';};
+$('library-search-query').oninput=()=>librarySearch.invalidate();
 $('library-search-cancel').onclick=()=>{librarySearch.cancel();librarySay('已取消搜尋等待；目前清單、草稿與音檔保留。');};
 $('library-select').onchange=()=>{clearLibraryReview();librarySelection();librarySay('選定版本已變更，請重新預覽；目前工作台與音檔保留。');};
 $('library-preview').onclick=async()=>{

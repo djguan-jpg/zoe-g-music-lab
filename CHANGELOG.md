@@ -1,3 +1,9 @@
+# v0.76.0 · 2026-10-05
+
+保存清單分清空庫、搜尋零命中與摘要不可讀；選定版本顯示四種名稱的字面命中位置。查詢編修／等待／取消後仍標示原接受查詢，原稿、預覽、音檔保持。541 Python／892 JavaScript／81語法／四份Skill、152歷史ZIP及v75原封裝539／879還原通過；14／21工具與原schema保持。
+
+修正搜尋零命中誤報空庫；摘要不可讀單獨警示原資料保留。新共享library_match與library-match.js只處理四種原名稱、query與非重疊Unicode codepoint spans；presentation純狀態→DOM只建文字/mark，四欄、最多560命中，有界局部捲動及鍵盤焦點。原HTTP搜尋結果不增欄位，app只記錄接受查詢及counts供顯示，編修查詢不改舊mark。沒有新增operation／wire／schema／依賴／模型／寫檔／path權限。產品76／來源38–76共39项，未知77拒絕，見[契約](docs/LIBRARY-PRESENTATION.md)、[QA](docs/QA-v0.76.0.md)、[交接](docs/HANDOFF-v0.76.0.md)。
+
 # v0.75.0 · 2026-10-05
 
 全庫字面搜尋保存名稱及歌曲／分鏡／歌詞名；分頁核對完整觀察摘要，來源變更需重新搜尋。錯誤或晚回覆保留清單、預覽、編修與音檔。539 Python／879 JavaScript／78語法／四份Skill及148歷史ZIP通過；基本14／明確啟庫21工具，新search1獨立。
