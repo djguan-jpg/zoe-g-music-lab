@@ -1,3 +1,9 @@
+# v0.77.0 · 2026-10-05
+
+保存紀錄與備份共用純 UTC 日期驗證，拒絕不存在曆日與時間溢位；移除瀏覽器自動轉日期，接受合法 Z／小時及單字元分隔的原時間，排序與保存 bytes 保持。544 Python／899 JavaScript／82語法／四份Skill、156歷史ZIP及v76原封裝541／892還原通過；14／21工具與原schema保持。
+
+保存時間與備份計畫原依runtime Date.parse，會接受被捨換的曆日。新純UTC年月日/閏年/時分秒/零offset/Unicode grammar跨Python與JS，完全返回原文；保存record與備份created_at、browser revision/list/search/receipt及backup plan共用。秒小數固定3或6位，explicit Z/±00:00與零秒offset支援，與native Python版本解析範圍分開。未知格式拒絕，不補日／換timezone／rewrite或migrate。原工具/operation/wire/schema/controller/write/path/model/依賴保持；產品77/來源38–77共40項、unknown78拒絕。見[契約](docs/UTC-TIMESTAMP.md)、[QA](docs/QA-v0.77.0.md)、[交接](docs/HANDOFF-v0.77.0.md)。
+
 # v0.76.0 · 2026-10-05
 
 保存清單分清空庫、搜尋零命中與摘要不可讀；選定版本顯示四種名稱的字面命中位置。查詢編修／等待／取消後仍標示原接受查詢，原稿、預覽、音檔保持。541 Python／892 JavaScript／81語法／四份Skill、152歷史ZIP及v75原封裝539／879還原通過；14／21工具與原schema保持。

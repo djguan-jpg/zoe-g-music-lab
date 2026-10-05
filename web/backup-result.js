@@ -4,6 +4,7 @@
   const node=typeof module==='object'&&module.exports;
   const J=node?require('../musiclab/assets/json-document.js'):root.MusicJsonDocument;
   const V=node?require('./planning-values.js'):root.MusicPlanningValues;
+  const T=node?require('../musiclab/assets/utc-timestamp.js'):root.MusicUtcTimestamp;
   const versions=node?require('../musiclab/assets/delivery-versions.js'):root.MusicDeliveryVersions;
   const maxBytes=32*1024*1024,maxEntries=1000;
   const exact=(v,keys)=>v&&typeof v==='object'&&!Array.isArray(v)&&Object.keys(v).length===keys.length&&keys.every(k=>Object.hasOwn(v,k));
@@ -28,8 +29,8 @@
       !Array.isArray(data.conflicts)||data.conflicts.length>maxEntries||typeof data.capacity_ok!=='boolean'||typeof data.can_restore!=='boolean')fail();
     const all=new Set();
     for(const entry of data.entries){
-      if(!exact(entry,['id','label','stored_at'])||!id(entry.id)||all.has(entry.id)||typeof entry.label!=='string'||!V.trim(entry.label)||Array.from(entry.label).length>200||
-        typeof entry.stored_at!=='string'||entry.stored_at.length>128||!/(?:Z|[+-]00:00)$/.test(entry.stored_at)||!Number.isFinite(Date.parse(entry.stored_at)))fail();
+      if(!exact(entry,['id','label','stored_at'])||!id(entry.id)||all.has(entry.id)||typeof entry.label!=='string'||!V.trim(entry.label)||Array.from(entry.label).length>200)fail();
+      T.checked(entry.stored_at);
       J.assertUnicode(entry.label,'備份版本名稱');all.add(entry.id);
     }
     const fresh=new Set(),conflicts=new Set();

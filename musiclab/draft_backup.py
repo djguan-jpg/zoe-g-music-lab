@@ -10,6 +10,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from . import __version__
 from .common import json_text
+from .utc_timestamp import checked_utc_timestamp
 from .draft_contract import MAX_DRAFT_BYTES
 from .library_contract import (ID_PATTERN, LIBRARY_SCHEMA_VERSION, MAX_ENTRIES,
                                MAX_METADATA_BYTES, strict_json, validate_revision)
@@ -125,9 +126,7 @@ def read_backup(source):
                     len(manifest['created_with']) > 64 or manifest['selection'] not in ('all','selected') or
                     not isinstance(manifest['revisions'], list) or len(manifest['revisions']) > MAX_ENTRIES):
                 raise ValueError('備份版本或資料格式不支援；不遷移、不恢復')
-            when = datetime.fromisoformat(manifest['created_at'])
-            if when.utcoffset() != timezone.utc.utcoffset(when):
-                raise ValueError('備份時間格式錯誤')
+            checked_utc_timestamp(manifest['created_at'])
             expected, seen, revisions = {'manifest.json'}, set(), []
             for entry in manifest['revisions']:
                 if (not isinstance(entry, dict) or set(entry) != {'id','draft_sha256','draft_bytes','record_sha256','record_bytes'} or
