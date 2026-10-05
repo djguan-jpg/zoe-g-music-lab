@@ -1,5 +1,7 @@
 # 分層與版本契約
 
+v0.78波形定位：pure wave-position→注入來源重查controller→DOM／native player組合；定位只改原生播放位置，歌詞／宣告／草稿保持。未新增Agent工具或網路／路徑／寫檔能力；14/21／Agent1／draft3及原schemas保持。新產品78／交付明確38–78／unknown79，詳見[波形契約](WAVE-POSITION.md)。
+
 v0.77 UTC時間：pure utc_timestamp.py/utc-timestamp.js strict Unicode/extended date/one-codepoint separator/hour-minute-second/3or6 fraction/zero offset/Gregorian ranges→library record/backup created_at/browser revision+backup plan→原controllers/DOM。返回原文不Date.parse/normalize/timezone convert，Z與既有短clock/零offset秒互通，原stored_at+ID lexical排序/backup bytes保持；unknown/invalid拒絕不寫入。原wire/schema/14+21/Agent1/draft3/library1/backup1保持，產品77/來源38–77/unknown78。見[UTC契約](UTC-TIMESTAMP.md)。下方歷史按當版保留。
 
 v0.76 保存清單呈現：Python/JS library-match純四欄字面query/Unicode codepoint非重疊spans → 原search过滤/完整reply validator；pure library-presentation完整context/selected metadata → detached literal library-presentation-dom → app原controls。空庫/no matches/unreadable/disabled分開；accepted query+counts只作browser暫態，stale/pending保留舊query及preview/edit/media。四欄/最多560marks、256px局部捲動/窄版換行；無新wire/operation/schema/工具/路徑/寫檔/model/依賴，14/21保持，產品76/來源38–76/unknown77。見[契約](LIBRARY-PRESENTATION.md)。下方歷史按當版保留。

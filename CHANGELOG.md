@@ -1,5 +1,9 @@
 # v0.77.0 · 2026-10-05
 
+## v0.78.0
+
+波形校時顯示播放位置與總長；方向鍵0.5秒、Shift細調0.05秒，Home／End到起尾。空音檔、換檔或錯誤時歸零停用，原歌詞與宣告保持。pure wave-position→注入來源重查controller→native DOM／app，無新wire/schema/工具。545 Python67.235秒／909 JS／84 syntax／四Skills、160歷史文字ZIP與v77原封裝545／901還原通過；native tab125缺口／126修正16觀察、390px按鍵與60欄位保持、console0，兩server原handles正常exit0／thread joined、tabclosed／viewportreset／no staging。QA回覆304321B超舊300000內部門檻的失敗record保留，fresh retry512KiB有界完成，產品容量不變。latest78／77／76、legal4/private/not_submitted保持，rolling active。
+
 保存紀錄與備份共用純 UTC 日期驗證，拒絕不存在曆日與時間溢位；移除瀏覽器自動轉日期，接受合法 Z／小時及單字元分隔的原時間，排序與保存 bytes 保持。545 Python／901 JavaScript／82語法／四份Skill、156歷史ZIP及v76原封裝541／892還原通過；14／21工具與原schema保持。
 
 保存時間與備份計畫原依runtime Date.parse，會接受被捨換的曆日。新純UTC年月日/閏年/時分秒/零offset/Unicode grammar跨Python與JS，完全返回原文；保存record與備份created_at、browser revision/list/search/receipt及backup plan共用。秒小數固定3或6位，explicit Z/±00:00與零秒offset支援，與native Python版本解析範圍分開。未知格式拒絕，不補日／換timezone／rewrite或migrate。原工具/operation/wire/schema/controller/write/path/model/依賴保持；產品77/來源38–77共40項、unknown78拒絕。見[契約](docs/UTC-TIMESTAMP.md)、[QA](docs/QA-v0.77.0.md)、[交接](docs/HANDOFF-v0.77.0.md)。

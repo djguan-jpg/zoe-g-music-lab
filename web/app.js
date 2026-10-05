@@ -582,7 +582,14 @@ $('timing-undo').onclick=()=>{if(!state.busy)timingController.undo();};
 $('timing-cancel').onclick=()=>{timingController.cancel();timingSay('已取消校時預覽，逐句表格保留。');};
 $('lyrics-shift').oninput=()=>{timingController.cancel();timingSay('調整量已修改，請重新預覽。');};
 timingControls();
-function drawWave(){const canvas=$('waveform'),ctx=canvas.getContext('2d'),w=canvas.width,h=canvas.height;ctx.clearRect(0,0,w,h);ctx.fillStyle='#e7ecdf';ctx.fillRect(0,0,w,h);ctx.strokeStyle='#b5c4ad';ctx.beginPath();ctx.moveTo(0,h/2);ctx.lineTo(w,h/2);ctx.stroke();if(state.waveform){ctx.strokeStyle='#4b745d';ctx.lineWidth=1;state.waveform.forEach((amplitude,i)=>{const x=(i+.5)*w/state.waveform.length;ctx.beginPath();ctx.moveTo(x,h/2-amplitude*52);ctx.lineTo(x,h/2+amplitude*52);ctx.stroke();});}const player=$('lyrics-player');if(Number.isFinite(player.duration)){const x=player.currentTime/player.duration*w;ctx.strokeStyle='#c94b29';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();canvas.setAttribute('aria-valuemax',player.duration.toFixed(3));canvas.setAttribute('aria-valuenow',player.currentTime.toFixed(3));}}
+let wavePosition=null;
+function drawWave(){
+  const canvas=$('waveform'),ctx=canvas.getContext('2d'),w=canvas.width,h=canvas.height;
+  ctx.clearRect(0,0,w,h);ctx.fillStyle='#e7ecdf';ctx.fillRect(0,0,w,h);ctx.strokeStyle='#b5c4ad';ctx.beginPath();ctx.moveTo(0,h/2);ctx.lineTo(w,h/2);ctx.stroke();
+  if(state.waveform){ctx.strokeStyle='#4b745d';ctx.lineWidth=1;state.waveform.forEach((amplitude,i)=>{const x=(i+.5)*w/state.waveform.length;ctx.beginPath();ctx.moveTo(x,h/2-amplitude*52);ctx.lineTo(x,h/2+amplitude*52);ctx.stroke();});}
+  const view=wavePosition?.refresh();
+  if(view?.available){const x=view.ratio*w;ctx.strokeStyle='#c94b29';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}
+}
 function tick(){
   const cues=MusicCueStamp.playableCues(entriesFor('cues').map(entry=>entry.value));
   const active=MusicEditor.activeCueIndex(cues,$('lyrics-player').currentTime);
@@ -617,7 +624,7 @@ $('lyrics-audio').onchange=async event=>{
     state.waveform=Array.from({length:Math.ceil(samples.length/bucket)},(_,i)=>{
       let peak=0;for(let j=i*bucket;j<Math.min((i+1)*bucket,samples.length);j++)peak=Math.max(peak,Math.abs(samples[j]));return peak;
     });
-    $('wave-note').textContent='波形已載入（第一聲道）；點擊定位，左右鍵微調 0.5 秒。';drawWave();
+    $('wave-note').textContent='波形已載入（第一聲道）；播放位置與定位按鍵如下。';drawWave();
   }catch(error){if(waveTask.isCurrent(token))$('wave-note').textContent='波形未完成：'+error.message;}
   finally{if(context&&context.state!=='closed')await context.close().catch(()=>{});if(state.audioContext===context)state.audioContext=null;}
 };
@@ -638,8 +645,11 @@ $('lyrics-media-undo').onclick=()=>{if(state.busy)return;try{lyricsMediaControll
 $('lyrics-player').onloadedmetadata=()=>{const player=$('lyrics-player');if(!state.audioUrl||player.currentSrc!==state.audioUrl)return;lyricsMediaController.loaded(player.currentSrc,player.duration);tick();};
 $('lyrics-player').ontimeupdate=tick;$('lyrics-player').onseeked=tick;
 $('lyrics-player').onerror=()=>{const player=$('lyrics-player');if(!state.audioUrl||!player.error)return;if(lyricsMediaController.fail(player.currentSrc||player.src))say('此音檔無法在瀏覽器播放，請改用支援的格式',true);};
-function seek(seconds){const p=$('lyrics-player');if(!Number.isFinite(p.duration))return;p.currentTime=Math.max(0,Math.min(p.duration,seconds));tick();}
-$('waveform').onclick=event=>{const r=event.currentTarget.getBoundingClientRect();seek((event.clientX-r.left)/r.width*$('lyrics-player').duration);};$('waveform').onkeydown=event=>{if(['ArrowLeft','ArrowRight','Home','End'].includes(event.key)){event.preventDefault();seek(event.key==='Home'?0:event.key==='End'?$('lyrics-player').duration:$('lyrics-player').currentTime+(event.key==='ArrowRight'?.5:-.5));}};
+wavePosition=MusicWavePositionDOM.bind({canvas:$('waveform'),readout:$('wave-position'),
+  capture:()=>{const player=$('lyrics-player');return {source:state.audioUrl,current_source:player.currentSrc||null,
+    duration:player.duration,position:player.currentTime,ready:player.readyState>=1&&!player.hidden,error:!!player.error};},
+  setPosition:seconds=>{$('lyrics-player').currentTime=seconds;},onSeek:tick,onError:error=>say('音檔定位未完成：'+error.message,true)});
+['loadstart','emptied','durationchange','error'].forEach(type=>$('lyrics-player').addEventListener(type,drawWave));
 function staleAudioReview(){
   const note=$('audio-review-stale');if(!note)return;
   note.hidden=false;$('audio-visual').classList.add('stale');

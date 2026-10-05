@@ -308,3 +308,8 @@ pure utc_timestamp與shared native utc-timestamp strict Unicode/最多128codepoi
 
 
 v0.77追加：UTC.compare以原始Unicode codepoint比較，list/search沿Python stored_at+ASCII ID排序；不以UTF16比較、Date或locale替代原source順序。完整timestamp驗證與原字串保持，matched tuple/continuation/原schema保持，見UTC-TIMESTAMP契約與QA final收據。
+
+
+## v0.78 波形定位
+
+pure wave-position完整source/current_source/duration/position/ready/error快照→顯示／鍵盤／滑鼠候選→注入controller套用前重查來源/時長→wave-position-dom literal text/ARIA/owned listeners→原native player/app同view比例畫游標。空／未知／錯／source不符歸零停用、tabindex-1，不攔截不可用鍵；顯示毫秒不改原秒數。方向鍵0.5秒／Shift0.05秒／HomeEnd，組合快捷鍵保持，無timer/URL/新媒體decode。定位不進draft3/wire，原waveTask/時長採用/手動stamp/草稿保持；2fixed assets/產品78/來源38–78/unknown79，14/21及原schema/legal4/private/not_submitted保持。見docs/WAVE-POSITION.md。
