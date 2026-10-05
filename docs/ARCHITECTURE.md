@@ -1,5 +1,7 @@
 # 分層與版本契約
 
+v0.68 分鏡自訂畫幅：原生text+datalist建議→既有raw-fields／draft3→planning-import原值映射→原target preview／明確Apply／actual after Undo。移除額外四值白名單，Python／Agent既有文字語義保持；空白可保存與診斷，完整plan仍拒絕。無新schema／operation／權限。見[契約](STORYBOARD-RATIO.md)。下列各版為歷史。
+
 v0.67 歌曲／分鏡報告接續：planning-report-input純完整來源診斷核對→planning-import限定panel proposal→既有讀檔／target preview→DOM明確載入及actual after Undo。1MiB原入口、raw字串與ID保持；無法表示的來源拒絕，不補寫／抹除。Agent1／draft3／14／19 tools保持，見[契約](PLANNING-REPORT-INPUT.md)。下列各版為歷史記錄。
 
 v0.66 條件套用撤回：共享pure validated value history→audio controller限定before／實際after→明確Undo→DOM成功焦點回原欄位。後續raw／profile／custom改動拒絕整份撤回，record保留；最近loaded復原與confirmed分開，媒體／其他台保持。Agent／CLI／HTTP與保存schemas無變更。見[契約](AUDIO-ACCEPTANCE-UNDO.md)。下列各版本為歷史記錄。

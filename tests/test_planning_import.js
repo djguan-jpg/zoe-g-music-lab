@@ -40,9 +40,8 @@ test('wrong operation, unknown fields and unsupported shapes never replace curre
   delete brief.unrepresented;brief.arrangement[0].unknown='must not disappear';assert.throws(()=>planningDraft(current,'music',brief),/未支援/);
   assert.deepEqual(current,before);
 });
-test('unrepresentable ratio, absent motif and oversized requirements fail before loading',()=>{
-  const mv=example('storyboard');mv.aspect_ratio='3:2';assert.throws(()=>planningDraft(draft(),'storyboard',mv),/畫幅/);
-  mv.aspect_ratio='16:9';mv.shots[0].motif='不存在';assert.throws(()=>planningDraft(draft(),'storyboard',mv),/未登記/);
+test('absent motif and oversized requirements fail before loading',()=>{
+  const mv=example('storyboard');mv.shots[0].motif='不存在';assert.throws(()=>planningDraft(draft(),'storyboard',mv),/未登記/);
   const music=example('music');music.deliverables=Array(101).fill('item');assert.throws(()=>planningDraft(draft(),'music',music),/100/);
 });
 test('incomplete requirements remain valid drafts but cannot produce a misleading completed brief',()=>{
