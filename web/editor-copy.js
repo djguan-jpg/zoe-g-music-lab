@@ -53,6 +53,6 @@
       }catch(error){onError(error);return false;}
     },dispose(){disposed=true;}});
   }
-  const api=Object.freeze({specs,checkedSource,proposal,createController});
+  const api=Object.freeze({specs,checkedSource,sameSource:equal,proposal,createController});
   if(typeof module==='object'&&module.exports)module.exports=api;else root.MusicEditorCopy=api;
 })(typeof globalThis==='object'?globalThis:this);

@@ -127,3 +127,6 @@ td input[data-raw-number]{width:63px}.raw-value-note{display:block;font-size:.78
 
 /* Repeated creative rows keep their actions reachable in narrow editors. */
 .entry-actions{display:flex;gap:6px;flex-wrap:wrap;align-items:center}.shot-header{gap:12px;flex-wrap:wrap}.shot-header h3{margin:0}.shot-header .entry-actions{flex-shrink:0}
+
+/* Order is a separate action bar, keeping long row editors compact. */
+.entry-order-tools select{width:100%;min-width:0}.entry-order-tools .actions{flex-wrap:wrap}.entry-order-tools button{white-space:normal}.shot[data-order-selected]{border-color:var(--accent)}#cues tr[data-order-selected]{background:#edf0e7}

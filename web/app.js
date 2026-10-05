@@ -19,6 +19,7 @@ const deletionHistory=MusicHistory.createHistory(20);
 let arrangementController=null,musicReadyController=null;
 let storyboardTimingController=null;
 let editorCopy=null;
+let editorOrder=null;
 let rowSequence=0;
 const rowIds=(items,ids)=>ids||items.map(()=>`row-${++rowSequence}`);
 const collections={
@@ -53,6 +54,11 @@ editorCopy=MusicEditorCopyDOM.bind(document,{busy:()=>state.busy,capture:entries
   apply:(list,entries)=>{writeEntries(list,entries);markDirty(collections[list].scope);},
   onCopied:(list,{index})=>{refreshCollectionControls();focusEntry(list,index,'new');say(`已複製${collections[list].label}，放在原列後方；${list==='arrangement'?'原編曲欄位保留，請依目前順序重新建立歌曲包':'開始與結束留白，請人工校時；原列、總長與音檔保留'}`);},
   onError:error=>say(error.message,true)});
+editorOrder=MusicEditorOrderDOM.bind(document,{busy:()=>state.busy,capture:entriesFor,
+  apply:(list,entries)=>{writeEntries(list,entries);markDirty(collections[list].scope);},
+  focusRow:(list,index)=>focusEntry(list,index,list==='cues'?'new':'entry'),
+  onChanged:(list,result,undo)=>say(`${undo?'已撤回最近一次移動':'已移動'+collections[list].label+' '+(result.from+1)+' → '+(result.to+1)}；原時間與創作保留，請重新檢查與建立成果`),
+  onError:error=>say(error.message,true)});
 function refreshDeletionHistory(scope){
   const records=deletionHistory.entries(scope),record=records.at(-1),select=$(scope+'-delete-select');
   select.replaceChildren();records.forEach((r,i)=>select.append(new Option(`${i+1} · ${r.label}`,String(i))));
@@ -64,10 +70,11 @@ function refreshDeletionButton(scope){
   const record=deletionHistory.at(scope,Number($(scope+'-delete-select').value)),button=$(scope+'-delete-undo');
   button.disabled=state.busy||!record;button.textContent=record?`還原：${record.label}`:'還原最近刪除';
 }
-function clearDeletionHistory(scope){deletionHistory.clear(scope);refreshDeletionHistory(scope);if(scope==='music'){arrangementController?.clear();musicReadyController?.clear();}if(scope==='storyboard')storyboardTimingController?.clear();}
+function clearDeletionHistory(scope){deletionHistory.clear(scope);refreshDeletionHistory(scope);if(scope==='music'){arrangementController?.clear();musicReadyController?.clear();}if(scope==='storyboard'){storyboardTimingController?.clear();editorOrder?.clear('shots');}if(scope==='lyrics')editorOrder?.clear('cues');}
 function focusEntry(list,index,mode='entry'){return editorFocus.focus(list,index,mode);}
 function refreshCollectionControls(){
   editorCopy?.refresh();
+  editorOrder?.refresh();
   for(const [list,spec] of Object.entries(collections)){
     $(spec.add).disabled=state.busy;
     $(list).querySelectorAll(spec.remove).forEach(button=>button.disabled=state.busy);
@@ -137,7 +144,7 @@ textDownloader.bind($('export-form'),{select:()=>{const name=$('output-file').va
 state.textVerification=MusicTextVerificationDOM.bind(document,{capture:()=>{const name=$('output-file').value;return {scope:state.tab,revision:state.resultRevisions[state.tab]||0,busy:state.busy,dirty:!!state.bundles[state.tab]?.dirty,visible:!$('output-region').hidden&&$('output-region').isConnected,source:Object.hasOwn(state.files,name)?{name,content:state.files[name]}:null};},
   onReport:report=>say(report.matched?'已核對選定檔案與目前原文完全一致；請保留這份檔案。':'選定檔案與目前原文有差異；成果與編修保留。',!report.matched),
   onError:error=>say(error.message+'；目前成果與編修保留',true)});
-document.querySelectorAll('[data-tab]').forEach(button=>button.onclick=()=>{if(state.busy){say('目前操作尚未完成，請稍候');return;}state.tab=button.dataset.tab;document.querySelectorAll('.panel').forEach(section=>section.hidden=section.id!==state.tab);document.querySelectorAll('[data-tab]').forEach(b=>{b.classList.toggle('active',b===button);if(b===button)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});const saved=state.bundles[state.tab];if(saved)setFiles(saved.files,saved.note,saved.dirty,saved.inputIndependent,saved.deliveryLabel);else clearOutput();say(saved?.dirty?'有修改尚未重新驗證，請重新建立成果':'準備開始');state.currentCue?.refresh();state.cuePosition?.refresh();lyricsSearchController?.refresh();storyboardSearchController?.refresh();editorCopy?.refresh();});
+document.querySelectorAll('[data-tab]').forEach(button=>button.onclick=()=>{if(state.busy){say('目前操作尚未完成，請稍候');return;}state.tab=button.dataset.tab;document.querySelectorAll('.panel').forEach(section=>section.hidden=section.id!==state.tab);document.querySelectorAll('[data-tab]').forEach(b=>{b.classList.toggle('active',b===button);if(b===button)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});const saved=state.bundles[state.tab];if(saved)setFiles(saved.files,saved.note,saved.dirty,saved.inputIndependent,saved.deliveryLabel);else clearOutput();say(saved?.dirty?'有修改尚未重新驗證，請重新建立成果':'準備開始');state.currentCue?.refresh();state.cuePosition?.refresh();lyricsSearchController?.refresh();storyboardSearchController?.refresh();editorCopy?.refresh();editorOrder?.refresh();});
 function renderSections(sections,ids){const keys=rowIds(sections,ids);$('arrangement').innerHTML=sections.map((s,i)=>`<tr data-history-id="${esc(keys[i])}"><td>${field(s.name,`段落 ${i+1} 名稱`)}</td><td>${field(s.bars,`段落 ${i+1} 小節`,'number')}</td><td>${field(s.energy,`段落 ${i+1} 能量`,'number')}</td><td>${field(s.focus,`段落 ${i+1} 任務`,'text',true)}</td><td>${field(s.texture,`段落 ${i+1} 聲音`,'text',true)}</td><td><div class="entry-actions"><button type="button" data-copy-entry aria-label="複製段落 ${i+1}" aria-describedby="section-copy-note">複製</button><button type="button" data-remove-section="${i}" aria-label="刪除段落 ${i+1}">刪除</button></div></td></tr>`).join('');[...$('arrangement').children].forEach((row,i)=>['name','bars','energy','focus','texture'].forEach((key,j)=>writeValue(row.querySelectorAll('input')[j],sections[i][key])));$('arrangement').querySelectorAll('[data-remove-section]').forEach((b,i)=>b.onclick=()=>deleteEntry('arrangement',i));arrangementController?.refresh();editorCopy?.refresh();}
 function requirementValues(id){return [...$(id).querySelectorAll('textarea')].map(input=>readValue(input));}
 function clearRequirementError(id){
@@ -358,7 +365,7 @@ function renderShots(shots,openStates=shots.map((_,i)=>i===0),ids){
   storyboardSearchController?.clear();refreshShotOverview();
   $('shots').querySelectorAll('[data-remove-shot]').forEach(button=>button.onclick=()=>{
     deleteEntry('shots',Number(button.dataset.removeShot));
-  });editorCopy?.refresh();
+  });editorCopy?.refresh();editorOrder?.refresh();
 }
 function getShots(){
   const motifs=new Map(getMotifs().map(m=>[m.id,m.name]));
@@ -508,7 +515,7 @@ function renderCues(cues,ids){
     if(result&&!result.changed)say('播放位置與目前時間相同；原編修及撤回紀錄保留。');
   });
   $('cues').querySelectorAll('[data-delete-cue]').forEach(button=>button.onclick=()=>deleteEntry('cues',Number(button.dataset.deleteCue)));
-  cueStampEdit?.refresh();state.currentCue?.invalidate();state.currentCue?.refresh();state.cuePosition?.refresh({force:true});editorCopy?.refresh();
+  cueStampEdit?.refresh();state.currentCue?.invalidate();state.currentCue?.refresh();state.cuePosition?.refresh({force:true});editorCopy?.refresh();editorOrder?.refresh();
 }
 storyboardSearchController=MusicStoryboardSearchDOM.bind(document,{version:MusicDeliveryVersions.current,
   capture:()=>{const entries=entriesFor('shots');return {ids:entries.map(e=>e.id),shots:entries.map(e=>Object.fromEntries(MusicStoryboardSearch.fields.map(k=>[k,e.value[k]]))),visible:state.tab==='storyboard'&&!$('storyboard').hidden,busy:state.busy,resultRevision:state.resultRevisions.storyboard||0};},

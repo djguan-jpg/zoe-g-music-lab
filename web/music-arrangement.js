@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 'use strict';
 (function(root){
+  const O=typeof module==='object'&&module.exports?require('./entry-order.js'):root.MusicEntryOrder;
   const clone=value=>structuredClone(value),keys=['name','bars','energy','focus','texture'];
   function checked(entries){
     if(!Array.isArray(entries)||entries.length>40||entries.some(e=>!e||typeof e.id!=='string'||!e.id||
@@ -11,23 +12,12 @@
   const ids=entries=>entries.map(e=>e.id);
   const same=(a,b)=>a.length===b.length&&a.every((id,i)=>id===b[i]);
   function move(entries,id,delta){
-    const after=checked(entries),from=after.findIndex(e=>e.id===id),to=from+delta;
-    if(![-1,1].includes(delta)||from<0||to<0||to>=after.length)throw Error('段落無法往這個方向移動');
-    const [entry]=after.splice(from,1);after.splice(to,0,entry);
-    return {entries:after,record:{id,from,to,before:ids(entries),after:ids(after)}};
+    const current=checked(entries),order=O.move(ids(current),id,delta),byId=new Map(current.map(e=>[e.id,e]));
+    return {entries:order.ids.map(id=>byId.get(id)),record:order.record};
   }
   function restore(entries,record){
-    const current=checked(entries);
-    if(!record||!Array.isArray(record.before)||!Array.isArray(record.after)||
-      !same(ids(current),record.after)||record.before.length!==current.length||
-      new Set(record.before).size!==current.length||record.before.some(id=>!record.after.includes(id))||
-      !Number.isInteger(record.from)||!Number.isInteger(record.to)||Math.abs(record.from-record.to)!==1||
-      record.before[record.from]!==record.id||record.after[record.to]!==record.id)
-      throw Error('段落順序或列已改動；未撤回移動');
-    const expected=[...record.before],[id]=expected.splice(record.from,1);expected.splice(record.to,0,id);
-    if(!same(expected,record.after))throw Error('段落移動紀錄不完整；未撤回');
-    const values=new Map(current.map(e=>[e.id,e]));
-    return record.before.map(id=>values.get(id));
+    const current=checked(entries),order=O.restore(ids(current),record),byId=new Map(current.map(e=>[e.id,e]));
+    return order.map(id=>byId.get(id));
   }
   function createController({capture,apply,onState=()=>{}}){
     let record=null,stale=false;
