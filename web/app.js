@@ -18,6 +18,7 @@ let lyricsExportController=null,cueStampEdit=null,lyricsSearchController=null,st
 const deletionHistory=MusicHistory.createHistory(20);
 let arrangementController=null,musicReadyController=null;
 let storyboardTimingController=null;
+let editorCopy=null;
 let rowSequence=0;
 const rowIds=(items,ids)=>ids||items.map(()=>`row-${++rowSequence}`);
 const collections={
@@ -48,6 +49,10 @@ function writeEntries(list,entries){
   else if(list==='motifs'){renderMotifs(values);refreshMotifChoices();}
   else renderRequirements(list,values,collections[list].label,ids);
 }
+editorCopy=MusicEditorCopyDOM.bind(document,{busy:()=>state.busy,capture:entriesFor,newId:()=>`row-${++rowSequence}`,
+  apply:(list,entries)=>{writeEntries(list,entries);markDirty(collections[list].scope);},
+  onCopied:(list,{index})=>{refreshCollectionControls();focusEntry(list,index,'new');say(`已複製${collections[list].label}，放在原列後方；${list==='arrangement'?'原編曲欄位保留，請依目前順序重新建立歌曲包':'開始與結束留白，請人工校時；原列、總長與音檔保留'}`);},
+  onError:error=>say(error.message,true)});
 function refreshDeletionHistory(scope){
   const records=deletionHistory.entries(scope),record=records.at(-1),select=$(scope+'-delete-select');
   select.replaceChildren();records.forEach((r,i)=>select.append(new Option(`${i+1} · ${r.label}`,String(i))));
@@ -62,6 +67,7 @@ function refreshDeletionButton(scope){
 function clearDeletionHistory(scope){deletionHistory.clear(scope);refreshDeletionHistory(scope);if(scope==='music'){arrangementController?.clear();musicReadyController?.clear();}if(scope==='storyboard')storyboardTimingController?.clear();}
 function focusEntry(list,index,mode='entry'){return editorFocus.focus(list,index,mode);}
 function refreshCollectionControls(){
+  editorCopy?.refresh();
   for(const [list,spec] of Object.entries(collections)){
     $(spec.add).disabled=state.busy;
     $(list).querySelectorAll(spec.remove).forEach(button=>button.disabled=state.busy);
@@ -131,8 +137,8 @@ textDownloader.bind($('export-form'),{select:()=>{const name=$('output-file').va
 state.textVerification=MusicTextVerificationDOM.bind(document,{capture:()=>{const name=$('output-file').value;return {scope:state.tab,revision:state.resultRevisions[state.tab]||0,busy:state.busy,dirty:!!state.bundles[state.tab]?.dirty,visible:!$('output-region').hidden&&$('output-region').isConnected,source:Object.hasOwn(state.files,name)?{name,content:state.files[name]}:null};},
   onReport:report=>say(report.matched?'已核對選定檔案與目前原文完全一致；請保留這份檔案。':'選定檔案與目前原文有差異；成果與編修保留。',!report.matched),
   onError:error=>say(error.message+'；目前成果與編修保留',true)});
-document.querySelectorAll('[data-tab]').forEach(button=>button.onclick=()=>{if(state.busy){say('目前操作尚未完成，請稍候');return;}state.tab=button.dataset.tab;document.querySelectorAll('.panel').forEach(section=>section.hidden=section.id!==state.tab);document.querySelectorAll('[data-tab]').forEach(b=>{b.classList.toggle('active',b===button);if(b===button)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});const saved=state.bundles[state.tab];if(saved)setFiles(saved.files,saved.note,saved.dirty,saved.inputIndependent,saved.deliveryLabel);else clearOutput();say(saved?.dirty?'有修改尚未重新驗證，請重新建立成果':'準備開始');state.currentCue?.refresh();state.cuePosition?.refresh();lyricsSearchController?.refresh();storyboardSearchController?.refresh();});
-function renderSections(sections,ids){const keys=rowIds(sections,ids);$('arrangement').innerHTML=sections.map((s,i)=>`<tr data-history-id="${esc(keys[i])}"><td>${field(s.name,`段落 ${i+1} 名稱`)}</td><td>${field(s.bars,`段落 ${i+1} 小節`,'number')}</td><td>${field(s.energy,`段落 ${i+1} 能量`,'number')}</td><td>${field(s.focus,`段落 ${i+1} 任務`,'text',true)}</td><td>${field(s.texture,`段落 ${i+1} 聲音`,'text',true)}</td><td><button type="button" data-remove-section="${i}" aria-label="刪除段落 ${i+1}">刪除</button></td></tr>`).join('');[...$('arrangement').children].forEach((row,i)=>['name','bars','energy','focus','texture'].forEach((key,j)=>writeValue(row.querySelectorAll('input')[j],sections[i][key])));$('arrangement').querySelectorAll('[data-remove-section]').forEach((b,i)=>b.onclick=()=>deleteEntry('arrangement',i));arrangementController?.refresh();}
+document.querySelectorAll('[data-tab]').forEach(button=>button.onclick=()=>{if(state.busy){say('目前操作尚未完成，請稍候');return;}state.tab=button.dataset.tab;document.querySelectorAll('.panel').forEach(section=>section.hidden=section.id!==state.tab);document.querySelectorAll('[data-tab]').forEach(b=>{b.classList.toggle('active',b===button);if(b===button)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});const saved=state.bundles[state.tab];if(saved)setFiles(saved.files,saved.note,saved.dirty,saved.inputIndependent,saved.deliveryLabel);else clearOutput();say(saved?.dirty?'有修改尚未重新驗證，請重新建立成果':'準備開始');state.currentCue?.refresh();state.cuePosition?.refresh();lyricsSearchController?.refresh();storyboardSearchController?.refresh();editorCopy?.refresh();});
+function renderSections(sections,ids){const keys=rowIds(sections,ids);$('arrangement').innerHTML=sections.map((s,i)=>`<tr data-history-id="${esc(keys[i])}"><td>${field(s.name,`段落 ${i+1} 名稱`)}</td><td>${field(s.bars,`段落 ${i+1} 小節`,'number')}</td><td>${field(s.energy,`段落 ${i+1} 能量`,'number')}</td><td>${field(s.focus,`段落 ${i+1} 任務`,'text',true)}</td><td>${field(s.texture,`段落 ${i+1} 聲音`,'text',true)}</td><td><div class="entry-actions"><button type="button" data-copy-entry aria-label="複製段落 ${i+1}" aria-describedby="section-copy-note">複製</button><button type="button" data-remove-section="${i}" aria-label="刪除段落 ${i+1}">刪除</button></div></td></tr>`).join('');[...$('arrangement').children].forEach((row,i)=>['name','bars','energy','focus','texture'].forEach((key,j)=>writeValue(row.querySelectorAll('input')[j],sections[i][key])));$('arrangement').querySelectorAll('[data-remove-section]').forEach((b,i)=>b.onclick=()=>deleteEntry('arrangement',i));arrangementController?.refresh();editorCopy?.refresh();}
 function requirementValues(id){return [...$(id).querySelectorAll('textarea')].map(input=>readValue(input));}
 function clearRequirementError(id){
   $(id+'-error').hidden=true;$(id+'-error').textContent='';
@@ -347,12 +353,12 @@ $('shots-expand').onclick=()=>{$('shots').querySelectorAll('details').forEach(d=
 $('shot-go').onclick=()=>{focusShot(Number($('shot-jump').value));say(`已定位鏡頭 ${Number($('shot-jump').value)+1}`);};
 function renderShots(shots,openStates=shots.map((_,i)=>i===0),ids){
   const motifs=getMotifs(),keys=rowIds(shots,ids);
-  $('shots').innerHTML=shots.map((s,i)=>`<article class="shot" data-history-id="${esc(keys[i])}"><div class="shot-header"><h3>鏡頭 ${i+1}</h3><button class="subtle" data-remove-shot="${i}" aria-label="刪除鏡頭 ${i+1}" aria-describedby="shot-delete-note">刪除</button></div><details ${openStates[i]?'open':''}><summary aria-label="鏡頭 ${i+1} 摘要"><span data-shot-caption></span></summary><div class="shot-editor"><div class="fields">${['start','end'].map((key,j)=>`<label>${j?'結束':'開始'}（秒）<input data-key="${key}" type="text" inputmode="decimal" data-raw-number="true" value="${esc(s[key])}" aria-label="鏡頭 ${i+1} ${j?'結束':'開始'}"></label>`).join('')}</div><label>使用母題<select data-key="motif_id" aria-label="鏡頭 ${i+1} 使用母題">${motifOptions(motifs,s.motif_id)}</select></label>${shotFields.map(([key,label])=>`<label>${label}<textarea data-key="${key}" rows="2" aria-label="鏡頭 ${i+1} ${label}">${esc(s[key])}</textarea></label>`).join('')}<label>畫面方向<select data-key="screen_direction" aria-label="鏡頭 ${i+1} 畫面方向">${[['left','向左'],['right','向右'],['neutral','正面／中性']].map(([value,label])=>`<option value="${value}" ${value===s.screen_direction?'selected':''}>${label}</option>`).join('')}</select></label></div></details></article>`).join('');
+  $('shots').innerHTML=shots.map((s,i)=>`<article class="shot" data-history-id="${esc(keys[i])}"><div class="shot-header"><h3>鏡頭 ${i+1}</h3><div class="entry-actions"><button type="button" class="subtle" data-copy-entry aria-label="複製鏡頭 ${i+1}" aria-describedby="shot-copy-note">複製</button><button class="subtle" data-remove-shot="${i}" aria-label="刪除鏡頭 ${i+1}" aria-describedby="shot-delete-note">刪除</button></div></div><details ${openStates[i]?'open':''}><summary aria-label="鏡頭 ${i+1} 摘要"><span data-shot-caption></span></summary><div class="shot-editor"><div class="fields">${['start','end'].map((key,j)=>`<label>${j?'結束':'開始'}（秒）<input data-key="${key}" type="text" inputmode="decimal" data-raw-number="true" value="${esc(s[key])}" aria-label="鏡頭 ${i+1} ${j?'結束':'開始'}"></label>`).join('')}</div><label>使用母題<select data-key="motif_id" aria-label="鏡頭 ${i+1} 使用母題">${motifOptions(motifs,s.motif_id)}</select></label>${shotFields.map(([key,label])=>`<label>${label}<textarea data-key="${key}" rows="2" aria-label="鏡頭 ${i+1} ${label}">${esc(s[key])}</textarea></label>`).join('')}<label>畫面方向<select data-key="screen_direction" aria-label="鏡頭 ${i+1} 畫面方向">${[['left','向左'],['right','向右'],['neutral','正面／中性']].map(([value,label])=>`<option value="${value}" ${value===s.screen_direction?'selected':''}>${label}</option>`).join('')}</select></label></div></details></article>`).join('');
   [...$('shots').children].forEach((row,i)=>row.querySelectorAll('[data-key]').forEach(control=>writeValue(control,shots[i][control.dataset.key])));
   storyboardSearchController?.clear();refreshShotOverview();
   $('shots').querySelectorAll('[data-remove-shot]').forEach(button=>button.onclick=()=>{
     deleteEntry('shots',Number(button.dataset.removeShot));
-  });
+  });editorCopy?.refresh();
 }
 function getShots(){
   const motifs=new Map(getMotifs().map(m=>[m.id,m.name]));
@@ -495,14 +501,14 @@ function renderCues(cues,ids){
   lyricsSearchController?.clear();
   if(!ids){cueStampEdit?.clear();timingController?.reset();timingSay('新的逐句內容已載入；整批校時撤回紀錄已清除。');}
   const keys=rowIds(cues,ids);state.cues=cues;timingControls();
-  $('cues').innerHTML=cues.map((c,i)=>`<tr data-history-id="${esc(keys[i])}"><td>${i+1}</td><td>${field(c.start,`歌詞 ${i+1} 開始`,'number')}</td><td>${field(c.end,`歌詞 ${i+1} 結束`,'number')}</td><td><input class="lyric-field" value="${esc(c.text)}" aria-label="歌詞 ${i+1} 文字"></td><td><div class="actions"><button type="button" data-cue-seek="${esc(keys[i])}" aria-label="第 ${i+1} 句定位句首" aria-describedby="cue-position-help" disabled>定位句首</button>${[['start','記下開始'],['end','記下結束'],['move','整句移動']].map(([action,label])=>`<button data-stamp="${i}" data-stamp-action="${action}" aria-label="第 ${i+1} 句${label}">${label}</button>`).join('')}<button data-delete-cue="${i}" aria-label="刪除第 ${i+1} 句">刪除</button></div></td></tr>`).join('');
+  $('cues').innerHTML=cues.map((c,i)=>`<tr data-history-id="${esc(keys[i])}"><td>${i+1}</td><td>${field(c.start,`歌詞 ${i+1} 開始`,'number')}</td><td>${field(c.end,`歌詞 ${i+1} 結束`,'number')}</td><td><input class="lyric-field" value="${esc(c.text)}" aria-label="歌詞 ${i+1} 文字"></td><td><div class="actions"><button type="button" data-cue-seek="${esc(keys[i])}" aria-label="第 ${i+1} 句定位句首" aria-describedby="cue-position-help" disabled>定位句首</button>${[['start','記下開始'],['end','記下結束'],['move','整句移動']].map(([action,label])=>`<button data-stamp="${i}" data-stamp-action="${action}" aria-label="第 ${i+1} 句${label}">${label}</button>`).join('')}<button type="button" data-copy-entry aria-label="複製歌詞 ${i+1}" aria-describedby="cue-copy-note">複製</button><button data-delete-cue="${i}" aria-label="刪除第 ${i+1} 句">刪除</button></div></td></tr>`).join('');
   [...$('cues').children].forEach((row,i)=>['start','end','text'].forEach((key,j)=>writeValue(row.querySelectorAll('input')[j],cues[i][key])));
   $('cues').querySelectorAll('[data-stamp]').forEach(button=>button.onclick=()=>{
     const result=cueStampEdit.stamp(button.closest('tr').dataset.historyId,button.dataset.stampAction);
     if(result&&!result.changed)say('播放位置與目前時間相同；原編修及撤回紀錄保留。');
   });
   $('cues').querySelectorAll('[data-delete-cue]').forEach(button=>button.onclick=()=>deleteEntry('cues',Number(button.dataset.deleteCue)));
-  cueStampEdit?.refresh();state.currentCue?.invalidate();state.currentCue?.refresh();state.cuePosition?.refresh({force:true});
+  cueStampEdit?.refresh();state.currentCue?.invalidate();state.currentCue?.refresh();state.cuePosition?.refresh({force:true});editorCopy?.refresh();
 }
 storyboardSearchController=MusicStoryboardSearchDOM.bind(document,{version:MusicDeliveryVersions.current,
   capture:()=>{const entries=entriesFor('shots');return {ids:entries.map(e=>e.id),shots:entries.map(e=>Object.fromEntries(MusicStoryboardSearch.fields.map(k=>[k,e.value[k]]))),visible:state.tab==='storyboard'&&!$('storyboard').hidden,busy:state.busy,resultRevision:state.resultRevisions.storyboard||0};},

@@ -61,6 +61,8 @@ ASSETS = {"/operation-presentation.js": ("web/operation-presentation.js", "text/
           "/text-verification-dom.js": ("web/text-verification-dom.js", "text/javascript"),
           "/editor-focus.js": ("web/editor-focus.js", "text/javascript"),
           "/editor-focus-dom.js": ("web/editor-focus-dom.js", "text/javascript"),
+          "/editor-copy.js": ("web/editor-copy.js", "text/javascript"),
+          "/editor-copy-dom.js": ("web/editor-copy-dom.js", "text/javascript"),
           "/planning-import.js": ("web/planning-import.js", "text/javascript"),
           "/deletion-history.js": ("web/deletion-history.js", "text/javascript"),
           "/draft-library.js": ("web/draft-library.js", "text/javascript"),
