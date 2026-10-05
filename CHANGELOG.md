@@ -1,3 +1,9 @@
+# v0.72.0 · 2026-10-05
+
+備份下載先核對完整摘要、串流位元組與 SHA-256，再交給瀏覽器；新增取消下載，晚回覆保留編修與音檔，已斷線回應只結束該連線。521 Python／853 JavaScript／76語法／四份Skill及136歷史ZIP通過。瀏覽器保存檔案仍未驗證。
+
+原下載只檢查URL等少數欄位便提交原生form；現在exact backup1 descriptor及1–32MiB界限、已知single-use相對URL、HTTP headers、逐chunk累積及完整bytes／SHA全部一致才原生Blob handoff。備份與文字下載共用有限URL ledger；新取消控制abort自身請求、late成功／失敗不改新狀態。取消後已斷線headers/body只關該回應，其他I/O錯誤仍保留。無新route／Agent操作／schema／依賴。見[契約](docs/BACKUP-DOWNLOAD.md)、[QA](docs/QA-v0.72.0.md)、[交接](docs/HANDOFF-v0.72.0.md)。
+
 # v0.71.0 · 2026-10-05
 
 備份預覽先量測選定 ZIP 的 SHA-256，完整核對來源、版本與恢復計數；未確認恢復回覆保留同一備份供明確重試，後續編修與音檔保持。517 Python／841 JavaScript／74語法／四份Skill及132歷史ZIP通過。

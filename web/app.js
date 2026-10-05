@@ -1029,18 +1029,13 @@ $('backup-open').onchange=()=>{
 };
 $('backup-restore').onclick=()=>{if(libraryAllowed())backupController.restore();};
 $('backup-cancel').onclick=()=>{if(backupController.cancel())backupSay('已取消恢復預覽；草稿庫與工作台保留。');};
-$('backup-download').onsubmit=async event=>{
-  event.preventDefault();if(!libraryAllowed()||backupDownloading)return;
-  backupDownloading=true;backupControls();backupSay('正在核對保存版本並建立 ZIP；工作台保留。');
-  try{
-    const response=await fetch('/api/drafts/backup/prepare',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});
-    const data=await response.json();if(!response.ok)throw Error(data.error||'備份未完成');
-    if(!/^\/api\/drafts\/backup\/download\/[0-9a-f]{32}$/.test(data.download_url)||data.bytes>backupMaximum)throw Error('下載回應不完整');
-    $('backup-download').action=data.download_url;$('backup-download').submit();
-    backupSay(`備份 ZIP 已核對 ${data.entry_count} 版並送出下載；請核對本機檔案。未保存編修、音檔與成果另存。`);
-  }catch(error){backupSay(error.message+'；目前工作台與音檔保留。',true);}
-  finally{backupDownloading=false;backupControls();}
-};
+state.backupDownload=MusicBackupDownloadDom.createAdapter(document,{
+  prepare:async signal=>{
+    const response=await fetch('/api/drafts/backup/prepare',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}',signal});
+    const data=await response.json();if(!response.ok)throw Error(data.error||'備份未完成');return data;
+  },maximum:()=>backupMaximum,allowed:libraryAllowed,say:backupSay,
+  onState:({busy})=>{backupDownloading=busy;backupControls();}
+});
 async function setupLibrary(){
   try{const response=await fetch('/api/capabilities');if(!response.ok)throw Error('無法確認草稿庫狀態');
     const info=await response.json();libraryEnabled=info.draft_library_enabled===true;backupMaximum=info.draft_backup.max_archive_bytes;

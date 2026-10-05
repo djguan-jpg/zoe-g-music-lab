@@ -25,3 +25,7 @@ inspect／restore／retry／cancel不載入創作，目前工作台、音檔、�
 Python共用read_backup沿原bounded ZIP／CRC／manifest／所有revision bytes/hash，restore沿原capacity/conflict／lock及不可覆寫規則。browser獨立核對選定File總SHA及回覆形狀／來源／計數一致性，不獨立解壓ZIP、重建entries摘要或直接核對目標磁碟。不宣稱原子恢復、耐久寫入、外部同時改寫File的原子快照，或作者／權利／作品驗收。
 
 CLI／Agent／MCP／HTTP backend輸入、wire與schema不變，三項Python實際跨adapter返回可由同純層接受；MCP inspect仍readonly、restore仍新增immutable版本。proof不進持久草稿／Git／Agent wire，無新增path、auth、模型、依賴或常駐服務。Agent1／draft3／library1／backup1、14基本／啟庫19工具、產品71／明確交付38–71保持。legal4 PolyForm Noncommercial1.0.0、ZOE. G／djguan-jpg、private、FreeTWAI not_submitted保持。
+
+## v0.72 共用原生雜湊
+
+backup-file.sha256接受1–32MiB自有ArrayBuffer、原生WebCrypto及32-byte digest；inspect沿此helper量測選定File並仍核對File.size。下載另經[完整下載契約](BACKUP-DOWNLOAD.md)，File proof／恢復wire checker保持。雜湊不解析ZIP、證明作者或保證保存。
