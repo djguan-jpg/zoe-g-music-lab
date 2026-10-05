@@ -5,9 +5,9 @@ const policy=require('../musiclab/assets/delivery-versions.js'),pack=require('..
 const json=require('../musiclab/assets/json-document.js'),source=fs.readFileSync('musiclab/assets/delivery-versions.js','utf8');
 const contract=()=>JSON.parse(fs.readFileSync('musiclab/assets/delivery-versions.json','utf8'));
 test('fixed explicit historical oracle and immutable isolated policy agree with producer version',()=>{
- const expected=Array.from({length:56},(_,i)=>'0.'+(38+i)+'.0');assert.deepEqual(policy.supported,expected);assert.equal(policy.current,'0.93.0');assert.equal(pack.version,policy.current);
+ const expected=Array.from({length:57},(_,i)=>'0.'+(38+i)+'.0');assert.deepEqual(policy.supported,expected);assert.equal(policy.current,'0.94.0');assert.equal(pack.version,policy.current);
  assert.equal(pack.supportsVersion,policy.supportsVersion);assert.equal(policy.schemaVersion,1);assert.ok(Object.isFrozen(policy)&&Object.isFrozen(policy.supported));assert.throws(()=>policy.supported.pop());
- const c=contract(),before=structuredClone(c),p=policy.createPolicy(c);assert.deepEqual(c,before);c.supported.length=0;c.current='9.0.0';assert.equal(p.current,'0.93.0');assert.ok(p.supportsVersion('0.93.0'));
+ const c=contract(),before=structuredClone(c),p=policy.createPolicy(c);assert.deepEqual(c,before);c.supported.length=0;c.current='9.0.0';assert.equal(p.current,'0.94.0');assert.ok(p.supportsVersion('0.94.0'));
 });
 test('sparse policies are exact lists without gap inference and browser producers use that rule',async()=>{
  const c=contract();c.current='0.59.0';c.supported=['0.38.0','0.59.0'];const sparse=policy.createPolicy(c);assert.equal(sparse.supportsVersion('0.54.0'),false);
@@ -45,9 +45,9 @@ test('real Python contract drives browser module and missing or unknown contract
 });
 test('runtime package import and comparison all reject unlisted future producers',async()=>{
  const s={scope:'lyrics',label:'',files:{'source.txt':'原文'}},hash=async()=> 'a'.repeat(64);
- await assert.rejects(pack.manifest(s,hash,'0.94.0'),/不支援/);assert.equal(pack.supportsVersion('0.54.0'),true);
+ await assert.rejects(pack.manifest(s,hash,'0.95.0'),/不支援/);assert.equal(pack.supportsVersion('0.54.0'),true);
  const importer=require('../web/delivery-import.js'),reports=require('../web/delivery-report.js');
- const manifest={format:'zoe-delivery-manifest',schema_version:1,tool_version:'0.94.0',scope:'lyrics',label:'',source_type:'provided_text_files',content_validation:'not_performed',file_count:1,source_bytes:6,files:[{name:'source.txt',bytes:6,sha256:'a'.repeat(64)}]};
+ const manifest={format:'zoe-delivery-manifest',schema_version:1,tool_version:'0.95.0',scope:'lyrics',label:'',source_type:'provided_text_files',content_validation:'not_performed',file_count:1,source_bytes:6,files:[{name:'source.txt',bytes:6,sha256:'a'.repeat(64)}]};
  const data={format:'zoe-delivery-inspection',schema_version:1,archive_bytes:100,archive_sha256:'a'.repeat(64),manifest},wire={files:s.files,data,meta:{version:pack.version,protocol_version:1,needs_review:true}};
  await assert.rejects(importer.checked(wire,{bytes:100,sha256:'a'.repeat(64),manifest},hash),/不支援/);assert.throws(()=>reports.report(data,{}),/不支援/);
 });

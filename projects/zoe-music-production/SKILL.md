@@ -210,3 +210,8 @@ v0.92 分鏡原文搜尋：pure storyboard_search／原生storyboard-search→ap
 ## v0.93 搜尋等待可取消
 
 歌詞／分鏡工作台的原文搜尋可取消本次等待、保留上一批及分頁再重試。換查詢／原文／工作台使舊請求失效並中止自己的fetch；原文、時間、媒體與草稿保持。共用純ownership／注入controller／明確signal／DOM分層，不新增Agent操作或取消endpoint。後端可完成，本機SHA未必可中斷；16／23、Agent1／draft3及既有schemas保持。見[契約](../../docs/SEARCH-CANCEL.md)。
+
+
+## v0.94 辨認長原文命中
+
+歌詞／分鏡搜尋顯示命中附近摘錄並以mark標示，完整原文仍在原欄位與完整報告。長查詢會標示「命中已摘錄」；原文控制符只在清單可見化，來源不改字。共享純UTF-8前後文／query核對與literal DOM分層，原controller、取消、分頁及focus保持。沒有新Agent操作或schema，16／23、Agent1／draft3及既有schemas保持。見[契約](../../docs/SEARCH-EXCERPT.md)。

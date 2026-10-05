@@ -122,3 +122,5 @@ td input[data-raw-number]{width:63px}.raw-value-note{display:block;font-size:.78
 @media(max-width:720px){.operation-bar{top:6px;padding:10px 12px;gap:10px;margin-bottom:18px}.operation-title{font-size:13px}.operation-note{font-size:11px}.operation-bar>button{padding:9px 10px}}
 
 .shot-search{border:1px solid var(--line);border-radius:12px;padding:16px;margin:16px 0}.shot-search ul{max-height:256px;overflow:auto;padding-left:1.25em}.shot-search li{margin:8px 0}
+
+#storyboard-search-matches .search-match,#lyrics-search-matches .search-match{width:100%;padding:10px 12px;line-height:1.65}.search-match-location{display:block;font-size:12px;font-weight:600;color:var(--green)}.search-match-excerpt{display:block;white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px}.search-match-excerpt mark{background:#e0ecc5;color:#203719;border-radius:2px}.search-match-shortened{font-size:11px;color:var(--muted);margin-left:5px}

@@ -1,5 +1,13 @@
 # v0.77.0 · 2026-10-05
 
+## v0.94.0
+
+歌詞與分鏡搜尋清單改顯示命中附近前後文，使用literal mark標示命中詞及原句／鏡號與欄位。長段落後半的關鍵字也能辨認，重複開場的結果可由鄰句分辨；長查詢明示「命中已摘錄」。點選與Enter仍回原欄位，完整原文／時間／報告保持；取消與分頁沿原控制。
+
+v0.94 命中前後文：共享 search-excerpt 純來源／UTF-8 span與query核對，重用既有 delivery-context 的每側64byte邊界模型；2000codepoints原欄位、query≤1024bytes，顯示每側48／命中96codepoints，控制符visible token不能被截斷。shared literal search-excerpt-dom建立span／mark，再由兩個原DOM adapter接到現有current controller；先准备全批view再改DOM。無innerHTML／source寫入／網路／timer，新server僅兩固定JS assets。原prefix caption helper相容保持，live結果使用新view；完整files/data/meta與兩種search1／23舊operation schemas不變。產品94／policy38–94共57／unknown95拒絕，16基本／23啟庫、Agent1／draft3／legal4／private／FreeTWAI not_submitted保持。
+
+572 Python67.375秒（兩隔離workers／120秒整體期限）／1094JS／107syntax／四Skills，51focused包含8新excerpt測試。原v93 exact-source ZIP還原572／1086，224歷史ZIP/manifests bytes相同，23既有operation input/output schemas相同。合成45鏡／45句、39原生觀察／320／390／1440px；23個狀態共460個native命中view依完整來源／byte span與純模型逐值相同。16後端完整HTTP回覆（含取消後完成者）等於application，兩種搜尋實際CLI／Agent／MCP一致，good/bad/good與預設覆寫拒絕bytes保持；主tab console0。見[QA](docs/QA-v0.94.0.md)、[交接](docs/HANDOFF-v0.94.0.md)。
+
 ## v0.93.0
 
 歌詞與分鏡搜尋等待中可按「取消搜尋」，保留上一批結果與分頁歷史，再次搜尋可立即重試。換查詢、編修原文或換工作台會中止自己的舊瀏覽器請求；晚成功／錯誤不能提交。滑鼠與鍵盤取消後仍持有取消焦點才返回查詢欄，後續焦點保留。共用純 request lifecycle／注入 controller／明確 signal／固定 DOM 分層；原文、時間、媒體、草稿與上一份成果保持，後端可能完成請求。
