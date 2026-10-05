@@ -38,7 +38,7 @@ from musiclab.delivery_inspect import read
 from musiclab.delivery_review import compare
 from musiclab.delivery_report import files
 rows=[]
-for version in ['0.'+str(i)+'.0' for i in range(38,87)]:
+for version in ['0.'+str(i)+'.0' for i in range(38,88)]:
  for scope in ['music','storyboard','lyrics','audio']:
   old={'scope':scope,'files':{'source.txt':'舊原文'}};new={'scope':scope,'files':{'source.txt':'新原文'}}
   source=read(io.BytesIO(prepare(new,tool_version=version).archive)).data;c=compare(old,new)

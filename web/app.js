@@ -63,19 +63,14 @@ function focusEntry(list,index,mode='entry'){return editorFocus.focus(list,index
 function deleteEntry(list,index){
   if(state.busy){say('目前操作尚未完成，請稍候');return;}
   const spec=collections[list],before=entriesFor(list),removed=MusicHistory.remove(before,index);
-  let remaining=removed.remaining,record=removed.record;
-  if(list==='shots'){
-    const duration=readValue($('mv-duration')),compact=MusicEditor.compactShotTimes(remaining.map(e=>e.value));
-    if(compact)remaining=remaining.map((e,i)=>({...e,value:compact[i]}));
-    record=MusicHistory.effects(record,before,remaining,['start','end'],{'mv-duration':duration},{'mv-duration':readValue($('mv-duration'))});
-  }
+  const {remaining,record}=removed;
   const value=record.entry.value,summary=String(typeof value==='string'?value:
     value.name||value.text||value.section||'').replace(/\s+/g,' ').trim();
   const caption=Array.from(summary);
   record.list=list;record.label=`${spec.label} ${index+1}${summary?' · '+caption.slice(0,24).join('')+(caption.length>24?'…':''):''}`;
   writeEntries(list,remaining);deletionHistory.push(spec.scope,record);refreshDeletionHistory(spec.scope);
   markDirty(spec.scope);focusEntry(list,Math.max(0,Math.min(index,remaining.length-1)));
-  say(`已刪除${record.label}，可還原；${list==='shots'?'請重新檢查分鏡時間':'重新建立成果後更新'}`);
+  say(`已刪除${record.label}，可還原；${list==='shots'?'其他鏡頭原時間與總長保留，請檢查時間待辦':'重新建立成果後更新'}`);
 }
 function undoDeletion(scope){
   if(state.busy){say('目前操作尚未完成，請稍候');return;}
@@ -330,7 +325,7 @@ $('shots-expand').onclick=()=>{$('shots').querySelectorAll('details').forEach(d=
 $('shot-go').onclick=()=>{focusShot(Number($('shot-jump').value));say(`已定位鏡頭 ${Number($('shot-jump').value)+1}`);};
 function renderShots(shots,openStates=shots.map((_,i)=>i===0),ids){
   const motifs=getMotifs(),keys=rowIds(shots,ids);
-  $('shots').innerHTML=shots.map((s,i)=>`<article class="shot" data-history-id="${esc(keys[i])}"><div class="shot-header"><h3>鏡頭 ${i+1}</h3><button class="subtle" data-remove-shot="${i}" aria-label="刪除鏡頭 ${i+1}">刪除</button></div><details ${openStates[i]?'open':''}><summary aria-label="鏡頭 ${i+1} 摘要"><span data-shot-caption></span></summary><div class="shot-editor"><div class="fields">${['start','end'].map((key,j)=>`<label>${j?'結束':'開始'}（秒）<input data-key="${key}" type="text" inputmode="decimal" data-raw-number="true" value="${esc(s[key])}" aria-label="鏡頭 ${i+1} ${j?'結束':'開始'}"></label>`).join('')}</div><label>使用母題<select data-key="motif_id" aria-label="鏡頭 ${i+1} 使用母題">${motifOptions(motifs,s.motif_id)}</select></label>${shotFields.map(([key,label])=>`<label>${label}<textarea data-key="${key}" rows="2" aria-label="鏡頭 ${i+1} ${label}">${esc(s[key])}</textarea></label>`).join('')}<label>畫面方向<select data-key="screen_direction" aria-label="鏡頭 ${i+1} 畫面方向">${[['left','向左'],['right','向右'],['neutral','正面／中性']].map(([value,label])=>`<option value="${value}" ${value===s.screen_direction?'selected':''}>${label}</option>`).join('')}</select></label></div></details></article>`).join('');
+  $('shots').innerHTML=shots.map((s,i)=>`<article class="shot" data-history-id="${esc(keys[i])}"><div class="shot-header"><h3>鏡頭 ${i+1}</h3><button class="subtle" data-remove-shot="${i}" aria-label="刪除鏡頭 ${i+1}" aria-describedby="shot-delete-note">刪除</button></div><details ${openStates[i]?'open':''}><summary aria-label="鏡頭 ${i+1} 摘要"><span data-shot-caption></span></summary><div class="shot-editor"><div class="fields">${['start','end'].map((key,j)=>`<label>${j?'結束':'開始'}（秒）<input data-key="${key}" type="text" inputmode="decimal" data-raw-number="true" value="${esc(s[key])}" aria-label="鏡頭 ${i+1} ${j?'結束':'開始'}"></label>`).join('')}</div><label>使用母題<select data-key="motif_id" aria-label="鏡頭 ${i+1} 使用母題">${motifOptions(motifs,s.motif_id)}</select></label>${shotFields.map(([key,label])=>`<label>${label}<textarea data-key="${key}" rows="2" aria-label="鏡頭 ${i+1} ${label}">${esc(s[key])}</textarea></label>`).join('')}<label>畫面方向<select data-key="screen_direction" aria-label="鏡頭 ${i+1} 畫面方向">${[['left','向左'],['right','向右'],['neutral','正面／中性']].map(([value,label])=>`<option value="${value}" ${value===s.screen_direction?'selected':''}>${label}</option>`).join('')}</select></label></div></details></article>`).join('');
   [...$('shots').children].forEach((row,i)=>row.querySelectorAll('[data-key]').forEach(control=>writeValue(control,shots[i][control.dataset.key])));
   refreshShotOverview();
   $('shots').querySelectorAll('[data-remove-shot]').forEach(button=>button.onclick=()=>{

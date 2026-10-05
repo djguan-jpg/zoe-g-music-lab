@@ -70,10 +70,10 @@ test('actual add-shot handler keeps declared duration and rejects duplicate work
     const context={readValue:control=>control.value,MusicPlanningValues:require('../web/planning-values.js'),$:id=>controls[id],state,rawShots:()=>structuredClone(rows),shotOpenStates:()=>[false],entriesFor:()=>[{id:'a'}],collections:{shots:{limit:1000}},rowSequence:1,renderShots:()=>writes++,markDirty:()=>{},focusEntry:()=>{},say:()=>{},Number};vm.createContext(context);vm.runInContext(code.slice(start,end),context);controls['shot-add'].onclick();assert.equal(controls['mv-duration'].value,'60');assert.equal(writes,busy?0:1);
   }
 });
-test('actual shot deletion compacts time but keeps declared duration and a restorable record',()=>{
+test('actual shot deletion keeps all surviving raw times, declared duration and a restorable record',()=>{
   const code=fs.readFileSync(path.join(root,'web/app.js'),'utf8'),start=code.indexOf('function deleteEntry('),end=code.indexOf('function undoDeletion(',start);
   const rows=[{id:'a',value:{start:'0',end:'6',section:'甲'}},{id:'b',value:{start:'6',end:'12',section:'乙'}},{id:'c',value:{start:'12',end:'18',section:'丙'}}],controls={'mv-duration':{value:'60'}};let written,record;
   const context={readValue:control=>control.value,MusicPlanningValues:require('../web/planning-values.js'),$:id=>controls[id],state:{busy:false},collections:{shots:{scope:'storyboard',label:'鏡頭'}},entriesFor:()=>structuredClone(rows),MusicHistory:require('../web/deletion-history.js'),MusicEditor:require('../web/editor-state.js'),deletionHistory:{push:(_scope,r)=>record=r},writeEntries:(_list,r)=>written=r,refreshDeletionHistory:()=>{},markDirty:()=>{},focusEntry:()=>{},say:()=>{}};
-  vm.createContext(context);vm.runInContext(code.slice(start,end),context);context.deleteEntry('shots',1);assert.equal(controls['mv-duration'].value,'60');assert.equal(written[1].value.end,'12');
+  vm.createContext(context);vm.runInContext(code.slice(start,end),context);context.deleteEntry('shots',1);assert.equal(controls['mv-duration'].value,'60');assert.deepEqual(written,[rows[0],rows[2]]);assert.deepEqual(record.patches,[]);assert.deepEqual(record.fields,{});
   const restored=context.MusicHistory.restore(written,record,{fields:{'mv-duration':'60'}});assert.deepEqual(restored.entries,rows);assert.equal(restored.fields['mv-duration'],'60');
 });
