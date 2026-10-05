@@ -13,6 +13,16 @@ def decimal_number(value, label):
     return number(value, label)
 
 
+def _negative_source(value, numeric):
+    raw = value.strip() if isinstance(value, str) else ''
+    mantissa = raw.lower().split('e', 1)[0]
+    return numeric < 0 or raw.startswith('-') and any(c in '123456789' for c in mantissa)
+
+
+def is_negative(value, label='時間'):
+    return _negative_source(value, decimal_number(value, label))
+
+
 def milliseconds(value, label='時間'):
     value = decimal_number(value, label)
     result = int(Decimal(str(value)).scaleb(3).to_integral_value(rounding=ROUND_HALF_UP))
@@ -31,7 +41,8 @@ def seconds_from_milliseconds(value):
 
 
 def normalized_seconds(value, label='時間', nonnegative=False):
+    original = value
     value = decimal_number(value, label)
-    if nonnegative and value < 0:
+    if nonnegative and _negative_source(original, value):
         raise ValueError(f'{label} 不能有負時間')
     return seconds_from_milliseconds(milliseconds(value, label))

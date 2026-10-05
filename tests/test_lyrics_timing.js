@@ -6,6 +6,13 @@ const {orderedEntries,createTimingController}=require('../web/lyrics-timing.js')
 const entries=()=>[{id:'b',value:{start:'4.000',end:'5.000',text:'原創二'}},{id:'a',value:{start:'01.000',end:'2.000',text:'原創一'}}];
 const reply=()=>({cues:[{start:1.5,end:2.5,text:'原創一'},{start:4.5,end:5.5,text:'原創二'}]});
 const later=()=>{let resolve,reject;const promise=new Promise((a,b)=>{resolve=a;reject=b;});return {promise,resolve,reject};};
+test('negative decimal underflow is refused before conversion while true zero and signed shifts remain valid',()=>{
+ for(const value of ['-1e-999',' -0.01e-999 ','-1e-324','-000.0001E-999','-1e-100000']){
+  assert.throws(()=>time.normalize(value,'開始',true),/負時間/);assert.throws(()=>time.timecode(value),/負時間/);
+  assert.throws(()=>time.normalizeCues([{start:value,end:1,text:'合成'}]),/負時間/);assert.equal(time.normalize(value),0);
+ }
+ for(const value of ['-0e-999','-0.000E-999','-0e+999','1e-999',-0]){assert.equal(time.normalize(value,'開始',true),0);assert.equal(time.timecode(value),'00:00.000');}
+});
 function setup(request=async()=>reply()){
   let current={entries:entries(),duration:'10'},controller;
   const seen={preview:[],applied:[],undone:[],errors:[],states:[],writes:0};

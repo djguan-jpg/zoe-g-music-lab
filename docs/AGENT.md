@@ -1,5 +1,7 @@
 # 本機 Agent 接口 v1
 
+v0.82原句首：pure cue-position→injected原列／媒體重查controller→delegated DOM→app，只改native播放位置；播放狀態、編修及撤回保持。共用Python／JS時間層在捨入前沿原十進位字串拒絕負值下溢，四adapter仍由application共用。只新增兩固定JS資產，14/21／Agent1/draft3／原schema及操作權限保持，產品82／來源38–82／unknown83。見[分層契約](CUE-POSITION.md)。
+
 v0.81目前句：pure current-cue→injected capture/focus controller→literal DOM→app共同媒體快照，明確定位原列文字；顯示更新不搶焦點。只增加兩固定JS資產路由，沒有新Agent/HTTP operation、path/write/network能力；14/21／Agent1/draft3／領域schema保持，產品81／來源38–81／unknown82。見[分層契約](CURRENT-CUE.md)。
 
 v0.80發佈資料：pure release_metadata→selected Git metadata/policy→package前及archive核對，expected tag與實際publication分開。未新增Agent operation、path/write/network能力；14/21／Agent1/draft3與領域schemas保持，產品80／來源38–80／unknown81。見[發佈契約](RELEASE-METADATA.md)。
