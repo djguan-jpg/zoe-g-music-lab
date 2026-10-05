@@ -243,3 +243,8 @@ v0.92 分鏡原文搜尋：pure storyboard_search／原生storyboard-search→ap
 ## v0.94 辨認長原文命中
 
 歌詞／分鏡搜尋顯示命中附近摘錄並以mark標示，完整原文仍在原欄位與完整報告。長查詢會標示「命中已摘錄」；原文控制符只在清單可見化，來源不改字。共享純UTF-8前後文／query核對與literal DOM分層，原controller、取消、分頁及focus保持。沒有新Agent操作或schema，16／23、Agent1／draft3及既有schemas保持。見[契約](../../docs/SEARCH-EXCERPT.md)。
+
+
+### v0.95 搜尋選字保護
+
+歌詞、分鏡與 ZIP 原文搜尋在中文輸入法選字時，Enter 不再提前尋找或重設原結果；一般 Enter 與「尋找」按鈕仍可使用。命中摘錄、原欄位定位、取消／重試、前後分頁及私人編修保留。search-input 純三欄鍵盤 metadata → 三個原 DOM adapter → 既有搜尋 controller。isComposing 或 legacy keyCode229 不 preventDefault、不讀來源／清單或呼叫搜尋；只有有效普通 Enter 才執行原動作。純層無 DOM／事件副作用、timer、網路或持久狀態；固定一 JS asset。控制器、app、application／CLI／Agent／MCP、領域 schemas 與 23 operation input/output schemas不變。產品95／唯一policy38–95共58／unknown96拒絕，16基本／23啟庫、Agent1／draft3／legal4／private／FreeTWAI not_submitted保持。鍵盤暫態不進Agent／草稿；工具數及操作保持。見../../docs/SEARCH-INPUT.md。

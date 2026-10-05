@@ -1,6 +1,10 @@
 # ZOE. G Music Lab
 
-## 目前版本 v0.94.0：看見命中附近原文
+## 目前版本 v0.95.0：選字後再搜尋
+
+歌詞、分鏡與 ZIP 原文搜尋在中文輸入法選字時，Enter 不再提前尋找或重設原結果；一般 Enter 與「尋找」按鈕仍可使用。命中摘錄、原欄位定位、取消／重試、前後分頁及私人編修保留。見[契約](docs/SEARCH-INPUT.md)、[驗證](docs/QA-v0.95.0.md)。
+
+## v0.94.0：看見命中附近原文
 
 歌詞與分鏡搜尋清單改顯示命中附近前後文，使用literal mark標示命中詞及原句／鏡號與欄位。長段落後半的關鍵字也能辨認，重複開場的結果可由鄰句分辨；長查詢明示「命中已摘錄」。點選與Enter仍回原欄位，完整原文／時間／報告保持；取消與分頁沿原控制。見[契約](docs/SEARCH-EXCERPT.md)、[驗證](docs/QA-v0.94.0.md)。
 
@@ -344,7 +348,7 @@ python music_lab.py draft restore --library outputs/restored-drafts --input '構
 
 ## Agent 使用
 
-目前預設十五種操作（歌曲、分鏡、歌詞、音檔、分鏡起稿、未校時歌詞起稿、校時待辦、歌曲欄位待辦、分鏡創作待辦、分鏡時間待辦、文字封裝、交付ZIP核對、歌詞匯出檢查、音檔接受條件待辦、歌詞原文搜尋）可用JSON-lines v1或MCP stdio adapter。明確選定 `--draft-library` 後共二十二種工具；備份檢查／恢復另需啟動時 `--draft-backup`，交付核對另以 `--delivery-zip` 選定ZIP，JSON不能更換路徑。大ZIP使用CLI或工作台。MCP明確支援 `2025-11-25`；拒絕未知初始化版本。`python scripts/agent_launch.py` 產生本版Python／入口完整路徑設定，`--format codex` 產生TOML片段；只顯示設定，不安裝或啟動Agent。移動解壓目錄後重新產生。已驗證不同目錄啟動MCP與實際工具輸出；特定host連線／實際Agent呼叫尚未驗證。見[Agent文件](docs/AGENT.md)。
+目前預設十六種操作（歌曲、分鏡、歌詞、音檔、分鏡起稿、未校時歌詞起稿、校時待辦、歌曲欄位待辦、分鏡創作待辦、分鏡時間待辦、文字封裝、交付ZIP核對、歌詞匯出檢查、音檔接受條件待辦、歌詞原文搜尋、分鏡原文搜尋）可用JSON-lines v1或MCP stdio adapter。明確選定 `--draft-library` 後共二十三種工具；備份檢查／恢復另需啟動時 `--draft-backup`，交付核對另以 `--delivery-zip` 選定ZIP，JSON不能更換路徑。大ZIP使用CLI或工作台。MCP明確支援 `2025-11-25`；拒絕未知初始化版本。`python scripts/agent_launch.py` 產生本版Python／入口完整路徑設定，`--format codex` 產生TOML片段；只顯示設定，不安裝或啟動Agent。移動解壓目錄後重新產生。已驗證不同目錄啟動MCP與實際工具輸出；特定host連線／實際Agent呼叫尚未驗證。見[Agent文件](docs/AGENT.md)。
 
 ## 專案紀錄
 

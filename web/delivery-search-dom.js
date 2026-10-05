@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 'use strict';
 (function(root){
+ const K=root.MusicSearchInput;
  function createAdapter(document,options){
   const $=id=>document.getElementById(id);
   const render=s=>{
@@ -17,7 +18,7 @@
   };
   const controller=root.MusicDeliverySearch.createSearcher({...options,includeContext:true,onState:render});
   $('delivery-search-query').oninput=e=>controller.setQuery(e.target.value);
-  $('delivery-search-query').onkeydown=e=>{if(e.key==='Enter'&&!e.isComposing){e.preventDefault();controller.setQuery(e.target.value);controller.find();}};
+  $('delivery-search-query').onkeydown=e=>{if(K.shouldFind({key:e.key,isComposing:e.isComposing??false,keyCode:e.keyCode??0})){e.preventDefault();controller.setQuery(e.target.value);controller.find();}};
   $('delivery-search-find').onclick=()=>{controller.setQuery($('delivery-search-query').value);return controller.find();};
   const move=(action,id,other)=>{const ok=action();if(ok&&$(id).disabled&&!$(other).disabled)$(other).focus?.();return ok;};
   $('delivery-search-more').onclick=()=>move(()=>controller.more(),'delivery-search-more','delivery-search-previous');
