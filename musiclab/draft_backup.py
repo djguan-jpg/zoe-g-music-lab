@@ -25,15 +25,20 @@ def digest(raw):
     return hashlib.sha256(raw).hexdigest()
 
 
+def selected_ids(identifiers):
+    """Pure selection validation shared by file and Agent backup exports."""
+    if (not isinstance(identifiers, list) or not 1 <= len(identifiers) <= MAX_ENTRIES or
+            any(not isinstance(v, str) or not re.fullmatch(ID_PATTERN, v) for v in identifiers) or
+            len(set(identifiers)) != len(identifiers)):
+        raise ValueError('備份選擇需為不重複的保存版本 ID 清單')
+    return sorted(identifiers)
+
+
 def export_backup(library, identifiers=None):
     if identifiers is None:
         identifiers = sorted(library.directories()); selection = 'all'
     else:
-        if (not isinstance(identifiers, list) or not 1 <= len(identifiers) <= MAX_ENTRIES or
-                any(not isinstance(v, str) or not re.fullmatch(ID_PATTERN, v) for v in identifiers) or
-                len(set(identifiers)) != len(identifiers)):
-            raise ValueError('備份選擇需為不重複的保存版本 ID 清單')
-        identifiers = sorted(identifiers); selection = 'selected'
+        identifiers = selected_ids(identifiers); selection = 'selected'
     revisions, contents, expanded = [], [], 0
     for identifier in identifiers:
         record_raw, draft_raw, _, _ = library.revision_bytes(identifier)

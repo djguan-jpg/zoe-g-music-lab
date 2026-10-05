@@ -1,8 +1,8 @@
 # ZOE. G Music Lab
 
-目前版本 **v0.72.0**：備份下載先核對完整摘要、串流位元組與 SHA-256，再交給瀏覽器；新增取消下載，晚回覆保留編修與音檔，已斷線回應只結束該連線。521 Python／853 JavaScript／76語法／四份Skill及136歷史ZIP通過。瀏覽器保存檔案仍未驗證。 見[備份下載契約](docs/BACKUP-DOWNLOAD.md)、[QA](docs/QA-v0.72.0.md)、[交接](docs/HANDOFF-v0.72.0.md)。
+目前版本 **v0.73.0**：新增唯讀草稿庫備份匯出；Agent／MCP預設摘要，明確選擇才內嵌不超過512KiB的ZIP，亦可指定保存ID。完整ZIP與來源核對，CLI／HTTP沿共用application。532 Python／853 JavaScript／76語法／四份Skill及140歷史ZIP通過；啟庫20工具，基本14保持。 見[備份匯出](docs/BACKUP-EXPORT.md)、[QA](docs/QA-v0.73.0.md)、[交接](docs/HANDOFF-v0.73.0.md)。
 
-上一輪 v0.71.0：備份預覽量測選定File的SHA，核對完整plan／restore回應，未確認結果保持同一File供明確重試。見[QA](docs/QA-v0.71.0.md)。
+上一輪 v0.72.0：備份下載完整串流與SHA核對、取消及斷線處理；瀏覽器保存檔案未驗證。見[QA](docs/QA-v0.72.0.md)。
 
 ## ZIP原文與差異（v0.40）
 

@@ -1,4 +1,8 @@
-# 進度：目前 v0.72.0
+# 進度：目前 v0.73.0
+
+## v0.73.0
+
+2026-10-05：新增唯讀草稿庫備份匯出；Agent／MCP預設摘要，明確選擇才內嵌不超過512KiB的ZIP，亦可指定保存ID。完整ZIP與來源核對，CLI／HTTP沿共用application。532 Python／853 JavaScript／76語法／四份Skill及140歷史ZIP通過；啟庫20工具，基本14保持。 baseline真CLI已能備份，但Agent validate與MCP實際19工具缺export。純selected_ids／checked_request→原immutable producer→同次raw完整read_backup／摘要／ID核對→immutable PreparedBackupExport／export1→共用application→CLI stdout／Agent JSONlines／MCP strict outputSchema／HTTP readonly route。四adapter真inline bytes由明確QA helper另存／還原／重用，record/draft／ID／時間與來源逐bytes同，原source保持；沒有新增browser UI／保存驗收。metadata不含原文、預設無base64；large實際ZIP超512KiB仍可摘要，要求inline在base64前拒絕。invalid/missingID後好請求可繼續，io_error不漏路徑。原路徑／保存規則保持。latest73/72/71保護，legal4/private/not_submitted、rolling active。
 
 ## v0.72.0
 

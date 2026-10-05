@@ -30,7 +30,7 @@ def tool_list(draft_library=None):
     tools = {**TOOLS, **(LIBRARY_TOOLS if draft_library is not None else {})}
     return [{"name": name, "description": operations[operation],
              "title": name.replace("_", " ").title(),
-             "inputSchema": input_schema(operation), "outputSchema": output_schema(),
+             "inputSchema": input_schema(operation), "outputSchema": output_schema(operation),
              "execution": {"taskSupport": "forbidden"},
              "annotations": {"readOnlyHint": operation not in ("draft_save", "draft_backup_restore"), "destructiveHint": False,
                              "idempotentHint": True, "openWorldHint": False}}

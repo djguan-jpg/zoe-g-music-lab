@@ -1,5 +1,7 @@
 # 本機 Agent 接口 v1
 
+v0.73 備份匯出：新draft_backup_export唯讀，需啟動時明確草稿庫；預設metadata，optional ids與explicit include_archive<=512KiB。pure request/selected IDs→既有producer→同一次ZIP完整read/hash/source IDs→不可變export1→application→CLI/Agent/MCP/HTTP，無payload path或自動寫檔。MCP新工具具體outputSchema，其他outputSchema保持；capabilities給data_schema。基本14／啟庫20，需重新discovery；export1與backup1/Agent1/draft3/library1分開。見[契約](BACKUP-EXPORT.md)。下方歷史工具數按當版保留。
+
 v0.72 備份下載：pure backup-download exact descriptor／archive bytes → required injected prepare/read/hash/send及latest lifecycle → native backup-download-dom bounded stream／AbortController →共用text-download-dom byte sender。32MiB binary／8MiB text各自domain保持，native backup-file.sha256共用File及下載buffer；backup1／draft3／library1／Agent1、14／19工具、routes及backend canonical ZIP契約保持。取消連線headers/body遇ConnectionError只close_connection，不重送回覆；其他I/O錯誤不吞。sent只代表anchor click＋清理排程，保存檔案未驗證。見[契約](BACKUP-DOWNLOAD.md)。下列為歷史。
 
 v0.71 備份來源與確認：native backup-file有界32MiB File bytes／SHA→pure backup-result exact wire、current產品／protocol／來源／全部plan計數與ID分組→required injected controller→DOM明確restore／同File retry。restore成功摘要不符不onRestored；backend既有完整ZIP／CRC／manifest／revision bytes／SHA及immutable restore保持，browser不獨立解析ZIP內容或核對目標磁碟耐久性。Agent1／draft3／library1／backup1、14／19工具保持。見[契約](BACKUP-RESULT.md)。下列各版為歷史。

@@ -64,7 +64,7 @@ def main(argv=None):
             sub.add_argument('--bars-per-shot', type=int)
     drafts = commands.add_parser("draft", help="明確選定本機草稿庫；保存版本不覆寫")
     actions = drafts.add_subparsers(dest="draft_action", required=True)
-    for action in ("save", "list", "read", "backup", "inspect", "restore"):
+    for action in ("save", "list", "read", "backup", "backup-export", "inspect", "restore"):
         sub = actions.add_parser(action)
         sub.add_argument("--library", required=True, help="明確選定草稿庫目錄")
         if action == "save":
@@ -76,6 +76,9 @@ def main(argv=None):
         elif action == "backup":
             sub.add_argument("--out", required=True, help="新備份 ZIP 路徑，不覆寫")
             sub.add_argument("--ids", nargs="+", help="可選：只備份明確選定的保存 ID")
+        elif action == 'backup-export':
+            sub.add_argument('--ids', nargs='+', help='明確保存 ID；省略則匯出全部版本摘要')
+            sub.add_argument('--include-archive', action='store_true', help='明確回傳不超過512 KiB的ZIP base64，只輸出JSON，不寫檔')
         elif action in ("inspect", "restore"):
             sub.add_argument("--input", required=True, help="明確選定的備份 ZIP")
             if action == "restore":
@@ -127,6 +130,10 @@ def main(argv=None):
             if args.draft_action == "backup":
                 raw, result = export_library_backup(library, args.ids)
                 write_backup(args.out, raw, library)
+            elif args.draft_action == 'backup-export':
+                payload = {'include_archive': args.include_archive}
+                if args.ids is not None:payload['ids'] = args.ids
+                result = build('draft_backup_export', payload, draft_library=library).wire()
             elif args.draft_action in ("inspect", "restore"):
                 payload = {"backup_sha256": args.sha256} if args.draft_action == "restore" else {}
                 result = build("draft_backup_"+args.draft_action, payload, draft_library=library, backup_source=args.input).wire()
