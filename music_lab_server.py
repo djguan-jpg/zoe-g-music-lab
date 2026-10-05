@@ -86,6 +86,8 @@ ASSETS = {"/operation-presentation.js": ("web/operation-presentation.js", "text/
           "/storyboard-search.js": ("musiclab/assets/storyboard-search.js", "text/javascript"),
           "/storyboard-search-controller.js": ("web/storyboard-search-controller.js", "text/javascript"),
           "/storyboard-search-dom.js": ("web/storyboard-search-dom.js", "text/javascript"),
+          "/search-excerpt.js": ("web/search-excerpt.js", "text/javascript"),
+          "/search-excerpt-dom.js": ("web/search-excerpt-dom.js", "text/javascript"),
           "/search-request.js": ("web/search-request.js", "text/javascript"),
           "/lyrics-search.js": ("musiclab/assets/lyrics-search.js", "text/javascript"),
           "/lyrics-search-controller.js": ("web/lyrics-search-controller.js", "text/javascript"),
