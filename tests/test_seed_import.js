@@ -66,7 +66,7 @@ test('unknown nested creative fields refuse rather than disappearing on apply',(
 test('actual common run can guard storyboard while music edits are retained',async()=>{
   const source=fs.readFileSync(path.join(root,'web/app.js'),'utf8'),a=source.indexOf('async function run('),b=source.indexOf('function setFiles(',a);
   const state={tab:'music',revisions:{music:0,storyboard:0},busy:false},button={disabled:false},notices=[];let resolve,commits=0;
-  const pending=new Promise(r=>resolve=r),context={cueStampEdit:null,state,say:m=>notices.push(m),timingControls:()=>{},markDirty:()=>{}};vm.runInNewContext(source.slice(a,b),context);
+  const pending=new Promise(r=>resolve=r),context={operationGate:require('../web/operation-gate.js').createGate({createAbort:()=>new AbortController()}),cueStampEdit:null,state,say:m=>notices.push(m),timingControls:()=>{},markDirty:()=>{}};vm.runInNewContext(source.slice(a,b),context);
   const work=context.run(button,async current=>{await pending;if(current())commits++;},'storyboard');state.revisions.music++;resolve();await work;assert.equal(commits,1);assert.equal(state.busy,false);
   let reject;const failure=new Promise((r,j)=>reject=j);const late=context.run(button,()=>failure,'storyboard');state.revisions.storyboard++;reject(Error('old target error'));await late;assert.ok(!notices.includes('old target error'));
 });

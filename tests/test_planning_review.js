@@ -60,7 +60,7 @@ function runAdapter(scope){
   const source=fs.readFileSync(path.join(root,'web/app.js'),'utf8'),a=source.indexOf('async function run('),b=source.indexOf('function setFiles(',a);
   const state={tab:scope,revisions:{[scope]:0},busy:false},button={disabled:false},notices=[];
   let resolve,reject,commits=0,dirty=0;const work=new Promise((r,j)=>{resolve=r;reject=j;});
-  const context={cueStampEdit:null,state,say:m=>notices.push(m),timingControls:()=>{},markDirty:()=>dirty++};vm.runInNewContext(source.slice(a,b),context);
+  const context={operationGate:require('../web/operation-gate.js').createGate({createAbort:()=>new AbortController()}),cueStampEdit:null,state,say:m=>notices.push(m),timingControls:()=>{},markDirty:()=>dirty++};vm.runInNewContext(source.slice(a,b),context);
   return {state,button,notices,resolve,reject,counts:()=>({commits,dirty}),
     start:()=>context.run(button,async isCurrent=>{await work;if(isCurrent())commits++;}),
     edit:()=>state.revisions[scope]++,retry:()=>context.run(button,async()=>{commits++;}),guarded:()=>context.run(button,isCurrent=>Review.inspect({operation:scope,brief:sourceBrief(scope),isCurrent,request:()=>work,onResult:()=>commits++}))};

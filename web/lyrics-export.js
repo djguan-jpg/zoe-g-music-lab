@@ -10,7 +10,7 @@
       const id=++sequence;pending=true;state();let before;
       const active=()=>id===sequence&&isCurrent();
       try{
-        before=structuredClone(capture());const reply=await request(structuredClone(before.payload));
+        before=structuredClone(capture());const reply=await request(structuredClone(before.payload),isCurrent);
         if(!active())return false;
         if(key(capture())!==key(before))throw Error('格式檢查期間來源或句子位置有修改；請重新檢查');
         const data=await R.inspect(reply,before.payload);

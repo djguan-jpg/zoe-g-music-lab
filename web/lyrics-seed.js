@@ -33,7 +33,7 @@
       const current=()=>isCurrent()&&(origin==='file'||sourceKey(capture())===before)&&guard.check(token);
       try{
         const payload=seed?{seed:validateSeed(seed)}:{title:selected.panels.music.fields['music-title'],text:selected.panels.music.fields['music-lyrics']};
-        const result=await request(structuredClone(payload));if(!current())return false;
+        const result=await request(structuredClone(payload),isCurrent);if(!current())return false;
         const data=validateSeed(result?.data);
         if(origin==='file'?Undo.fingerprint(data)!==Undo.fingerprint(payload.seed):data.title!==trimText(payload.title)||data.source_text!==payload.text)fail();
         if(result.meta?.protocol_version!==1||result.meta.needs_review!==true||typeof result.meta.version!=='string'||!result.meta.version||

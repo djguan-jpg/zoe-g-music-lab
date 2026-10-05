@@ -59,11 +59,11 @@
   function createController({capture,request,onReport,onError,onState}){
     let token=0,pending=false;const state=()=>onState({pending});
     function invalidate(){token++;pending=false;state();}
-    return {invalidate,async check(){const current=++token,payload=structuredClone(capture());pending=true;state();try{
-      const reply=await request(payload);if(current!==token)return false;
+    return {invalidate,async check(isCurrent=()=>true){const current=++token,payload=structuredClone(capture());pending=true;state();try{
+      const reply=await request(payload,isCurrent);if(current!==token||!isCurrent())return false;
       if(!equal(capture(),payload))throw Error('檢查期間內容有修改；請重新檢查');
       const data=inspect(reply,payload);onReport(data,reply.files);return true;
-    }catch(error){if(current===token)onError(error);return false;}finally{if(current===token){pending=false;state();}}}};
+    }catch(error){if(current===token&&isCurrent())onError(error);return false;}finally{if(current===token){pending=false;state();}}}};
   }
   const api={review,markdown,inspect,createController};if(typeof module==='object'&&module.exports)module.exports=api;else root.MusicLyricsReview=api;
 })(typeof globalThis==='object'?globalThis:this);
