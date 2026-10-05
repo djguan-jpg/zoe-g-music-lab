@@ -2,6 +2,7 @@
 'use strict';
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 const statistics=require('../web/audio-statistics.js'),audio=require('../web/audio-review.js');
+const fixture=require('./audio_result_fixture.js');
 function report(){return {file:'original.wav',profile:'distribution',sha256:'a'.repeat(64),sample_rate:48000,bit_depth:16,channels:1,frames:48000,duration_seconds:1,
  acceptance:{rates:[44100,48000],bits:[16,24],channels:[1,2]},checks:{sample_rate:true,bit_depth:true,channels:true},warnings:[],status:'technical_checks_passed',
  quiet_regions:{threshold_dbfs:-60,leading_seconds:.1,trailing_seconds:.2,quiet_frame_ratio:.3},stereo_correlation:null,
@@ -49,8 +50,8 @@ test('browser dependency is fixed before review and native module uses the same 
 });
 test('current contradictory responses preserve original result while late contradictory responses stay cancelled',async()=>{
  for(const late of [false,true]){let current=true,resolve,writes=0;const file={name:'original.wav',size:96044};
-  const args={selected:()=>({file,profile:'distribution'}),isCurrent:()=>current,request:()=>new Promise(r=>resolve=r),onResult:()=>writes++};
-  const pending=audio.inspect(args),bad=report();bad.per_channel[0].full_scale_samples=48001;current=!late;resolve({data:bad});
+  const args={hashFile:fixture.hashFile,selected:()=>({file,profile:'distribution'}),isCurrent:()=>current,request:()=>new Promise(r=>resolve=r),onResult:()=>writes++};
+  const pending=audio.inspect(args);await Promise.resolve();const bad=report();bad.per_channel[0].full_scale_samples=48001;current=!late;resolve(fixture.wire(bad));
   if(late)assert.equal(await pending,false);else await assert.rejects(pending,/數值互相矛盾/);assert.equal(writes,0);
  }
 });

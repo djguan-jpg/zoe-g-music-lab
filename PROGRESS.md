@@ -1,4 +1,8 @@
-# 進度：目前 v0.61.0
+# 進度：目前 v0.62.0
+
+## v0.62.0
+
+2026-10-04：音檔報告 SHA-256 綁定實際選定 File 位元組，拒絕同名同大小錯來源；示範條件與條件草稿都核對完整回覆、產品／協定版本與嚴格報告 JSON。原成果保持，雜湊期間改選取消上傳，合法重試及自訂規格提醒正常。486 Python／767 JavaScript／65 語法／四份 Skill 通過，83 份真 File PCM 與96個歷史ZIP bytes保持。 原生tab106以default File SHA／真HTTP正常、受控protocol999、受控同名同大小錯WAV、兩次正常重試、自訂24接受實際16六回覆200；錯誤保持原visible report/visual/filenames/selected input value。完成狀態再核對Enter重試exact及下載enabled，custom warning需確認／原SHA保持；390px幾何、logs0、tab關閉/viewportreset/server58244 exit0/staging未建立。第一focused舊late fixture未等hash phase造成未觀察promise拒絕，修正測試時序且保留失敗log/run，fresh focused3／62與transport2通過。exact v61還原及本輪指定source/private PR/Release/actual remote/latest62/61/60依收據；legal4/private/not_submitted與13/18 tools/Agent1/draft3保持，rolling active。
 
 ## v0.61.0
 

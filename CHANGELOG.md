@@ -1,4 +1,12 @@
-# v0.61.0 · 2026-10-04
+# v0.62.0 · 2026-10-04
+
+音檔報告 SHA-256 綁定實際選定 File 位元組，拒絕同名同大小錯來源；示範條件與條件草稿都核對完整回覆、產品／協定版本與嚴格報告 JSON。原成果保持，雜湊期間改選取消上傳，合法重試及自訂規格提醒正常。486 Python／767 JavaScript／65 語法／四份 Skill 通過，83 份真 File PCM 與96個歷史ZIP bytes保持。
+
+基線七個真application／native File缺口：unknown protocol、unknown product、wrong tool、missing Markdown、preset bad raw JSON、preset wrong name、same name/size wrong actual source均被接受。新增audio-file native byte hash與audio-result pure whole-reply checker，再走audio-review既有PCM／loudness與presentation。hash後/current request後各核對identity／revision／raw條件，error也走原current guard。fixed assets/index依序注入，沒有取代Python analyzer、application、CLI/Agent/MCP／formatters或允許未知schema。
+
+新增2 Python transport/source整合與16 JS（7 File／9 Result）；83原有matrix改用真正File bytes/default WebCrypto；known abc vector、64MiB真File、invalid尺寸/reader/digest/no crypto、精確metadata/files/data、strict Unicode/JSON/rawdraft/current/late及pre-upload取消核對。單元控制器fixture可注入hash callback；公開app走default native SHA，並以原生及真跨adapter資料獨立證明。首輪focused1 JS檔在未到request前拒絕假的late promise，修正fixture等待hash phase而不改產品取消；原failed record/log保持，新retry3／62、transport2、第一次full486／767通過。
+
+## v0.61.0 · 2026-10-04
 
 音檔報告新增獨立 PCM 數值核對：拒絕正值 sample peak、RMS 高於 peak、滿刻度樣本超過影格、安靜段超過時長及非立體聲相關值等矛盾回覆。原報告、表單與音檔保留，可重新分析；全安靜音檔兩端全長與四捨五入保持有效。484 Python／751 JavaScript／63 語法／四份 Skill 通過，83 份實際合成音檔與92個歷史ZIP bytes保持。
 

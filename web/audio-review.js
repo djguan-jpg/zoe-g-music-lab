@@ -2,9 +2,9 @@
 'use strict';
 (function(root){
   const acceptance=typeof module==='object'&&module.exports?require('./audio-acceptance.js'):root.MusicAudioAcceptance;
-  const json=typeof module==='object'&&module.exports?require('../musiclab/assets/json-document.js'):root.MusicJsonDocument;
+  const results=typeof module==='object'&&module.exports?require('./audio-result.js'):root.MusicAudioResult;
+  const files=typeof module==='object'&&module.exports?require('./audio-file.js'):root.MusicAudioFile;
   const statistics=typeof module==='object'&&module.exports?require('./audio-statistics.js'):root.MusicAudioStatistics;
-  const same=(a,b)=>typeof a===typeof b&&(a===null||typeof a!=='object'?a===b:Array.isArray(a)?Array.isArray(b)&&a.length===b.length&&a.every((v,i)=>same(v,b[i])):b!==null&&!Array.isArray(b)&&Object.keys(a).length===Object.keys(b).length&&Object.keys(a).every(k=>Object.hasOwn(b,k)&&same(a[k],b[k])));
 
   function buildLoudness(report){
     const invalid=()=>{throw Error('響度報告不完整或版本不支援，沒有替換目前結果');};
@@ -95,7 +95,7 @@
       correlation:report.stereo_correlation===null?'不可測':String(report.stereo_correlation),
       blockAlign:source.block_align,byteRate:source.average_bytes_per_second,loudness:buildLoudness(report)};
   }
-  async function inspect({selected,isCurrent,request,onResult}){
+  async function inspect({selected,isCurrent,request,onResult,hashFile=files.sha256}){
     const selection=selected(),file=selection.file,profile=selection.profile;
     if(!file)throw Error('先選擇 PCM WAV');
     if(!Number.isSafeInteger(file.size)||file.size<=0||file.size>64*1024*1024)throw Error('音檔需介於 1 byte 與 64 MiB');
@@ -106,18 +106,12 @@
     const current=()=>{try{const latest=selected();return isCurrent()&&latest.file===file&&latest.profile===profile&&
       (latest.acceptanceDraft===undefined?key===null:acceptance.fingerprint(latest.acceptanceDraft)===key);}catch{return false;}};
     try{
+      const sha256=await hashFile(file);
+      if(!current())return false;
       const result=await request({file,profile,...(document?{acceptanceDraft:document}:{})});
       if(!current())return false;
-      const review=buildReview(result.data);
-      if(review.bytes!==file.size||review.profile!==profile||!same(result.data.acceptance,expected.acceptance))throw Error('音檔報告與這次選擇或接受值不一致，沒有替換結果');
-      if(document){
-        const echoed=acceptance.validate(result.data.acceptance_draft);
-        const source=acceptance.validate(json.parse(result.files?.['audio-acceptance-draft.json'],{maxBytes:acceptance.maxBytes,label:'接受條件回覆'}));
-        const stored=json.parse(result.files?.['report.json'],{maxBytes:8*1024*1024,label:'音檔報告'});
-        const filename=Array.from(file.name.replaceAll('\\','/').replace(/\/+$/,'').split('/').filter(p=>p!=='.').at(-1)||'selected.wav').slice(0,200).join('');
-        if(acceptance.fingerprint(echoed)!==key||acceptance.fingerprint(source)!==key||!same(stored,result.data)||result.data.file!==filename)
-          throw Error('報告來源或條件草稿不一致，沒有替換结果');
-      }
+      const data=results.checked(result,{file,profile,document,acceptance:expected.acceptance,sha256});
+      const review=buildReview(data);
       onResult(result,review);return true;
     }catch(error){if(current())throw error;return false;}
   }

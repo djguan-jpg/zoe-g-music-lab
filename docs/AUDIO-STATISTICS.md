@@ -1,5 +1,7 @@
 # 音檔報告數值一致性（v0.61）
 
+目前v0.62另有選定File實際SHA與完整回覆核對；本頁保留v61數值模組的責任範圍，見[新來源契約](AUDIO-RESULT.md)。
+
 分析先核對所選音檔、接受條件與原始JSON；報告的PCM數值若互相矛盾，會顯示「音檔報告數值互相矛盾，沒有替換目前結果；請重新分析原音檔」。原成果保持，可按分析按鈕重試；不改音檔、不修正數值或自動調整音量。
 
 `web/audio-statistics.js`獨立pure validator → `web/audio-review.js` model／inspect → 既有app result renderer。HTTP固定`/audio-statistics.js`／index依序載入；Node與瀏覽器共用同一實作。Python analyzer/application與CLI／Agent／MCP報告producer保持，實際producer資料跨語言驗證。
