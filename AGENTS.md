@@ -275,3 +275,8 @@ pure library-revision共享完整entry／read data與save receipt→讀前clone 
 ## v0.71 備份來源及恢復確認
 
 native backup-file最多32MiB File.arrayBuffer／大小核對／WebCrypto SHA→pure backup-result exact files/data/meta及current product／protocol1／needs_review=true→required hashFile/checkPlan/checkRestore controller→DOM。雜湊後與request後latest重查；plan核對同SHA／bytes、全部unique IDs與new/reused/conflict分組／計數及can_restore一致。restore核對同SHA／總數與added+reused，允許retry後分布改變；不符成功回覆保留same File／SHA供明確retry，原4xx拒絕規則保持。backend原ZIP CRC／manifest／revision bytes／hash及immutable restore保持，browser不獨立解析ZIP或承諾目標耐久／原子恢復。proof暫態不入draft／Agent。產品71／來源38–71、14／19 tools、Agent1／draft3／library1／backup1／legal4／private／not_submitted保持，見[契約](docs/BACKUP-RESULT.md)。
+
+
+## v0.72 備份下載及取消
+
+pure backup-download exact backup1 descriptor／knownrelative token URL／counts／32MiB bytes → required injected prepare/read/hash/send latest controller → native bounded stream及WebCrypto backup-file.sha256 → shared text-download-dom createByteSender有限URL ledger →DOM。text domain的8MiB／Unicode／name規則保持，generic sender只接受domain已驗prepared，不自作path／ZIP驗證。讀後、hash後及handoff前current重查；cancel/pagehide abort自身request，late success/error不覆蓋，dispose清自身URLs/timers/listeners，BFCache新明確下載可用。取消headers/body的ConnectionError只關回應，其他I/O錯誤保持。sent是click+schedule，保存未驗證；沒有獨立ZIP語義parse或作者／權利證明。產品72／來源38–72、14／19、Agent1／draft3／library1／backup1／legal4／private／not_submitted保持。見[契約](docs/BACKUP-DOWNLOAD.md)。

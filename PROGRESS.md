@@ -1,4 +1,8 @@
-# 進度：目前 v0.71.0
+# 進度：目前 v0.72.0
+
+## v0.72.0
+
+2026-10-05：備份下載先核對完整摘要、串流位元組與 SHA-256，再交給瀏覽器；新增取消下載，晚回覆保留編修與音檔，已斷線回應只結束該連線。521 Python／853 JavaScript／76語法／四份Skill及136歷史ZIP通過。瀏覽器保存檔案仍未驗證。 真備份producer重現未知schema／缺SHA／矛盾版數仍走form.submit；改純descriptor／archive checker→注入prepare-read-hash-send latest controller→有界原生串流／共用Blob sender→DOM。native tab118 wrong descriptor與同長度改bytes拒絕，Enter健康下載交接顯示已核對2版，download event20秒逾時，無saved proof；取消／晚成功保留編修、WAV及dirty。390px提示313px、console0。取消導致Windows10053、第二次500回覆的缺口另補reply ConnectionError處理；新tab119 Enter取消、late reply close_connection=true且沒有第二次write，console0、server原handle56716 exit0。tab118原server4869 exit0帶原trace保留，兩server staging清零／關閉、兩tab關閉／viewport reset。指定v71 ZIP還原517／841及136歷史byte相同，latest72／71／70保護，legal4／private／not_submitted保持，rolling active。
 
 ## v0.71.0
 

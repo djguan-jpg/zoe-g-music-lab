@@ -65,6 +65,8 @@ ASSETS = {"/delivery-versions.js": ("musiclab/assets/delivery-versions.js","text
           "/backup-transfer.js": ("web/backup-transfer.js", "text/javascript"),
           "/backup-file.js": ("web/backup-file.js", "text/javascript"),
           "/backup-result.js": ("web/backup-result.js", "text/javascript"),
+          "/backup-download.js": ("web/backup-download.js", "text/javascript"),
+          "/backup-download-dom.js": ("web/backup-download-dom.js", "text/javascript"),
           "/lyric-time.js": ("musiclab/assets/lyric-time.js", "text/javascript"),
           "/lyrics-timing.js": ("web/lyrics-timing.js", "text/javascript"),
           "/lyrics-media.js": ("musiclab/assets/lyrics-media.js", "text/javascript"),
@@ -123,8 +125,13 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
         self.send_header("Content-Security-Policy", "default-src 'self'; script-src 'self'; style-src 'self'; media-src 'self' blob:; connect-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'none'; frame-ancestors 'none'")
         if filename:
             self.send_header("Content-Disposition", f'attachment; filename="{filename}"')
-        self.end_headers()
-        self.wfile.write(raw)
+        try:
+            self.end_headers()
+            self.wfile.write(raw)
+        except ConnectionError:
+            # Cancellation may disconnect during headers or body. Do not try
+            # another reply on the same broken socket; other I/O errors remain.
+            self.close_connection = True
 
     def allowed(self):
         port = self.server.server_port
