@@ -235,3 +235,8 @@ json_document.utf8_bytes與json-document.assertUnicode共享既有嚴格Unicode�
 ## v0.63 音檔完整文字報告
 
 純audio_report.py／audio-report.js canonical render → audio_bundle共用application（CLI/Agent/MCP/HTTP）／audio-result checked逐字MD → 原audio-review PCM/LUFS/current → DOM。取代v62僅非空Unicode的MD檢查；JSON量測、原媒體／schema／protocol保持。固定小數是顯示契約，null明示不可測；全文有效Unicode／8MiB，錯誤／late保留原結果。數字契約見[AUDIO-REPORT](docs/AUDIO-REPORT.md)，非實聽、重測或權利證明。
+
+
+## v0.64 自訂接受條件診斷
+
+pure field_values／fieldValues沿原精確正整數文法→review1全部三欄→application readonly與四adapter；JS whole source／JSON／MD／current產品核對→readiness-state快照→獨立DOM定位。custom false保留未用原值不阻擋，zero issue始終needs_review；不冒充音檔接受。極大零指數Decimal InvalidOperation轉受控正整數錯誤，原小數不捨入。基本14／啟庫19、Agent1／draft3與legal4／private／not_submitted保持；產品64／明確交付38–64。見[契約](docs/AUDIO-ACCEPTANCE-REVIEW.md)。

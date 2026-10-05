@@ -1,4 +1,8 @@
-# 進度：目前 v0.63.0
+# 進度：目前 v0.64.0
+
+## v0.64.0
+
+2026-10-05：自訂接受條件一次檢查三欄、點選定位並輸出共用來源核對報告；未完成原文與音檔保留，錯／晚回覆不覆蓋。CLI／Agent／MCP／HTTP同readonly操作，基本14／啟庫19工具。修正有界極大指數的Decimal例外。497 Python／778 JavaScript／68語法／四份Skill、85份跨語言來源与104歷史ZIP通過。 原生tab108已觀察三待辦／Enter定位、受控錯MD與晚回覆保留、zero-issue重試、native PCM一項DC提醒及停用原值，390px幾何與console0；owned tab閉合、viewport reset、server70761 exit0、staging未建。原失敗收據保留，最終新run與exact-source/private PR/release/actual remote/latest64/63/62依收據。legal4/private/not_submitted与Agent1/draft3保持，rolling active。
 
 ## v0.63.0
 

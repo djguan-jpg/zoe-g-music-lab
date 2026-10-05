@@ -14,7 +14,7 @@ from musiclab.draft_library import DraftLibrary, revision_id
 def main(argv=None):
     parser = argparse.ArgumentParser(description=f"ZOE. G Music Lab · 本機 v{__version__}")
     commands = parser.add_subparsers(dest="command", required=True)
-    for name in ("music", "storyboard", "lyrics", "audio", "storyboard-seed", "lyrics-seed", "lyrics-review", "lyrics-export-review", "music-review", "storyboard-review", "storyboard-timing-review", "delivery-package", "delivery-inspect"):
+    for name in ("music", "storyboard", "lyrics", "audio", "audio-acceptance-review", "storyboard-seed", "lyrics-seed", "lyrics-review", "lyrics-export-review", "music-review", "storyboard-review", "storyboard-timing-review", "delivery-package", "delivery-inspect"):
         sub = commands.add_parser(name)
         sub.add_argument("--out", required=True, help="指定本輪輸出資料夾")
         sub.add_argument("--overwrite", action="store_true", help="明確替換此輸出目錄的同名成果")
@@ -153,6 +153,13 @@ def main(argv=None):
             result = build(args.command.replace('-', '_'), payload)
             bundle = result.files
             status = 2 if result.data['issue_count'] else 0
+        elif args.command == 'audio-acceptance-review':
+            from musiclab.audio_acceptance import decode, MAX_BYTES
+            with Path(args.input).open('rb') as source:
+                document = decode(source.read(MAX_BYTES + 1))
+            result = build('audio_acceptance_review', {'document': document})
+            bundle = result.files
+            status = 2 if result.data['issue_count'] else 0
         elif args.command in ('lyrics-review','lyrics-export-review'):
             payload=read_json(args.input)
             result = build('lyrics_export_review', {'package':payload,**({'include_package':True} if args.include_package else {})}) if args.command=='lyrics-export-review' else build('lyrics_review',payload)
@@ -221,7 +228,8 @@ def main(argv=None):
     if args.command == 'lyrics-seed':
         print('未校時歌詞起稿已建立；沒有猜測時間，請依實際音檔標記開始與結束。')
     if status == 2:
-        print("已完成分鏡欄位檢查；有待修正項目，詳見 storyboard-review.md。" if args.command == 'storyboard-review' else
+        print("已完成條件檢查；有待修正項目，詳見 audio-acceptance-review.md。" if args.command == 'audio-acceptance-review' else
+              "已完成分鏡欄位檢查；有待修正項目，詳見 storyboard-review.md。" if args.command == 'storyboard-review' else
               "已完成歌曲欄位檢查；有待修正項目，詳見 music-review.md。" if args.command == 'music-review' else
               "已完成校時檢查；有待修正項目，詳見 lyrics-review.md。" if args.command == 'lyrics-review' else
               "已完成格式檢查；完整 JSON 請另存，詳見 lyrics-export-review.md。" if args.command == 'lyrics-export-review' else

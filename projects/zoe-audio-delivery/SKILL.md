@@ -66,3 +66,7 @@ python music_lab.py audio --input selected.wav --profile video --rates 48000 --b
 ## v0.44 原文分段閱讀
 
 ZIP核對後可切目前成果／ZIP原文逐段閱讀，原文下載仍是全文，保持表單與媒體。CLI text-file／Agent-MCP text_window明確讀16KiB原文，後續位置pin前次archive SHA；完整來源先核對，UTF-8字元中間或來源變動拒絕。text-window1獨立、12／17工具與Agent1／draft3保持。見[共用契約](../../docs/DELIVERY-TEXT.md)。
+
+## 接受條件診斷（v0.64）
+
+未完成條件可先用工作台「檢查自訂條件」定位三欄待辦；或CLI audio-acceptance-review --input條件草稿 --out明確目錄。Agent／MCP audio_acceptance_review payload只含document，回同來源JSON／Markdown，不讀媒體或改原值。零待辦只表示條件可解析，請接續原audio分析與實聽。基本14／啟庫19工具，Host重新discovery；原文、媒體与保存另存狀態保持。見[契約](../../docs/AUDIO-ACCEPTANCE-REVIEW.md)。

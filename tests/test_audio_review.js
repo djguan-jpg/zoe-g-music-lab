@@ -69,7 +69,7 @@ function adapter(){
   const source=fs.readFileSync(path.join(__dirname,'../web/app.js'),'utf8'),start=source.indexOf("$('audio-build').onclick="),end=source.indexOf('const draftTask=',start),
     runStart=source.indexOf('async function run('),runEnd=source.indexOf('function setFiles(',runStart);
   assert.ok(start>=0&&end>start&&runStart>=0&&runEnd>runStart);
-  const state={tab:'audio',revisions:{audio:0},busy:false},nodes={'audio-build':{disabled:false},'audio-file':{files:[{name:'first.wav',size:192044}]},'audio-profile':{value:'distribution'}};
+  const state={tab:'audio',revisions:{audio:0},busy:false,audioAcceptanceReview:{check:()=>true,refresh(){}}},nodes={'audio-build':{disabled:false},'audio-file':{files:[{name:'first.wav',size:192044}]},'audio-profile':{value:'distribution'}};
   let resolve,reject,rendered=0,files=0;const notices=[];
   const context={readValue:control=>control.value,state,$:id=>nodes[id],MusicAudio:{...MusicAudio,inspect:options=>MusicAudio.inspect({...options,hashFile:fixture.hashFile})},URLSearchParams,timingControls:()=>{},say:m=>notices.push(m),markDirty:()=>{},
     api:()=>new Promise((r,j)=>{resolve=r;reject=j;}),renderAudioReview:()=>rendered++,setFiles:()=>files++};

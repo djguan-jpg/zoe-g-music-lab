@@ -89,3 +89,5 @@ td input[data-raw-number]{width:63px}.raw-value-note{display:block;font-size:.78
 .delivery-text-reader{margin:16px 0;border-block:1px solid var(--line);padding:12px 0;min-width:0}.delivery-text-reader summary{cursor:pointer;color:var(--green);font-weight:600}.delivery-text-reader .reader-body{padding-top:12px}.delivery-text-reader textarea{width:100%;box-sizing:border-box;white-space:pre-wrap;overflow-wrap:anywhere}.delivery-text-reader .actions{gap:8px}.delivery-text-reader .hint{font-variant-numeric:tabular-nums;overflow-wrap:anywhere}.delivery-text-reader summary:focus-visible{outline:2px solid var(--green);outline-offset:4px}
 
 .reader-search{padding:12px 0;margin-bottom:12px;border-bottom:1px solid var(--line);min-width:0}.reader-search input,.reader-search select{width:100%;min-width:0;box-sizing:border-box}.reader-search .actions{display:flex;flex-wrap:wrap}
+
+[data-accept-ready-invalid]{border-color:#a34935;background:#fff3ed;outline-offset:3px}

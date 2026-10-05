@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 """Portable raw acceptance draft, independent of project drafts and media paths."""
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from .common import number, json_text
 from .json_document import decode_json
 
@@ -42,21 +42,28 @@ def decode(raw):
     return validate(decode_json(raw, max_bytes=MAX_BYTES, allow_bom=True))
 
 
+def field_values(key, raw):
+    parts = raw.replace('，', ',').split(',')
+    if not 1 <= len(parts) <= MAX_VALUES:
+        raise ValueError(f'{key} 最多 64 個接受值')
+    # Check finite numeric grammar first, then exact decimal integrality.
+    # A long fractional string must not become an integer by float rounding.
+    for part in parts: number(part, key)
+    try:
+        values = [Decimal(part) for part in parts]
+    except InvalidOperation:
+        raise ValueError(f'{key} 需填正整數，以逗號分隔') from None
+    if any(value != value.to_integral_value() or not 1 <= value <= MAX_INTEGER for value in values):
+        raise ValueError(f'{key} 需填正整數，以逗號分隔')
+    return [int(value) for value in values]
+
+
 def prepare(document):
     draft = validate(document)
     limits = {key: list(value) for key, value in PROFILES[draft['profile']].items()}
     if draft['custom']:
         for key, raw in draft['fields'].items():
-            parts = raw.replace('，', ',').split(',')
-            if not 1 <= len(parts) <= MAX_VALUES:
-                raise ValueError(f'{key} 最多 64 個接受值')
-            # Check finite numeric grammar first, then exact decimal integrality.
-            # A long fractional string must not become an integer by float rounding.
-            for part in parts: number(part, key)
-            values = [Decimal(part) for part in parts]
-            if any(value != value.to_integral_value() or not 1 <= value <= MAX_INTEGER for value in values):
-                raise ValueError(f'{key} 需填正整數，以逗號分隔')
-            limits[key] = [int(value) for value in values]
+            limits[key] = field_values(key, raw)
     return draft['profile'], limits
 
 
