@@ -1,4 +1,8 @@
-# 進度：目前 v0.83.0
+# 進度：目前 v0.84.0
+
+## v0.84.0
+
+2026-10-05：新增歌詞句後明確聚焦新文字欄；刪除最後一列後接回對應新增按鈕，還原接回原列。共用於歌曲段落、避免事項、交付項目、母題、鏡頭及歌詞六種清單；新增鏡頭展開並聚焦母題，還原鏡頭聚焦摘要。editor-focus純有界ID來源／proposal→注入雙capture controller→固定DOM adapter→app分層，busy/hidden/source drift與無效目標拒絕focus，確認native activeElement才成功；不讀原欄位、不改資料／草稿／播放。554 Python68.828秒／972 JS／92syntax／四Skills、50focused、184歷史ZIP／manifest、v83原包554／960還原、CLI/Agent/MCP bytes相同與good/bad/good、native30觀察／六種清單／九歌曲scalar保持／合成音檔與paused position保持／自然播放不中止／390px鍵盤通過。QA整合helper誤用不存在的test_delivery_inspection.py，保留失敗run；fresh recovery只完成剩餘修改，全部測試通過。兩tab與兩bounded server正常結束。兩fixed JS路由；沒有新operation/schema/依賴/模型/權限，14/21／Agent1/draft3/legal4/private/not_submitted保持。latest84/83/82與rolling active。
 
 ## v0.83.0
 

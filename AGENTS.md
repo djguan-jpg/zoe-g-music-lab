@@ -338,3 +338,8 @@ cue-position純原row／wave-position完整media／LyricTime毫秒→注入readR
 ## v0.83 目前歌詞播放資料
 
 current-cue checkedRows／checkedContext／原playableCues與activeCueIndex→private單份prepared rows→注入playback controller→owned DOM高亮／app。input/render/stamp與undo/batch apply與undo明確invalidate，token拒絕讀取中失效；錯rows只嘗試一次，下一次失效或明確fresh focus可重查。position-only只context，hidden/unready初次不讀rows，busy維持唯讀但停focus；media每次核對，原exclusive／last overlap保持，仍O(n)numeric scan。focus沿原createController完整fresh來源雙讀及DOM原欄位核對，顯示cache不替代來源。未發送事件的外部任意value改寫不保證即時display，明確focus仍fresh；single prepared copy有界10000列，invalidate/dispose釋放。高亮僅owned old/new，same connected ID不重resolve或write、detached同ID新node重resolve，dispose清owned listeners/class。無新timer、asset、schema或操作；product83／來源38–83共46／unknown84／expectedtag83，14/21／Agent1/draft3／legal4/private/not_submitted保持。見docs/CURRENT-CUE-PLAYBACK.md。
+
+
+## v0.84 編修焦點接續
+
+editor-focus純六清單metadata（IDs／visible／busy）與entry/new/add候選→注入capture/focusTarget雙來源核對controller→editor-focus-dom固定入口/目標/原生activeElement確認→app。ID不入草稿；最多40/100/100/30/1000/10000列、ID64，未知list/field/mode/超界/重複ID拒絕；dispose停讀與副作用。新增歌詞focus文字、空表focus新增、還原row與shot摘要；只明確add/delete/undo時執行，不因播放/載入自動搶焦點。focus本身不寫編修值、markDirty或media；shot details.open沿原暫態行為。兩固定JS路由，不增加POST/Agent/CLI操作或路徑權限。產品84／來源38–84共47／unknown85／expectedtag84，14/21／Agent1/draft3/legal4/private/not_submitted保持。見docs/EDITOR-FOCUS.md。

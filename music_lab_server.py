@@ -56,6 +56,8 @@ ASSETS = {"/delivery-versions.js": ("musiclab/assets/delivery-versions.js","text
           "/delivery-navigation.js": ("web/delivery-navigation.js", "text/javascript"),
           "/delivery-navigation-dom.js": ("web/delivery-navigation-dom.js", "text/javascript"),
           "/editor-state.js": ("web/editor-state.js", "text/javascript"),
+          "/editor-focus.js": ("web/editor-focus.js", "text/javascript"),
+          "/editor-focus-dom.js": ("web/editor-focus-dom.js", "text/javascript"),
           "/planning-import.js": ("web/planning-import.js", "text/javascript"),
           "/deletion-history.js": ("web/deletion-history.js", "text/javascript"),
           "/draft-library.js": ("web/draft-library.js", "text/javascript"),

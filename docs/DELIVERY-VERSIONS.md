@@ -121,3 +121,8 @@ current0.82.0、supported38–82共45項、unknown83拒絕；176歷史ZIP／mani
 ## v0.83
 
 current0.83.0、supported38–83共46項、unknown84拒絕；180歷史ZIP／manifest與v82實際producer bytes一致。projects.version=current及release_version=v+current仍為預期tag，各自核對selected-source封裝與actual publication。播放快取及高亮不進draft3／Agent1／領域wire；14/21保持。見[契約](CURRENT-CUE-PLAYBACK.md)。
+
+
+## v0.84
+
+current0.84.0、supported38–84共47項、unknown85拒絕；184歷史ZIP／manifest与v83 actual producer bytes相同。expectedtag v0.84.0保持selected-source核對，實際發布另看remote receipt。編修定位只在本頁，Agent1/draft3/14/21及領域schema保持。見[契約](EDITOR-FOCUS.md)。

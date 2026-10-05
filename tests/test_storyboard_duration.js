@@ -67,7 +67,7 @@ test('same or unavailable duration cannot invoke the writer',()=>{
 test('actual add-shot handler keeps declared duration and rejects duplicate work while busy',()=>{
   const code=fs.readFileSync(path.join(root,'web/app.js'),'utf8'),start=code.indexOf("$('shot-add').onclick="),end=code.indexOf("$('mv-build').onclick=",start);assert.ok(start>=0&&end>start);
   for(const busy of [false,true]){const controls={'shot-add':{},'mv-duration':{value:'60'}},rows=[{start:'0',end:'24',character_state:'原人物'}],state={busy};let writes=0;
-    const context={readValue:control=>control.value,MusicPlanningValues:require('../web/planning-values.js'),$:id=>controls[id],state,rawShots:()=>structuredClone(rows),shotOpenStates:()=>[false],entriesFor:()=>[{id:'a'}],collections:{shots:{limit:1000}},rowSequence:1,renderShots:()=>writes++,markDirty:()=>{},focusShot:()=>{},say:()=>{},Number};vm.createContext(context);vm.runInContext(code.slice(start,end),context);controls['shot-add'].onclick();assert.equal(controls['mv-duration'].value,'60');assert.equal(writes,busy?0:1);
+    const context={readValue:control=>control.value,MusicPlanningValues:require('../web/planning-values.js'),$:id=>controls[id],state,rawShots:()=>structuredClone(rows),shotOpenStates:()=>[false],entriesFor:()=>[{id:'a'}],collections:{shots:{limit:1000}},rowSequence:1,renderShots:()=>writes++,markDirty:()=>{},focusEntry:()=>{},say:()=>{},Number};vm.createContext(context);vm.runInContext(code.slice(start,end),context);controls['shot-add'].onclick();assert.equal(controls['mv-duration'].value,'60');assert.equal(writes,busy?0:1);
   }
 });
 test('actual shot deletion compacts time but keeps declared duration and a restorable record',()=>{
