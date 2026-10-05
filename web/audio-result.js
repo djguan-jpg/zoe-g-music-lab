@@ -4,6 +4,7 @@
   const json=typeof module==='object'&&module.exports?require('../musiclab/assets/json-document.js'):root.MusicJsonDocument;
   const drafts=typeof module==='object'&&module.exports?require('./audio-acceptance.js'):root.MusicAudioAcceptance;
   const versions=typeof module==='object'&&module.exports?require('../musiclab/assets/delivery-versions.js'):root.MusicDeliveryVersions;
+  const markdown=typeof module==='object'&&module.exports?require('./audio-report.js'):root.MusicAudioReport;
   const maxTextBytes=8*1024*1024;
   const fields=['tool','version','file','sha256','source_evidence','profile','acceptance','sample_rate','bit_depth','channels','frames',
     'duration_seconds','per_channel','checks','warnings','quiet_regions','stereo_correlation','loudness','status','limitations'];
@@ -35,6 +36,7 @@
       const source=drafts.validate(json.parse(result.files['audio-acceptance-draft.json'],{maxBytes:drafts.maxBytes,label:'接受條件回覆'}));
       if(drafts.fingerprint(echo)!==key||drafts.fingerprint(source)!==key)fail();
     }
+    if(result.files['report.md']!==markdown.render(data))fail();
     return data;
   }
   const api=Object.freeze({checked,displayName,maxTextBytes});

@@ -14,3 +14,8 @@ preset exact files是report.json/report.md；帶draft另有audio-acceptance-draf
 所選File位元組對報告宣告SHA的核對不等於獨立重算PCM量測，也不证明producer可信／外部文件系统原子快照、著作權、實聽或收件者接受。仍信任已驗證的本機analyzer計算，sample peak不是true peak、RMS與LUFS分開。
 
 錯誤會顯示「音檔回覆版本、來源或交付檔案不一致，沒有替換目前結果；請重新分析原音檔」。hash缺少時顯示明確原因並保留成果；沒有下載確認或外部保存完成宣告。見[QA](QA-v0.62.0.md)與[交接](HANDOFF-v0.62.0.md)。
+
+
+## v0.63 音檔完整文字報告
+
+純audio_report.py／audio-report.js canonical render → audio_bundle共用application（CLI/Agent/MCP/HTTP）／audio-result checked逐字MD → 原audio-review PCM/LUFS/current → DOM。取代v62僅非空Unicode的MD檢查；JSON量測、原媒體／schema／protocol保持。固定小數是顯示契約，null明示不可測；全文有效Unicode／8MiB，錯誤／late保留原結果。數字契約見[AUDIO-REPORT](AUDIO-REPORT.md)，非實聽、重測或權利證明。

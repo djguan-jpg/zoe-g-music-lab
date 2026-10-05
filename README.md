@@ -1,8 +1,8 @@
 # ZOE. G Music Lab
 
-目前版本 **v0.62.0**：音檔報告 SHA-256 綁定實際選定 File 位元組，拒絕同名同大小錯來源；示範條件與條件草稿都核對完整回覆、產品／協定版本與嚴格報告 JSON。原成果保持，雜湊期間改選取消上傳，合法重試及自訂規格提醒正常。486 Python／767 JavaScript／65 語法／四份 Skill 通過，83 份真 File PCM 與96個歷史ZIP bytes保持。 見[來源與分層](docs/AUDIO-RESULT.md)、[QA](docs/QA-v0.62.0.md)、[交接](docs/HANDOFF-v0.62.0.md)。
+目前版本 **v0.63.0**：音檔 Markdown 改由獨立 Python／JS 純排版產生並逐字核對；錯作品、錯 SHA、改規格／數值／提醒或新增宣稱均拒絕，原成果及音檔保留，合法重試正常。不可測值明示「不可測」，數字固定顯示位數，JSON 量測保持。490 Python／772 JavaScript／66 語法／四份 Skill 通過，83份真 File PCM 與100個歷史 ZIP bytes保持。 見[文字契約](docs/AUDIO-REPORT.md)、[QA](docs/QA-v0.63.0.md)、[交接](docs/HANDOFF-v0.63.0.md)。
 
-上一輪 v0.61.0：獨立PCM數值檢查拒絕矛盾回覆，原成果與音檔保留。v61指定ZIP獨立還原484 Python／751 JavaScript通過。見[QA](docs/QA-v0.61.0.md)。
+上一輪 v0.62.0：所選File真正SHA與完整回覆來源核對；v62指定ZIP獨立還原486 Python／767 JavaScript通過。見[QA](docs/QA-v0.62.0.md)。
 
 ## ZIP原文與差異（v0.40）
 

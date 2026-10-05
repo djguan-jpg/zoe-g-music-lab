@@ -11,7 +11,7 @@ function reply(document=null){return fixture.wire({file:'first.wav',profile:'dis
 const draft=()=>({format:accept.format,schema_version:1,profile:'distribution',custom:false,fields:{rates:'48000',bits:'16',channels:'2'}});
 test('preset and raw-draft replies obey the same full envelope without input mutation',()=>{
  for(const doc of [null,draft()]){const wire=reply(doc),before=structuredClone(wire);assert.equal(model.checked(wire,selection(doc)),wire.data);assert.deepEqual(wire,before);}
- const r=reply();r.data.warnings=['實聽待確認'];r.data.status='needs_review';r.meta.needs_review=true;r.files['report.json']=JSON.stringify(r.data);model.checked(r,selection());
+ const r=reply();r.data.warnings=['實聽待確認'];r.data.status='needs_review';r.meta.needs_review=true;r.files['report.json']=JSON.stringify(r.data);r.files['report.md']=require('../web/audio-report.js').render(r.data);model.checked(r,selection());
 });
 test('unknown, stale or mismatched product/protocol/tool and false review metadata refuse',()=>{
  const changes=[r=>delete r.meta,r=>r.meta.protocol_version=2,r=>r.meta.protocol_version=true,r=>r.meta.extra=true,
@@ -59,7 +59,7 @@ test('changes or failures while source hashing prevent upload and preserve curre
 });
 test('browser fixed dependencies precede review and use the same isolated reply checker',()=>{
  const index=fs.readFileSync('web/index.html','utf8');for(const script of ['audio-file','audio-result'])assert.ok(index.indexOf('/'+script+'.js')<index.indexOf('/audio-review.js'));
- const context={MusicJsonDocument:require('../musiclab/assets/json-document.js'),MusicAudioAcceptance:accept,MusicDeliveryVersions:require('../musiclab/assets/delivery-versions.js'),TextEncoder};
+ const context={MusicJsonDocument:require('../musiclab/assets/json-document.js'),MusicAudioReport:require('../web/audio-report.js'),MusicAudioAcceptance:accept,MusicDeliveryVersions:require('../musiclab/assets/delivery-versions.js'),TextEncoder};
  vm.runInNewContext(fs.readFileSync('web/audio-result.js','utf8'),context);context.MusicAudioResult.checked(reply(),selection());
  const r=reply();r.meta.protocol_version=99;assert.throws(()=>context.MusicAudioResult.checked(r,selection()));
 });

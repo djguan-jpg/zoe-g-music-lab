@@ -78,11 +78,12 @@ class AudioResultTests(unittest.TestCase):
             self.assertTrue(mcp[-2]['result']['isError']);self.assertEqual(mcp[-1]['result']['structuredContent'],expected)
             cli=subprocess.run([sys.executable,'-X','utf8',str(ROOT/'music_lab.py'),'audio','--input',str(path),'--out',str(Path(folder)/'report')],capture_output=True,timeout=25)
             self.assertEqual(cli.returncode,2,cli.stderr[-1000:]);self.assertEqual((Path(folder)/'report/report.json').read_text(encoding='utf-8'),expected['files']['report.json'])
+            self.assertEqual((Path(folder)/'report/report.md').read_bytes(),expected['files']['report.md'].encode('utf-8'))
             with WorkbenchServer(('127.0.0.1',0),WorkbenchHandler) as server:
                 server.draft_library=None;thread=threading.Thread(target=server.serve_forever,daemon=True);thread.start()
                 try:
                     connection=http.client.HTTPConnection('127.0.0.1',server.server_address[1],timeout=10)
-                    for asset in ['audio-file.js','audio-result.js']:
+                    for asset in ['audio-file.js','audio-result.js','audio-report.js']:
                         connection.request('GET','/'+asset);response=connection.getresponse();self.assertEqual(response.status,200)
                         self.assertEqual(response.read(),(ROOT/'web'/asset).read_bytes())
                     for profile,status in [('unknown',400),('distribution',200)]:
