@@ -1,5 +1,9 @@
 # v0.77.0 · 2026-10-05
 
+## v0.86.0
+
+新增「核對下載的原文」：明確選回本機檔案，逐 byte 比較目前選定成果的完整 canonical UTF-8 bytes，顯示一致／第一個0起差異與雙方大小；改名不影響核對。pure text-verification→注入 capture/native File read/latest/current controller→literal DOM，8MiB讀前上限、讀後大小與來源核對；切檔/成果/換台/dirty/busy清除過期證明，晚成功/失敗不改後續狀態。不讀textarea摘錄、不改成果/編修/媒體、不解草稿另存警示、不保存核對報告。三固定JS資產；沒有新operation或領域schema，15/22、Agent1/draft3與既有下載保持。564Python67.640秒/1002JS/98syntax/四Skills、2Python+16JS focused、60共用流程回歸、192歷史ZIP/manifests與v85原包562/986還原、actual CLI/Agent/MCP good/bad/good通過。native18觀察含相同/改名/單byte差異/空檔、切檔/編修/換台失效、原值/成果/草稿提示保持、390px Enter選檔與无document橫向超宽。baseline與本輪Page下載事件各確認brief.json 2040bytes completed；回選檔是明示合成fixture，沒有取得實際下載保存路徑/bytes，不混淆兩種證據。初次全測17JS失敗源自共用run的新增free lexical依賴，改用state.textVerification後fresh全通過，失敗紀錄保留；unknown POST測試400誤判修正為原404，native QA比對依目前canonical檔名修正。兩owned tab/兩bounded server正常關閉、viewport reset；完整視覺/screen reader/正式素材實聽未驗證。產品86/來源38–86共49/unknown87、legal4/private/not_submitted與latest86/85/84保持，rolling active。
+
 ## v0.85.0
 
 新增唯讀原句搜尋：保留原順序、重複句、Unicode與空白，每句列第一個字面命中；時間未完成亦可查找。Python/JS純search1原文字陣列與UTF-8 SHA→application→CLI/Agent/MCP/HTTP；browser注入latest/source/query/results核對controller→literal DOM→穩定ID文字欄定位。每批20、上一批/下一批，原句或ID變更失效，晚成功/失敗保留後續編修；只定位、不seek。source SHA不含時間或媒體，完整搜尋请求與傳輸沿2MiB上限。產品85／明確來源38–85共48／unknown86；新增lyrics_search，基本15／啟庫22，Agent1/draft3與既有領域schemas保持。562 Python68.797秒／986 JS／95syntax／四Skills、8Python+14JS focused、188歷史ZIP/manifests與v84原包554/972還原；actual CLI/Agent/MCP與新搜尋四adapter good/bad/good/預設拒覆寫通過。native12觀察：300句分頁與第21句focus、空表/零命中、未完成時間、query/text/delete失效、音檔/時長/paused position保持、自然播放繼續、390px Enter/literal HTML無執行。download click已送出但10秒未取得保存檔案，另存驗收未完成；完整視覺/screen-reader/實聽未驗證。兩測試helper失敗源自MCP舊清單及JS位置regex，失敗紀錄保留，fresh checks全通過。三tab/兩bounded servers正常結束；無新依賴/模型/網路/path權限。legal4/private/not_submitted保持，latest85/84/83與rolling active。
