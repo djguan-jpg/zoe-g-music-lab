@@ -61,7 +61,7 @@ class AcceptanceTests(unittest.TestCase):
     def test_discovery_independent_version_and_no_extra_tools(self):
         info = capabilities()
         self.assertEqual(info['audio_acceptance_draft'], descriptor())
-        self.assertEqual(len(info['operations']),15)
+        self.assertEqual(len(info['operations']),16)
         schema = info['input_schemas']['audio']
         self.assertFalse(schema['additionalProperties'])
         self.assertEqual(schema['properties']['acceptance_draft']['properties']['schema_version']['const'], 1)

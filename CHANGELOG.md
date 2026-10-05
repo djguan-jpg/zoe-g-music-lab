@@ -1,5 +1,9 @@
 # v0.77.0 · 2026-10-05
 
+## v0.92.0
+
+新增分鏡原文搜尋：依八個敘事欄位找第一個字面命中，每批20鏡，前後分頁並展開原欄位。Python／原生JS純來源與SHA模型→共用application四adapter→注入current controller→literal DOM及stable ID／原值focus。1000鏡／每欄2000codepoints／compact source1MiB，回覆files/data/meta、JSON與Markdown完整核對；原文／時間／草稿保留，未知或晚回覆拒絕。新增唯讀storyboard_search與CLI／MCP／HTTP，16基本／23啟庫需重新discovery；22個既有operation input/output schemas逐值相同。572Python73.532秒／1069JS／104syntax／四Skills、原v91封裝564／1057還原、216歷史ZIP/manifests byte相同；45鏡原生40觀察／11完整HTTP報告與四adapter一致，三尺寸／八欄focus／Enter分頁／零命中／晚回覆及編修保持。product92／sources38–92共55／unknown93拒絕，Agent1／draft3／legal4／private／FreeTWAI not_submitted保持，rolling active。
+
 ## v0.91.0
 
 處理列改在main上方sticky區：390px baseline歌曲報告時取消入口top3618px，現版在390/320/1440px長表單捲動後仍可操作。pure operation-presentation有界驗證四workbench/action及gate三bool一致性→固定DOM adapter隔離擷取一次metadata→app.run開始前hook；refresh只讀gate，不讀創作來源、不新增timer或scroll呼叫。標示處理中/取消中及工作台/動作，idle隱藏並清空context；既有gate/request cancel/current/source/revision/dirty及focus保持。server只新增一固定JS asset，application/CLI/Agent/MCP/domain/wire/權限/依賴不變，15/22、Agent1/draft3保持。564Python63.922秒/1057JS/101syntax/四Skills、142focused（8新presentation/DOM/actualrun）、原v90 ZIP564/1049還原與212歷史ZIP/manifests逐bytes相同。原生390×844、320×568、1440×900，歌曲/分鏡/歌詞標示、捲動可達、mouse/Enter取消、重試、人工編修/歷史/上一份成果及完成清空核對；三原生報告與actual application/CLI/Agent/MCP/HTTP一致。geometry/保存screenshot與實際操作不冒充完整視覺/screen-reader驗收，正式媒體/特定Host/平台未驗證。產品91/supported38–91共54/unknown92，legal4/private/FreeTWAI not_submitted保持；restore/main/指定封裝與SHA、latest91/90/89保護，rolling active。

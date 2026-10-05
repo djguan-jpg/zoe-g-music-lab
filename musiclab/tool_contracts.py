@@ -110,6 +110,14 @@ def payload_schema(operation):
         cue=object_schema({'start':clock,'end':clock,'text':{'type':'string','maxLength':2000}},('start','end','text'),additionalProperties=False)
         return object_schema({'title':{'type':'string','minLength':1,'maxLength':200},'duration':clock,
                               'cues':array_schema(cue,0,10000)},('cues',),additionalProperties=False)
+    if operation == 'storyboard_search':
+        from .storyboard_search import FIELDS
+        return object_schema({'shots':array_schema(object_schema({k:{'type':'string','maxLength':2000} for k in FIELDS},FIELDS,additionalProperties=False),0,1000),
+                              'query':{'type':'string','minLength':1,'maxLength':1024,'description':'Exact original literal, at most1024 UTF-8 bytes; no regex or normalization'},
+                              'start_row':{'type':'integer','minimum':1,'maximum':1001,'default':1},
+                              'max_results':{'type':'integer','minimum':1,'maximum':50,'default':20},
+                              'source_sha256':{'type':'string','pattern':'^[0-9a-f]{64}$'}},('shots','query'),additionalProperties=False,
+                              **{'allOf':[{'if':{'required':['start_row'],'properties':{'start_row':{'minimum':2}}},'then':{'required':['source_sha256']}}]})
     if operation == 'lyrics_search':
         return object_schema({'texts':array_schema({'type':'string','maxLength':2000},0,10000),
                               'query':{'type':'string','minLength':1,'maxLength':1024,'description':'Exact original literal, at most1024 UTF-8 bytes; no regex or normalization'},
@@ -366,6 +374,11 @@ def output_schema(operation=None):
                                                  "needs_review": {"type": "boolean"}},
                                                 ("version", "protocol_version", "needs_review"), additionalProperties=False)},
                          ("files", "data", "meta"), additionalProperties=False)
+    if operation == 'storyboard_search':
+        from .storyboard_search import data_schema
+        result['properties']['data']=data_schema()
+        result['properties']['files']=object_schema({'storyboard-search.json':{'type':'string'},'storyboard-search.md':{'type':'string'}},('storyboard-search.json','storyboard-search.md'),additionalProperties=False)
+        result['properties']['meta']['properties']['needs_review']['const']=True
     if operation == 'lyrics_search':
         from .lyrics_search import data_schema
         result['properties']['data']=data_schema()

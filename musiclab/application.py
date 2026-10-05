@@ -30,6 +30,7 @@ from .storyboard_seed import storyboard_seed_bundle, SEED_SCHEMA_VERSION, MAX_SL
 from .lyrics_seed import lyrics_seed_bundle, LYRICS_SEED_SCHEMA_VERSION, MAX_SOURCE_BYTES, MAX_LINES
 from .lyrics_review import review_bundle, descriptor as lyrics_review_descriptor
 from .lyrics_search import bundle as lyrics_search_bundle, descriptor as lyrics_search_descriptor
+from .storyboard_search import bundle as storyboard_search_bundle, descriptor as storyboard_search_descriptor
 from .lyrics_export_review import review_bundle as lyrics_export_review_bundle, descriptor as lyrics_export_review_descriptor
 from .music_review import review_bundle as music_review_bundle, descriptor as music_review_descriptor
 from .storyboard_review import review_bundle as storyboard_review_bundle, descriptor as storyboard_review_descriptor
@@ -53,6 +54,7 @@ OPERATIONS = {
     "music": "Song planning and AI task packaging; no model invocation",
     "music_review": "Locate incomplete raw song draft fields and numeric ranges; read-only; no content filling, complete plan acceptance or model",
     "storyboard": "Shot timing and motif continuity; no media rendering",
+    "storyboard_search": "Find exact literal original narrative shot fields, first matching field per shot; source SHA pinned pagination; read-only, no paths, clocks, editing or model",
     "storyboard_review": "Locate incomplete raw storyboard fields and motif references; read-only; no timing edits, complete plan acceptance or model",
     "storyboard_timing_review": "Locate raw storyboard numeric, seconds and exclusive-frame coverage issues; read-only; no time edits, complete creative acceptance or media",
     "lyrics": "Manual cue validation and LRC/SRT/JSON exports; no ASR",
@@ -114,6 +116,7 @@ def capabilities(draft_library=None, backup_source=None, delivery_source=None):
                                "legacy_conversion": "explicit allow_legacy only", "media_generated": False},
             "lyrics_review": lyrics_review_descriptor(),
             "lyrics_search": lyrics_search_descriptor(),
+            "storyboard_search": storyboard_search_descriptor(),
             "lyrics_export_review": lyrics_export_review_descriptor(),
             "music_review": music_review_descriptor(),
             "storyboard_review": storyboard_review_descriptor(),
@@ -231,6 +234,9 @@ def build(operation, payload, *, audio_source=None, draft_library=None, backup_s
     elif operation == "lyrics_review":
         files = review_bundle(payload)
         data = json.loads(files["lyrics-review.json"])
+    elif operation == "storyboard_search":
+        files = storyboard_search_bundle(payload)
+        data = json.loads(files["storyboard-search.json"])
     elif operation == "lyrics_search":
         files = lyrics_search_bundle(payload)
         data = json.loads(files['lyrics-search.json'])
@@ -305,7 +311,7 @@ def build(operation, payload, *, audio_source=None, draft_library=None, backup_s
         if document is not None:
             files["audio-acceptance-draft.json"] = json_text(document)
     review = bool(data.get("review_notes") or data.get("warnings") or data.get("duration_estimated"))
-    if operation in ('audio_acceptance_review', 'lyrics_review', 'lyrics_search', 'lyrics_export_review', 'music_review', 'storyboard_review', 'storyboard_timing_review'):
+    if operation in ('audio_acceptance_review', 'lyrics_review', 'lyrics_search', 'storyboard_search', 'lyrics_export_review', 'music_review', 'storyboard_review', 'storyboard_timing_review'):
         review = True  # Diagnostic readiness never proves performance synchronization.
     if operation == 'lyrics':
         review = package_needs_review(data)

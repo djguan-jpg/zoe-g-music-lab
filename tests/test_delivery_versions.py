@@ -13,7 +13,7 @@ ROOT=Path(__file__).resolve().parents[1]
 
 class DeliveryVersionTests(unittest.TestCase):
     def test_explicit_historical_oracle_product_and_discovery_agree(self):
-        expected=tuple('0.'+str(v)+'.0' for v in range(38,92))
+        expected=tuple('0.'+str(v)+'.0' for v in range(38,93))
         self.assertEqual(SUPPORTED_TOOL_VERSIONS,expected)
         self.assertEqual(__version__,CURRENT_VERSION)
         self.assertEqual(CURRENT_VERSION,expected[-1])
@@ -60,10 +60,10 @@ class DeliveryVersionTests(unittest.TestCase):
         self.assertEqual(p.returncode,0,p.stderr);data=json.loads(p.stdout)
         self.assertEqual(data['version'],CURRENT_VERSION)
         self.assertEqual(data['delivery_inspection']['supported_tool_versions'],list(SUPPORTED_TOOL_VERSIONS))
-        self.assertEqual(data['protocol_version'],1);self.assertEqual(len(data['operations']),15)
+        self.assertEqual(data['protocol_version'],1);self.assertEqual(len(data['operations']),16)
         source={'scope':'music','files':{'source.txt':'原文🎵'}}
         self.assertEqual(prepare(source).manifest['tool_version'],CURRENT_VERSION)
-        for version in [True,[],{},'0.92.0','0.37.0','0.59.0\n']:
+        for version in [True,[],{},'0.93.0','0.37.0','0.59.0\n']:
             with self.subTest(version=version),self.assertRaises(ValueError):prepare(source,tool_version=version)
 
 
