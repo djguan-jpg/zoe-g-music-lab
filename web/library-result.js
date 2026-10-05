@@ -3,6 +3,7 @@
 (function(root){
   const node=typeof module==='object'&&module.exports;
   const D=node?require('./library-revision.js'):root.MusicLibraryRevision;
+  const T=node?require('../musiclab/assets/utc-timestamp.js'):root.MusicUtcTimestamp;
   const versions=node?require('../musiclab/assets/delivery-versions.js'):root.MusicDeliveryVersions;
   const maxEntries=1000,maxPage=100;
   const exact=(v,keys)=>v&&typeof v==='object'&&!Array.isArray(v)&&Object.keys(v).length===keys.length&&keys.every(k=>Object.hasOwn(v,k));
@@ -15,7 +16,7 @@
     return result.data;
   }
   // The producer sorts original UTC strings, then IDs; do not substitute Date ordering.
-  const earlier=(a,b)=>a.stored_at<b.stored_at||a.stored_at===b.stored_at&&a.id<b.id;
+  const earlier=(a,b)=>T.compare(a.stored_at,b.stored_at)<0||a.stored_at===b.stored_at&&a.id<b.id;
   function checkedList(payload,result,cursorEntry=null){
     if(!exact(payload,['limit','cursor'])||!Number.isSafeInteger(payload.limit)||payload.limit<1||payload.limit>maxPage||
       payload.cursor!==null&&!identifier(payload.cursor)||!exact(result,['entries','next_cursor','issues','status'])||

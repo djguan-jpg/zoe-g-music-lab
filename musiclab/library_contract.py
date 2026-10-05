@@ -2,9 +2,9 @@
 """Pure immutable revision contract shared by disk reads and portable backups."""
 import hashlib
 import re
-from datetime import datetime, timezone
 from .json_document import decode_json
 from .draft_contract import MAX_DRAFT_BYTES, validate_draft
+from .utc_timestamp import checked_utc_timestamp
 
 ID_PATTERN = r'draft-[0-9a-f]{32}'
 LIBRARY_SCHEMA_VERSION = 1
@@ -31,9 +31,7 @@ def validate_record(record, identifier):
             not isinstance(record['titles'], dict) or set(record['titles']) != {'music', 'storyboard', 'lyrics'} or
             any(not isinstance(v, str) or len(v) > 120 for v in record['titles'].values())):
         raise ValueError('保存版本資料格式錯誤')
-    when = datetime.fromisoformat(record['stored_at'])
-    if when.utcoffset() != timezone.utc.utcoffset(when):
-        raise ValueError('保存時間格式錯誤')
+    checked_utc_timestamp(record['stored_at'])
     return record
 
 

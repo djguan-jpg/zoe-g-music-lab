@@ -1,6 +1,6 @@
 # ZOE. G Music Lab
 
-目前版本 **v0.76.0**：保存清單分清空庫、搜尋零命中與摘要不可讀；選定版本顯示四種名稱的字面命中位置。查詢編修／等待／取消後仍標示原接受查詢，原稿、預覽、音檔保持。541 Python／892 JavaScript／81語法／四份Skill、152歷史ZIP及v75原封裝539／879還原通過；14／21工具與原schema保持。 見[使用與分層](docs/LIBRARY-PRESENTATION.md)、[QA](docs/QA-v0.76.0.md)、[交接](docs/HANDOFF-v0.76.0.md)。
+目前版本 **v0.77.0**：保存紀錄與備份共用純 UTC 日期驗證，拒絕不存在曆日與時間溢位；移除瀏覽器自動轉日期，接受合法 Z／小時及單字元分隔的原時間，排序與保存 bytes 保持。545 Python／901 JavaScript／82語法／四份Skill、156歷史ZIP及v76原封裝541／892還原通過；14／21工具與原schema保持。 見[UTC時間契約](docs/UTC-TIMESTAMP.md)、[QA](docs/QA-v0.77.0.md)、[交接](docs/HANDOFF-v0.77.0.md)。
 
 上一輪 v0.74.0：完整保存回覆與分頁來源核對，未確認保存以同一 ID 及原稿重試。見[QA](docs/QA-v0.74.0.md)。
 

@@ -4,13 +4,14 @@
   const node=typeof module==='object'&&module.exports;
   const D=node?require('./library-revision.js'):root.MusicLibraryRevision;
   const M=node?require('./library-match.js'):root.MusicLibraryMatch;
+  const T=node?require('../musiclab/assets/utc-timestamp.js'):root.MusicUtcTimestamp;
   const versions=node?require('../musiclab/assets/delivery-versions.js'):root.MusicDeliveryVersions;
   const exact=(v,keys)=>v&&typeof v==='object'&&!Array.isArray(v)&&Object.keys(v).length===keys.length&&keys.every(k=>Object.hasOwn(v,k));
   const sha=v=>typeof v==='string'&&v.length===64&&/^[0-9a-f]{64}$/.test(v);
   const integer=(v,min,max)=>Number.isSafeInteger(v)&&v>=min&&v<=max;
   const fail=()=>{throw Error('搜尋回覆或接續來源不一致；原清單、預覽與工作台保留，請重新搜尋');};
   const cursor=v=>exact(v,['start_index','search_sha256'])&&integer(v.start_index,1,1000)&&sha(v.search_sha256);
-  const earlier=(a,b)=>a.stored_at<b.stored_at||a.stored_at===b.stored_at&&a.id<b.id;
+  const earlier=(a,b)=>T.compare(a.stored_at,b.stored_at)<0||a.stored_at===b.stored_at&&a.id<b.id;
   function checkedRequest(value){
     if(typeof value?.query==='string')M.checkedQuery(value.query);
     if(!exact(value,['query','limit','cursor'])||typeof value.query!=='string'||!integer([...value.query].length,1,200)||
