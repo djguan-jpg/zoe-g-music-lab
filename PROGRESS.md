@@ -1,4 +1,8 @@
-# 進度：目前 v0.70.0
+# 進度：目前 v0.71.0
+
+## v0.71.0
+
+2026-10-05：備份預覽先量測選定 ZIP 的 SHA-256，完整核對來源、版本與恢復計數；未確認恢復回覆保留同一備份供明確重試，後續編修與音檔保持。517 Python／841 JavaScript／74語法／四份Skill及132歷史ZIP通過。 真備份producer重現wrong SHA／矛盾版數／無關restore摘要被接受。native backup-file→pure backup-result full wire／data一致性→required injected hash／plan／restore checks→原latest controller→DOM分層。native tab117，四次inspect／兩次restore；response副本故障保留原ZIP與磁碟。第一次恢復已加入兩版但錯計數不確認，Enter沿同File／SHA重試回added0／reused2，磁碟兩版record／draft逐bytes相同。恢復版本可預覽，後續歌名／WAV／dirty保持；390px提示313px、console0、tab關閉／viewport reset／server原session17368 exit0／staging未建立。最新71／70／69保護，legal4／private／not_submitted保持，rolling active。
 
 ## v0.70.0
 

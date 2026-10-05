@@ -270,3 +270,8 @@ pure library-receipt完整data ACK／同ID metadata／全部draft3→注入reado
 ## v0.70 保存版本預覽來源
 
 pure library-revision共享完整entry／read data與save receipt→讀前clone selected metadata→required checkRead→原latest token／replacement snapshot→DOM current ID／完整metadata在read完成、Apply與export重查。wrong ID／metadata／late拒絕且保留編修／media；切換取消preview並提示重新預覽。checkedSelection只比較已驗entry，不冒充獨立完整record validator。backend read核對磁碟bytes／SHA，browser不獨立重算磁碟bytes；純data層未新增HTTP meta/files核對。全案load／Undo原media重選邊界保持。產品70／明確來源38–70、14／19 tools、Agent1／draft3／library1／legal4／private／not_submitted保持，見[契約](docs/LIBRARY-REVISION.md)。
+
+
+## v0.71 備份來源及恢復確認
+
+native backup-file最多32MiB File.arrayBuffer／大小核對／WebCrypto SHA→pure backup-result exact files/data/meta及current product／protocol1／needs_review=true→required hashFile/checkPlan/checkRestore controller→DOM。雜湊後與request後latest重查；plan核對同SHA／bytes、全部unique IDs與new/reused/conflict分組／計數及can_restore一致。restore核對同SHA／總數與added+reused，允許retry後分布改變；不符成功回覆保留same File／SHA供明確retry，原4xx拒絕規則保持。backend原ZIP CRC／manifest／revision bytes／hash及immutable restore保持，browser不獨立解析ZIP或承諾目標耐久／原子恢復。proof暫態不入draft／Agent。產品71／來源38–71、14／19 tools、Agent1／draft3／library1／backup1／legal4／private／not_submitted保持，見[契約](docs/BACKUP-RESULT.md)。

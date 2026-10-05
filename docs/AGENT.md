@@ -1,5 +1,7 @@
 # 本機 Agent 接口 v1
 
+v0.71 備份來源與確認：native backup-file有界32MiB File bytes／SHA→pure backup-result exact wire、current產品／protocol／來源／全部plan計數與ID分組→required injected controller→DOM明確restore／同File retry。restore成功摘要不符不onRestored；backend既有完整ZIP／CRC／manifest／revision bytes／SHA及immutable restore保持，browser不獨立解析ZIP內容或核對目標磁碟耐久性。Agent1／draft3／library1／backup1、14／19工具保持。見[契約](BACKUP-RESULT.md)。下列各版為歷史。
+
 v0.70 保存版本來源：pure library-revision共享完整entry／read data核對→讀前隔離選定metadata→required checkRead→原latest／target preview→app完成／Apply／export active selection重查。save receipt重用純entry/read並保持click-time原稿比較；切換版本取消舊預覽且提示重新預覽。backend核對磁碟bytes／SHA，browser完整值比較不獨立重算磁碟雜湊。Agent1／draft3／library1、14／19工具保持。見[契約](LIBRARY-REVISION.md)。下列各版為歷史。
 
 v0.69 保存回讀：pure library-receipt完整data ACK／metadata／draft3→注入同ID readonly read→原pending controller→DOM／retention。核對失敗保留原ID／click-time原稿，read4xx不能當成原save拒絕；確認後才retain，後續編修保持。backend既有read核對磁碟SHA／bytes，browser比較完整回讀原值，沒有獨立重算磁碟SHA或耐久性保證。見[契約](LIBRARY-SAVE-RECEIPT.md)。下列各版為歷史。
