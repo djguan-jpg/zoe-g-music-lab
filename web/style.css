@@ -91,3 +91,6 @@ td input[data-raw-number]{width:63px}.raw-value-note{display:block;font-size:.78
 .reader-search{padding:12px 0;margin-bottom:12px;border-bottom:1px solid var(--line);min-width:0}.reader-search input,.reader-search select{width:100%;min-width:0;box-sizing:border-box}.reader-search .actions{display:flex;flex-wrap:wrap}
 
 [data-accept-ready-invalid]{border-color:#a34935;background:#fff3ed;outline-offset:3px}
+
+/* Search state is ephemeral; literal long queries must fit narrow views. */
+#library-search-status,#library-search-hint{overflow-wrap:anywhere;min-width:0}

@@ -56,6 +56,7 @@
           onError(error,{retryable:false});
         }return false;}},
       cancelRead(){readToken++;preview?.cancel();},
+      cancelList(){listToken++;},
       cancel(){readToken++;listToken++;preview?.cancel();},
       pending:()=>pending?clone(pending.payload):null
     };

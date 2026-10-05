@@ -1,4 +1,8 @@
-# 進度：目前 v0.74.0
+# 進度：目前 v0.75.0
+
+## v0.75.0
+
+2026-10-05：全庫字面搜尋保存名稱及歌曲／分鏡／歌詞名；分頁核對完整觀察摘要，來源變更需重新搜尋。錯誤或晚回覆保留清單、預覽、編修與音檔。539 Python／879 JavaScript／78語法／四份Skill及148歷史ZIP通過；基本14／明確啟庫21工具，新search1獨立。 真CLI／Agent／MCP及工作台缺少搜尋已重現。純library_search request/index/hash/page/schema→metadata_snapshot→application四adapter，browser純result→latest/controller→literal DOM，固定/api/drafts/search。原生tab121實際15search／2list／1read，錯頁／unknown、same cursor retry、合成新增一版後舊來源拒絕、fresh24版、Case/body邊界、較早版預覽、cancel/late與healthy retry；原23版bytes／編修／WAV／dirty保持。390px提示313px、console0、tab關閉／viewport reset／server原handle93630 exit0。單程序全套碰到120s上限，profile保留；新固定兩隔離程序仍120s整體期限，完整discovery逐ID核對539測試各一次，71.812秒通過。v74指定ZIP原碼未改，外部launcher還原534／867；148歷史文字ZIP bytes相同。latest75／74／73、legal4／private／not_submitted保持，rolling active。
 
 ## v0.74.0
 

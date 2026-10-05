@@ -1,8 +1,8 @@
 # ZOE. G Music Lab
 
-目前版本 **v0.74.0**：保存、清單與回讀先核對完整產品／協定回覆，清單再核對所有版本資料、排序與分頁來源。錯誤或晚回覆保留目前清單、預覽、編修與音檔；未確認保存沿同一 ID 及原稿重試。534 Python／867 JavaScript／77語法／四份Skill及144歷史ZIP通過，基本14／啟庫20工具保持。 見[保存回覆與清單](docs/LIBRARY-RESULT.md)、[QA](docs/QA-v0.74.0.md)、[交接](docs/HANDOFF-v0.74.0.md)。
+目前版本 **v0.75.0**：全庫字面搜尋保存名稱及歌曲／分鏡／歌詞名；分頁核對完整觀察摘要，來源變更需重新搜尋。錯誤或晚回覆保留清單、預覽、編修與音檔。539 Python／879 JavaScript／78語法／四份Skill及148歷史ZIP通過；基本14／明確啟庫21工具，新search1獨立。 見[搜尋使用與分層](docs/LIBRARY-SEARCH.md)、[QA](docs/QA-v0.75.0.md)、[交接](docs/HANDOFF-v0.75.0.md)。
 
-上一輪 v0.73.0：CLI／Agent／MCP／HTTP 唯讀備份匯出，預設摘要、明確小型 ZIP 內嵌。見[QA](docs/QA-v0.73.0.md)。
+上一輪 v0.74.0：完整保存回覆與分頁來源核對，未確認保存以同一 ID 及原稿重試。見[QA](docs/QA-v0.74.0.md)。
 
 ## ZIP原文與差異（v0.40）
 

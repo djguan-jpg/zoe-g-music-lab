@@ -81,6 +81,9 @@ def acceptance_draft_schema():
 
 
 def payload_schema(operation):
+    if operation == 'draft_search':
+        from .library_search import request_schema
+        return request_schema()
     if operation == "audio_acceptance_review":
         return object_schema({"document": acceptance_draft_schema()}, ["document"], additionalProperties=False)
     if operation == 'lyrics_export_review':
@@ -361,4 +364,9 @@ def output_schema(operation=None):
         result['properties']['data'] = data_schema()
         result['properties']['files']['maxProperties'] = 0
         result['properties']['meta']['properties']['needs_review']['const'] = True
+    if operation == 'draft_search':
+        from .library_search import data_schema
+        result['properties']['data'] = data_schema()
+        result['properties']['files']['maxProperties'] = 0
+        result['properties']['meta']['properties']['needs_review']['const'] = False
     return result

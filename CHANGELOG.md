@@ -1,3 +1,11 @@
+# v0.75.0 · 2026-10-05
+
+全庫字面搜尋保存名稱及歌曲／分鏡／歌詞名；分頁核對完整觀察摘要，來源變更需重新搜尋。錯誤或晚回覆保留清單、預覽、編修與音檔。539 Python／879 JavaScript／78語法／四份Skill及148歷史ZIP通過；基本14／明確啟庫21工具，新search1獨立。
+
+保存版本原只能逐頁挑選。新增唯讀draft_search，literal case-sensitive匹配label及三種title，不讀正文／media；query與全庫可讀metadata／不可讀ID派生SHA，cursor pin拒絕來源或query變更。browser精確wire／data／全metadata／頁長／邊界核對，controller核對latest及所有已顯示ID才發布；查詢改動／cancel保留上一份清單及有效preview，重新整理切回全部版本。CLI／Agent／MCP／HTTP共用application，MCP需重新discovery。
+
+全套測試已超過原单程序120秒，保留timeout/profile收據；驗證launcher採固定2隔離程序，120秒整體期限保持，獨立完整discovery逐ID檢查不漏／不重複。Git指定source封裝使用同launcher。無新依賴／模型／外網／auth／path或write權限，Agent1／draft3／library1／backup1保持；產品75支持38–75，unknown76拒絕。見[契約](docs/LIBRARY-SEARCH.md)、[QA](docs/QA-v0.75.0.md)、[交接](docs/HANDOFF-v0.75.0.md)。
+
 # v0.74.0 · 2026-10-05
 
 保存、清單與回讀先核對完整產品／協定回覆，清單再核對所有版本資料、排序與分頁來源。錯誤或晚回覆保留目前清單、預覽、編修與音檔；未確認保存沿同一 ID 及原稿重試。534 Python／867 JavaScript／77語法／四份Skill及144歷史ZIP通過，基本14／啟庫20工具保持。
