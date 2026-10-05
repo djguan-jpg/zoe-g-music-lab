@@ -5,7 +5,7 @@
   const contract=typeof module!=='undefined'&&module.exports?require('../contracts/draft-v3.json'):root.MusicDraftContract;
   if(!contract||contract.version!==3)throw Error('草稿契約未載入或版本不支援');
   const Values=typeof module==='object'&&module.exports?require('./planning-values.js'):root.MusicPlanningValues;
-  const clock=value=>{try{return Values.number(value,'鏡頭時間');}catch{return NaN;}};
+  const clock=value=>{try{return Values.nonnegativeNumber(value,'鏡頭時間');}catch{return NaN;}};
   const draftFields=contract.fields,draftRows=contract.rows;
   function exactKeys(value, keys) {
     return value && typeof value==='object' && !Array.isArray(value) &&

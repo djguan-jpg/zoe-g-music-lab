@@ -4,7 +4,7 @@
 Never sort, fill, round or modify source seconds. Missing endpoints stop only
 the checks that depend on them; every original row still contributes counts.
 """
-from .common import number
+from .common import number, is_negative_number
 from .storyboard_frames import frame_index, SECONDS_TOLERANCE
 
 MAX_ISSUES = 200
@@ -47,7 +47,7 @@ def diagnose(duration_source, fps_source, shots):
         start, end = clock(shot['start'], 'shots', row, 'start'), clock(shot['end'], 'shots', row, 'end')
         valid = start is not None and end is not None
         for field, value in [('start', start), ('end', end)]:
-            if value is not None and not 0 <= value <= 14400 + SECONDS_TOLERANCE:
+            if value is not None and (is_negative_number(shot[field], field) or not 0 <= value <= 14400 + SECONDS_TOLERANCE):
                 add('shots', row, field, 'invalid_range', '時間需為非負且不超過14400秒的容差範圍')
                 valid = False
         if valid and end <= start:

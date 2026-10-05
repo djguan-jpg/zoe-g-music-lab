@@ -7,13 +7,17 @@
   const strip=s=>s.replace(whitespace,'');
   const numericWhitespace=/^[\u0009-\u000d\u0020\u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]+|[\u0009-\u000d\u0020\u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]+$/g;
   const fail=()=>{throw Error('請填寫有限十進位數字');};
+  const ascii=v=>Array.from(v.replace(numericWhitespace,''),c=>{const cp=c.codePointAt(0),zero=digitZeros.find(z=>cp>=z&&cp<z+10);return zero===undefined?c:String(cp-zero);}).join('');
   function number(v){
     if(typeof v==='string'){
-      v=Array.from(v.replace(numericWhitespace,''),c=>{const cp=c.codePointAt(0),zero=digitZeros.find(z=>cp>=z&&cp<z+10);return zero===undefined?c:String(cp-zero);}).join('');
+      v=ascii(v);
       const digits='[0-9](?:_?[0-9])*',decimal=new RegExp('^[+-]?(?:'+digits+'(?:\\.(?:'+digits+')?)?|\\.'+digits+')(?:[eE][+-]?'+digits+')?$');
       if(!decimal.test(v))fail();v=Number(v.replaceAll('_',''));
     }
     if(typeof v!=='number'||!Number.isFinite(v))fail();return v;
   }
-  const api={trim:strip,number};if(typeof module==='object'&&module.exports)module.exports=api;else root.MusicPlanningValues=api;
+  function negativeSource(v,n){const raw=typeof v==='string'?ascii(v):'',mantissa=raw.split(/[eE]/,1)[0];return n<0||raw.startsWith('-')&&/[1-9]/.test(mantissa);}
+  const isNegative=v=>negativeSource(v,number(v));
+  function nonnegativeNumber(v){const n=number(v);if(negativeSource(v,n))throw Error('時間需為非負數');return n;}
+  const api={trim:strip,number,isNegative,nonnegativeNumber};if(typeof module==='object'&&module.exports)module.exports=api;else root.MusicPlanningValues=api;
 })(typeof globalThis==='object'?globalThis:this);

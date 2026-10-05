@@ -16,6 +16,7 @@
   const same=(a,b)=>JSON.stringify(canonical(a))===JSON.stringify(canonical(b));
   function text(v,blank=false){if(typeof v!=='string'||!blank&&!strip(v))fail();return strip(v);}
   function number(v){try{return Values.number(v);}catch{fail();}}
+  function nonnegative(v){try{return Values.nonnegativeNumber(v);}catch{fail();}}
   function list(v,max,minimum=0){if(!Array.isArray(v)||v.length<minimum||v.length>max)fail();return v;}
   function jsonFile(files,name){if(!object(files)||typeof files[name]!=='string')fail();return J.parse(files[name],{maxBytes:maxJsonBytes,label:'設計 JSON'});}
   function assertSame(a,b){if(!same(a,b))fail();}
@@ -62,7 +63,7 @@
     if(Object.keys(motifs).length!==brief.motifs.length)fail();
     const shots=[],continuity=[],notes=[],states=new Map(motifEntries.map(([name])=>[name,[]]));let previous=null;
     list(brief.shots,1000,1).forEach((s,i)=>{
-      if(!object(s))fail();const start=number(s.start),end=number(s.end),name=text(s.motif),direction=s.screen_direction;
+      if(!object(s))fail();const start=nonnegative(s.start),end=nonnegative(s.end),name=text(s.motif),direction=s.screen_direction;
       if(!Object.hasOwn(motifs,name)||!['left','right','neutral'].includes(direction))fail();
       shots.push({shot:i+1,start,end,start_frame:Frames.frameIndex(start,fps),end_frame_exclusive:Frames.frameIndex(end,fps),
         ...Object.fromEntries(['section','purpose','visual','camera','transition'].map(k=>[k,text(s[k])]))});
