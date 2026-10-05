@@ -506,13 +506,15 @@ function renderCues(cues,ids){
 }
 storyboardSearchController=MusicStoryboardSearchDOM.bind(document,{version:MusicDeliveryVersions.current,
   capture:()=>{const entries=entriesFor('shots');return {ids:entries.map(e=>e.id),shots:entries.map(e=>Object.fromEntries(MusicStoryboardSearch.fields.map(k=>[k,e.value[k]]))),visible:state.tab==='storyboard'&&!$('storyboard').hidden,busy:state.busy,resultRevision:state.resultRevisions.storyboard||0};},
-  request:payload=>api('/api/storyboard-search',payload),
+  createAbort:()=>new AbortController(),
+  request:(payload,{signal})=>api('/api/storyboard-search',payload,false,signal),
   focusTarget:target=>{const row=$('shots').children[target.index],field=row?.querySelector(`[data-key="${target.field}"]`);if(state.busy||state.tab!=='storyboard'||!row||row.dataset.historyId!==target.id||!field||!field.isConnected||field.disabled||readValue(field)!==target.text)return false;focusShot(target.index,target.field);return document.activeElement===field;},
   onReport:(data,files)=>{setFiles(files,`分鏡原文搜尋 · 命中 ${data.total_matched_rows} 鏡 · 此批 ${data.matches.length} 鏡`);say('分鏡搜尋完成；選擇結果可展開原欄位，文字與時間保留。');},
   onError:error=>say(error.message+'；分鏡與原成果保留',true)});
 lyricsSearchController=MusicLyricsSearchDOM.bind(document,{version:MusicDeliveryVersions.current,
   capture:()=>{const entries=entriesFor('cues');return {ids:entries.map(e=>e.id),texts:entries.map(e=>e.value.text),visible:state.tab==='lyrics'&&!$('lyrics').hidden,busy:state.busy,resultRevision:state.resultRevisions.lyrics||0};},
-  request:payload=>api('/api/lyrics-search',payload),
+  createAbort:()=>new AbortController(),
+  request:(payload,{signal})=>api('/api/lyrics-search',payload,false,signal),
   focusTarget:target=>{const row=$('cues').children[target.index],field=row?.querySelector('.lyric-field');if(state.busy||state.tab!=='lyrics'||!row||row.dataset.historyId!==target.id||!field||readValue(field)!==target.text)return false;return focusEntry('cues',target.index,'new');},
   onReport:(data,files)=>{setFiles(files,`原句搜尋 · 命中 ${data.total_matched_rows} 句 · 此批 ${data.matches.length} 句`);say('原句搜尋完成；選擇結果可回到文字欄，時間與播放位置保留。');},
   onError:error=>say(error.message+'；歌詞與原成果保留',true)});
