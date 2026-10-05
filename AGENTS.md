@@ -250,3 +250,8 @@ audio_acceptance_input／audio-acceptance-input獨立純contract1：64KiB嚴格d
 ## v0.66 條件套用撤回
 
 draft-undo.createValueUndo純注入validator／隔離before與after／精確proposal→audio controller→DOM。history只一筆完整接受條件，Apply記actual capture after；載入checkpoint仍只確認檔案原document，adapter改寫值不可冒充保留原檔。Undo核對當前全部profile／custom／fields，再只改條件並復原以前loaded，confirmed／媒體／其他台保持；編修拒絕且record保留，success清preview／late token／record，projectLoaded／dispose清暫態。DOM成功focus可編修rates或profile，不聚焦停用Undo。無新schema／wire／Agent operation；產品66／明確來源38–66、14／19工具、Agent1／draft3／legal4／private／not_submitted保持。見[契約](docs/AUDIO-ACCEPTANCE-UNDO.md)。
+
+
+## v0.67 歌曲／分鏡報告接續
+
+planning-report-input純strict decode／全部來源診斷→readiness-report精確完整document比較→隔離raw panel；planning-import.panelDraft驗draft3與UI可表示畫幅／引用／方向→既有latest target preview→DOM明確Apply／actual after scopedUndo。1MiB入口保持，report1／Agent1／draft3／14／19 tools無新權限；kind與報告暫態不入草稿。原文／未完成數值／母題ID保持；未知或不符拒絕，來源一致不證明作者／權利。產品67／交付來源38–67，legal4／private／not_submitted保持。見[契約](docs/PLANNING-REPORT-INPUT.md)。

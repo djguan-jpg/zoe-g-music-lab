@@ -67,6 +67,7 @@ ASSETS = {"/delivery-versions.js": ("musiclab/assets/delivery-versions.js","text
           "/lyrics-review.js": ("musiclab/assets/lyrics-review.js", "text/javascript"),
           "/lyrics-export-review.js": ("musiclab/assets/lyrics-export-review.js", "text/javascript"),
           "/lyrics-export.js": ("web/lyrics-export.js", "text/javascript"),
+          "/planning-report-input.js": ("web/planning-report-input.js", "text/javascript"),
           "/audio-acceptance-input.js": ("web/audio-acceptance-input.js", "text/javascript"),
           "/audio-acceptance-review.js": ("web/audio-acceptance-review.js", "text/javascript"),
           "/audio-acceptance-review-dom.js": ("web/audio-acceptance-review-dom.js", "text/javascript"),

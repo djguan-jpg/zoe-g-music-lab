@@ -19,6 +19,14 @@
     throw Error(`${label}需為數字或數字文字`);}
   function list(value,label,limit){if(!Array.isArray(value)||value.length>limit)throw Error(`${label}需為不超過 ${limit} 項的清單`);return value;}
   function strings(value,label){return list(value,label,100).map(item=>string(item,label));}
+  function panelDraft(current,operation,panel){
+    if(!['music','storyboard'].includes(operation))throw Error('只支援歌曲或分鏡待辦來源');
+    const draft=Editor.validateDraft(current);draft.panels[operation]=structuredClone(panel);draft.tab=operation;
+    const checked=Editor.validateDraft(draft);
+    if(operation==='storyboard'&&!['','16:9','9:16','1:1','4:3'].includes(checked.panels.storyboard.fields['mv-ratio']))
+      throw Error('目前工作台無法表示這份報告的畫幅；請保留原檔，來源未載入');
+    return checked;
+  }
   function planningDraft(current,operation,brief){
     const draft=Editor.validateDraft(current);
     if(!['music','storyboard'].includes(operation))throw Error('只支援歌曲或分鏡需求');
@@ -102,6 +110,6 @@
       return {...shot,motif:names.get(motif_id)};
     })};
   }
-  const api={planningDraft,planningBrief,createBriefImport,requirementIssue};
+  const api={planningDraft,panelDraft,planningBrief,createBriefImport,requirementIssue};
   if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.MusicPlanning=api;
 })(typeof window==='undefined'?{}:window);

@@ -1,5 +1,7 @@
 # 本機 Agent 接口 v1
 
+v0.67 歌曲／分鏡報告接續：planning-report-input純完整來源診斷核對→planning-import限定panel proposal→既有讀檔／target preview→DOM明確載入及actual after Undo。1MiB原入口、raw字串與ID保持；無法表示的來源拒絕，不補寫／抹除。Agent1／draft3／14／19 tools保持，見[契約](PLANNING-REPORT-INPUT.md)。下列各版為歷史記錄。
+
 v0.66 條件套用撤回：共享pure validated value history→audio controller限定before／實際after→明確Undo→DOM成功焦點回原欄位。後續raw／profile／custom改動拒絕整份撤回，record保留；最近loaded復原與confirmed分開，媒體／其他台保持。Agent／CLI／HTTP與保存schemas無變更。見[契約](AUDIO-ACCEPTANCE-UNDO.md)。下列各版本為歷史記錄。
 
 v0.65 接續接受條件報告：pure input1→完整review1來源派生核對→隔離draft1→CLI或browser注入controller→明確預覽／套用。已載入與已確認下載各保留最近一個指紋，不以舊確認取代新載入。原Agent／MCP／HTTP payload、14／19 tools及Agent1／draft3保持；沒有報告路徑或媒體權限。見[契約](AUDIO-ACCEPTANCE-INPUT.md)。下列各版為歷史記錄。

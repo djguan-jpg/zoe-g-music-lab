@@ -1,3 +1,9 @@
+# v0.67.0 · 2026-10-05
+
+歌曲／分鏡完整待辦報告可接續原始欄位；先核對整份報告，再預覽、明確載入選定工作台。保留原始留白、文字、母題ID與音檔，沿既有限定撤回；不能表示的來源拒絕載入，原檔保留。506 Python／800 JavaScript／70語法／四份Skill與116歷史ZIP核對通過。
+
+既有需求選檔只接受完成的brief，無法接續Agent完整待辦報告。新增planning-report-input純檢查，重派生全部來源診斷並精確比較完整report1；planning-import隔離限定panel proposal，DOM沿既有current preview／明確Apply／actual after Undo。未知欄位含function／undefined不能被序列化忽略；一致來源不代表作者或權利證明。無新Agent／HTTP operation、依賴、模型或持久schema。見[契約](docs/PLANNING-REPORT-INPUT.md)、[驗證](docs/QA-v0.67.0.md)、[可逆交接](docs/HANDOFF-v0.67.0.md)。
+
 # v0.66.0 · 2026-10-05
 
 條件草稿／報告明確套用後，可撤回最近一次條件套用；完整核對實際套用後的條件，後續編修拒絕覆蓋。恢復原始未完成值與之前的載入留點，保留下載確認、音檔及其他工作台。成功撤回把鍵盤焦點接回可編修欄位。503 Python／794 JavaScript／69語法／四份Skill與112歷史ZIP核對通過。

@@ -1,4 +1,8 @@
-# 進度：目前 v0.66.0
+# 進度：目前 v0.67.0
+
+## v0.67.0
+
+2026-10-05：歌曲／分鏡完整待辦報告可接續原始欄位；先核對整份報告，再預覽、明確載入選定工作台。保留原始留白、文字、母題ID與音檔，沿既有限定撤回；不能表示的來源拒絕載入，原檔保留。506 Python／800 JavaScript／70語法／四份Skill與116歷史ZIP核對通過。 指定v66 ZIP503／794獨立還原通過。native tab112使用實際Agent music_review／storyboard_review檔案，preview未修改，Apply後HTTP完整wire／files與Agent相同，原CRLF、未知BPM、空白小節／時間與motif-7保持。後續編修阻止Undo／Apply；錯scope、notes、schema2與未支援方向拒絕且原成果保留。原完成需求仍經HTTP核對；390px Enter載入聚焦storyboard、note有界、console0，tab關閉／viewport reset／server90815 exit0。legal4／private／not_submitted、Agent1／draft3／14／19 tools保持，latest67／66／65受保護，exact-source／private PR／release／遠端驗證依收據，rolling active。
 
 ## v0.66.0
 
