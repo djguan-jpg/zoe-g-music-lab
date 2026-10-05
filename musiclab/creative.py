@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 import csv
 import io
-from .common import json_text, number, text
+from .common import json_text, number, text, nonnegative_number
 from .storyboard_frames import frame_index, frame_timeline, SECONDS_TOLERANCE
 
 
@@ -75,8 +75,8 @@ def storyboard_bundle(brief):
     for index, source in enumerate(source_shots, 1):
         if not isinstance(source, dict):
             raise ValueError(f"鏡頭 {index} 需為物件")
-        start = number(source.get("start"), f"鏡頭 {index} start")
-        end = number(source.get("end"), f"鏡頭 {index} end")
+        start = nonnegative_number(source.get("start"), f"鏡頭 {index} start")
+        end = nonnegative_number(source.get("end"), f"鏡頭 {index} end")
         if start < 0 or end <= start or end > duration + SECONDS_TOLERANCE:
             raise ValueError(f"鏡頭 {index} 時間超出範圍或沒有正時長")
         if abs(start - previous_end) > SECONDS_TOLERANCE:

@@ -33,7 +33,7 @@
     if(!panel.shots.length)add('fields',0,'shots','no_shots','尚無鏡頭，請新增或接續分鏡起稿');
     panel.shots.forEach((shot,i)=>{
       const row=i+1,start=clock(shot.start,'shots',row,'start'),end=clock(shot.end,'shots',row,'end');let valid=start!==null&&end!==null;
-      for(const [field,value] of [['start',start],['end',end]])if(value!==null&&!(value>=0&&value<=14400+F.secondsTolerance)){add('shots',row,field,'invalid_range','時間需為非負且不超過14400秒的容差範圍');valid=false;}
+      for(const [field,value] of [['start',start],['end',end]])if(value!==null&&(V.isNegative(shot[field])||!(value>=0&&value<=14400+F.secondsTolerance))){add('shots',row,field,'invalid_range','時間需為非負且不超過14400秒的容差範圍');valid=false;}
       if(valid&&end<=start){add('shots',row,'end','nonpositive_duration','結束需晚於開始');valid=false;}
       if(valid&&duration!==null&&end>duration+F.secondsTolerance){add('shots',row,'end','beyond_declaration','鏡尾超出作品宣告時長的容差範圍');valid=false;}
       const previous=rows.at(-1);

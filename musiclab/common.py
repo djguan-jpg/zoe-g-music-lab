@@ -17,6 +17,30 @@ def number(value, label):
     return result
 
 
+def _negative_source(value, numeric):
+    """After number validation, retain the sign of an underflowing decimal.
+
+    Python float's existing Unicode Nd / underscore / whitespace grammar stays
+    authoritative. An exponent digit does not make a zero mantissa negative.
+    Already numeric negative zero has no nonzero decimal source to recover.
+    """
+    raw = value.strip() if isinstance(value, str) else ''
+    mantissa = raw.lower().split('e', 1)[0]
+    return numeric < 0 or raw.startswith('-') and any(
+        char.isdecimal() and int(char) != 0 for char in mantissa)
+
+
+def is_negative_number(value, label):
+    return _negative_source(value, number(value, label))
+
+
+def nonnegative_number(value, label):
+    result = number(value, label)
+    if _negative_source(value, result):
+        raise ValueError(f'{label} 時間需為非負數')
+    return result
+
+
 def text(value, label):
     if not isinstance(value, str) or not value.strip():
         raise ValueError(f"{label} 不可空白")
