@@ -41,13 +41,13 @@
     return {profile:d.profile,acceptance:limits};
   }
   function decode(raw,size){return validate(json.decode(raw,{size,maxBytes,label:'接受條件草稿'}));}
-  function createController({capture,media=()=>null,replace,read,allowed=()=>true,events,onState=()=>{},onChange=()=>{},onError=()=>{}}){
-    const initial=fingerprint(capture());let retained=null,pendingDownload=null,preview=null,sequence=0,listening=false;
+  function createController({capture,media=()=>null,replace,read,decodeSelection=(raw,size)=>({document:decode(raw,size),kind:'draft'}),allowed=()=>true,events,onState=()=>{},onChange=()=>{},onError=()=>{}}){
+    const initial=fingerprint(capture());let loaded=null,confirmed=null,pendingDownload=null,preview=null,sequence=0,listening=false;
     const current=()=>fingerprint(capture());
     function status(){
-      const key=current(),dirty=key!==initial&&key!==retained;
-      return {dirty,mode:!dirty?(key===retained?'retained':'initial'):pendingDownload?(key===pendingDownload.key?'download_unconfirmed':'changed_after_download'):'unretained',
-        pendingDownload:!!pendingDownload,preview:preview?structuredClone(preview.document):null,allowed:allowed()};
+      const key=current(),retained=key===loaded||key===confirmed,dirty=key!==initial&&!retained;
+      return {dirty,mode:!dirty?(retained?'retained':'initial'):pendingDownload?(key===pendingDownload.key?'download_unconfirmed':'changed_after_download'):'unretained',
+        pendingDownload:!!pendingDownload,preview:preview?structuredClone(preview.document):null,previewKind:preview?.kind||null,allowed:allowed()};
     }
     function beforeLeave(event){let dirty=true;try{dirty=status().dirty;}catch{}if(dirty){event.preventDefault();event.returnValue='';}}
     function refresh(){
@@ -66,22 +66,24 @@
       const matches=()=>{try{return token===sequence&&allowed()&&current()===key&&media()===source;}catch{return false;}};
       try{
         if(!file||!Number.isSafeInteger(file.size)||file.size<1||file.size>maxBytes)throw Error('接受條件草稿最多 64 KiB');
-        const document=decode(await read(file),file.size);
+        const selection=decodeSelection(await read(file),file.size);
+        if(!selection||!['draft','review'].includes(selection.kind))throw Error('接受條件檔案來源不支援');
+        const document=validate(selection.document);
         if(!matches())return false;
-        preview={document,key,source};refresh();return true;
+        preview={document,kind:selection.kind,key,source};refresh();return true;
       }catch(error){if(matches())onError(error);return false;}
     }
     function apply(){
       if(!preview||!allowed())return false;
       if(current()!==preview.key||media()!==preview.source){cancel();onError(Error('預覽後條件或音檔已改動；請重新選檔'));return false;}
-      const document=validate(preview.document);replace(document);retained=fingerprint(document);sequence++;preview=null;onChange();refresh();return true;
+      const document=validate(preview.document);replace(document);loaded=fingerprint(document);sequence++;preview=null;onChange();refresh();return true;
     }
     function download(send=()=>{}){
       if(!allowed())throw Error('目前操作尚未完成，請稍候');
       const document=validate(capture()),content=JSON.stringify(document,null,2)+'\n';
       const key=fingerprint(document);send(content);pendingDownload={key};refresh();return content;
     }
-    function confirm(){if(!pendingDownload||!allowed())return false;retained=pendingDownload.key;pendingDownload=null;refresh();return true;}
+    function confirm(){if(!pendingDownload||!allowed())return false;confirmed=pendingDownload.key;pendingDownload=null;refresh();return true;}
     return {capture:()=>validate(capture()),inspect,apply,cancel,changed,refresh,download,confirm,status,
       projectLoaded(){cancel();if(capture().custom){replace({...validate(capture()),custom:false});onChange();}refresh();},
       dispose(){if(listening)events.removeEventListener('beforeunload',beforeLeave);listening=false;sequence++;preview=null;}};

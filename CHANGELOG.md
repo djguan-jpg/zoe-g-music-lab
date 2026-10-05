@@ -1,3 +1,9 @@
+# v0.65.0 · 2026-10-05
+
+完整條件檢查報告可接續原始條件；Python／JS先核對整份報告，再由CLI選定檔案或工作台預覽／明確套用。保留未完成原文與音檔，錯誤／未知／晚到檔案拒絕。已載入條件與已確認下載分別留點，確認較早下載不再誤標新條件。503 Python／785 JavaScript／69語法／四份Skill，50份跨語言輸入與108歷史ZIP核對通過。
+
+原Agent報告已含完整來源，但原草稿decoder拒絕直接接續。新增純input契約，不放寬原draft decoder或Agent payload；完整review1從source重新派生，逐欄核對後只取隔離draft1。工作台保留原生File／current快照、預覽與明確套用；CLI沿原排他輸出。保存留點拆為最近載入與最近確認下載兩個有限指紋；後續編修仍需另存。見[契約](docs/AUDIO-ACCEPTANCE-INPUT.md)、[驗證與限制](docs/QA-v0.65.0.md)、[還原與交接](docs/HANDOFF-v0.65.0.md)。
+
 # v0.64.0 · 2026-10-05
 
 自訂接受條件一次檢查三欄、點選定位並輸出共用來源核對報告；未完成原文與音檔保留，錯／晚回覆不覆蓋。CLI／Agent／MCP／HTTP同readonly操作，基本14／啟庫19工具。修正有界極大指數的Decimal例外。497 Python／778 JavaScript／68語法／四份Skill、85份跨語言來源与104歷史ZIP通過。

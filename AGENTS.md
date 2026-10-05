@@ -240,3 +240,8 @@ json_document.utf8_bytes與json-document.assertUnicode共享既有嚴格Unicode�
 ## v0.64 自訂接受條件診斷
 
 pure field_values／fieldValues沿原精確正整數文法→review1全部三欄→application readonly與四adapter；JS whole source／JSON／MD／current產品核對→readiness-state快照→獨立DOM定位。custom false保留未用原值不阻擋，zero issue始終needs_review；不冒充音檔接受。極大零指數Decimal InvalidOperation轉受控正整數錯誤，原小數不捨入。基本14／啟庫19、Agent1／draft3與legal4／private／not_submitted保持；產品64／明確交付38–64。見[契約](docs/AUDIO-ACCEPTANCE-REVIEW.md)。
+
+
+## v0.65 條件報告接續
+
+audio_acceptance_input／audio-acceptance-input獨立純contract1：64KiB嚴格decoder→整份review1重新派生並核對→隔離source draft1。CLI兩個既有明確選檔入口與browser注入decodeSelection支援；原draft decoder與Agent／MCP／HTTP payload保持draft-only，無新operation。previewKind暫態不入草稿，current／native File／busy／late與明確Apply保持。條件保存以最近loaded與confirmed兩個指紋留點，較早download確認不能取消新loaded；非保存成功或自動保存承諾。產品65／明確來源38–65，14／19 tools／Agent1／draft3／legal4／private／not_submitted保持。見[契約](docs/AUDIO-ACCEPTANCE-INPUT.md)。

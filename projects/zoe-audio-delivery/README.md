@@ -52,3 +52,7 @@ python music_lab.py audio --input '自己的歌曲.wav' --profile video --out ou
 ## v0.64 三欄條件檢查
 
 「檢查自訂條件」一次列出取樣率、位元深度与聲道數待辦；「建立條件檢查報告」保留原值與所選音檔。CLI audio-acceptance-review明確--input原條件draft1／--out輸出；0=可解析、2=有待辦、1=輸入或I/O錯誤，預設不覆寫。Agent／MCP／HTTP使用同readonly operation，見[完整契約](../../docs/AUDIO-ACCEPTANCE-REVIEW.md)。
+
+## v0.65 接續條件報告
+
+實際Agent輸出的audio-acceptance-review.json可直接在工作台選檔：核對→預覽→明確套用原始條件。CLI的audio-acceptance-review --input與audio --acceptance-draft接受原草稿或完整來源一致的報告；上限64KiB。原音檔、條件原文與其他工作台保留，報告不是媒體通過或作者身分證明。見[完整契約](../../docs/AUDIO-ACCEPTANCE-INPUT.md)。

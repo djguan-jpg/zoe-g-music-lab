@@ -20,6 +20,7 @@ from .delivery_review import compare as compare_delivery, descriptor as comparis
 from .delivery_report import files as delivery_report_files, descriptor as report_descriptor
 from .audio_acceptance import validate as validate_acceptance, prepare as prepare_acceptance, descriptor as acceptance_descriptor
 from .audio_acceptance_review import review_bundle as acceptance_review_bundle, descriptor as acceptance_review_descriptor
+from .audio_acceptance_input import descriptor as acceptance_input_descriptor
 from .common import json_text
 from .loudness import descriptor as loudness_descriptor
 from .storyboard_frames import descriptor as frames_descriptor
@@ -117,6 +118,7 @@ def capabilities(draft_library=None, backup_source=None, delivery_source=None):
             "delivery_comparison_report": report_descriptor(),
             "audio_acceptance_draft": acceptance_descriptor(),
             "audio_acceptance_review": acceptance_review_descriptor(),
+            "audio_acceptance_input": acceptance_input_descriptor(),
             "audio_loudness": loudness_descriptor(),
             "storyboard_frames": frames_descriptor(),
             "input_schemas": {operation: payload_schema(operation) for operation in operations},

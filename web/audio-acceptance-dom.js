@@ -6,21 +6,21 @@
     const capture=()=>({format:model.format,schema_version:1,profile:readValue($('audio-profile')),custom:$('audio-custom').checked,
       fields:Object.fromEntries(keys.map(k=>[k,readValue($('audio-accept-'+k))]))});
     const replace=d=>{writeValue($('audio-profile'),d.profile);$('audio-custom').checked=d.custom;keys.forEach(k=>writeValue($('audio-accept-'+k),d.fields[k]));};
-    const controller=model.createController({capture,replace,media:()=>$('audio-file').files[0]||null,read:file=>file.arrayBuffer(),events,allowed,onChange,onError,
+    const controller=model.createController({capture,replace,media:()=>$('audio-file').files[0]||null,read:file=>file.arrayBuffer(),decodeSelection:root.MusicAudioAcceptanceInput.decode,events,allowed,onChange,onError,
       onState:value=>{
         $('audio-custom-fields').hidden=!$('audio-custom').checked;
         $('audio-accept-preview').hidden=!value.preview;$('audio-accept-apply').disabled=!value.preview||!value.allowed;
         $('audio-accept-cancel').disabled=!value.allowed;
         $('audio-accept-file').disabled=!value.allowed;
         $('audio-accept-export-button').disabled=!value.allowed;$('audio-accept-confirm').disabled=!value.pendingDownload||!value.allowed;
-        const notes={initial:'接受條件尚未編修。',retained:'目前條件與載入或已確認的條件草稿一致。',unretained:'接受條件尚未另存；請下載條件草稿。',
+        const notes={initial:'接受條件尚未編修。',retained:'目前條件與已載入檔案或已確認的條件草稿一致。',unretained:'接受條件尚未另存；請下載條件草稿。',
           download_unconfirmed:'條件草稿下載已送出；核對檔案後再確認。',changed_after_download:'下載後條件又有改動，請另存目前條件。'};
         $('audio-accept-note').textContent=value.error||notes[value.mode];
         if(value.preview){
           $('audio-accept-preview-content').value=JSON.stringify(value.preview,null,2);
           let note;try{const prepared=model.prepare(value.preview);note=`套用後${value.preview.custom?'使用自訂值':'使用示範條件'}：${prepared.acceptance.rates.join(' / ')} Hz；${prepared.acceptance.bits.join(' / ')} bit；${prepared.acceptance.channels.join(' / ')} 聲道。`;}
           catch(error){note='草稿保留未完成原值，可以套用後繼續編修；分析前請補齊接受值。 '+error.message;}
-          $('audio-accept-preview-note').textContent=note;
+          $('audio-accept-preview-note').textContent=(value.previewKind==='review'?'來自條件檢查報告；接續其中原始條件，音檔仍須另行分析。 ':'')+note;
         }
       }});
     keys.forEach(k=>$('audio-accept-'+k).addEventListener('input',()=>controller.changed()));
