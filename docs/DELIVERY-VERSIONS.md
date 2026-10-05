@@ -106,3 +106,8 @@ current0.79.0、明確supported38–79共42項，unknown80拒絕；164歷史文�
 ## v0.80
 
 current0.80.0、supported38–80共43項、unknown81拒絕；168歷史ZIP/manifest與v79實際producer bytes一致。每輪projects.version=current、release_version=v+current為預期tag；封裝前從selected commit兩個固定blob核對，不從working metadata推測；實際發佈另記remote evidence。manifest1新增checks.release_metadata，Agent1/draft3/14/21保持。見[發佈契約](RELEASE-METADATA.md)。
+
+
+## v0.81
+
+current0.81.0、supported38–81共44項、unknown82拒絕；172歷史ZIP/manifest與v80實際producer bytes一致。projects.version=current、release_version=v+current為預期tag，封裝與實際publication仍各核對。新增目前句導航不改領域wire／Agent1/draft3／14/21，見[分層契約](CURRENT-CUE.md)。

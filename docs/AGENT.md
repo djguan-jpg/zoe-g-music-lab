@@ -1,5 +1,7 @@
 # 本機 Agent 接口 v1
 
+v0.81目前句：pure current-cue→injected capture/focus controller→literal DOM→app共同媒體快照，明確定位原列文字；顯示更新不搶焦點。只增加兩固定JS資產路由，沒有新Agent/HTTP operation、path/write/network能力；14/21／Agent1/draft3／領域schema保持，產品81／來源38–81／unknown82。見[分層契約](CURRENT-CUE.md)。
+
 v0.80發佈資料：pure release_metadata→selected Git metadata/policy→package前及archive核對，expected tag與實際publication分開。未新增Agent operation、path/write/network能力；14/21／Agent1/draft3與領域schemas保持，產品80／來源38–80／unknown81。見[發佈契約](RELEASE-METADATA.md)。
 
 v0.79逐句標記撤回：pure cue-stamp-edit→注入row／media／實際after重查controller→literal DOM／native player組合。只還原最近目標時間，文字／其他句／media保持；載入Agent新歌詞清除頁面歷史，預覽保持。未新增Agent工具或網路／路徑／寫檔能力；14/21／Agent1／draft3及原schemas保持。新產品79／交付明確38–79／unknown80，詳見[逐句撤回契約](CUE-STAMP-EDIT.md)。
