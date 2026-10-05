@@ -1,3 +1,9 @@
+# v0.73.0 · 2026-10-05
+
+新增唯讀草稿庫備份匯出；Agent／MCP預設摘要，明確選擇才內嵌不超過512KiB的ZIP，亦可指定保存ID。完整ZIP與來源核對，CLI／HTTP沿共用application。532 Python／853 JavaScript／76語法／四份Skill及140歷史ZIP通過；啟庫20工具，基本14保持。
+
+補齊CLI/工作台已有備份而Agent/MCP只能inspect/restore的流程缺口。新增draft_backup_export、CLI draft backup-export及loopback POST /api/drafts/backup/export。metadata含完整ZIP hash/bytes/count/selection及實際revision IDs；explicit include_archive只回<=512KiB base64，不寫檔。pure codec重查本次原bytes完整CRC/manifest/revision hashes與producer摘要及selected IDs。獨立export1、可發現的strict輸入／輸出schema；MCP新工具readonly。原backup1/prepare/file backup、Agent1/draft3/library1維持。見[契約](docs/BACKUP-EXPORT.md)、[QA](docs/QA-v0.73.0.md)、[交接](docs/HANDOFF-v0.73.0.md)。
+
 # v0.72.0 · 2026-10-05
 
 備份下載先核對完整摘要、串流位元組與 SHA-256，再交給瀏覽器；新增取消下載，晚回覆保留編修與音檔，已斷線回應只結束該連線。521 Python／853 JavaScript／76語法／四份Skill及136歷史ZIP通過。瀏覽器保存檔案仍未驗證。

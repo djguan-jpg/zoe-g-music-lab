@@ -280,3 +280,8 @@ native backup-file最多32MiB File.arrayBuffer／大小核對／WebCrypto SHA→
 ## v0.72 備份下載及取消
 
 pure backup-download exact backup1 descriptor／knownrelative token URL／counts／32MiB bytes → required injected prepare/read/hash/send latest controller → native bounded stream及WebCrypto backup-file.sha256 → shared text-download-dom createByteSender有限URL ledger →DOM。text domain的8MiB／Unicode／name規則保持，generic sender只接受domain已驗prepared，不自作path／ZIP驗證。讀後、hash後及handoff前current重查；cancel/pagehide abort自身request，late success/error不覆蓋，dispose清自身URLs/timers/listeners，BFCache新明確下載可用。取消headers/body的ConnectionError只關回應，其他I/O錯誤保持。sent是click+schedule，保存未驗證；沒有獨立ZIP語義parse或作者／權利證明。產品72／來源38–72、14／19、Agent1／draft3／library1／backup1／legal4／private／not_submitted保持。見[契約](docs/BACKUP-DOWNLOAD.md)。
+
+
+## v0.73 唯讀備份匯出
+
+純backup_export checked_request／shared selected_ids→原immutable export_backup→同一次raw完整read_backup／CRC／manifest／revision hashes與producer摘要/selection/IDs核對→不可變bytes/hash/selection/IDs PreparedBackupExport→共用application→CLI stdout／Agent JSONlines／MCP strict outputSchema／HTTP readonly export。metadata預設，explicit include_archive=true且ZIP<=512KiB才base64；超限在encode前拒絕。JSON不可選來源/目的路徑、overwrite、media或未保存draft；來源由啟動時明確草稿庫。export1與backup1/draft3/library1/Agent1分開，未知輸入欄位拒絕；schema形狀不代替ZIP/來源核對。新工具readonly，基本14/啟庫20需重新discovery；原backup/prepare/inspect/restore語義保持。沒有自動寫檔、耐久或全庫原子快照承諾。產品73/來源38–73/unknown74、legal4/private/not_submitted保持，見[契約](docs/BACKUP-EXPORT.md)。

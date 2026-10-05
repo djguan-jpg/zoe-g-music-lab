@@ -265,7 +265,8 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
             operations = {"/api/music": "music", "/api/storyboard": "storyboard", "/api/lyrics": "lyrics",
                           "/api/storyboard-seed": "storyboard_seed",
                           "/api/lyrics-seed": "lyrics_seed", "/api/lyrics-review": "lyrics_review", "/api/lyrics-export-review": "lyrics_export_review", "/api/audio-acceptance-review": "audio_acceptance_review", "/api/music-review": "music_review", "/api/storyboard-review": "storyboard_review", "/api/storyboard-timing-review": "storyboard_timing_review",
-                          "/api/drafts/save": "draft_save", "/api/drafts/list": "draft_list", "/api/drafts/read": "draft_read"}
+                          "/api/drafts/save": "draft_save", "/api/drafts/list": "draft_list", "/api/drafts/read": "draft_read",
+                          "/api/drafts/backup/export": "draft_backup_export"}
             if route.path not in operations:
                 return self.reply(404, '{"error":"找不到此操作"}')
             return self.reply(200, json_text(build(operations[route.path], data,

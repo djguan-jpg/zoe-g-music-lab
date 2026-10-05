@@ -130,6 +130,14 @@ def payload_schema(operation):
                                     {'required':['seed'], 'not':{'anyOf':[{'required':[key]} for key in ('music','fps','bars_per_shot')]}}])
     if operation == "draft_backup_inspect":
         return object_schema({}, (), additionalProperties=False)
+    if operation == 'draft_backup_export':
+        from .library_contract import ID_PATTERN, MAX_ENTRIES
+        return object_schema({'ids': {'type': 'array', 'minItems': 1, 'maxItems': MAX_ENTRIES,
+                                      'uniqueItems': True, 'items': {'type': 'string', 'pattern': '^'+ID_PATTERN+'$'},
+                                      'description': 'Explicit immutable revision IDs only; omit for all. Never paths.'},
+                              'include_archive': {'type': 'boolean', 'default': False,
+                                                  'description': 'Explicitly include checked ZIP base64 only when archive<=512 KiB; no filesystem write'}},
+                             (), additionalProperties=False)
     if operation == "draft_backup_restore":
         return object_schema({"backup_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$",
             "description": "SHA-256 from preview of the backup selected at process launch"}},
@@ -339,8 +347,8 @@ def input_schema(operation):
     return object_schema({"payload": payload_schema(operation)}, ("payload",), additionalProperties=False)
 
 
-def output_schema():
-    return object_schema({"files": {"type": "object", "additionalProperties": {"type": "string"},
+def output_schema(operation=None):
+    result = object_schema({"files": {"type": "object", "additionalProperties": {"type": "string"},
                                     "description": "Returned text artifacts, not files saved to disk"},
                           "data": {"type": "object", "description": "Domain result; varies by operation"},
                           "meta": object_schema({"version": {"type": "string"},
@@ -348,3 +356,9 @@ def output_schema():
                                                  "needs_review": {"type": "boolean"}},
                                                 ("version", "protocol_version", "needs_review"), additionalProperties=False)},
                          ("files", "data", "meta"), additionalProperties=False)
+    if operation == 'draft_backup_export':
+        from .backup_export import data_schema
+        result['properties']['data'] = data_schema()
+        result['properties']['files']['maxProperties'] = 0
+        result['properties']['meta']['properties']['needs_review']['const'] = True
+    return result

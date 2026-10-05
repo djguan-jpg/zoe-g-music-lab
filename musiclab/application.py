@@ -41,6 +41,7 @@ from .draft_contract import MAX_DRAFT_BYTES
 from .draft_library import LIBRARY_SCHEMA_VERSION, MAX_ENTRIES
 from .draft_backup import (BACKUP_SCHEMA_VERSION, MAX_BACKUP_BYTES, MAX_EXPANDED_BYTES,
                            export_backup, inspect_backup, restore_backup)
+from .backup_export import checked_request as checked_backup_export, prepare as prepare_backup_export, descriptor as backup_export_descriptor
 
 PROTOCOL_VERSION = 1
 MAX_REQUEST_BYTES = MAX_JSON_BYTES
@@ -64,6 +65,7 @@ LIBRARY_OPERATIONS = {
     "draft_save": "Save an immutable revision only in the explicitly selected local library; no media",
     "draft_list": "List metadata from the explicitly selected library; no arbitrary path access",
     "draft_read": "Read a saved revision and verify its hash and draft shape before returning it",
+    "draft_backup_export": "Export a fully checked backup from the explicitly selected library; metadata by default, explicit include_archive=true only for ZIP<=512 KiB; optional saved IDs, no paths or filesystem writes",
     "draft_backup_inspect": "Validate the backup selected at launch and preview conflicts; no restore",
     "draft_backup_restore": "Restore the selected backup after confirming its SHA-256; never overwrite revisions",
 }
@@ -98,6 +100,7 @@ def capabilities(draft_library=None, backup_source=None, delivery_source=None):
                               "max_draft_bytes": MAX_DRAFT_BYTES, "max_revisions": MAX_ENTRIES, "default_page_size": 20},
             "draft_backup": {"backup_schema_version": BACKUP_SCHEMA_VERSION, "source_selected": backup_source is not None,
                              "max_archive_bytes": MAX_BACKUP_BYTES, "max_expanded_bytes": MAX_EXPANDED_BYTES},
+            "draft_backup_export": backup_export_descriptor(),
             "storyboard_seed": {"schema_version": SEED_SCHEMA_VERSION, "max_slots": MAX_SLOTS,
                                 "status": "timing_seed_incomplete", "media_generated": False},
             "lyrics_seed": {"schema_version": LYRICS_SEED_SCHEMA_VERSION, "max_source_bytes": MAX_SOURCE_BYTES,
@@ -174,6 +177,7 @@ def build(operation, payload, *, audio_source=None, draft_library=None, backup_s
         required, optional = {"draft_save": ({"draft", "label", "id"}, set()),
                               "draft_list": (set(), {"limit", "cursor"}),
                               "draft_read": ({"id"}, set()), "draft_backup_inspect": (set(), set()),
+                              "draft_backup_export": (set(), {"ids", "include_archive"}),
                               "draft_backup_restore": ({"backup_sha256"}, set())}[operation]
         if not required <= set(payload) or set(payload) - required - optional:
             raise ValueError("草稿庫操作欄位錯誤；不能指定路徑或覆寫版本")
@@ -185,6 +189,10 @@ def build(operation, payload, *, audio_source=None, draft_library=None, backup_s
             data = draft_library.list(payload.get('limit', 20), payload.get('cursor'))
         elif operation == "draft_backup_inspect":
             data = inspect_backup(draft_library, backup_source)
+        elif operation == 'draft_backup_export':
+            request = checked_backup_export(payload)
+            raw, summary = export_library_backup(draft_library, request['ids'])
+            data = prepare_backup_export(raw, summary, request['ids']).summary(request['include_archive'])
         else:
             data = restore_backup(draft_library, backup_source, payload['backup_sha256'])
         return Result({}, data, operation != 'draft_list')

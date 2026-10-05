@@ -129,7 +129,7 @@ class MusicReviewTests(unittest.TestCase):
         schema=tool['inputSchema']['properties']['payload'];self.assertFalse(schema['additionalProperties']);self.assertEqual(schema['required'],['panel'])
         self.assertEqual(schema['properties']['panel']['properties']['fields']['properties']['music-bpm'],{'type':'string'})
         self.assertNotIn('minItems',schema['properties']['panel']['properties']['sections'])
-        with tempfile.TemporaryDirectory() as folder:self.assertEqual(len(tool_list(DraftLibrary(folder))),19)
+        with tempfile.TemporaryDirectory() as folder:self.assertEqual(len(tool_list(DraftLibrary(folder))),20)
 
     def test_loopback_http_uses_same_application_boundary(self):
         server=WorkbenchServer(('127.0.0.1',0),WorkbenchHandler);server.draft_library=None;thread=threading.Thread(target=server.serve_forever);thread.start()

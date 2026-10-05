@@ -236,7 +236,7 @@ class DraftAdapterTests(unittest.TestCase):
             result = command([config['command'], *config['args']], cwd=folder, input=''.join(json.dumps(r, ensure_ascii=False)+'\n' for r in requests))
             replies = [json.loads(line) for line in result.stdout.splitlines()]
             tools = {t['name']: t for t in replies[1]['result']['tools']}
-            self.assertEqual(len(tools),19); self.assertFalse(tools['draft_save']['annotations']['readOnlyHint'])
+            self.assertEqual(len(tools),20); self.assertFalse(tools['draft_save']['annotations']['readOnlyHint'])
             self.assertTrue(tools['draft_read']['annotations']['readOnlyHint'])
             self.assertEqual(replies[3]['result']['structuredContent']['data']['draft'], draft())
             self.assertFalse(replies[2]['result'].get('isError', False)); self.assertEqual(len([p for p in library.iterdir() if p.is_dir()]), 1)
