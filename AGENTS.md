@@ -245,3 +245,8 @@ pure field_values／fieldValues沿原精確正整數文法→review1全部三欄
 ## v0.65 條件報告接續
 
 audio_acceptance_input／audio-acceptance-input獨立純contract1：64KiB嚴格decoder→整份review1重新派生並核對→隔離source draft1。CLI兩個既有明確選檔入口與browser注入decodeSelection支援；原draft decoder與Agent／MCP／HTTP payload保持draft-only，無新operation。previewKind暫態不入草稿，current／native File／busy／late與明確Apply保持。條件保存以最近loaded與confirmed兩個指紋留點，較早download確認不能取消新loaded；非保存成功或自動保存承諾。產品65／明確來源38–65，14／19 tools／Agent1／draft3／legal4／private／not_submitted保持。見[契約](docs/AUDIO-ACCEPTANCE-INPUT.md)。
+
+
+## v0.66 條件套用撤回
+
+draft-undo.createValueUndo純注入validator／隔離before與after／精確proposal→audio controller→DOM。history只一筆完整接受條件，Apply記actual capture after；載入checkpoint仍只確認檔案原document，adapter改寫值不可冒充保留原檔。Undo核對當前全部profile／custom／fields，再只改條件並復原以前loaded，confirmed／媒體／其他台保持；編修拒絕且record保留，success清preview／late token／record，projectLoaded／dispose清暫態。DOM成功focus可編修rates或profile，不聚焦停用Undo。無新schema／wire／Agent operation；產品66／明確來源38–66、14／19工具、Agent1／draft3／legal4／private／not_submitted保持。見[契約](docs/AUDIO-ACCEPTANCE-UNDO.md)。

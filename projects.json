@@ -1,6 +1,6 @@
 {
   "suite": "ZOE. G Music Lab",
-  "version": "0.65.0",
+  "version": "0.66.0",
   "created_on": "2026-10-01",
   "founder": {
     "display_name": "ZOE. G",
@@ -9,7 +9,7 @@
   "ai_collaboration": "Codex assisted with scope, original skill text, implementation and validation",
   "publication": "github_private",
   "repository": "https://github.com/djguan-jpg/zoe-g-music-lab",
-  "release_version": "v0.65.0",
+  "release_version": "v0.66.0",
   "platform_claim": "not_submitted",
   "projects": [
     {
@@ -38,7 +38,7 @@
       "title": "ZOE Audio Delivery",
       "entry": "projects/zoe-audio-delivery/SKILL.md",
       "cli": "audio",
-      "scope": "PCM evidence, gated integrated loudness, quiet edges, stereo correlation and portable raw delivery-condition drafts"
+      "scope": "PCM evidence, gated integrated loudness, quiet edges, stereo correlation and portable raw delivery-condition drafts; whole-source reviewed condition file handoff and scoped explicit Apply undo"
     }
   ],
   "license": "PolyForm-Noncommercial-1.0.0",

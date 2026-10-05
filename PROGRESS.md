@@ -1,4 +1,8 @@
-# 進度：目前 v0.65.0
+# 進度：目前 v0.66.0
+
+## v0.66.0
+
+2026-10-05：條件草稿／報告明確套用後，可撤回最近一次條件套用；完整核對實際套用後的條件，後續編修拒絕覆蓋。恢復原始未完成值與之前的載入留點，保留下載確認、音檔及其他工作台。成功撤回把鍵盤焦點接回可編修欄位。503 Python／794 JavaScript／69語法／四份Skill與112歷史ZIP核對通過。 指定v65 ZIP503／785獨立還原通過。native tab110重現後續bits32拒絕、回原after24可撤回、換第二音檔仍保留、CRLF原條件重建報告完全相同、最近loaded留點恢復及錯檔保留；成功後焦點丟失已修正，fresh tab111實測preset／custom焦點、390px及console0。兩tab已關閉、viewport reset、server97795 exit0、staging未建立。原Agent1／draft3／14／19工具、legal4／private／not_submitted保持；exact-source封裝、private PR／Release及實際遠端依收據，latest66／65／64保護。rolling active。
 
 ## v0.65.0
 
