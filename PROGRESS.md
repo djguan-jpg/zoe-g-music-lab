@@ -1,4 +1,8 @@
-# 進度：目前 v0.68.0
+# 進度：目前 v0.69.0
+
+## v0.69.0
+
+2026-10-05：草稿保存後先回讀同一 ID，完整核對點擊時草稿與保存回應，才標示已保存。回讀失敗保留原 ID／原稿供重試，後續編修與音檔保持。511 Python／816 JavaScript／71語法／四份Skill、124歷史ZIP及指定v68還原508／804通過。 基準controller接受wrong-id回應就onSaved，已重現並修正。pure receipt→注入readonly reader→原pending controller→DOM／retention分層，既有HTTP draft_save／draft_read及Agent工具保持。native tab114首次回讀僅回應副本被改，UI拒絕確認、保留待重試。鍵盤Enter重試沿同ID與完整payload，backend reused=true、磁碟只有一版且SHA／bytes一致；後續歌名編修保持未另存提醒，原案預覽不改目前台／media，回原標題才與保存留點一致。390px錯誤提示313px無局部overflow；console0、tab關閉／viewport reset／server62174 exit0／staging未建立。legal4／private／not_submitted保持，最新69／68／67保護，rolling active。
 
 ## v0.68.0
 

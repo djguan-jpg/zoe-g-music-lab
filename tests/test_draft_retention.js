@@ -74,7 +74,7 @@ test('dispose releases its own listener and full-content refresh catches program
 });
 test('real save controller exposes an isolated click-time snapshot to retention after a delayed acknowledgment',async()=>{
   const h=harness(),calls=[];h.set(draft('點擊時'));h.guard.refresh();
-  const c=createLibraryController({capture:h.current,validate:Editor.validateDraft,newId:()=> 'draft-'+'1'.repeat(32),
+  const c=createLibraryController({capture:h.current,validate:Editor.validateDraft,newId:()=> 'draft-'+'1'.repeat(32),confirmSave:async(payload,ack)=>ack,
     request:(action,payload)=>new Promise((resolve,reject)=>calls.push({action,payload,resolve,reject})),
     onSaved:r=>{h.guard.retain(r.draft,{kind:'library',label:r.entry.label});r.draft.panels.music.fields['music-title']='外部污染';},
     onPending:()=>{},onError:()=>{},onReady:()=>{},onList:()=>{}});
@@ -83,7 +83,7 @@ test('real save controller exposes an isolated click-time snapshot to retention 
 });
 test('unconfirmed failure, abandon and retry cannot mark the later form as retained',async()=>{
   const h=harness(),calls=[];h.set(draft('送出'));h.guard.refresh();
-  const c=createLibraryController({capture:h.current,validate:Editor.validateDraft,newId:()=> 'draft-'+'2'.repeat(32),
+  const c=createLibraryController({capture:h.current,validate:Editor.validateDraft,newId:()=> 'draft-'+'2'.repeat(32),confirmSave:async(payload,ack)=>ack,
     request:(action,payload)=>new Promise((resolve,reject)=>calls.push({action,payload,resolve,reject})),onSaved:r=>h.guard.retain(r.draft,{kind:'library'}),
     onPending:()=>{},onError:()=>{},onReady:()=>{},onList:()=>{}});
   const saving=c.save('待確認');calls[0].reject(Error('unknown'));await saving;assert.equal(h.guard.status().dirty,true);

@@ -120,3 +120,7 @@ ZIP核對後可切目前成果／ZIP原文逐段閱讀，原文下載仍是全�
 ## v0.54 一起保存報告與完整歌詞
 
 按「建立格式報告與歌詞包」產生報告JSON／Markdown與完整lyrics.json；按「驗證並建立歌詞包」產生原四個歌詞檔及兩報告，可一起另存本輪ZIP。只保存目前已驗證來源的值，原JSON排版另保留。Agent／MCP lyrics_export_review {package:完整包,include_package:true} 明確取完整附檔；省略／false只兩報告。CLI `python music_lab.py lyrics-export-review --input lyrics.json --include-package --out outputs/format-review`；0無已查提醒／2有提醒且報告已寫／1拒絕，預設不覆寫，明確--overwrite才替換指定輸出。提醒仍需實聽核對，不改歌詞或時間。見[契約](../../docs/LYRICS-EXPORT-BUNDLE.md)。
+
+## v0.69 共用草稿保存
+
+工作台保存會回讀同ID並核對完整原稿後才確認。失敗保留原ID與點擊時草稿供明確重試，不把後續編修代入重試；音檔／成果另存。CLI／Agent既有save與readonly read仍共用Python immutable library，沒有新增JSON路徑／寫檔權限。核對不證明作品品質、作者權利或平台創始接受。見[契約](../../docs/LIBRARY-SAVE-RECEIPT.md)。
