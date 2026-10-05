@@ -318,3 +318,8 @@ pure wave-position完整source/current_source/duration/position/ready/error快�
 ## v0.79 逐句標記撤回
 
 pure cue-stamp-edit重用既有stamp毫秒及wave-position readiness→注入readRow/writeTimes/captureMedia controller→literal cue-stamp-edit-dom／app。單筆stable ID＋原start/end字串＋actual after，文字不留歷史；套用前核對完整row與source/current_source/duration，natural position前進可保持本次capture。undo先核對target actual after，只寫時間並再核對實際值；目標改時／刪除永久stale，改回／刪句還原不復活，文字／其他row／media改動可保留。同值／錯誤保留原有效record，new lyrics render無ID清除。history不進draft3/wire/Agent/results；busy阻擋、owned click listener dispose，無timer/URL/媒體decode。共用captureLyricPlayer維持原波形路徑。2fixed assets/產品79/來源38–79/unknown80，14/21及原schema/legal4/private/not_submitted保持。見docs/CUE-STAMP-EDIT.md。
+
+
+## v0.80 發佈預期標籤
+
+projects.version及release_version精確等於selected commit policy.current及v+current，schema1 strict；release_version僅預期tag，不是remote publication或創始接受。pure release_metadata frozen identity／原policy grammar→strict marker64KiB/policy8192B→Git cat-file size前檢查/show同blob bytes→package mkdir前guard與archive完整metadata/policy再核對，working files不換来源、不靜默修復。manifest1只新增checks.release_metadata=passed，歷史ZIP/tag/原packager與maintenance判定保持。產品80／supported38–80／unknown81，14/21／Agent1/draft3/領域schemas/legal4/private/not_submitted保持，web/HTTP/Agent/CLI無diff，無新依賴/模型/路徑或網路權限。見docs/RELEASE-METADATA.md。
