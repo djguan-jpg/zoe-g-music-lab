@@ -1,4 +1,8 @@
-# 進度：目前 v0.73.0
+# 進度：目前 v0.74.0
+
+## v0.74.0
+
+2026-10-05：保存、清單與回讀先核對完整產品／協定回覆，清單再核對所有版本資料、排序與分頁來源。錯誤或晚回覆保留目前清單、預覽、編修與音檔；未確認保存沿同一 ID 及原稿重試。534 Python／867 JavaScript／77語法／四份Skill及144歷史ZIP通過，基本14／啟庫20工具保持。 真 Python 清單回覆經原 app adapter 丟棄 meta，未知產品／protocol、未知 library schema／status 與重複ID均被 controller 發布，缺口已重現。共享 checkedMetadata→純 library-result envelope／page→注入 required checkList、latest→DOM；保存與確認回讀同 envelope 門檻。實際 tab120 七次 list／六次 read／三次 save，回覆副本故障拒絕、同cursor健康重試、同ID僅新增一版且原21版bytes保持；錯ACK及錯readback保留pending，後續編修／WAV／dirty及取消late保持。390px提示313px／console0，tab關閉、viewport reset、server原handle51440 exit0／無staging。上一版指定ZIP532／853還原及144歷史ZIPbytes相同。latest74／73／72、legal4／private／not_submitted保持，rolling active。
 
 ## v0.73.0
 

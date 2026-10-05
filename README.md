@@ -1,8 +1,8 @@
 # ZOE. G Music Lab
 
-目前版本 **v0.73.0**：新增唯讀草稿庫備份匯出；Agent／MCP預設摘要，明確選擇才內嵌不超過512KiB的ZIP，亦可指定保存ID。完整ZIP與來源核對，CLI／HTTP沿共用application。532 Python／853 JavaScript／76語法／四份Skill及140歷史ZIP通過；啟庫20工具，基本14保持。 見[備份匯出](docs/BACKUP-EXPORT.md)、[QA](docs/QA-v0.73.0.md)、[交接](docs/HANDOFF-v0.73.0.md)。
+目前版本 **v0.74.0**：保存、清單與回讀先核對完整產品／協定回覆，清單再核對所有版本資料、排序與分頁來源。錯誤或晚回覆保留目前清單、預覽、編修與音檔；未確認保存沿同一 ID 及原稿重試。534 Python／867 JavaScript／77語法／四份Skill及144歷史ZIP通過，基本14／啟庫20工具保持。 見[保存回覆與清單](docs/LIBRARY-RESULT.md)、[QA](docs/QA-v0.74.0.md)、[交接](docs/HANDOFF-v0.74.0.md)。
 
-上一輪 v0.72.0：備份下載完整串流與SHA核對、取消及斷線處理；瀏覽器保存檔案未驗證。見[QA](docs/QA-v0.72.0.md)。
+上一輪 v0.73.0：CLI／Agent／MCP／HTTP 唯讀備份匯出，預設摘要、明確小型 ZIP 內嵌。見[QA](docs/QA-v0.73.0.md)。
 
 ## ZIP原文與差異（v0.40）
 
