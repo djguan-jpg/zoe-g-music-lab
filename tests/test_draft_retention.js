@@ -97,7 +97,7 @@ test('actual undo proposal returns to retained content and clears the content wa
 });
 test('production startup keeps edits made while examples load, including an already retained edit',async()=>{
   const source=fs.readFileSync(require.resolve('../web/app.js'),'utf8'),start=source.indexOf('async function initialize(){'),end=source.indexOf('\ninitialize();',start),h=harness();let resolve,loaded=0,notice='';
-  const context={writeValue:(control,value)=>{control.value=value;},draftRetention:h.guard,captureDraft:h.current,state:{examples:null},fetch:()=>new Promise(r=>resolve=r),loadMusic:()=>loaded++,loadMv:()=>loaded++,$:()=>({value:''}),drawWave:()=>{},setupLibrary:()=>{},say:s=>notice=s};
+  const context={refreshExampleControls:()=>{},writeValue:(control,value)=>{control.value=value;},draftRetention:h.guard,captureDraft:h.current,state:{examples:null},fetch:()=>new Promise(r=>resolve=r),loadMusic:()=>loaded++,loadMv:()=>loaded++,$:()=>({value:''}),drawWave:()=>{},setupLibrary:()=>{},say:s=>notice=s};
   vm.runInNewContext(source.slice(start,end)+'\nthis.init=initialize;',context);const pending=context.init();h.set(draft('載入期間自寫'));h.guard.refresh('music');h.guard.retain(h.current(),{kind:'library'});
   resolve({ok:true,json:async()=>({music:{}})});await pending;assert.equal(loaded,0);assert.equal(h.current().panels.music.fields['music-title'],'載入期間自寫');assert.match(notice,/編修已保留/);
 });
@@ -124,6 +124,6 @@ test('actual draft export records a submitted snapshot, while an oversized refus
 });
 test('startup fetch failure still tracks subsequent draft edits instead of disabling retention',async()=>{
   const source=fs.readFileSync(require.resolve('../web/app.js'),'utf8'),start=source.indexOf('async function initialize(){'),end=source.indexOf('\ninitialize();',start),h=harness();
-  const context={writeValue:(control,value)=>{control.value=value;},draftRetention:h.guard,captureDraft:h.current,state:{examples:null},fetch:async()=>{throw Error('synthetic unavailable');},say:()=>{}};
+  const context={refreshExampleControls:()=>{},writeValue:(control,value)=>{control.value=value;},draftRetention:h.guard,captureDraft:h.current,state:{examples:null},fetch:async()=>{throw Error('synthetic unavailable');},say:()=>{}};
   vm.runInNewContext(source.slice(start,end)+'\nthis.init=initialize;',context);await context.init();h.set(draft('failure then edit'));h.guard.refresh('music');assert.equal(h.guard.status().dirty,true);assert.equal(h.listeners.size,1);
 });
