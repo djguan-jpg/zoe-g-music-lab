@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 'use strict';
 (function(root){
-  function createBackupController({request,maximum=()=>32*1024*1024,onPreview,onRestored,onError,onState}){
+  function createBackupController({request,hashFile,checkPlan,checkRestore,maximum=()=>32*1024*1024,onPreview,onRestored,onError,onState}){
+    if(typeof hashFile!=='function'||typeof checkPlan!=='function'||typeof checkRestore!=='function')throw Error('備份來源與回覆核對未設定');
     let token=0,pending=null,reading=false,restoring=false;
     const state=()=>onState({reading,restoring,ready:!!pending,canRestore:!!pending?.plan.can_restore});
     return {
@@ -14,11 +15,12 @@
         }
         reading=true;state();
         try{
-          const plan=await request('inspect',file);
+          const source=structuredClone(await hashFile(file));
           if(current!==token)return false;
-          if(!plan||plan.backup_schema_version!==1||!Array.isArray(plan.entries)||!Array.isArray(plan.conflicts)||
-              typeof plan.can_restore!=='boolean'||! /^[0-9a-f]{64}$/.test(plan.backup_sha256))throw Error('備份預覽回應不完整');
-          pending={file,plan:structuredClone(plan)};onPreview(structuredClone(plan),file.name);return true;
+          const result=await request('inspect',file);
+          if(current!==token)return false;
+          const plan=checkPlan(result,source);
+          pending={file,source,plan:structuredClone(plan)};onPreview(structuredClone(plan),file.name);return true;
         }catch(error){if(current===token)onError(error,{retryable:false});return false;}
         finally{if(current===token){reading=false;state();}}
       },
@@ -26,7 +28,8 @@
         if(reading||restoring||!pending||!pending.plan.can_restore)return false;
         const job=pending;restoring=true;state();
         try{
-          const result=await request('restore',job.file,job.plan.backup_sha256);
+          const reply=await request('restore',job.file,job.plan.backup_sha256);
+          const result=checkRestore(reply,job.source,job.plan);
           pending=null;onRestored(result);return true;
         }catch(error){
           if(error.status>=400&&error.status<500)pending=null;

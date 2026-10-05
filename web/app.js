@@ -1008,9 +1008,10 @@ async function backupRequest(operation,file,sha){
   const response=await fetch('/api/drafts/backup/'+operation+(sha?'?sha256='+encodeURIComponent(sha):''),{method:'POST',body:file});
   const result=await response.json();
   if(!response.ok){const error=Error(result.error||'本機備份操作未完成');error.status=response.status;throw error;}
-  return result.data;
+  return result;
 }
 const backupController=MusicBackup.createBackupController({request:backupRequest,maximum:()=>backupMaximum,
+  hashFile:MusicBackupFile.inspect,checkPlan:MusicBackupResult.checkedInspect,checkRestore:MusicBackupResult.checkedRestore,
   onState:({reading,restoring,ready,canRestore})=>{backupReading=reading;backupRestoring=restoring;backupReady=ready;backupCanRestore=canRestore;
     if(!ready)$('backup-review').hidden=true;backupControls();},
   onPreview:(plan,name)=>{

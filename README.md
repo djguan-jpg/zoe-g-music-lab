@@ -1,8 +1,8 @@
 # ZOE. G Music Lab
 
-目前版本 **v0.70.0**：保存版本預覽核對選定 ID 與完整 metadata；讀取完成、套用與匯出前重查目前選擇。不符時保留編修與音檔，切換版本提示重新預覽。514 Python／829 JavaScript／72語法／四份Skill、128歷史ZIP及指定v69還原511／816通過。 見[來源契約](docs/LIBRARY-REVISION.md)、[QA](docs/QA-v0.70.0.md)、[交接](docs/HANDOFF-v0.70.0.md)。
+目前版本 **v0.71.0**：備份預覽先量測選定 ZIP 的 SHA-256，完整核對來源、版本與恢復計數；未確認恢復回覆保留同一備份供明確重試，後續編修與音檔保持。517 Python／841 JavaScript／74語法／四份Skill及132歷史ZIP通過。 見[備份契約](docs/BACKUP-RESULT.md)、[QA](docs/QA-v0.71.0.md)、[交接](docs/HANDOFF-v0.71.0.md)。
 
-上一輪 v0.69.0：保存後回讀同 ID，完整原稿核對才確認；失敗保留原 ID／原稿供明確重試。見[QA](docs/QA-v0.69.0.md)。
+上一輪 v0.70.0：保存版本預覽核對選定 ID／完整 metadata，完成、套用與匯出前重查目前選擇。見[QA](docs/QA-v0.70.0.md)。
 
 ## ZIP原文與差異（v0.40）
 

@@ -1,3 +1,9 @@
+# v0.71.0 · 2026-10-05
+
+備份預覽先量測選定 ZIP 的 SHA-256，完整核對來源、版本與恢復計數；未確認恢復回覆保留同一備份供明確重試，後續編修與音檔保持。517 Python／841 JavaScript／74語法／四份Skill及132歷史ZIP通過。
+
+之前backup controller只做部分plan shape檢查，未量測選定ZIP，任何恢復回覆都能onRestored。新增backup-file原生File／WebCrypto來源層與backup-result純完整wire核對，controller必須注入三個驗證callback。雜湊後及inspect後重查latest；preview全部ID分組／計數／狀態一致，restore核對原SHA／總數與added+reused。錯成功回覆保持uncertain pending及同File供明確重試；原4xx definite拒絕規則保持，無自動重送。見[契約](docs/BACKUP-RESULT.md)、[QA](docs/QA-v0.71.0.md)、[交接](docs/HANDOFF-v0.71.0.md)。
+
 # v0.70.0 · 2026-10-05
 
 保存版本預覽核對選定 ID 與完整 metadata；讀取完成、套用與匯出前重查目前選擇。不符時保留編修與音檔，切換版本提示重新預覽。514 Python／829 JavaScript／72語法／四份Skill、128歷史ZIP及指定v69還原511／816通過。
