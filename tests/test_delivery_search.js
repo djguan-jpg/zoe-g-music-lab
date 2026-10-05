@@ -81,7 +81,7 @@ test('edits media busy apply undo and new source invalidate search cache without
 });
 function dom(s){
  const html=fs.readFileSync('web/index.html','utf8'),ids=[...html.matchAll(/id="(delivery-[^"]+)"/g)].map(m=>m[1]),nodes={};for(const id of ids)nodes[id]={value:'',open:false,replaceChildren(){this.children=[];this.value=''},append(v){(this.children||=[]).push(v)}};nodes['delivery-reader-side'].value='incoming';
- const context={MusicDeliveryText:text,MusicDeliveryContext:require('../web/delivery-context.js'),MusicDeliverySearch:search,MusicDeliveryImport:importer};for(const file of ['delivery-text-dom.js','delivery-search-dom.js','delivery-import-dom.js'])vm.runInNewContext(fs.readFileSync('web/'+file,'utf8'),context);
+ const context={MusicSearchInput:require('../web/search-input.js'),MusicDeliveryText:text,MusicDeliveryContext:require('../web/delivery-context.js'),MusicDeliverySearch:search,MusicDeliveryImport:importer};for(const file of ['delivery-text-dom.js','delivery-search-dom.js','delivery-import-dom.js'])vm.runInNewContext(fs.readFileSync('web/'+file,'utf8'),context);
  const c=context.MusicDeliveryImportDom.createAdapter({getElementById:id=>nodes[id],createElement:()=>({})},{...s.options,downloadText:()=>true});return {c,nodes};
 }
 
@@ -102,4 +102,17 @@ test('DOM Enter finds exact original and selected result seeks; source changes c
 });
 test('DOM distinguishes empty missing and no-match and never executes literal HTML',async()=>{
  const s=setup(),{c,nodes:n}=dom(s);await c.inspect(s.file);n['delivery-reader'].open=true;n['delivery-search-query'].value='x';n['delivery-review-file'].value='empty.txt';n['delivery-review-file'].onchange();n['delivery-search-find'].onclick();assert.match(n['delivery-search-note'].textContent,/有效的空檔/);n['delivery-reader-side'].value='before';n['delivery-reader-side'].onchange();assert.match(n['delivery-search-note'].textContent,/沒有這個檔案/);n['delivery-reader-side'].value='incoming';n['delivery-reader-side'].onchange();n['delivery-review-file'].value='full.txt';n['delivery-review-file'].onchange();n['delivery-search-query'].value='HIT';n['delivery-search-find'].onclick();assert.match(n['delivery-search-note'].textContent,/沒有找到/);n['delivery-search-query'].value='<script>literal</script>';n['delivery-search-find'].onclick();n['delivery-search-match'].onchange({target:{value:'0'}});assert.equal(n['delivery-reader-content'].value,'<script>literal</script>');const before=structuredClone(s.view.bundle);c.apply();c.undo();assert.deepEqual(s.view.bundle,before);assert.equal(n['delivery-search-match'].disabled,true);
+});
+
+test('ZIP original DOM IME Enter preserves current batch selection history context and source in every scope',async()=>{
+ for(const scope of ['music','storyboard','lyrics','audio']){const s=setup(scope),{c,nodes:n}=dom(s);await c.inspect(s.file);n['delivery-review-file'].value='full.txt';n['delivery-review-file'].onchange();n['delivery-reader'].open=true;n['delivery-reader'].ontoggle();const q=n['delivery-search-query'];q.value='hit';n['delivery-search-find'].onclick();n['delivery-search-more'].onclick();n['delivery-search-match'].onchange({target:{value:'2'}});
+  const snapshot=()=>({note:n['delivery-search-note'].textContent,selected:n['delivery-search-match'].value,labels:n['delivery-search-match'].children.map(v=>v.textContent),context:n['delivery-search-context'].value,page:n['delivery-reader-content'].value,previous:n['delivery-search-previous'].disabled,bundle:structuredClone(s.view.bundle)}),before=snapshot(),media=s.view.media[0];let prevented=0;
+  for(const e of [{isComposing:true,keyCode:13},{isComposing:false,keyCode:229},{isComposing:true,keyCode:229}])q.onkeydown({key:'Enter',...e,target:q,preventDefault(){prevented++;}});
+  assert.equal(prevented,0);assert.deepEqual(snapshot(),before);assert.equal(s.view.media[0],media);q.onkeydown({key:'Enter',isComposing:false,keyCode:13,target:q,preventDefault(){prevented++;}});assert.equal(prevented,1);assert.match(n['delivery-search-note'].textContent,/第1–20筆/);assert.equal(n['delivery-search-previous'].disabled,true);c.cancel();
+ }
+});
+test('ZIP original IME empty query causes no read error and ordinary Enter remains explicit',async()=>{
+ const s=setup(),{c,nodes:n}=dom(s);await c.inspect(s.file);n['delivery-review-file'].value='full.txt';n['delivery-review-file'].onchange();const q=n['delivery-search-query'];q.value='';let prevented=0;const note=n['delivery-search-note'].textContent,before=structuredClone(s.view.bundle);
+ for(const e of [{isComposing:true,keyCode:13},{isComposing:false,keyCode:229}])q.onkeydown({key:'Enter',...e,target:q,preventDefault(){prevented++;}});assert.equal(prevented,0);assert.deepEqual(s.errors,[]);assert.equal(n['delivery-search-note'].textContent,note);assert.deepEqual(s.view.bundle,before);
+ q.onkeydown({key:'Enter',isComposing:false,keyCode:13,target:q,preventDefault(){prevented++;}});assert.equal(prevented,1);assert.equal(s.errors.length,1);q.value='hit';assert.equal(n['delivery-search-find'].onclick(),true);assert.match(n['delivery-search-note'].textContent,/第1–20筆/);c.cancel();
 });
