@@ -110,7 +110,7 @@ class JsonDocumentTests(unittest.TestCase):
         self.assertEqual(p.returncode, 0)
         replies = [json.loads(line) for line in p.stdout.decode().splitlines()]
         self.assertEqual(replies[0]['error']['code'], -32700)
-        self.assertEqual(len(replies[2]['result']['tools']),13)
+        self.assertEqual(len(replies[2]['result']['tools']),14)
         self.assertFalse(replies[3]['result']['isError'])
 
     def test_real_http_rejects_duplicate_and_invalid_utf8_then_valid_request(self):

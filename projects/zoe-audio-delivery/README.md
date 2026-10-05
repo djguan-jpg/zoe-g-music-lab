@@ -48,3 +48,7 @@ python music_lab.py audio --input '自己的歌曲.wav' --profile video --out ou
 ## v0.41 可保存差異報告
 
 選交付ZIP核對完成後可下載來源SHA與完整變更摘要JSON／Markdown，原成果／表單／音檔保留，載入仍需明確動作。修改後重新核對，不把報告當原文或素材權利驗收。CLI --comparison-report／Agent include_report要求baseline且不能include_files=true，12／17工具保持，report1獨立。launcher可列印明確WAV／ZIP選擇，沒有Host設定或模型呼叫。default text output拒絕raced-in同名檔，多檔可能部分輸出須查看錯誤。見[共用契約](../../docs/DELIVERY-REPORT.md)。
+
+## v0.64 三欄條件檢查
+
+「檢查自訂條件」一次列出取樣率、位元深度与聲道數待辦；「建立條件檢查報告」保留原值與所選音檔。CLI audio-acceptance-review明確--input原條件draft1／--out輸出；0=可解析、2=有待辦、1=輸入或I/O錯誤，預設不覆寫。Agent／MCP／HTTP使用同readonly operation，見[完整契約](../../docs/AUDIO-ACCEPTANCE-REVIEW.md)。

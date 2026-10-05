@@ -67,6 +67,8 @@ ASSETS = {"/delivery-versions.js": ("musiclab/assets/delivery-versions.js","text
           "/lyrics-review.js": ("musiclab/assets/lyrics-review.js", "text/javascript"),
           "/lyrics-export-review.js": ("musiclab/assets/lyrics-export-review.js", "text/javascript"),
           "/lyrics-export.js": ("web/lyrics-export.js", "text/javascript"),
+          "/audio-acceptance-review.js": ("web/audio-acceptance-review.js", "text/javascript"),
+          "/audio-acceptance-review-dom.js": ("web/audio-acceptance-review-dom.js", "text/javascript"),
           "/audio-acceptance.js": ("web/audio-acceptance.js", "text/javascript"),
           "/audio-acceptance-dom.js": ("web/audio-acceptance-dom.js", "text/javascript"),
           "/audio-review.js": ("web/audio-review.js", "text/javascript"),
@@ -249,7 +251,7 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
                 return self.reply(200,json_text(backup_downloads(self.server).prepare(archive,summary)))
             operations = {"/api/music": "music", "/api/storyboard": "storyboard", "/api/lyrics": "lyrics",
                           "/api/storyboard-seed": "storyboard_seed",
-                          "/api/lyrics-seed": "lyrics_seed", "/api/lyrics-review": "lyrics_review", "/api/lyrics-export-review": "lyrics_export_review", "/api/music-review": "music_review", "/api/storyboard-review": "storyboard_review", "/api/storyboard-timing-review": "storyboard_timing_review",
+                          "/api/lyrics-seed": "lyrics_seed", "/api/lyrics-review": "lyrics_review", "/api/lyrics-export-review": "lyrics_export_review", "/api/audio-acceptance-review": "audio_acceptance_review", "/api/music-review": "music_review", "/api/storyboard-review": "storyboard_review", "/api/storyboard-timing-review": "storyboard_timing_review",
                           "/api/drafts/save": "draft_save", "/api/drafts/list": "draft_list", "/api/drafts/read": "draft_read"}
             if route.path not in operations:
                 return self.reply(404, '{"error":"找不到此操作"}')

@@ -1,5 +1,7 @@
 # 本機 Agent 接口 v1
 
+v0.64 自訂接受條件診斷：共享原解析→pure三欄review→application／四adapter；JS完整來源与JSON／MD核對→readiness-state current快照→DOM文字／焦點。基本14／啟庫19工具，review1獨立，Agent1／draft3與媒體／保存／路徑權限保持。見[契約](AUDIO-ACCEPTANCE-REVIEW.md)。以下各版本為歷史記錄。
+
 ## v0.54 報告與完整歌詞包
 
 lyrics_export_review 新增可選 strict boolean include_package。省略／false仍回兩個報告，true另附完整 lyrics.json；JSON-lines／MCP／HTTP共用應用層，CLI明確 --include-package。report／source SHA與預設wire保持，13／18工具、Agent1／draft3及report1不變。見[契約](LYRICS-EXPORT-BUNDLE.md)。以下為歷史迭代記錄。

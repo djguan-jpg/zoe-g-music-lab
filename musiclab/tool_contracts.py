@@ -71,7 +71,18 @@ def seed_schema():
                   'slots':array_schema(slot,1,1000),'review_notes':array_schema(text('Human review note'),1,100)})
 
 
+def acceptance_draft_schema():
+    from .audio_acceptance import FORMAT, MAX_FIELD
+    fields = {key: {'type': 'string', 'maxLength': MAX_FIELD} for key in ('rates', 'bits', 'channels')}
+    return object_schema({'format': {'const': FORMAT}, 'schema_version': {'type': 'integer', 'const': 1},
+                           'profile': {'enum': ['distribution', 'video']}, 'custom': {'type': 'boolean'},
+                           'fields': object_schema(fields, fields.keys(), additionalProperties=False)},
+                          ['format', 'schema_version', 'profile', 'custom', 'fields'], additionalProperties=False)
+
+
 def payload_schema(operation):
+    if operation == "audio_acceptance_review":
+        return object_schema({"document": acceptance_draft_schema()}, ["document"], additionalProperties=False)
     if operation == 'lyrics_export_review':
         return object_schema({'package': lyrics_package_schema(),'include_package':{'type':'boolean','description':'Explicitly include checked complete lyrics.json with report; default false keeps compact report'}},['package'],additionalProperties=False)
     if operation == 'storyboard_timing_review':
@@ -313,12 +324,7 @@ def payload_schema(operation):
     if operation == "audio":
         limits = {"anyOf": [array_schema({"type": "integer", "minimum": 1}, 1), {"type": "null"}],
                   "description": "Accepted positive integers; null uses the profile default. Booleans are rejected."}
-        from .audio_acceptance import FORMAT, MAX_FIELD
-        fields = {key: {'type': 'string', 'maxLength': MAX_FIELD} for key in ('rates', 'bits', 'channels')}
-        draft = object_schema({'format': {'const': FORMAT}, 'schema_version': {'type': 'integer', 'const': 1},
-                               'profile': {'enum': ['distribution', 'video']}, 'custom': {'type': 'boolean'},
-                               'fields': object_schema(fields, fields.keys(), additionalProperties=False)},
-                              ['format', 'schema_version', 'profile', 'custom', 'fields'], additionalProperties=False)
+        draft = acceptance_draft_schema()
         return object_schema({"profile": {"type": "string", "enum": ["distribution", "video"], "default": "distribution"},
                               "rates": deepcopy(limits), "bits": deepcopy(limits), "channels": deepcopy(limits),
                               'acceptance_draft': draft,

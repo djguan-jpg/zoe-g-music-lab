@@ -1,3 +1,9 @@
+# v0.64.0 · 2026-10-05
+
+自訂接受條件一次檢查三欄、點選定位並輸出共用來源核對報告；未完成原文與音檔保留，錯／晚回覆不覆蓋。CLI／Agent／MCP／HTTP同readonly操作，基本14／啟庫19工具。修正有界極大指數的Decimal例外。497 Python／778 JavaScript／68語法／四份Skill、85份跨語言來源与104歷史ZIP通過。
+
+原prepare只回第一欄；抽出既有field解析，純Python／JS review一次診斷全部，full reply checker与通用readiness-state／獨立DOM分層。新CLI／Agent／MCP／HTTP readonly operation與精確schema，保留原音檔分析／草稿／保存與法律邊界。極大零指數InvalidOperation轉受控ValueError，不捨入小數。原生錯MD／late拒絕與音檔接續已驗證；本輪沒有browser saved-path證據。還原點、驗證與交接見[本輪QA](docs/QA-v0.64.0.md)、[交接](docs/HANDOFF-v0.64.0.md)。
+
 # v0.63.0 · 2026-10-05
 
 音檔 Markdown 改由獨立 Python／JS 純排版產生並逐字核對；錯作品、錯 SHA、改規格／數值／提醒或新增宣稱均拒絕，原成果及音檔保留，合法重試正常。不可測值明示「不可測」，數字固定顯示位數，JSON 量測保持。490 Python／772 JavaScript／66 語法／四份 Skill 通過，83份真 File PCM 與100個歷史 ZIP bytes保持。

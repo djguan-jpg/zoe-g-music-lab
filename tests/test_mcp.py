@@ -56,7 +56,7 @@ class MCPTests(unittest.TestCase):
             self.assertIn("接入測試", replies[1]["result"]["structuredContent"]["files"]["lyrics.lrc"])
             self.assertEqual(list(Path(folder).iterdir()), [])
 
-    def test_real_subprocess_thirteen_tools_match_application_and_exit_on_eof(self):
+    def test_real_subprocess_fourteen_tools_match_application_and_exit_on_eof(self):
         with tempfile.TemporaryDirectory() as folder:
             source = Path(folder) / "synthetic.wav"
             with wave.open(str(source), "wb") as wav:
@@ -79,7 +79,8 @@ class MCPTests(unittest.TestCase):
                      ("storyboard_review", "storyboard_review", json.loads((ROOT / "examples/unfinished-storyboard-review.json").read_text(encoding="utf-8"))),
                      ("storyboard_timing_review", "storyboard_timing_review", json.loads((ROOT / "examples/unfinished-storyboard-timing-review.json").read_text(encoding="utf-8"))),
                      ("delivery_package", "delivery_package", {"scope":"music","files":{"plan.md":"原創文字"}}),
-                     ("delivery_inspect", "delivery_inspect", {})]
+                     ("delivery_inspect", "delivery_inspect", {}),
+                     ("audio_acceptance_review", "audio_acceptance_review", {"document": {"format":"zoe-audio-acceptance-draft","schema_version":1,"profile":"video","custom":True,"fields":{"rates":"","bits":"16.5","channels":"0"}}})]
             requests = [initialize(), {"jsonrpc": "2.0", "method": "notifications/initialized"},
                         message("tools/list", request_id=2)]
             requests.extend(call(name, payload, i + 3) for i, (name, _, payload) in enumerate(cases))

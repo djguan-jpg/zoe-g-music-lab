@@ -26,14 +26,17 @@
     if(scale<0&&trailing<-scale)throw Error('接受值需為正整數；不捨入小數');
     return value;
   }
-  function prepare(d){
-    d=validate(d);const limits=structuredClone(profiles[d.profile]);
-    if(d.custom)for(const key of keys){
-      const parts=d.fields[key].replaceAll('，',',').split(',');
+  function fieldValues(key,raw){
+      const parts=raw.replaceAll('，',',').split(',');
       if(parts.length>64)throw Error(`${key} 最多 64 個接受值`);
       const list=parts.map(exactInteger);
       if(!list.every(v=>Number.isSafeInteger(v)&&v>0))throw Error(`${key} 需填正整數，以逗號分隔`);
-      limits[key]=list;
+      return list;
+  }
+  function prepare(d){
+    d=validate(d);const limits=structuredClone(profiles[d.profile]);
+    if(d.custom)for(const key of keys){
+      limits[key]=fieldValues(key,d.fields[key]);
     }
     return {profile:d.profile,acceptance:limits};
   }
@@ -83,6 +86,6 @@
       projectLoaded(){cancel();if(capture().custom){replace({...validate(capture()),custom:false});onChange();}refresh();},
       dispose(){if(listening)events.removeEventListener('beforeunload',beforeLeave);listening=false;sequence++;preview=null;}};
   }
-  const api={format,maxBytes,maxInteger,validate,prepare,decode,fingerprint,createController};
+  const api={format,maxBytes,maxInteger,validate,fieldValues,prepare,decode,fingerprint,createController};
   if(typeof module==='object'&&module.exports)module.exports=api;else root.MusicAudioAcceptance=api;
 })(typeof globalThis==='object'?globalThis:this);
