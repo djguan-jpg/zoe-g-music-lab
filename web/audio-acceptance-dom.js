@@ -13,6 +13,7 @@
         $('audio-accept-cancel').disabled=!value.allowed;
         $('audio-accept-file').disabled=!value.allowed;
         $('audio-accept-export-button').disabled=!value.allowed;$('audio-accept-confirm').disabled=!value.pendingDownload||!value.allowed;
+        $('audio-accept-undo').disabled=!value.undoAvailable||!value.allowed;$('audio-accept-undo-note').hidden=!value.undoAvailable;
         const notes={initial:'接受條件尚未編修。',retained:'目前條件與已載入檔案或已確認的條件草稿一致。',unretained:'接受條件尚未另存；請下載條件草稿。',
           download_unconfirmed:'條件草稿下載已送出；核對檔案後再確認。',changed_after_download:'下載後條件又有改動，請另存目前條件。'};
         $('audio-accept-note').textContent=value.error||notes[value.mode];
@@ -29,6 +30,7 @@
     $('audio-file').addEventListener('change',()=>controller.cancel());
     $('audio-accept-file').onchange=()=>{const file=$('audio-accept-file').files[0];$('audio-accept-file').value='';if(file)controller.inspect(file);};
     $('audio-accept-apply').onclick=()=>controller.apply();$('audio-accept-cancel').onclick=()=>controller.cancel();
+    $('audio-accept-undo').onclick=()=>{const changed=controller.undo();if(changed)($('audio-custom').checked?$('audio-accept-rates'):$('audio-profile')).focus();return changed;};
     $('audio-accept-confirm').onclick=()=>controller.confirm();
     $('audio-accept-export').onsubmit=event=>{event.preventDefault();try{controller.download(content=>{if(downloadText('audio-acceptance-draft.json',content)!==true)throw Error('條件草稿下載未送出');});}catch(error){onError(error);}};
     controller.refresh();return controller;

@@ -56,3 +56,7 @@ python music_lab.py audio --input '自己的歌曲.wav' --profile video --out ou
 ## v0.65 接續條件報告
 
 實際Agent輸出的audio-acceptance-review.json可直接在工作台選檔：核對→預覽→明確套用原始條件。CLI的audio-acceptance-review --input與audio --acceptance-draft接受原草稿或完整來源一致的報告；上限64KiB。原音檔、條件原文與其他工作台保留，報告不是媒體通過或作者身分證明。見[完整契約](../../docs/AUDIO-ACCEPTANCE-INPUT.md)。
+
+## v0.66 撤回條件套用
+
+草稿／完整報告經預覽明確套用後，可按「撤回上次條件套用」。只撤回最近一次的接受條件，音檔與其他台保持；套用後再改動條件會保留編修並拒絕撤回。撤回未保存原值後仍需另存。成功後焦點回取樣率或示範條件選單。沒有新增Agent操作或持久草稿欄位，見[契約](../../docs/AUDIO-ACCEPTANCE-UNDO.md)。

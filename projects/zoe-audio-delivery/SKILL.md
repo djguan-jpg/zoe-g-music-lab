@@ -74,3 +74,7 @@ ZIP核對後可切目前成果／ZIP原文逐段閱讀，原文下載仍是全�
 ## 接續條件報告（v0.65）
 
 在工作台「載入條件草稿或檢查報告」選定draft1或完整review1 JSON，先預覽再明確套用。報告核對全部資料才接續source；未完成原值仍保留，音檔另行分析。CLI audio-acceptance-review --input也接受完整報告，audio --acceptance-draft可使用完整報告的有效來源；預設不覆寫。Agent／MCP payload仍使用原draft1，不接受整份報告或路徑；需自行從已核對檔案提取source。見[契約](../../docs/AUDIO-ACCEPTANCE-INPUT.md)。
+
+## v0.66 撤回條件套用
+
+草稿／完整報告經預覽明確套用後，可按「撤回上次條件套用」。只撤回最近一次的接受條件，音檔與其他台保持；套用後再改動條件會保留編修並拒絕撤回。撤回未保存原值後仍需另存。成功後焦點回取樣率或示範條件選單。沒有新增Agent操作或持久草稿欄位，見[契約](../../docs/AUDIO-ACCEPTANCE-UNDO.md)。

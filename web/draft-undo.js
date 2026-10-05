@@ -7,6 +7,21 @@
     if(value&&typeof value==='object')return '{'+Object.keys(value).sort().map(k=>JSON.stringify(k)+':'+fingerprint(value[k])).join(',')+'}';
     return JSON.stringify(value);
   }
+  function createValueUndo(validate,message='套用後已有編修；目前內容保留，無法撤回。'){
+    if(typeof validate!=='function')throw Error('撤回需要明確的內容驗證');
+    let record=null;
+    const checked=value=>structuredClone(validate(value));
+    return {
+      record(before,after){const previous=checked(before),received=checked(after);record={before:previous,after:received};},
+      proposal(current){
+        if(!record)return null;
+        if(fingerprint(checked(current))!==fingerprint(record.after))throw Error(message);
+        return checked(record.before);
+      },
+      available:()=>record!==null,
+      clear(){record=null;}
+    };
+  }
   function createUndo(){
     let record=null;
     return {
@@ -27,6 +42,6 @@
       clear(){record=null;}
     };
   }
-  const api={fingerprint,createUndo};
+  const api={fingerprint,createUndo,createValueUndo};
   if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.MusicDraftUndo=api;
 })(typeof window==='undefined'?{}:window);

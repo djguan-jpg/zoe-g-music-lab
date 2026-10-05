@@ -21,3 +21,7 @@ Agent 產出的 `audio-acceptance-review.json` 可以接續到工作台原始接
 application descriptor列出檔案input1契約；既有operation、Agent／MCP／HTTP payload仍使用draft1。不能直接以完整報告代替payload.document；沒有JSON路徑選擇或寫檔／媒體權限。基本14／明確啟庫19工具、Agent1、draft3、review1、acceptance-draft1保持，新增固定input JS資產。
 
 產品65／明確交付來源38–65共28項，未知66拒絕。輸入一致與SHA不能證明作者、版權、聲音品質、平台創始人資格或正式交付接受。legal4、PolyForm Noncommercial1.0.0、private與FreeTWAI not_submitted保持。驗證見[QA](QA-v0.65.0.md)，可逆見[交接](HANDOFF-v0.65.0.md)。
+
+## v0.66 限定撤回
+
+明確套用後可使用「撤回上次條件套用」，保留音檔；後續編修會阻止覆蓋。套用前未保存的內容撤回後仍提示另存。input1／review1與原選檔核對保持，見[撤回契約](AUDIO-ACCEPTANCE-UNDO.md)。

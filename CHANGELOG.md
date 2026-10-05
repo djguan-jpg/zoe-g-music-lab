@@ -1,3 +1,9 @@
+# v0.66.0 · 2026-10-05
+
+條件草稿／報告明確套用後，可撤回最近一次條件套用；完整核對實際套用後的條件，後續編修拒絕覆蓋。恢復原始未完成值與之前的載入留點，保留下載確認、音檔及其他工作台。成功撤回把鍵盤焦點接回可編修欄位。503 Python／794 JavaScript／69語法／四份Skill與112歷史ZIP核對通過。
+
+原條件Apply沒有撤回入口。既有draft-undo新增注入validator的純value history；controller記錄before／實際after，scope僅完整接受條件，不保存媒體。Undo成功恢復此前loaded指紋，獨立confirmed保持，清單一次一份；拒絕後記錄保留供精確回原after再核對。DOM明確操作與焦點保持分層。見[契約](docs/AUDIO-ACCEPTANCE-UNDO.md)、[驗證](docs/QA-v0.66.0.md)、[可逆交接](docs/HANDOFF-v0.66.0.md)。
+
 # v0.65.0 · 2026-10-05
 
 完整條件檢查報告可接續原始條件；Python／JS先核對整份報告，再由CLI選定檔案或工作台預覽／明確套用。保留未完成原文與音檔，錯誤／未知／晚到檔案拒絕。已載入條件與已確認下載分別留點，確認較早下載不再誤標新條件。503 Python／785 JavaScript／69語法／四份Skill，50份跨語言輸入與108歷史ZIP核對通過。
