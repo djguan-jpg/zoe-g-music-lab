@@ -115,3 +115,8 @@ td input[data-raw-number]{width:63px}.raw-value-note{display:block;font-size:.78
 #lyrics-search-matches button{max-width:100%;white-space:normal;text-align:left;overflow-wrap:anywhere}
 
 .text-verification{border-top:1px solid var(--line);margin:18px 0;padding-top:16px;min-width:0;overflow-wrap:anywhere}.text-verification h3{margin-bottom:10px}.text-verification input{min-width:0}.text-verification [data-match="true"]{color:var(--green)}.text-verification [data-match="false"]{color:#9e3827}
+
+/* Pending operation feedback stays reachable above long editors. */
+.operation-bar{position:sticky;top:8px;z-index:20;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px 18px;align-items:center;padding:14px 16px;margin:0 0 24px;border:1px solid #aebfaf;border-left:3px solid var(--green);background:#f0f3e9;box-shadow:0 3px 12px #253c3314;min-width:0}
+.operation-summary{min-width:0}.operation-title{font-size:14px;line-height:1.5;font-weight:600;color:var(--green);margin:0;overflow-wrap:anywhere}.operation-note{font-size:12px;line-height:1.5;margin:4px 0 0;overflow-wrap:anywhere}.operation-bar>button{min-height:40px;align-self:center}
+@media(max-width:720px){.operation-bar{top:6px;padding:10px 12px;gap:10px;margin-bottom:18px}.operation-title{font-size:13px}.operation-note{font-size:11px}.operation-bar>button{padding:9px 10px}}

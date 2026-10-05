@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 'use strict';
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
-const Gate=require('../web/operation-gate.js'),Review=require('../musiclab/assets/lyrics-review.js');
+const Presentation=require('../web/operation-presentation.js'),Gate=require('../web/operation-gate.js'),Review=require('../musiclab/assets/lyrics-review.js');
 const app=fs.readFileSync('web/app.js','utf8');
 function block(a,b){const i=app.indexOf(a),j=app.indexOf(b,i+1);assert.ok(i>=0&&j>i);return app.slice(i,j);}
 const gate=()=>Gate.createGate({createAbort:()=>new AbortController()});
@@ -37,8 +37,8 @@ test('ordinary current failures and source-stale successes keep existing run beh
 });
 function dom(){
  const body={},doc={body,activeElement:body},button={disabled:true,textContent:'取消等待'},note={hidden:true,textContent:''};let hidden=true;
- Object.defineProperty(button,'hidden',{get:()=>hidden,set:value=>{hidden=value;if(value&&doc.activeElement===button)doc.activeElement=body;}});doc.getElementById=id=>id==='operation-cancel'?button:note;
- let view={busy:false,cancelling:false,canCancel:false},calls=0;const ctx={};vm.runInNewContext(fs.readFileSync('web/operation-control-dom.js','utf8'),ctx);const adapter=ctx.MusicOperationControlDOM.createAdapter(doc,{capture:()=>view,cancel:()=>calls++});return{doc,button,note,adapter,set:value=>view=value,get calls(){return calls;}};
+ Object.defineProperty(button,'hidden',{get:()=>hidden,set:value=>{hidden=value;if(value&&doc.activeElement===button)doc.activeElement=body;}});const bar={hidden:true},title={textContent:''};doc.getElementById=id=>({'operation-cancel':button,'operation-note':note,'operation-bar':bar,'operation-title':title}[id]);
+ let view={busy:false,cancelling:false,canCancel:false},calls=0;const ctx={MusicOperationPresentation:Presentation};vm.runInNewContext(fs.readFileSync('web/operation-control-dom.js','utf8'),ctx);const adapter=ctx.MusicOperationControlDOM.createAdapter(doc,{capture:()=>view,cancel:()=>calls++});return{doc,button,note,adapter,set:value=>{if(value.busy&&!view.busy)adapter.begin({scope:'music',action:'建立待辦報告'});view=value;},get calls(){return calls;}};
 }
 test('DOM adapter keeps idle control hidden and only a live cancellable click invokes cancellation',()=>{
  const s=dom();s.button.onclick();assert.equal(s.calls,0);assert.equal(s.button.hidden,true);s.set({busy:true,cancelling:false,canCancel:true});s.adapter.refresh();assert.equal(s.button.hidden,false);assert.equal(s.button.disabled,false);s.button.onclick();assert.equal(s.calls,1);s.set({busy:true,cancelling:true,canCancel:false});s.adapter.refresh();s.button.onclick();assert.equal(s.calls,1);assert.equal(s.button.disabled,true);assert.match(s.note.textContent,/正在取消/);

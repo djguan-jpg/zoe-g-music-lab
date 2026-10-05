@@ -106,6 +106,7 @@ function field(value,label,type='text',wide=false){return `<input type="text" va
 async function api(route,data,binary=false,signal){const response=await fetch(route,{method:'POST',headers:{'Content-Type':binary?'application/octet-stream':'application/json'},body:binary?data:JSON.stringify(data),...(signal?{signal}:{})});const result=await response.json();if(!response.ok){const error=Error(result.error||'操作未完成');error.status=response.status;throw error;}return result;}
 async function run(button,task,scope=state.tab){
   if(state.busy)return;
+  state.operationControl?.begin({scope,action:button.textContent||'建立成果'});
   const job=operationGate.begin(),tab=state.tab,revision=state.revisions[scope]||0,current=()=>operationGate.current(job)&&state.tab===tab&&(state.revisions[scope]||0)===revision;
   current.signal=job.signal;
   say('處理中，請稍候');state.busy=true;button.disabled=true;timingControls();cueStampEdit?.refresh();state.currentCue?.refresh();state.cuePosition?.refresh();state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();state.audioAcceptanceReview?.refresh();state.deliveryPackage?.refresh();state.deliveryImport?.refresh();state.textVerification?.refresh();
