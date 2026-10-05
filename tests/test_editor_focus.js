@@ -57,7 +57,7 @@ test('DOM adapter refuses missing, detached, disabled or hidden targets and unco
 });
 test('actual cue-add adapter retains default times and existing raw rows, then explicitly focuses new text',()=>{
  const fs=require('node:fs'),vm=require('node:vm'),app=fs.readFileSync('web/app.js','utf8'),a=app.indexOf("$('cue-add').onclick="),b=app.indexOf('function lyricsBuildSource()',a),button={},events=[],rows=[{id:'original',value:{start:'00.1000',end:'2.0000',text:'原\r\n字 🎵'}}];
- const context={$:()=>button,entriesFor:()=>structuredClone(rows),rowSequence:2,LyricTime:require('../musiclab/assets/lyric-time.js'),writeEntries:(list,value)=>events.push({list,value}),markDirty:scope=>events.push(scope),focusEntry:(...args)=>events.push(args),say:message=>events.push(message)};
+ const context={state:{busy:false},$:()=>button,entriesFor:()=>structuredClone(rows),rowSequence:2,LyricTime:require('../musiclab/assets/lyric-time.js'),writeEntries:(list,value)=>events.push({list,value}),markDirty:scope=>events.push(scope),focusEntry:(...args)=>events.push(args),say:message=>events.push(message)};
  vm.runInNewContext(app.slice(a,b),context);button.onclick();assert.equal(events[0].value[0].value.text,'原\r\n字 🎵');assert.deepEqual(JSON.parse(JSON.stringify(events[0].value[1].value)),{start:'2',end:'5',text:''});assert.deepEqual(events[2],['cues',1,'new']);assert.equal(rows.length,1);
 });
 test('actual deletion of the final row requests index zero fallback and keeps its restorable history',()=>{

@@ -4,7 +4,7 @@
 
 | 層 | 責任 |
 | --- | --- |
-| web/history.js | 純 remove/restore；隔離原值與 record，以 stable ID／鄰居定位還原，容量与重複 ID 防護 |
+| web/deletion-history.js | 純 remove/restore；隔離原值與 record，以 stable ID／鄰居定位還原，容量与重複 ID 防護 |
 | web/app.js | 原生 entriesFor/writeEntries；只提交 remove 的 remaining/record，限定工作台 dirty 與既有焦點接續 |
 | web/index.html | 固定說明；刪除控制以 aria-describedby 引用提示 |
 | 共用 storyboard-timing-review 與 controller | 原秒數／FPS／秒與影格覆蓋診斷，定位現有原列，唯讀報告不補時間 |
