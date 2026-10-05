@@ -109,7 +109,7 @@ class StoryboardFramesTests(unittest.TestCase):
         info=capabilities()
         self.assertEqual(info['storyboard_frames'],descriptor())
         self.assertEqual((info['protocol_version'],info['storyboard_seed']['schema_version']),(1,1))
-        self.assertEqual(len(info['operations']),15)
+        self.assertEqual(len(info['operations']),16)
 
     def test_real_cli_bad_boundary_then_correction_and_overwrite_refusal(self):
         with tempfile.TemporaryDirectory() as folder:

@@ -43,7 +43,7 @@ class LyricsSearchTests(unittest.TestCase):
   for vector,line in zip(vectors,p.stdout.strip().split("\n")):
    r=search(vector);self.assertEqual(json.loads(line),{'data':r,'md':markdown(r)})
  def test_metadata_and_schema_is_read_only_no_path(self):
-  c=capabilities();self.assertEqual(c['lyrics_search']['schema_version'],1);self.assertEqual(len(c['operations']),15);s=input_schema('lyrics_search')['properties']['payload'];self.assertFalse(s['additionalProperties']);self.assertEqual(s['allOf'][0]['then']['required'],['source_sha256']);self.assertEqual(output_schema('lyrics_search')['properties']['data']['properties']['schema_version']['const'],1)
+  c=capabilities();self.assertEqual(c['lyrics_search']['schema_version'],1);self.assertEqual(len(c['operations']),16);s=input_schema('lyrics_search')['properties']['payload'];self.assertFalse(s['additionalProperties']);self.assertEqual(s['allOf'][0]['then']['required'],['source_sha256']);self.assertEqual(output_schema('lyrics_search')['properties']['data']['properties']['schema_version']['const'],1)
  def test_actual_cli_agent_mcp_good_bad_good_and_exclusive_outputs(self):
   payload={'texts':['原句🎵','未校時原句'],'query':'原句'};expected=build('lyrics_search',payload).wire()
   with tempfile.TemporaryDirectory() as d:

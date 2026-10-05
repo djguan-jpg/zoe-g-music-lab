@@ -83,6 +83,9 @@ ASSETS = {"/operation-presentation.js": ("web/operation-presentation.js", "text/
           "/lyrics-media.js": ("musiclab/assets/lyrics-media.js", "text/javascript"),
           "/lyrics-review.js": ("musiclab/assets/lyrics-review.js", "text/javascript"),
           "/lyrics-export-review.js": ("musiclab/assets/lyrics-export-review.js", "text/javascript"),
+          "/storyboard-search.js": ("musiclab/assets/storyboard-search.js", "text/javascript"),
+          "/storyboard-search-controller.js": ("web/storyboard-search-controller.js", "text/javascript"),
+          "/storyboard-search-dom.js": ("web/storyboard-search-dom.js", "text/javascript"),
           "/lyrics-search.js": ("musiclab/assets/lyrics-search.js", "text/javascript"),
           "/lyrics-search-controller.js": ("web/lyrics-search-controller.js", "text/javascript"),
           "/lyrics-search-dom.js": ("web/lyrics-search-dom.js", "text/javascript"),
@@ -286,7 +289,7 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
                 return self.reply(200,json_text(backup_downloads(self.server).prepare(archive,summary)))
             operations = {"/api/music": "music", "/api/storyboard": "storyboard", "/api/lyrics": "lyrics",
                           "/api/storyboard-seed": "storyboard_seed",
-                          "/api/lyrics-seed": "lyrics_seed", "/api/lyrics-review": "lyrics_review", "/api/lyrics-search": "lyrics_search", "/api/lyrics-export-review": "lyrics_export_review", "/api/audio-acceptance-review": "audio_acceptance_review", "/api/music-review": "music_review", "/api/storyboard-review": "storyboard_review", "/api/storyboard-timing-review": "storyboard_timing_review",
+                          "/api/lyrics-seed": "lyrics_seed", "/api/lyrics-review": "lyrics_review", "/api/lyrics-search": "lyrics_search", "/api/storyboard-search": "storyboard_search", "/api/lyrics-export-review": "lyrics_export_review", "/api/audio-acceptance-review": "audio_acceptance_review", "/api/music-review": "music_review", "/api/storyboard-review": "storyboard_review", "/api/storyboard-timing-review": "storyboard_timing_review",
                           "/api/drafts/save": "draft_save", "/api/drafts/list": "draft_list", "/api/drafts/read": "draft_read",
                           "/api/drafts/search": "draft_search",
                           "/api/drafts/backup/export": "draft_backup_export"}

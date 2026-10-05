@@ -8,7 +8,7 @@ class TextVerificationTests(unittest.TestCase):
  def test_static_assets_remain_fixed_local_files_and_basic_tools_unchanged(self):
   for name in ['text-verification.js','text-verification-controller.js','text-verification-dom.js']:
    self.assertEqual(ASSETS['/'+name],('web/'+name,'text/javascript'))
-  self.assertEqual(len(capabilities()['operations']),15)
+  self.assertEqual(len(capabilities()['operations']),16)
   self.assertNotIn('text_verification',capabilities()['operations'])
  def test_actual_loopback_serves_same_bytes_without_file_read_post_or_path_permission(self):
   class Handler(WorkbenchHandler):
