@@ -11,6 +11,11 @@
     const order=O.move(s.entries.map(e=>e.id),id,delta),byId=new Map(s.entries.map(e=>[e.id,e]));
     return {entries:order.ids.map(id=>byId.get(id)),record:order.record};
   }
+  function moveTo(list,value,id,index){
+    const s=source(list,value);if(!s.visible||s.busy)return null;
+    const order=O.moveTo(s.entries.map(e=>e.id),id,index);if(!order)return null;
+    const byId=new Map(s.entries.map(e=>[e.id,e]));return {entries:order.ids.map(id=>byId.get(id)),record:order.record};
+  }
   function restore(list,value,record){
     const s=source(list,value);if(!s.visible||s.busy)return null;
     const ids=O.restore(s.entries.map(e=>e.id),record),byId=new Map(s.entries.map(e=>[e.id,e]));return ids.map(id=>byId.get(id));
@@ -36,10 +41,13 @@
     return Object.freeze({refresh,move(list,id,delta){
       if(disposed)return null;
       try{known(list);if(!allowed(list))return null;const before=source(list,capture(list)),plan=move(list,before,id,delta);if(!plan||!commit(list,before,plan.entries,plan.record))return null;return {id,index:plan.record.to,from:plan.record.from,to:plan.record.to};}catch(error){onError(error);return null;}
+    },moveTo(list,id,index){
+      if(disposed)return null;
+      try{known(list);if(!allowed(list))return null;const before=source(list,capture(list)),plan=moveTo(list,before,id,index);if(!plan||!commit(list,before,plan.entries,plan.record))return null;return {id,index:plan.record.to,from:plan.record.from,to:plan.record.to};}catch(error){onError(error);return null;}
     },undo(list){
       if(disposed)return null;
       try{known(list);if(!allowed(list))return null;const before=source(list,capture(list));refresh(list,{ids:before.entries.map(e=>e.id),visible:before.visible,busy:before.busy});const saved=records.get(list);if(!saved)throw Error('沒有可撤回的列移動；目前編修保留');const record=structuredClone(saved),entries=restore(list,before,record);if(!entries||!commit(list,before,entries,null))return null;return {id:record.id,index:record.from,from:record.to,to:record.from};}catch(error){onError(error);return null;}
     },clear(list){known(list);records.delete(list);stale.delete(list);},dispose(){disposed=true;records.clear();stale.clear();}});
   }
-  const api=Object.freeze({lists,move,restore,metadata,createController});if(typeof module==='object'&&module.exports)module.exports=api;else root.MusicEditorOrder=api;
+  const api=Object.freeze({lists,move,moveTo,restore,metadata,createController});if(typeof module==='object'&&module.exports)module.exports=api;else root.MusicEditorOrder=api;
 })(typeof globalThis==='object'?globalThis:this);
