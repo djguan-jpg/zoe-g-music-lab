@@ -71,6 +71,19 @@ test('beforeunload rechecks actual values and disposal removes only its owned li
   a.events.get('beforeunload')(event);assert.equal(prevented,1);assert.equal(event.returnValue,'');
   a.set(draft());a.events.get('beforeunload')(event);assert.equal(prevented,1);a.c.dispose();assert.equal(a.events.size,0);
 });
+
+test('confirming an older download preserves the separately loaded condition checkpoint',async()=>{
+  const a=controller(),older=draft({rates:'44100'}),loaded=draft({rates:'96000'});
+  a.set(older);a.c.changed();a.c.download();
+  const work=a.c.inspect(a.file(loaded));a.resolve(loaded);assert.equal(await work,true);
+  assert.equal(a.c.apply(),true);assert.equal(a.c.status().mode,'retained');
+  assert.equal(a.c.confirm(),true);assert.deepEqual(a.get(),loaded);
+  assert.equal(a.c.status().mode,'retained');assert.equal(a.c.status().dirty,false);
+  assert.equal(a.events.has('beforeunload'),false);
+  a.set(older);a.c.changed();assert.equal(a.c.status().mode,'retained');
+  a.set(draft({rates:'192000'}));a.c.changed();assert.equal(a.c.status().dirty,true);
+  a.set(loaded);a.c.changed();assert.equal(a.c.status().dirty,false);
+});
 test('whole project load deactivates custom mode while retaining unfinished raw inputs',()=>{
   const a=controller();a.set(draft({bits:'16\n unfinished'}));a.c.projectLoaded();
   assert.equal(a.get().custom,false);assert.equal(a.get().fields.bits,'16\n unfinished');assert.equal(a.c.status().dirty,true);

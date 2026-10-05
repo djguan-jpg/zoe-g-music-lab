@@ -58,6 +58,28 @@ def markdown(data):
     return '\n'.join(lines + ['', *data['review_notes'], ''])
 
 
+def _same(expected, actual):
+    """JSON semantic equality, without bool/number coercion or unknown keys."""
+    if isinstance(expected, dict):
+        return isinstance(actual, dict) and set(expected) == set(actual) and all(
+            _same(value, actual[key]) for key, value in expected.items())
+    if isinstance(expected, list):
+        return isinstance(actual, list) and len(expected) == len(actual) and all(
+            _same(a, b) for a, b in zip(expected, actual))
+    if type(expected) is int:
+        return type(actual) in (int, float) and expected == actual
+    return type(expected) is type(actual) and expected == actual
+
+
+def validate_report(document):
+    if not isinstance(document, dict) or 'source' not in document:
+        raise ValueError('條件檢查報告需包含完整原始條件')
+    expected = review({'document': document['source']})
+    if not _same(expected, document):
+        raise ValueError('條件檢查報告與原始條件不一致或版本不支援')
+    return expected
+
+
 def review_bundle(payload):
     data = review(payload)
     return {'audio-acceptance-review.json': json_text(data), 'audio-acceptance-review.md': markdown(data)}

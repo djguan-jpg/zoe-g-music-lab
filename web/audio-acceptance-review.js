@@ -11,6 +11,7 @@
   const keys=['rates','bits','channels'],labels={rates:'取樣率（Hz）',bits:'位元深度（bit）',channels:'聲道數'};
   const messages={missing_value:'尚未填寫接受值',too_many_values:'最多 64 個接受值',invalid_value:'需為正整數，以逗號分隔；不捨入小數'};
   const notes=['只檢查條件原值；不補填、不轉檔、不調整聲音。','條件可解析不代表音檔通過；仍須分析音檔、實聽及確認交付需求。'];
+  const same=(a,b)=>typeof a===typeof b&&(a===null||typeof a!=='object'?a===b:Array.isArray(a)?Array.isArray(b)&&a.length===b.length&&a.every((v,i)=>same(v,b[i])):b!==null&&!Array.isArray(b)&&Object.keys(a).length===Object.keys(b).length&&Object.keys(a).every(k=>Object.hasOwn(b,k)&&same(a[k],b[k])));
   function review(document){
     const source=drafts.validate(document),fields=[],issues=[],acceptance={};
     for(const key of keys){
@@ -31,6 +32,11 @@
     for(const issue of data.issues)lines.push(`- ${labels[issue.field]}：${issue.message}`);
     return [...lines,'',...data.review_notes,''].join('\n');
   }
+  function validateReport(document){
+    const expected=review(document?.source);
+    if(!same(expected,document))throw Error('條件檢查報告與原始條件不一致或版本不支援');
+    return expected;
+  }
   function checkedResult(document,reply){
     if(reply?.meta?.version!==versions.current)throw Error('條件檢查報告版本不符；目前成果與編修保留');
     for(const name of ['audio-acceptance-review.json','audio-acceptance-review.md']){
@@ -41,5 +47,5 @@
       markdownName:'audio-acceptance-review.md',markdown,label:'條件檢查報告'});
   }
   function createController(options){return state.createController({...options,source:drafts.validate,inspect:review});}
-  const api={review,markdown,checkedResult,createController,labels};if(node)module.exports=api;else root.MusicAudioAcceptanceReview=api;
+  const api={review,markdown,validateReport,checkedResult,createController,labels};if(node)module.exports=api;else root.MusicAudioAcceptanceReview=api;
 })(typeof globalThis==='object'?globalThis:this);

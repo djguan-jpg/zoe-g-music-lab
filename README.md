@@ -1,8 +1,8 @@
 # ZOE. G Music Lab
 
-目前版本 **v0.64.0**：自訂接受條件一次檢查三欄、點選定位並輸出共用來源核對報告；未完成原文與音檔保留，錯／晚回覆不覆蓋。CLI／Agent／MCP／HTTP同readonly操作，基本14／啟庫19工具。修正有界極大指數的Decimal例外。497 Python／778 JavaScript／68語法／四份Skill、85份跨語言來源与104歷史ZIP通過。 見[診斷契約](docs/AUDIO-ACCEPTANCE-REVIEW.md)、[QA](docs/QA-v0.64.0.md)、[交接](docs/HANDOFF-v0.64.0.md)。
+目前版本 **v0.65.0**：完整條件檢查報告可接續原始條件；Python／JS先核對整份報告，再由CLI選定檔案或工作台預覽／明確套用。保留未完成原文與音檔，錯誤／未知／晚到檔案拒絕。已載入條件與已確認下載分別留點，確認較早下載不再誤標新條件。503 Python／785 JavaScript／69語法／四份Skill，50份跨語言輸入與108歷史ZIP核對通過。 見[接續契約](docs/AUDIO-ACCEPTANCE-INPUT.md)、[QA](docs/QA-v0.65.0.md)、[交接](docs/HANDOFF-v0.65.0.md)。
 
-上一輪 v0.63.0：完整音檔Markdown從同源資料重建與逐字核對，指定v63 ZIP獨立還原490 Python／772 JavaScript通過。見[QA](docs/QA-v0.63.0.md)。
+上一輪 v0.64.0：自訂接受條件一次檢查三欄、定位待辦與跨工具唯讀報告，基本14／啟庫19工具。見[QA](docs/QA-v0.64.0.md)。
 
 ## ZIP原文與差異（v0.40）
 

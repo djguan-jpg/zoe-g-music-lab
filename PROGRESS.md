@@ -1,4 +1,8 @@
-# 進度：目前 v0.64.0
+# 進度：目前 v0.65.0
+
+## v0.65.0
+
+2026-10-05：完整條件檢查報告可接續原始條件；Python／JS先核對整份報告，再由CLI選定檔案或工作台預覽／明確套用。保留未完成原文與音檔，錯誤／未知／晚到檔案拒絕。已載入條件與已確認下載分別留點，確認較早下載不再誤標新條件。503 Python／785 JavaScript／69語法／四份Skill，50份跨語言輸入與108歷史ZIP核對通過。 原生tab109以實際Agent報告選檔，驗證錯／未知拒絕、preview不修改、編修改動失效、Enter取消／套用、CRLF原值回送、native WAV及其他三台保留；390px幾何與console0，tab關閉／viewport reset／server12055正常exit0。舊v64指定ZIP完整497項回測有一項CIM查詢失敗，原封裝11項程序測試單獨重驗通過，778 JS通過；沒有把首次失敗宣稱全綠。原失敗與新run收據保留。legal4／private／not_submitted、14／19 tools與Agent1／draft3保持；exact-source封裝、private PR／release、實際遠端及latest65／64／63以收據為準，rolling active。
 
 ## v0.64.0
 

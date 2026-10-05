@@ -70,3 +70,7 @@ ZIP核對後可切目前成果／ZIP原文逐段閱讀，原文下載仍是全�
 ## 接受條件診斷（v0.64）
 
 未完成條件可先用工作台「檢查自訂條件」定位三欄待辦；或CLI audio-acceptance-review --input條件草稿 --out明確目錄。Agent／MCP audio_acceptance_review payload只含document，回同來源JSON／Markdown，不讀媒體或改原值。零待辦只表示條件可解析，請接續原audio分析與實聽。基本14／啟庫19工具，Host重新discovery；原文、媒體与保存另存狀態保持。見[契約](../../docs/AUDIO-ACCEPTANCE-REVIEW.md)。
+
+## 接續條件報告（v0.65）
+
+在工作台「載入條件草稿或檢查報告」選定draft1或完整review1 JSON，先預覽再明確套用。報告核對全部資料才接續source；未完成原值仍保留，音檔另行分析。CLI audio-acceptance-review --input也接受完整報告，audio --acceptance-draft可使用完整報告的有效來源；預設不覆寫。Agent／MCP payload仍使用原draft1，不接受整份報告或路徑；需自行從已核對檔案提取source。見[契約](../../docs/AUDIO-ACCEPTANCE-INPUT.md)。
