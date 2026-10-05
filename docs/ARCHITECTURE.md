@@ -1,5 +1,7 @@
 # 分層與版本契約
 
+v0.75 搜尋：pure library_search query/metadata index/SHA/page/schema → shared metadata_snapshot → application CLI／Agent／MCP／HTTP，固定POST /api/drafts/search。query1–200 Unicode codepoints／800UTF8、limit1–100、cursor index+全觀察來源hash，來源／query變更拒接。browser pure library-search精確wire/current/search1/全metadata/query/頁長/排序/continuation → injected latest/cancel/已顯示ID → DOM；原清單/preview/draft/media保持，搜尋不進draft。基本14／啟庫21需重新discovery，Agent1/draft3/library1/backup1保持；無正文／media／path／寫檔／model權限。見[契約](LIBRARY-SEARCH.md)。下方歷史按當版保留。
+
 v0.74 保存回覆：工作台 save/list/read 與 save confirmation readback 先通過 library-result 的完整 HTTP envelope 核對，三操作的 files 必須空、current產品與protocol1一致、needs_review依操作精確。共享 checkedMetadata 與純 bounded checkedList 核對所有列、原時間／ID排序、cursor metadata與接續位置，再沿 required injected checkList／latest 交 DOM。保存內容仍由 receipt／revision 核對；不符 ACK 保留同ID pending、錯回讀仍為 uncertain save。CLI／Agent／MCP／HTTP producer wire、Agent1／draft3／library1／14及20工具保持。見[契約](LIBRARY-RESULT.md)。下方歷史描述按當版保留。
 
 v0.73 備份匯出：新draft_backup_export唯讀，需啟動時明確草稿庫；預設metadata，optional ids與explicit include_archive<=512KiB。pure request/selected IDs→既有producer→同一次ZIP完整read/hash/source IDs→不可變export1→application→CLI/Agent/MCP/HTTP，無payload path或自動寫檔。MCP新工具具體outputSchema，其他outputSchema保持；capabilities給data_schema。基本14／啟庫20，需重新discovery；export1與backup1/Agent1/draft3/library1分開。見[契約](BACKUP-EXPORT.md)。下方歷史工具數按當版保留。

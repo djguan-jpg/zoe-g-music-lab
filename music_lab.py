@@ -64,7 +64,7 @@ def main(argv=None):
             sub.add_argument('--bars-per-shot', type=int)
     drafts = commands.add_parser("draft", help="明確選定本機草稿庫；保存版本不覆寫")
     actions = drafts.add_subparsers(dest="draft_action", required=True)
-    for action in ("save", "list", "read", "backup", "backup-export", "inspect", "restore"):
+    for action in ("save", "list", "search", "read", "backup", "backup-export", "inspect", "restore"):
         sub = actions.add_parser(action)
         sub.add_argument("--library", required=True, help="明確選定草稿庫目錄")
         if action == "save":
@@ -84,8 +84,9 @@ def main(argv=None):
             if action == "restore":
                 sub.add_argument("--sha256", required=True, help="inspect 預覽的備份摘要")
         else:
+            if action == 'search':sub.add_argument('--query', required=True, help='字面搜尋保存名稱與三種作品名；保留大小寫與空白，不搜尋草稿正文')
             sub.add_argument("--limit", type=int, default=20)
-            sub.add_argument("--cursor")
+            sub.add_argument("--cursor", help='search 接續使用前次 INDEX:SHA256；list 使用保存 ID')
     args = parser.parse_args(argv)
     status = 0
     try:
@@ -134,6 +135,9 @@ def main(argv=None):
                 payload = {'include_archive': args.include_archive}
                 if args.ids is not None:payload['ids'] = args.ids
                 result = build('draft_backup_export', payload, draft_library=library).wire()
+            elif args.draft_action == 'search':
+                from musiclab.library_search import cli_cursor
+                result = build('draft_search', {'query': args.query, 'limit': args.limit, 'cursor': cli_cursor(args.cursor)}, draft_library=library).wire()
             elif args.draft_action in ("inspect", "restore"):
                 payload = {"backup_sha256": args.sha256} if args.draft_action == "restore" else {}
                 result = build("draft_backup_"+args.draft_action, payload, draft_library=library, backup_source=args.input).wire()

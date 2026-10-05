@@ -75,7 +75,7 @@ class AcceptanceReviewTests(unittest.TestCase):
         schema = cap['input_schemas']['audio_acceptance_review']
         self.assertEqual(schema['required'], ['document']); self.assertFalse(schema['additionalProperties'])
         with tempfile.TemporaryDirectory() as folder:
-            self.assertEqual(len(capabilities(DraftLibrary(folder))['operations']), 20)
+            self.assertEqual(len(capabilities(DraftLibrary(folder))['operations']), 21)
         session = Session()
         session.response(json.dumps({'jsonrpc': '2.0', 'id': 0, 'method': 'initialize', 'params': {
             'protocolVersion': '2025-11-25', 'capabilities': {}, 'clientInfo': {'name': 'qa', 'version': '1'}}}))

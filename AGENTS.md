@@ -290,3 +290,8 @@ pure backup-download exact backup1 descriptor／knownrelative token URL／counts
 ## v0.74 保存回覆與清單
 
 shared library-revision.checkedMetadata→pure library-result exact save/list/read envelope／bounded list/source→required injected checkList／latest→DOM。current產品／protocol1／empty files／operation needs_review精確，save確認回讀也沿同門檻；原receipt／完整revision檢查保持。不符ACK保留pending同ID及原稿，錯readback保持uncertain；不假造status400釋放ID。list metadata全部欄位／Unicode／unique IDs及issues／原stored_at+ID排序／next cursor與完整page／current cursor metadata核對，before onList；未知／late不覆蓋編修、清單、預覽、media及dirty。metadata不驗實際draft SHA，read仍由backend核對bytes/hash。固定asset只新增原生JS，無新wire／schema／權限／工具／依賴。產品74／明確來源38–74／unknown75、14/20／Agent1／draft3／library1／legal4／private／not_submitted保持。見[契約](docs/LIBRARY-RESULT.md)。
+
+
+## v0.75 全庫保存名稱搜尋
+
+pure library_search strict query/metadata index/canonical observed SHA/page/schema→DraftLibrary.metadata_snapshot→application四adapter；新唯讀draft_search僅明確啟庫，14基本/21啟庫需重新discovery。1–200codepoints/800UTF8/limit1–100/最多1000版本，literal case-sensitive保留Unicode/空白；只label與三title，不body/media。cursor pin query+全部可讀metadata及排序unreadable IDs，變更／end越界拒絕；不是disk bytes或原子snapshot/作者證明。browser pure envelope/data/current/search1/metadata/每列匹配/頁長/原stored_at+ID排序/cursor及前次boundary→latest/query/已顯示ID/controller→literal DOM；query改動、cancel、unknown/late保留清單/preview/edit/media；all refresh取消自身搜尋，明確成功才切all。search不進draft或新增write/path/model/依賴。新scripts/check_python_tests.py固定2隔離程序且120s整體期限，parent完整discovery逐ID核對coverage；package使用同runner，不提高期限。產品75／來源38–75／unknown76、Agent1/draft3/library1/backup1/legal4/private/not_submitted保持。見[契約](docs/LIBRARY-SEARCH.md)。

@@ -59,6 +59,7 @@ ASSETS = {"/delivery-versions.js": ("musiclab/assets/delivery-versions.js","text
           "/planning-import.js": ("web/planning-import.js", "text/javascript"),
           "/deletion-history.js": ("web/deletion-history.js", "text/javascript"),
           "/draft-library.js": ("web/draft-library.js", "text/javascript"),
+          "/library-search.js": ("web/library-search.js", "text/javascript"),
           "/library-receipt.js": ("web/library-receipt.js", "text/javascript"),
           "/library-revision.js": ("web/library-revision.js", "text/javascript"),
           "/library-result.js": ("web/library-result.js", "text/javascript"),
@@ -267,6 +268,7 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
                           "/api/storyboard-seed": "storyboard_seed",
                           "/api/lyrics-seed": "lyrics_seed", "/api/lyrics-review": "lyrics_review", "/api/lyrics-export-review": "lyrics_export_review", "/api/audio-acceptance-review": "audio_acceptance_review", "/api/music-review": "music_review", "/api/storyboard-review": "storyboard_review", "/api/storyboard-timing-review": "storyboard_timing_review",
                           "/api/drafts/save": "draft_save", "/api/drafts/list": "draft_list", "/api/drafts/read": "draft_read",
+                          "/api/drafts/search": "draft_search",
                           "/api/drafts/backup/export": "draft_backup_export"}
             if route.path not in operations:
                 return self.reply(404, '{"error":"找不到此操作"}')

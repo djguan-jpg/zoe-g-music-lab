@@ -42,6 +42,7 @@ from .draft_library import LIBRARY_SCHEMA_VERSION, MAX_ENTRIES
 from .draft_backup import (BACKUP_SCHEMA_VERSION, MAX_BACKUP_BYTES, MAX_EXPANDED_BYTES,
                            export_backup, inspect_backup, restore_backup)
 from .backup_export import checked_request as checked_backup_export, prepare as prepare_backup_export, descriptor as backup_export_descriptor
+from .library_search import checked_request as checked_library_search, prepare as prepare_library_search, descriptor as library_search_descriptor
 
 PROTOCOL_VERSION = 1
 MAX_REQUEST_BYTES = MAX_JSON_BYTES
@@ -64,6 +65,7 @@ OPERATIONS = {
 LIBRARY_OPERATIONS = {
     "draft_save": "Save an immutable revision only in the explicitly selected local library; no media",
     "draft_list": "List metadata from the explicitly selected library; no arbitrary path access",
+    "draft_search": "Search all observed saved labels and music/storyboard/lyrics titles by literal case-sensitive substring; continuation pins query and complete metadata/issues; no draft body, media, paths or writes",
     "draft_read": "Read a saved revision and verify its hash and draft shape before returning it",
     "draft_backup_export": "Export a fully checked backup from the explicitly selected library; metadata by default, explicit include_archive=true only for ZIP<=512 KiB; optional saved IDs, no paths or filesystem writes",
     "draft_backup_inspect": "Validate the backup selected at launch and preview conflicts; no restore",
@@ -101,6 +103,7 @@ def capabilities(draft_library=None, backup_source=None, delivery_source=None):
             "draft_backup": {"backup_schema_version": BACKUP_SCHEMA_VERSION, "source_selected": backup_source is not None,
                              "max_archive_bytes": MAX_BACKUP_BYTES, "max_expanded_bytes": MAX_EXPANDED_BYTES},
             "draft_backup_export": backup_export_descriptor(),
+            "draft_search": library_search_descriptor(),
             "storyboard_seed": {"schema_version": SEED_SCHEMA_VERSION, "max_slots": MAX_SLOTS,
                                 "status": "timing_seed_incomplete", "media_generated": False},
             "lyrics_seed": {"schema_version": LYRICS_SEED_SCHEMA_VERSION, "max_source_bytes": MAX_SOURCE_BYTES,
@@ -176,6 +179,7 @@ def build(operation, payload, *, audio_source=None, draft_library=None, backup_s
     if operation in LIBRARY_OPERATIONS:
         required, optional = {"draft_save": ({"draft", "label", "id"}, set()),
                               "draft_list": (set(), {"limit", "cursor"}),
+                              "draft_search": ({"query"}, {"limit", "cursor"}),
                               "draft_read": ({"id"}, set()), "draft_backup_inspect": (set(), set()),
                               "draft_backup_export": (set(), {"ids", "include_archive"}),
                               "draft_backup_restore": ({"backup_sha256"}, set())}[operation]
@@ -187,6 +191,10 @@ def build(operation, payload, *, audio_source=None, draft_library=None, backup_s
             data = draft_library.read(payload['id'])
         elif operation == "draft_list":
             data = draft_library.list(payload.get('limit', 20), payload.get('cursor'))
+        elif operation == 'draft_search':
+            request = checked_library_search(payload)
+            records, issues = draft_library.metadata_snapshot()
+            data = prepare_library_search(request, records, issues)
         elif operation == "draft_backup_inspect":
             data = inspect_backup(draft_library, backup_source)
         elif operation == 'draft_backup_export':
@@ -195,7 +203,7 @@ def build(operation, payload, *, audio_source=None, draft_library=None, backup_s
             data = prepare_backup_export(raw, summary, request['ids']).summary(request['include_archive'])
         else:
             data = restore_backup(draft_library, backup_source, payload['backup_sha256'])
-        return Result({}, data, operation != 'draft_list')
+        return Result({}, data, operation not in ('draft_list', 'draft_search'))
     if operation == "delivery_inspect":
         if set(payload)-{'include_files','baseline','include_report','file_names','text_window','text_search'}:raise ValueError('交付核對不能由JSON指定來源路徑')
         if 'baseline' in payload and payload['baseline'] is None:raise ValueError('比較基準需為scope／files物件')

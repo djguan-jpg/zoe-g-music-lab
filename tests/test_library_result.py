@@ -45,8 +45,10 @@ class LibraryResultTests(unittest.TestCase):
                 for (action,payload),wire in zip(actions,wires):cases.append({'action':action,'payload':payload,'wire':wire,'after':after if payload.get('cursor') else None,'selected':selected})
             before=copy.deepcopy(cases);results=checked(cases);self.assertTrue(all(r['ok'] for r in results));self.assertEqual(cases,before)
             self.assertEqual(selected['titles']['music'],'🎵'*119+'甲');self.assertEqual(agent[3]['data']['reused'],True)
+            wrong_cases=[]
             for action,payload in actions:
-                wrong=build('draft_'+action,payload,draft_library=library).wire();wrong['meta']['version']='99.0.0';self.assertFalse(checked([{'action':action,'payload':payload,'wire':wrong,'after':after,'selected':selected}])[0]['ok'])
+                wrong=build('draft_'+action,payload,draft_library=library).wire();wrong['meta']['version']='99.0.0';wrong_cases.append({'action':action,'payload':payload,'wire':wrong,'after':after,'selected':selected})
+            self.assertEqual([item['ok'] for item in checked(wrong_cases)],[False]*len(actions))
 
     def test_real_loopback_asset_pages_and_read_wires_preserve_source_and_host_origin_gates(self):
         class Quiet(WorkbenchHandler):

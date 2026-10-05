@@ -119,10 +119,8 @@ class DraftLibrary:
                     raise ValueError('草稿庫超過 1000 個版本，請另選新草稿庫；現有資料保留')
         return result
 
-    def list(self, limit=20, cursor=None):
-        if type(limit) is not int or not 1 <= limit <= 100:
-            raise ValueError('每頁需為 1–100 個版本')
-        after = self.metadata(cursor) if cursor is not None else None
+    def metadata_snapshot(self):
+        """One bounded observed metadata scan; body checks remain in revision reads."""
         records, issues = [], []
         for identifier in self.directories():
             try:
@@ -130,6 +128,13 @@ class DraftLibrary:
             except (ValueError, OSError, UnicodeError, RecursionError):
                 issues.append({'id': identifier, 'error': 'unreadable_revision'})
         records.sort(key=lambda r: (r['stored_at'], r['id']), reverse=True)
+        return records, issues
+
+    def list(self, limit=20, cursor=None):
+        if type(limit) is not int or not 1 <= limit <= 100:
+            raise ValueError('每頁需為 1–100 個版本')
+        after = self.metadata(cursor) if cursor is not None else None
+        records, issues = self.metadata_snapshot()
         if after:
             records = [r for r in records if (r['stored_at'], r['id']) < (after['stored_at'], after['id'])]
         page = records[:limit]
