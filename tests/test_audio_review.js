@@ -71,7 +71,7 @@ function adapter(){
   assert.ok(start>=0&&end>start&&runStart>=0&&runEnd>runStart);
   const state={tab:'audio',revisions:{audio:0},busy:false,audioAcceptanceReview:{check:()=>true,refresh(){}}},nodes={'audio-build':{disabled:false},'audio-file':{files:[{name:'first.wav',size:192044}]},'audio-profile':{value:'distribution'}};
   let resolve,reject,rendered=0,files=0;const notices=[];
-  const context={cueStampEdit:null,readValue:control=>control.value,state,$:id=>nodes[id],MusicAudio:{...MusicAudio,inspect:options=>MusicAudio.inspect({...options,hashFile:fixture.hashFile})},URLSearchParams,timingControls:()=>{},say:m=>notices.push(m),markDirty:()=>{},
+  const context={operationGate:require('../web/operation-gate.js').createGate({createAbort:()=>new AbortController()}),cueStampEdit:null,readValue:control=>control.value,state,$:id=>nodes[id],MusicAudio:{...MusicAudio,inspect:options=>MusicAudio.inspect({...options,hashFile:fixture.hashFile})},URLSearchParams,timingControls:()=>{},say:m=>notices.push(m),markDirty:()=>{},
     api:()=>new Promise((r,j)=>{resolve=r;reject=j;}),renderAudioReview:()=>rendered++,setFiles:()=>files++};
   vm.runInNewContext(source.slice(runStart,runEnd),context);vm.runInNewContext(source.slice(start,end),context);
   return {state,nodes,notices,start:()=>nodes['audio-build'].onclick(),resolve:()=>queueMicrotask(()=>resolve(fixture.wire(report()))),reject:error=>queueMicrotask(()=>reject(error)),

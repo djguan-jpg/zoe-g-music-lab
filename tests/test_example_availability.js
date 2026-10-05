@@ -9,7 +9,7 @@ function setup(){
  const state={busy:false,tab:'music',examples:{music:{title:'範例'},storyboard:{}},revisions:{},files:{old:'原成果'},raw:{music:' 原歌名 🎵 ',storyboard:' 原片名 '},history:{music:['早刪除','新刪除'],storyboard:['鏡頭2']},media:{identity:'原音檔',position:12.4,paused:false}};
  const context={state,$:id=>{assert.ok(nodes[id],id);return nodes[id];},say:(...args)=>calls.push(['say',...args]),
   loadMusic:()=>{calls.push(['load','music']);state.raw.music='合成歌曲';state.history.music=[];},loadMv:()=>{calls.push(['load','storyboard']);state.raw.storyboard='合成分鏡';state.history.storyboard=[];},
-  markDirty:scope=>{calls.push(['dirty',scope]);state.revisions[scope]=(state.revisions[scope]||0)+1;},cueStampEdit:null};
+  markDirty:scope=>{calls.push(['dirty',scope]);state.revisions[scope]=(state.revisions[scope]||0)+1;},operationGate:require('../web/operation-gate.js').createGate({createAbort:()=>new AbortController()}),cueStampEdit:null};
  vm.createContext(context);vm.runInContext(block('function refreshExampleControls(',"$('music-example').onclick=")+handler('music-example')+handler('mv-example'),context);
  context.timingControls=()=>context.refreshExampleControls();vm.runInContext(block('async function run(','function setFiles('),context);
  return{state,nodes,calls,context,click:id=>nodes[id].onclick(),refresh:()=>context.refreshExampleControls()};

@@ -78,7 +78,7 @@
           const parsed=J.decode(content,{size:file.size,maxBytes:1024*1024,label:'起稿 JSON'});
           payload={seed:validateSeed(parsed)};
         }else payload={music:Planning.planningBrief(selected.draft,'music'),fps:selected.fps,bars_per_shot:selected.bars_per_shot};
-        const result=await request(structuredClone(payload));
+        const result=await request(structuredClone(payload),isCurrent);
         if(!current())return false;
         const seed=validateSeed(result?.data);
         if(origin==='file'){if(Undo.fingerprint(seed)!==Undo.fingerprint(payload.seed))fail();}

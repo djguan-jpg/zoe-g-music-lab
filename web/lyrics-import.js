@@ -106,7 +106,7 @@
           const fields=selectedDraft.panels.lyrics.fields;content=fields['lyrics-source'];suffix=fields['lyrics-format'];name='目前歌詞原文';
         }
         const selected=sourceRequest(content,suffix,selectedDraft.panels.lyrics.fields);
-        const result=await request(selected.operation,structuredClone(selected.payload));
+        const result=await request(selected.operation,structuredClone(selected.payload),isCurrent);
         if(!active()||!guard.check(token))return false;
         const job={name,selected,result:checkedResult(selected,result,previewContract)};
         importDraft(selectedDraft,job); // Check representability before offering a replacement.

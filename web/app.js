@@ -4,6 +4,7 @@ const $ = id => document.getElementById(id);
 $('product-version').textContent='v'+MusicDeliveryVersions.current;
 const textDownloader=MusicTextDownloadDom.createAdapter(document,{events:window});
 const state = {tab:'music', examples:null, files:{}, bundles:{}, revisions:{}, music:[], shots:[], cues:[], audioUrl:null, audioContext:null, waveform:null, busy:false,resultRevisions:{},deliveryImport:null,deliveryPackage:null,deliveryNavigation:null,audioAcceptance:null};
+const operationGate=MusicOperationGate.createGate({createAbort:()=>new AbortController()});
 const rawFields=MusicRawFieldsDom.createAdapter(document);
 const readValue=control=>rawFields.read(control);
 const writeValue=(control,value)=>rawFields.write(control,value);
@@ -102,14 +103,16 @@ const waveTask = MusicEditor.createLatestTask();
 function say(message,error=false){$('status').textContent=message;$('status').className=error?'error':'';state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();state.audioAcceptanceReview?.refresh();state.deliveryPackage?.refresh();state.deliveryImport?.refresh();state.textVerification?.refresh();if(state.tab==='storyboard'){$('shot-status').textContent=message;$('shot-status').classList.toggle('error',error);}}
 function esc(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function field(value,label,type='text',wide=false){return `<input type="text" value="${esc(value)}" aria-label="${esc(label)}" class="${wide?'wide':''}" ${type==='number'?'inputmode="decimal" data-raw-number="true"':''}>`;}
-async function api(route,data,binary=false){const response=await fetch(route,{method:'POST',headers:{'Content-Type':binary?'application/octet-stream':'application/json'},body:binary?data:JSON.stringify(data)});const result=await response.json();if(!response.ok){const error=Error(result.error||'操作未完成');error.status=response.status;throw error;}return result;}
+async function api(route,data,binary=false,signal){const response=await fetch(route,{method:'POST',headers:{'Content-Type':binary?'application/octet-stream':'application/json'},body:binary?data:JSON.stringify(data),...(signal?{signal}:{})});const result=await response.json();if(!response.ok){const error=Error(result.error||'操作未完成');error.status=response.status;throw error;}return result;}
 async function run(button,task,scope=state.tab){
   if(state.busy)return;
-  const tab=state.tab,revision=state.revisions[scope]||0,current=()=>state.tab===tab&&(state.revisions[scope]||0)===revision;
+  const job=operationGate.begin(),tab=state.tab,revision=state.revisions[scope]||0,current=()=>operationGate.current(job)&&state.tab===tab&&(state.revisions[scope]||0)===revision;
+  current.signal=job.signal;
   say('處理中，請稍候');state.busy=true;button.disabled=true;timingControls();cueStampEdit?.refresh();state.currentCue?.refresh();state.cuePosition?.refresh();state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();state.audioAcceptanceReview?.refresh();state.deliveryPackage?.refresh();state.deliveryImport?.refresh();state.textVerification?.refresh();
   try{await task(current);}catch(error){if(current())say(error.message,true);}
-  finally{if(!current()){markDirty(scope);say('處理期間輸入有修改，請重新建立成果');}state.busy=false;button.disabled=false;timingControls();cueStampEdit?.refresh();state.currentCue?.refresh();state.cuePosition?.refresh();state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();state.audioAcceptanceReview?.refresh();state.deliveryPackage?.refresh();state.deliveryImport?.refresh();state.textVerification?.refresh();}
+  finally{const cancelled=operationGate.cancelled(job);if(!cancelled&&!current()){markDirty(scope);say('處理期間輸入有修改，請重新建立成果');}operationGate.finish(job);state.busy=false;button.disabled=false;timingControls();cueStampEdit?.refresh();state.currentCue?.refresh();state.cuePosition?.refresh();state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();state.audioAcceptanceReview?.refresh();state.deliveryPackage?.refresh();state.deliveryImport?.refresh();state.textVerification?.refresh();if(cancelled)say('已取消本次等待；目前編修與上一份成果保留，可重新建立。');state.operationControl?.finishFocus(button);}
 }
+function cancelRun(){if(!operationGate.cancel())return;say('正在取消等待；目前編修與上一份成果保留。');timingControls();}
 function setFiles(files,note,dirty=false,inputIndependent=false,deliveryLabel=null){state.resultRevisions[state.tab]=(state.resultRevisions[state.tab]||0)+1;state.files=files;state.bundles[state.tab]={files,note,dirty,inputIndependent,...(deliveryLabel===null?{}:{deliveryLabel})};const select=$('output-file');select.replaceChildren();Object.keys(files).forEach(name=>{const option=document.createElement('option');option.value=name;option.textContent=name;select.append(option);});select.disabled=false;$('download').disabled=dirty;$('output-note').textContent=note+(dirty?'（有修改尚未重新驗證）':'');previewOutput();state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();state.audioAcceptanceReview?.refresh();state.deliveryPackage?.refresh();state.deliveryImport?.refresh();state.textVerification?.refresh();}
 function markDirty(tab){draftRetention.refresh(tab);if(tab==='music'){arrangementController?.refresh();musicReadyController?.refresh();}if(tab==='storyboard'){storyboardDurationController?.refresh();storyboardReadyController?.refresh();storyboardTimingController?.refresh();}if(['music','storyboard'].includes(tab))stalePlanningReview(tab);if(tab==='audio'){staleAudioReview();state.audioAcceptanceReview?.refresh();}if(tab==='lyrics'){cueStampEdit?.refresh();lyricsSearchController?.refresh();staleLyricsExportReview();lyricsExportController?.invalidate();staleLyricsReview();lyricsReviewController?.invalidate();lyricsMediaController?.refresh();const pending=timingReading||timingReady;timingController?.invalidate();if(pending)timingSay('歌詞有修改，請重新預覽整批校時。');}state.revisions[tab]=(state.revisions[tab]||0)+1;const saved=state.bundles[tab];if(!saved||saved.inputIndependent){state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();state.audioAcceptanceReview?.refresh();state.deliveryPackage?.refresh();state.deliveryImport?.refresh();state.textVerification?.refresh();return;}saved.dirty=true;if(state.tab===tab){$('download').disabled=true;$('output-note').textContent=saved.note+'（有修改尚未重新驗證）';}state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();state.audioAcceptanceReview?.refresh();state.deliveryPackage?.refresh();state.deliveryImport?.refresh();state.textVerification?.refresh();}
 document.querySelector('.editor').addEventListener('input',event=>{
@@ -240,7 +243,7 @@ function checkMusicReady(){const view=musicReadyController.check();if(!view.repo
 $('music-ready-check').onclick=()=>{if(state.busy)return;try{checkMusicReady();}catch(error){say(error.message,true);}};
 $('music-ready-report').onclick=()=>run($('music-ready-report'),async current=>{
   const panel=capturePanel('music');musicReadyController.check();
-  const reply=await api('/api/music-review',{panel});if(!current())return;
+  const reply=await api('/api/music-review',{panel},false,current.signal);if(!current())return;
   const accepted=MusicReadiness.checkedResult(panel,reply);
   $('music-visual').hidden=true;
   setFiles(accepted.files,`歌曲欄位檢查 · 待辦 ${accepted.data.issue_count} 項`);
@@ -250,7 +253,7 @@ $('music-form').onsubmit=event=>{event.preventDefault();if(state.busy)return;
   clearRequirementError('music-avoid');clearRequirementError('music-deliverables');
   try{if(!checkMusicReady())return;}catch(error){say(error.message,true);return;}
   run(event.submitter,isCurrent=>MusicPlanReview.inspect({operation:'music',brief:MusicPlanning.planningBrief(captureDraft(),'music'),isCurrent,
-    request:(operation,brief)=>api('/api/'+operation,brief),onResult:applyPlanningResult}));};
+    request:(operation,brief)=>api('/api/'+operation,brief,false,isCurrent.signal),onResult:applyPlanningResult}));};
 function stalePlanningReview(scope){
   const box=$(scope==='music'?'music-visual':'mv-visual'),note=box.querySelector('[data-plan-stale]');if(!note||box.hidden)return;
   note.hidden=false;box.classList.add('stale');box.querySelector('[data-plan-status]').textContent='上一份設計';
@@ -385,7 +388,7 @@ $('mv-build').onclick=()=>run($('mv-build'),isCurrent=>{
   if(view.report.issueCount){locateStoryboardIssue(0);throw Error('分鏡創作有待辦；已定位第一個欄位，目前內容保留。');}
   if(!checkStoryboardTiming())throw Error('分鏡時間有待辦；已定位第一個欄位，目前內容保留。');
   const brief=MusicPlanning.planningBrief(captureDraft(),'storyboard');brief.shots=getShots();
-  return MusicPlanReview.inspect({operation:'storyboard',brief,isCurrent,request:(operation,selected)=>api('/api/'+operation,selected),onResult:applyPlanningResult});
+  return MusicPlanReview.inspect({operation:'storyboard',brief,isCurrent,request:(operation,selected)=>api('/api/'+operation,selected,false,isCurrent.signal),onResult:applyPlanningResult});
 });
 function storyboardIssueTarget(issue){
   if(issue.scope==='fields')return $(issue.field==='motifs'?'motif-add':issue.field==='shots'?'shot-add':issue.field);
@@ -451,14 +454,14 @@ storyboardTimingController=MusicStoryboardTiming.createController({capture:captu
 $('mv-time-check').onclick=()=>{if(state.busy){say('目前操作尚未完成，請稍候');return;}try{const view=storyboardTimingController.check();say(view.report.issueCount?`已列出${view.report.issueCount}項時間待辦；原時間保留。`:'時間資料沒有待辦；仍須完整建立驗證。');}catch(e){say(e.message,true);}};
 $('mv-time-report').onclick=()=>run($('mv-time-report'),async current=>{
   const panel=captureStoryboardTiming().panel;storyboardTimingController.check();
-  const reply=await api('/api/storyboard-timing-review',{panel});if(!current())return;
+  const reply=await api('/api/storyboard-timing-review',{panel},false,current.signal);if(!current())return;
   const accepted=MusicStoryboardTiming.checkedResult(panel,reply);
   $('mv-visual').hidden=true;setFiles(accepted.files,`分鏡時間檢查 · 待辦 ${accepted.data.issue_count} 項`);
   say('分鏡時間報告已建立；原時間保留，仍須完整創作與實際音畫驗證');
 });
 $('mv-ready-report').onclick=()=>run($('mv-ready-report'),async current=>{
   const panel=capturePanel('storyboard');storyboardReadyController.check();
-  const reply=await api('/api/storyboard-review',{panel});if(!current())return;
+  const reply=await api('/api/storyboard-review',{panel},false,current.signal);if(!current())return;
   const accepted=MusicStoryboardReadiness.checkedResult(panel,reply);
   $('mv-visual').hidden=true;
   setFiles(accepted.files,`分鏡欄位檢查 · 待辦 ${accepted.data.issue_count} 項`);
@@ -533,14 +536,14 @@ function lyricsBuildSource(){
   return {sorted,payload,expected:MusicLyricsResult.expectedBuild(payload)};
 }
 $('lyrics-build').onclick=()=>run($('lyrics-build'),async isCurrent=>{const review=MusicLyricsReview.review(lyricsReviewPayload());renderLyricsReview(review);if(review.issue_count){focusLyricsIssue(review.issues[0]);throw Error('校時有待修正項目；已定位第一個欄位，原文與句子保留。');}
-  const source=lyricsBuildSource(),reply=await api('/api/lyrics',source.payload);if(!isCurrent())return;
+  const source=lyricsBuildSource(),reply=await api('/api/lyrics',source.payload,false,isCurrent.signal);if(!isCurrent())return;
   const result=MusicLyricsResult.checkedResult(source.expected,reply),formats=await MusicLyricsExportReview.review({package:result.data});if(!isCurrent())return;
   const files={...result.files,...MusicLyricsExportReview.files(formats,{package:result.data})};
   timingController.invalidate();renderCues(result.data.cues,source.sorted.map(e=>e.id));renderLyricsExportReview(formats,source.sorted.map(e=>e.id));setFiles(files,`已驗證歌詞與格式報告 · ${result.data.cues.length} 句`);say(`歌詞時間驗證通過；格式提醒 ${formats.issue_count} 項，完整 JSON 與報告已建立，可一起另存。`);tick();});
-lyricsReviewController=MusicLyricsReview.createController({capture:lyricsReviewPayload,request:payload=>api('/api/lyrics-review',payload),
+lyricsReviewController=MusicLyricsReview.createController({capture:lyricsReviewPayload,request:(payload,current)=>api('/api/lyrics-review',payload,false,current?.signal),
   onReport:(data,files)=>{renderLyricsReview(data);setFiles(files,'校時檢查報告 · 資料待辦，仍需實聽');say('已檢查全部逐句資料；選擇待辦可定位，未修改內容');},
   onError:error=>{staleLyricsReview();say(error.message+'；目前句子保留',true);},onState:({pending})=>{$('lyrics-review-check').disabled=state.busy||pending;}});
-$('lyrics-review-check').onclick=()=>run($('lyrics-review-check'),()=>lyricsReviewController.check());
+$('lyrics-review-check').onclick=()=>run($('lyrics-review-check'),current=>lyricsReviewController.check(current));
 function staleLyricsExportReview(){
   const box=$('lyrics-export-box');box.dataset.stale='true';
   $('lyrics-export-status').textContent='目前內容已編修；請重新建立或檢查匯出格式。';
@@ -558,12 +561,13 @@ function renderLyricsExportReview(data,ids){
   });
   if(data.issue_count>20){const li=document.createElement('li');li.textContent='畫面只列前20項；報告含前200項與全部計數。';list.append(li);}
 }
-lyricsExportController=MusicLyricsExport.createController({capture:()=>{const source=lyricsBuildSource();return {payload:{package:source.expected,include_package:true},ids:source.sorted.map(e=>e.id)};},request:payload=>api('/api/lyrics-export-review',payload),
+lyricsExportController=MusicLyricsExport.createController({capture:()=>{const source=lyricsBuildSource();return {payload:{package:source.expected,include_package:true},ids:source.sorted.map(e=>e.id)};},request:(payload,current)=>api('/api/lyrics-export-review',payload,false,current?.signal),
   onReport:(data,files,ids)=>{renderLyricsExportReview(data,ids);setFiles(files,'格式報告與完整歌詞包 · 原內容保留');say('格式報告與對應的完整 JSON 已建立；原歌詞與時間保留，可一起另存。');},
   onError:error=>say(error.message+'；目前歌詞與成果保留',true),onState:({pending})=>{$('lyrics-export-check').disabled=state.busy||pending;}});
 $('lyrics-export-check').onclick=()=>run($('lyrics-export-check'),current=>lyricsExportController.check(current));
 function timingSay(message,error=false){$('timing-status').textContent=message;$('timing-status').classList.toggle('error',error);}
 function timingControls(){
+  state.operationControl?.refresh();
   refreshExampleControls();
   refreshCollectionControls();
   lyricsSearchController?.refresh();
@@ -711,7 +715,7 @@ function renderAudioReview(d){
 }
 $('audio-build').onclick=()=>{if(state.busy)return;try{if(!state.audioAcceptanceReview.check(true)){say('接受條件有待辦；請修正後再分析',true);return;}}catch(error){say(error.message,true);return;}return run($('audio-build'),isCurrent=>MusicAudio.inspect({
   selected:()=>({file:$('audio-file').files[0],profile:readValue($('audio-profile')),acceptanceDraft:state.audioAcceptance?.capture()}),isCurrent,
-  request:({file,profile,acceptanceDraft})=>api('/api/audio?'+new URLSearchParams({name:file.name,...(acceptanceDraft?{acceptance_draft:JSON.stringify(acceptanceDraft)}:{profile})}),file,true),
+  request:({file,profile,acceptanceDraft})=>api('/api/audio?'+new URLSearchParams({name:file.name,...(acceptanceDraft?{acceptance_draft:JSON.stringify(acceptanceDraft)}:{profile})}),file,true,isCurrent.signal),
   onResult:(result,review)=>{renderAudioReview(review);setFiles(result.files,'音檔檢查 · '+review.status);say(review.needsReview?`檢查已完成，有 ${review.warnings.length} 項需確認`:'本次技術條件通過；報告已建立');}
 }));};
 const draftTask=MusicEditor.createLatestTask();
@@ -876,7 +880,7 @@ $('brief-apply').onclick=()=>{
 };
 seedController=MusicSeed.createPreview({
   capture:()=>({draft:captureDraft(),fps:$('seed-fps').value,bars_per_shot:$('seed-bars').value}),
-  request:payload=>api('/api/storyboard-seed',payload),
+  request:(payload,current)=>api('/api/storyboard-seed',payload,false,current?.signal),
   onClear:()=>{$('seed-review').hidden=true;$('seed-content').value='';},
   onReady:(seed,files,source)=>{
     $('seed-review-note').textContent=`${source.origin==='file'?'已檢查檔案起稿「'+source.label+'」；目前歌曲保留。':'依目前歌曲估算。'}「${seed.title}」約 ${seed.duration_seconds} 秒，${seed.slots.length} 鏡。套用會替換分鏡片名、時長、FPS 及全部鏡頭，保留現有視覺基調、人物設定、母題清單與其他工作台。新鏡頭尚未選母題，畫面與狀態留白。`;
@@ -912,7 +916,7 @@ $('seed-apply').onclick=()=>{
   }catch(error){say(error.message,true);}
 };
 lyricsSeedController=MusicLyricsSeed.createPreview({
-  capture:captureDraft,request:payload=>api('/api/lyrics-seed',payload),
+  capture:captureDraft,request:(payload,current)=>api('/api/lyrics-seed',payload,false,current?.signal),
   onClear:()=>{$('lyrics-seed-review').hidden=true;$('lyrics-seed-content').value='';},
   onReady:(seed,files,origin)=>{
     $('lyrics-seed-note').textContent=`「${seed.title}」共${seed.lines.length}句，時間尚未標記。套用只替換校時名稱、原文與格式、全部逐句內容；保留歌曲／分鏡／交付條件、目前時長與音檔。原始文字及空白行留在起稿資料，開始與結束留白；段落標籤請人工調整。`;
@@ -934,7 +938,7 @@ $('lyrics-seed-apply').onclick=()=>{
   }catch(error){say(error.message,true);}
 };
 lyricsImportController=MusicLyricsImport.createImport({
-  capture:captureDraft,request:(operation,payload)=>api('/api/'+operation.replace('_','-'),payload),
+  capture:captureDraft,request:(operation,payload,current)=>api('/api/'+operation.replace('_','-'),payload,false,current?.signal),
   onClear:()=>{$('lyrics-import-review').hidden=true;$('lyrics-import-source').value='';$('lyrics-import-rows').replaceChildren();$('lyrics-import-apply').textContent='套用這份歌詞';},
   onState:({reading,ready})=>{
     $('lyrics-import-apply').disabled=reading||!ready;
@@ -1121,8 +1125,9 @@ async function setupLibrary(){
   }catch(error){librarySay(error.message,true);libraryControls();}
 }
 state.deliveryNavigation=MusicDeliveryNavigationDom.createAdapter(document,()=>({scope:state.tab,names:Object.keys(state.files),busy:state.busy,dirty:!!state.bundles[state.tab]?.dirty,message:$('status').textContent,error:$('status').classList.contains('error')}));
+state.operationControl=MusicOperationControlDOM.createAdapter(document,{capture:()=>operationGate.view(),cancel:cancelRun});
 state.audioAcceptance=MusicAudioAcceptanceDom.createAdapter(document,{readValue,writeValue,events:window,allowed:()=>!state.busy,downloadText:(name,content)=>textDownloader.send(name,content),onChange:()=>markDirty('audio'),onError:error=>say(error.message,true)});
-state.deliveryPackage=MusicDeliveryPackageDom.createAdapter(document,{capture:()=>({scope:state.tab,label:state.bundles[state.tab]?.deliveryLabel??state.bundles[state.tab]?.note??'',files:state.files,busy:state.busy,dirty:!!state.bundles[state.tab]?.dirty}),run,request:payload=>api('/api/delivery-package/prepare',payload),discard:id=>api('/api/delivery-package/discard',{id}),say});
+state.deliveryPackage=MusicDeliveryPackageDom.createAdapter(document,{capture:()=>({scope:state.tab,label:state.bundles[state.tab]?.deliveryLabel??state.bundles[state.tab]?.note??'',files:state.files,busy:state.busy,dirty:!!state.bundles[state.tab]?.dirty}),run,request:(payload,current)=>api('/api/delivery-package/prepare',payload,false,current?.signal),discard:id=>api('/api/delivery-package/discard',{id}),say});
 state.deliveryImport=MusicDeliveryImportDom.createAdapter(document,{
   downloadText:(name,content)=>textDownloader.send(name,content),
   capture:()=>({scope:state.tab,revision:state.revisions[state.tab]||0,resultRevision:state.resultRevisions[state.tab]||0,bundle:state.bundles[state.tab]||null,busy:state.busy,media:[$('audio-file').files[0]||null,$('lyrics-audio').files[0]||null]}),
@@ -1138,7 +1143,7 @@ initialize();
 
 state.audioAcceptanceReview=MusicAudioAcceptanceReviewDom.createAdapter(document,{capture:()=>state.audioAcceptance.capture(),allowed:()=>!state.busy,onError:message=>say(message,true)});
 $('audio-accept-ready-report').onclick=()=>{if(state.busy)return;try{state.audioAcceptanceReview.check();}catch(error){say(error.message,true);return;}return run($('audio-accept-ready-report'),async current=>{
-  const document=state.audioAcceptance.capture();const reply=await api('/api/audio-acceptance-review',{document});if(!current())return;
+  const document=state.audioAcceptance.capture();const reply=await api('/api/audio-acceptance-review',{document},false,current.signal);if(!current())return;
   const accepted=MusicAudioAcceptanceReview.checkedResult(document,reply);$('audio-visual').hidden=true;
   setFiles(accepted.files,`接受條件檢查 · 待辦 ${accepted.data.issue_count} 項`);say('條件檢查報告已建立；請接續音檔分析與實聽');
 });};

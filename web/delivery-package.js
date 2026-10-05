@@ -50,7 +50,7 @@
     let reply=null,completed=false;
     try{
       const expected=await manifest(payload,hash);if(!current())return false;
-      reply=await request(payload);if(!current())return false;
+      reply=await request(payload,isCurrent);if(!current())return false;
       const accepted=checked(reply,expected);if(!current())return false;
       await onDownload(accepted);completed=true;return true;
     }catch(error){if(current())throw error;return false;}
