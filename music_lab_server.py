@@ -60,6 +60,7 @@ ASSETS = {"/delivery-versions.js": ("musiclab/assets/delivery-versions.js","text
           "/deletion-history.js": ("web/deletion-history.js", "text/javascript"),
           "/draft-library.js": ("web/draft-library.js", "text/javascript"),
           "/library-receipt.js": ("web/library-receipt.js", "text/javascript"),
+          "/library-revision.js": ("web/library-revision.js", "text/javascript"),
           "/draft-retention.js": ("web/draft-retention.js", "text/javascript"),
           "/backup-transfer.js": ("web/backup-transfer.js", "text/javascript"),
           "/lyric-time.js": ("musiclab/assets/lyric-time.js", "text/javascript"),

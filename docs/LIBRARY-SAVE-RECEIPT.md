@@ -1,10 +1,12 @@
-# 草稿保存回讀核對 · v0.69
+# 草稿保存回讀核對 · v0.69／v0.70共享來源層
+
+v0.70將entry／read的純metadata與完整draft驗證移至[共用保存版本來源層](LIBRARY-REVISION.md)，library-receipt保留ACK／click-time payload規則及全原稿比較。以下保存狀態規則保持。
 
 原controller收到保存回應即呼叫onSaved，wrong ID／label亦可解除未保存提醒。本版確認完整data ACK，再用既有readonly draft_read回讀同ID的完整版本，與點擊時原稿及ACK逐值一致才確認。
 
 ## 分層與邊界
 
-library-receipt.js為無I/O／DOM／media／路徑的純checkedAck與checkedReadback。ACK exact entry／reused strict bool／draft_only_not_validated，entry exact library1／draft3／ID／label／UTC保存時間／有界bytes與SHA格式／created_with／三項title。title按Unicode codepoint取原稿前120字元，原值含空白、CRLF與Unicode保持。完整回讀exact entry／draft／status；entry必須等於ACK，draft經既有validateDraft後與完整click-time draft逐值一致，含saved_at／tool_version／tab、全部四panels與列順序。物件鍵順序不是來源證明；所有返回值隔離。
+library-receipt.js的checkedAck／checkedReadback與library-revision.js共享純entry／read核對，均無I/O／DOM／media／路徑。ACK exact entry／reused strict bool／draft_only_not_validated，entry exact library1／draft3／ID／label／UTC保存時間／有界bytes與SHA格式／created_with／三項title。title按Unicode codepoint取原稿前120字元，原值含空白、CRLF與Unicode保持。完整回讀exact entry／draft／status；entry必須等於ACK，draft經既有validateDraft後與完整click-time draft逐值一致，含saved_at／tool_version／tab、全部四panels與列順序。物件鍵順序不是來源證明；所有返回值隔離。
 
 createVerifier只注入read(id)與validate，先核對ACK再讀、兩個async邊界保留隔離原稿。app提供既有/api/drafts/read且只傳ID；原/api/drafts/save保持。新純層檢查data，沒有新增整個HTTP meta／files的wire核對。library controller required confirmSave，未提供就拒絕初始化；測試中explicit identity callback只隔離既有controller測試，production必須使用完整verifier。
 
@@ -16,4 +18,4 @@ click時保存隔離ID／label／完整draft，直到read確認前saving=true，
 
 確認後才retain原click-time checkpoint；current capture指紋與原稿比較以顯示後續修改尚未保存，原編修不被回讀覆蓋。failed不清dirty提醒，已確認原案也不替後續編修解除提醒。放棄pending只清本頁待重試紀錄，不刪磁碟版本；重新整理清單不代替保存確認。沒有自動保存／無資料遺失承諾；page生命周期仍沿既有限制。
 
-產品69、交付明確38–69／未知70；Agent1／draft3／library1、14基本／明確啟庫19工具保持。CLI／Agent／MCP仍走既有application及immutable library。legal4 PolyForm Noncommercial1.0.0、ZOE. G／djguan-jpg、private、FreeTWAI not_submitted保持。
+現版產品70、交付明確38–70／未知71；Agent1／draft3／library1、14基本／明確啟庫19工具保持。CLI／Agent／MCP仍走既有application及immutable library。legal4 PolyForm Noncommercial1.0.0、ZOE. G／djguan-jpg、private、FreeTWAI not_submitted保持。

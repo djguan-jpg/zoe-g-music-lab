@@ -87,7 +87,7 @@ test('cancelled guarded brief callback cannot revive after a newer read',async()
   const wait=later();let n=0;const h=briefHarness(async(_,brief)=>++n===1?wait.promise:{brief});const old=h.reader.read(file(music()),'music');await Promise.resolve();await Promise.resolve();h.reader.cancel();
   await h.reader.read(file(music()),'music');wait.resolve({brief:music()});assert.equal(await old,false);assert.equal(h.ready.length,1);assert.deepEqual(h.errors,[]);
 });
-function libraryHarness(request){const h=harness(),ready=[],errors=[];const library=createLibraryController({confirmSave:async(payload,ack)=>ack,preview:h.preview,request,capture:()=>h.current.draft,validate:Editor.validateDraft,
+function libraryHarness(request){const h=harness(),ready=[],errors=[];const library=createLibraryController({checkRead:(id,result,validate)=>({entry:structuredClone(result.entry),draft:validate(result.draft)}),confirmSave:async(payload,ack)=>ack,preview:h.preview,request,capture:()=>h.current.draft,validate:Editor.validateDraft,
   newId:()=> 'unused',onReady:r=>ready.push(r),onError:e=>errors.push(e.message),onPending:()=>{},onSaved:()=>{},onList:()=>{}});return {...h,library,ready,errors};}
 const stored=()=>({entry:{id:'synthetic',label:'保存案'},draft:draft()});
 test('saved-version adapter uses whole-draft preview and blocks later unrelated edits',async()=>{

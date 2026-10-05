@@ -13,7 +13,7 @@ function harness(){
  current.panels.music.fields['music-title']='原案🎵';checkpoint.refresh(current);
  const request=(action,p)=>new Promise((resolve,reject)=>calls.push({action,payload:structuredClone(p),resolve,reject}));
  const c=createLibraryController({request,capture:()=>structuredClone(current),validate:E.validateDraft,newId:()=> 'draft-'+String(++sequence).padStart(32,'0'),
-  confirmSave:R.createVerifier({read:id=>request('read',{id}),validate:E.validateDraft}),
+  checkRead:(id,result,validate)=>({entry:structuredClone(result.entry),draft:validate(result.draft)}),confirmSave:R.createVerifier({read:id=>request('read',{id}),validate:E.validateDraft}),
   onSaved:r=>{saved.push(r);checkpoint.retain(r.draft,{kind:'library',label:r.entry.label});},onList:()=>{},onReady:()=>{},
   onError:(e,s)=>errors.push({message:e.message,...s}),onPending:s=>states.push(s)});
  return {c,calls,saved,errors,states,checkpoint,current,sequence:()=>sequence};

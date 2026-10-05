@@ -1,3 +1,9 @@
+# v0.70.0 · 2026-10-05
+
+保存版本預覽核對選定 ID 與完整 metadata；讀取完成、套用與匯出前重查目前選擇。不符時保留編修與音檔，切換版本提示重新預覽。514 Python／829 JavaScript／72語法／四份Skill、128歷史ZIP及指定v69還原511／816通過。
+
+先前read controller只驗draft格式，完整合法的另一版本也能成為預覽。抽出library-revision純完整entry/read契約，save receipt重用而保留完整click-time draft比較。controller必須注入checkRead，讀前隔離selected metadata；app在read完成、Apply及原案匯出各重查active selection。原latest token／目標快照／native File保護保持。切換版本清preview並明示重新預覽，晚回覆不得恢復舊提示。無新增schema／operation／任意路徑／依賴。見[契約](docs/LIBRARY-REVISION.md)、[QA](docs/QA-v0.70.0.md)、[交接](docs/HANDOFF-v0.70.0.md)。
+
 # v0.69.0 · 2026-10-05
 
 草稿保存後先回讀同一 ID，完整核對點擊時草稿與保存回應，才標示已保存。回讀失敗保留原 ID／原稿供重試，後續編修與音檔保持。511 Python／816 JavaScript／71語法／四份Skill、124歷史ZIP及指定v68還原508／804通過。

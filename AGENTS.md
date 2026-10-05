@@ -265,3 +265,8 @@ planning-report-input純strict decode／全部來源診斷→readiness-report精
 ## v0.69 保存回讀核對
 
 pure library-receipt完整data ACK／同ID metadata／全部draft3→注入readonly read→required confirmSave→既有pending controller→DOM／retention。保存ACK後任何回讀錯誤（含4xx）／不符保持原ID與click-time原稿供重試；原save4xx拒絕規則保持。確認前saving仍阻擋放棄／重試，確認後才retain原稿、後續編修保持dirty。backend read核對磁碟bytes／SHA，browser不獨立重算保存bytes或承諾原子／耐久交易。產品69／來源明確38–69、14／19 tools、Agent1／draft3／library1／legal4／private／not_submitted保持，見[契約](docs/LIBRARY-SAVE-RECEIPT.md)。
+
+
+## v0.70 保存版本預覽來源
+
+pure library-revision共享完整entry／read data與save receipt→讀前clone selected metadata→required checkRead→原latest token／replacement snapshot→DOM current ID／完整metadata在read完成、Apply與export重查。wrong ID／metadata／late拒絕且保留編修／media；切換取消preview並提示重新預覽。checkedSelection只比較已驗entry，不冒充獨立完整record validator。backend read核對磁碟bytes／SHA，browser不獨立重算磁碟bytes；純data層未新增HTTP meta/files核對。全案load／Undo原media重選邊界保持。產品70／明確來源38–70、14／19 tools、Agent1／draft3／library1／legal4／private／not_submitted保持，見[契約](docs/LIBRARY-REVISION.md)。

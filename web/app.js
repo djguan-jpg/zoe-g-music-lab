@@ -927,6 +927,8 @@ function libraryControls(){
 }
 function clearLibraryReview(){libraryController.cancelRead();pendingLibraryReview=null;$('library-review').hidden=true;$('library-review-content').value='';}
 function librarySelection(){
+  const choice=$('library-select').value;
+  if(libraryReadingId&&libraryReadingId!==choice||pendingLibraryReview&&pendingLibraryReview.entry.id!==choice)clearLibraryReview();
   const record=libraryRecords.find(r=>r.id===$('library-select').value);
   $('library-selection-note').textContent=record?`${record.label} · ${record.stored_at} · 歌曲：${record.titles.music||'未命名'}／分鏡：${record.titles.storyboard||'未命名'}／歌詞：${record.titles.lyrics||'未命名'}`:'尚無保存版本；先為目前草稿命名並保存。';
   libraryControls();
@@ -935,6 +937,7 @@ const libraryController=MusicLibrary.createLibraryController({
   preview:libraryPreview,
   request:async(action,payload)=>(await api('/api/drafts/'+action,payload)).data,
   confirmSave:MusicLibraryReceipt.createVerifier({read:async id=>(await api('/api/drafts/read',{id})).data,validate:MusicEditor.validateDraft}),
+  checkRead:(id,result,validate,entry)=>{if(!entry)throw Error('請先選定保存版本，再重新預覽');const ready=MusicLibraryRevision.checkedRead(id,result,validate,entry);checkedLibrarySelection(id,ready.entry);return ready;},
   capture:captureDraft,validate:MusicEditor.validateDraft,newId:()=> 'draft-'+crypto.randomUUID().replaceAll('-',''),
   onPending:({pending,saving})=>{libraryPending=pending;librarySaving=saving;libraryControls();if(saving)librarySay('正在保存並回讀核對；完成前保留目前編修。');},
   onSaved:({entry,reused,changed,draft})=>{
@@ -970,21 +973,29 @@ $('library-save').onclick=()=>{if(libraryAllowed())libraryController.save($('lib
 $('library-retry').onclick=()=>{if(libraryAllowed())libraryController.retry();};
 $('library-abandon').onclick=()=>{if(libraryController.abandon())librarySay('已放棄待重試紀錄；可能已保存的版本保留。先重新整理確認，再明確建立新版本。');};
 $('library-refresh').onclick=()=>refreshLibrary();$('library-more').onclick=()=>refreshLibrary(true,true);
-$('library-select').onchange=()=>{clearLibraryReview();librarySelection();};
+$('library-select').onchange=()=>{clearLibraryReview();librarySelection();librarySay('選定版本已變更，請重新預覽；目前工作台與音檔保留。');};
 $('library-preview').onclick=async()=>{
   if(!libraryAllowed())return;const id=$('library-select').value;if(!id||libraryReadingId===id)return;
   clearLibraryReview();draftTask.begin();clearConversion();briefImporter.cancel();clearBriefReview();
   libraryReadingId=id;libraryControls();librarySay('正在讀取選定保存版本，核對後顯示預覽。');
-  try{await libraryController.read(id);}finally{if(libraryReadingId===id)libraryReadingId=null;libraryControls();}
+  try{await libraryController.read(id,libraryRecords.find(entry=>entry.id===id));}finally{if(libraryReadingId===id)libraryReadingId=null;libraryControls();}
 };
+function checkedLibrarySelection(id,entry){
+  if(id!==$('library-select').value)throw Error('選定保存版本已有變更，請重新預覽；目前內容保留');
+  return MusicLibraryRevision.checkedSelection(id,entry,libraryRecords.find(selected=>selected.id===id));
+}
+function checkedLibraryReview(){
+  if(!pendingLibraryReview)throw Error('請先預覽保存版本');
+  checkedLibrarySelection(pendingLibraryReview.entry.id,pendingLibraryReview.entry);return pendingLibraryReview;
+}
 $('library-apply').onclick=()=>{
   if(!libraryAllowed()||!pendingLibraryReview)return;
-  try{const proposal=libraryPreview.proposal();if(!proposal)return;loadDraft(proposal.draft,{kind:'library',label:proposal.entry.label});
+  try{checkedLibraryReview();const proposal=libraryPreview.proposal();if(!proposal)return;loadDraft(proposal.draft,{kind:'library',label:proposal.entry.label});
     librarySay(`已載入「${proposal.entry.label}」；可撤回本次載入，請重選音檔並重新建立成果。`);
   }catch(error){librarySay(error.message,true);}
 };
 $('library-cancel').onclick=()=>{clearLibraryReview();librarySay('已取消版本預覽，目前工作台保留。');};
-textDownloader.bind($('library-export'),{select:()=>{if(!libraryAllowed()||!pendingLibraryReview)throw Error('請先預覽保存版本');return {name:pendingLibraryReview.entry.id+'.json',content:JSON.stringify(pendingLibraryReview.draft,null,2)+'\n'};},onSent:()=>librarySay('已送出保存版本的 JSON 下載；原版本保留。'),onError:error=>librarySay(error.message,true)});
+textDownloader.bind($('library-export'),{select:()=>{if(!libraryAllowed()||!pendingLibraryReview)throw Error('請先預覽保存版本');const selected=checkedLibraryReview();return {name:selected.entry.id+'.json',content:JSON.stringify(selected.draft,null,2)+'\n'};},onSent:()=>librarySay('已送出保存版本的 JSON 下載；原版本保留。'),onError:error=>librarySay(error.message,true)});
 let backupReading=false,backupRestoring=false,backupReady=false,backupCanRestore=false,backupMaximum=32*1024*1024,backupDownloading=false;
 function backupSay(message,error=false){$('backup-status').textContent=message;$('backup-status').classList.toggle('error',error);}
 function backupControls(){

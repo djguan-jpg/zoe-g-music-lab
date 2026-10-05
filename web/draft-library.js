@@ -7,8 +7,9 @@
       Object.fromEntries(Object.keys(x).sort().map(key=>[key,stable(x[key])])):x;
     return JSON.stringify(stable(value.panels));
   }
-  function createLibraryController({request,capture,validate,newId,confirmSave,onSaved,onList,onReady,onError,onPending,preview=null}){
+  function createLibraryController({request,capture,validate,newId,confirmSave,checkRead,onSaved,onList,onReady,onError,onPending,preview=null}){
     if(typeof confirmSave!=='function')throw Error('保存回讀核對未設定');
+    if(typeof checkRead!=='function')throw Error('保存版本來源核對未設定');
     let pending=null,saving=false,listToken=0,readToken=0;
     async function send(){
       if(saving||!pending)return false;
@@ -44,9 +45,9 @@
       async list(cursor=null){const token=++listToken;
         try{const result=await request('list',{limit:20,cursor});if(token!==listToken)return false;onList(result,cursor!==null);return true;}
         catch(error){if(token===listToken)onError(error,{retryable:false});return false;}},
-      async read(id){const token=++readToken;let selected;
-        try{selected=preview?.begin();const result=await request('read',{id});if(token!==readToken)return false;
-          const draft=validate(result.draft),ready={entry:clone(result.entry),draft};
+      async read(id,expectedEntry=null){const token=++readToken;let selected;
+        try{const pinned=clone(expectedEntry);selected=preview?.begin();const result=await request('read',{id});if(token!==readToken)return false;
+          const ready=checkRead(id,result,validate,pinned);
           if(preview&&!preview.accept(selected,ready))return false;onReady(ready);return true;}
         catch(error){if(token===readToken){
           if(preview&&selected!==undefined){try{if(!preview.check(selected))return false;}catch(changed){error=changed;}}

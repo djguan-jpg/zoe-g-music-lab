@@ -13,6 +13,7 @@ test('actual result download reads canonical source and rejects busy, dirty or a
 });
 test('actual saved-version export uses the previewed draft rather than display or current input',()=>{
  const app=fs.readFileSync('web/app.js','utf8'),start=app.indexOf("textDownloader.bind($('library-export')"),end=app.indexOf('\n',start),form={},sent=[],notes=[],preview={entry:{id:'draft-123'},draft:{original:'\r\n🎵'}},context={pendingLibraryReview:preview,libraryAllowed:()=>true,librarySay:(m,e)=>notes.push({m,e}),$:()=>form};
+ context.checkedLibraryReview=()=>context.pendingLibraryReview;
  context.textDownloader={bind:(form,options)=>{const c=model.createController({...options,send:r=>{sent.push(r);return true;}});form.onsubmit=e=>{e.preventDefault();return c.download();};}};
  vm.runInNewContext(app.slice(start,end),context);assert.equal(form.onsubmit({preventDefault(){}}),true);assert.equal(sent[0].name,'draft-123.json');assert.equal(Buffer.from(sent[0].bytes).toString(),JSON.stringify(preview.draft,null,2)+'\n');context.pendingLibraryReview=null;assert.equal(form.onsubmit({preventDefault(){}}),false);assert.equal(sent.length,1);assert.equal(notes.at(-1).e,true);
 });
