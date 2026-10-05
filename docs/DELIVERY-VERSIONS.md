@@ -91,3 +91,8 @@ current=0.76.0、明確supported38–76共39項，unknown77拒絕。四scope×38
 ## v0.77
 
 current0.77.0、明確supported38–77共40項，unknown78拒絕；156個歷史文字ZIP/manifest與v76實際producer bytes一致。新共用UTC validator不增加wire/schema/操作或工具，Agent1/draft3/library1/backup1/search1與14/21保持。
+
+
+## v0.78
+
+current0.78.0、明確supported38–78共41項，unknown79拒絕；160歷史文字ZIP/manifest與v77實際producer bytes一致。波形暫態定位不增加wire/schema/操作或工具，14/21及Agent1/draft3保持。

@@ -104,3 +104,6 @@ td input[data-raw-number]{width:63px}.raw-value-note{display:block;font-size:.78
 #library-match-list mark{background:#e0ecc5;color:#203719;border-radius:2px}
 #library-match-list:focus-visible{outline:2px solid #476523;outline-offset:4px}
 @media(max-width:540px){#library-match-list li{grid-template-columns:minmax(0,1fr);gap:.2rem}}
+
+.wave-position{font-variant-numeric:tabular-nums;font-weight:650;margin:.6rem 0;overflow-wrap:anywhere}
+#waveform[data-wave-available="false"]{cursor:default}
