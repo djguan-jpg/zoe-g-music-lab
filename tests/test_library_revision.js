@@ -7,7 +7,7 @@ const F=require('./library_revision_fixture.js'),original=require('./planning_re
 const later=()=>{let resolve,reject;const promise=new Promise((a,b)=>{resolve=a;reject=b;});return {promise,resolve,reject};};
 function harness(request){
  const current={draft:original.draft(),media:[{name:'original.wav'},null]},ready=[],errors=[];
- const preview=createPreview({capture:()=>current}),c=createLibraryController({request,capture:()=>current.draft,validate:E.validateDraft,preview,newId:()=> 'unused',confirmSave:async()=>{},checkRead:D.checkedRead,
+ const preview=createPreview({capture:()=>current}),c=createLibraryController({checkList:(payload,result)=>structuredClone(result),request,capture:()=>current.draft,validate:E.validateDraft,preview,newId:()=> 'unused',confirmSave:async()=>{},checkRead:D.checkedRead,
   onSaved:()=>{},onList:()=>{},onReady:r=>ready.push(r),onError:e=>errors.push(e.message),onPending:()=>{}});
  return {current,ready,errors,preview,c};
 }
@@ -79,7 +79,7 @@ test('actual app read callback rechecks active selection as well as the initial 
  h.context.libraryRecords[0]=structuredClone(h.a.entry);h.nodes['library-select'].value=F.revision('2').entry.id;assert.throws(()=>callback(h.a.entry.id,h.a,E.validateDraft,h.a.entry));
 });
 test('controller requires an explicit read checker and changed selection never passes the pure guard',()=>{
- assert.throws(()=>createLibraryController({confirmSave:async()=>{}}),/保存版本來源核對未設定/);
+ assert.throws(()=>createLibraryController({checkList:(payload,result)=>structuredClone(result),confirmSave:async()=>{}}),/保存版本來源核對未設定/);
  const a=F.revision();assert.throws(()=>D.checkedSelection(a.entry.id,a.entry,null));assert.throws(()=>D.checkedSelection('other',a.entry,a.entry));assert.deepEqual(D.checkedSelection(a.entry.id,a.entry,a.entry),a.entry);
 });
 test('actual selection event cancels late preview and keeps the new-selection notice with current edits',async()=>{

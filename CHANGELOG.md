@@ -1,3 +1,9 @@
+# v0.74.0 · 2026-10-05
+
+保存、清單與回讀先核對完整產品／協定回覆，清單再核對所有版本資料、排序與分頁來源。錯誤或晚回覆保留目前清單、預覽、編修與音檔；未確認保存沿同一 ID 及原稿重試。534 Python／867 JavaScript／77語法／四份Skill及144歷史ZIP通過，基本14／啟庫20工具保持。
+
+原工作台把 HTTP 回覆剝成 data，保存／回讀的內容核對看不到產品版本與協定；清單也能接受未知格式、重複ID或錯接續位置。新增纯 library-result 核對三種完整 envelope，從 library-revision 抽出共享完整 metadata 檢查；required checkList 在最新回覆核對後才交付DOM。排序依後端原時間字串與ID，不改成 Date 排序。錯回覆保留原清單及 pending save；同 ID 回讀確認後，後續修改仍提示尚未保存。無新 wire/schema/tool/依賴／權限。見[契約](docs/LIBRARY-RESULT.md)、[QA](docs/QA-v0.74.0.md)、[交接](docs/HANDOFF-v0.74.0.md)。
+
 # v0.73.0 · 2026-10-05
 
 新增唯讀草稿庫備份匯出；Agent／MCP預設摘要，明確選擇才內嵌不超過512KiB的ZIP，亦可指定保存ID。完整ZIP與來源核對，CLI／HTTP沿共用application。532 Python／853 JavaScript／76語法／四份Skill及140歷史ZIP通過；啟庫20工具，基本14保持。

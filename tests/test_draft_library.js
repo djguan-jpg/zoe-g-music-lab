@@ -12,7 +12,7 @@ function draft(){
 }
 function harness(){
   let current=draft(),sequence=0;const calls=[],saved=[],lists=[],ready=[],errors=[],states=[];
-  const controller=createLibraryController({capture:()=>structuredClone(current),validate:validateDraft,newId:()=>`draft-${String(++sequence).padStart(32,'0')}`,checkRead:(id,result,validate)=>({entry:structuredClone(result.entry),draft:validate(result.draft)}),confirmSave:async(payload,ack)=>ack,
+  const controller=createLibraryController({checkList:(payload,result)=>structuredClone(result),capture:()=>structuredClone(current),validate:validateDraft,newId:()=>`draft-${String(++sequence).padStart(32,'0')}`,checkRead:(id,result,validate)=>({entry:structuredClone(result.entry),draft:validate(result.draft)}),confirmSave:async(payload,ack)=>ack,
     request:(action,payload)=>new Promise((resolve,reject)=>calls.push({action,payload,resolve,reject})),
     onSaved:r=>saved.push(r),onList:(r,append)=>lists.push({r,append}),onReady:r=>ready.push(r),onError:(e,s)=>errors.push({message:e.message,...s}),onPending:s=>states.push(s)});
   return {controller,calls,saved,lists,ready,errors,states,current:()=>current,set:value=>current=value,sequence:()=>sequence};

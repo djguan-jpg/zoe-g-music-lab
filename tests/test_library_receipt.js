@@ -12,7 +12,7 @@ function harness(){
  let current=F.draft(),sequence=0;const calls=[],saved=[],errors=[],states=[],checkpoint=createCheckpoint();checkpoint.initialize(current);
  current.panels.music.fields['music-title']='原案🎵';checkpoint.refresh(current);
  const request=(action,p)=>new Promise((resolve,reject)=>calls.push({action,payload:structuredClone(p),resolve,reject}));
- const c=createLibraryController({request,capture:()=>structuredClone(current),validate:E.validateDraft,newId:()=> 'draft-'+String(++sequence).padStart(32,'0'),
+ const c=createLibraryController({checkList:(payload,result)=>structuredClone(result),request,capture:()=>structuredClone(current),validate:E.validateDraft,newId:()=> 'draft-'+String(++sequence).padStart(32,'0'),
   checkRead:(id,result,validate)=>({entry:structuredClone(result.entry),draft:validate(result.draft)}),confirmSave:R.createVerifier({read:id=>request('read',{id}),validate:E.validateDraft}),
   onSaved:r=>{saved.push(r);checkpoint.retain(r.draft,{kind:'library',label:r.entry.label});},onList:()=>{},onReady:()=>{},
   onError:(e,s)=>errors.push({message:e.message,...s}),onPending:s=>states.push(s)});
@@ -80,5 +80,5 @@ test('only a definite original save refusal clears pending before any acknowledg
  assert.equal(h.c.pending(),null);assert.equal(h.errors[0].retryable,false);assert.equal(h.calls.length,1);assert.equal(h.saved.length,0);
 });
 test('controller and verifier require explicit confirmation and read adapters at construction',()=>{
- assert.throws(()=>createLibraryController({}),/保存回讀核對未設定/);assert.throws(()=>R.createVerifier({validate:E.validateDraft}),/保存回讀核對未設定/);assert.throws(()=>R.createVerifier({read:()=>{}}),/保存回讀核對未設定/);
+ assert.throws(()=>createLibraryController({checkList:(payload,result)=>structuredClone(result),}),/保存回讀核對未設定/);assert.throws(()=>R.createVerifier({validate:E.validateDraft}),/保存回讀核對未設定/);assert.throws(()=>R.createVerifier({read:()=>{}}),/保存回讀核對未設定/);
 });

@@ -935,9 +935,10 @@ function librarySelection(){
 }
 const libraryController=MusicLibrary.createLibraryController({
   preview:libraryPreview,
-  request:async(action,payload)=>(await api('/api/drafts/'+action,payload)).data,
-  confirmSave:MusicLibraryReceipt.createVerifier({read:async id=>(await api('/api/drafts/read',{id})).data,validate:MusicEditor.validateDraft}),
+  request:async(action,payload)=>MusicLibraryResult.checkedEnvelope(action,await api('/api/drafts/'+action,payload)),
+  confirmSave:MusicLibraryReceipt.createVerifier({read:async id=>MusicLibraryResult.checkedEnvelope('read',await api('/api/drafts/read',{id})),validate:MusicEditor.validateDraft}),
   checkRead:(id,result,validate,entry)=>{if(!entry)throw Error('請先選定保存版本，再重新預覽');const ready=MusicLibraryRevision.checkedRead(id,result,validate,entry);checkedLibrarySelection(id,ready.entry);return ready;},
+  checkList:(payload,result)=>MusicLibraryResult.checkedList(payload,result,payload.cursor===null?null:libraryRecords.find(entry=>entry.id===payload.cursor)),
   capture:captureDraft,validate:MusicEditor.validateDraft,newId:()=> 'draft-'+crypto.randomUUID().replaceAll('-',''),
   onPending:({pending,saving})=>{libraryPending=pending;librarySaving=saving;libraryControls();if(saving)librarySay('正在保存並回讀核對；完成前保留目前編修。');},
   onSaved:({entry,reused,changed,draft})=>{

@@ -285,3 +285,8 @@ pure backup-download exact backup1 descriptor／knownrelative token URL／counts
 ## v0.73 唯讀備份匯出
 
 純backup_export checked_request／shared selected_ids→原immutable export_backup→同一次raw完整read_backup／CRC／manifest／revision hashes與producer摘要/selection/IDs核對→不可變bytes/hash/selection/IDs PreparedBackupExport→共用application→CLI stdout／Agent JSONlines／MCP strict outputSchema／HTTP readonly export。metadata預設，explicit include_archive=true且ZIP<=512KiB才base64；超限在encode前拒絕。JSON不可選來源/目的路徑、overwrite、media或未保存draft；來源由啟動時明確草稿庫。export1與backup1/draft3/library1/Agent1分開，未知輸入欄位拒絕；schema形狀不代替ZIP/來源核對。新工具readonly，基本14/啟庫20需重新discovery；原backup/prepare/inspect/restore語義保持。沒有自動寫檔、耐久或全庫原子快照承諾。產品73/來源38–73/unknown74、legal4/private/not_submitted保持，見[契約](docs/BACKUP-EXPORT.md)。
+
+
+## v0.74 保存回覆與清單
+
+shared library-revision.checkedMetadata→pure library-result exact save/list/read envelope／bounded list/source→required injected checkList／latest→DOM。current產品／protocol1／empty files／operation needs_review精確，save確認回讀也沿同門檻；原receipt／完整revision檢查保持。不符ACK保留pending同ID及原稿，錯readback保持uncertain；不假造status400釋放ID。list metadata全部欄位／Unicode／unique IDs及issues／原stored_at+ID排序／next cursor與完整page／current cursor metadata核對，before onList；未知／late不覆蓋編修、清單、預覽、media及dirty。metadata不驗實際draft SHA，read仍由backend核對bytes/hash。固定asset只新增原生JS，無新wire／schema／權限／工具／依賴。產品74／明確來源38–74／unknown75、14/20／Agent1／draft3／library1／legal4／private／not_submitted保持。見[契約](docs/LIBRARY-RESULT.md)。
