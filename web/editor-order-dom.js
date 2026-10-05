@@ -24,15 +24,20 @@
         get(list+'-order-note').textContent=view.stale?'列或順序已改動，先前移動不可撤回；目前編修保留。':view.record?`${labels[list]} ${view.record.from+1} → ${view.record.to+1}；可撤回最近一次移動，後續欄位編修保留。`:'選擇一列再移動；原時間與創作欄位一起保留。';
       }
     }
+    function move(list,id,delta){
+      if(disposed||!P.lists.includes(list)||!allowed(list))return null;
+      const result=controller.move(list,id,delta);refresh();if(!result)return null;
+      get(list+'-order').value=result.id;refresh();onChanged(list,result,false);return result;
+    }
     function listen(element,type,fn){element.addEventListener(type,fn);listeners.push([element,type,fn]);}
     for(const list of P.lists){
       listen(get(list+'-order'),'change',refresh);for(const type of ['input','change'])listen(get(list),type,event=>{if(disposed)return;const row=event.target?.closest('[data-history-id]'),saved=options.get(list);if(row?.parentElement!==get(list)||!saved)return;const option=saved.byId.get(row.dataset.historyId),index=saved.ids.indexOf(row.dataset.historyId);if(option&&index>=0)option.textContent=caption(list,row,index);});
       for(const [suffix,delta] of [['earlier',-1],['later',1],['order-undo',0]]){
-        const button=get(list+'-'+suffix);listen(button,'click',()=>{if(button.disabled||!allowed(list))return;const result=delta?controller.move(list,get(list+'-order').value,delta):controller.undo(list);refresh();if(!result)return;get(list+'-order').value=result.id;refresh();const target=button.disabled?get(list+'-order'):button;if(target.isConnected&&!target.disabled)target.focus();onChanged(list,result,delta===0);});
+        const button=get(list+'-'+suffix);listen(button,'click',()=>{if(button.disabled||!allowed(list))return;const result=delta?move(list,get(list+'-order').value,delta):controller.undo(list);if(!delta){refresh();if(result){get(list+'-order').value=result.id;refresh();onChanged(list,result,true);}}if(!result)return;const target=button.disabled?get(list+'-order'):button;if(target.isConnected&&!target.disabled)target.focus();});
       }
       const show=get(list+'-order-show');listen(show,'click',()=>{if(show.disabled||!allowed(list))return;const m=meta(list),index=m.ids.indexOf(get(list+'-order').value);if(index>=0)focusRow(list,index);});
     }
-    return Object.freeze({refresh,select(list,id){
+    return Object.freeze({refresh,move,select(list,id){
       if(disposed||!P.lists.includes(list)||!allowed(list))return false;
       const m=meta(list),index=m.ids.indexOf(id);if(index<0)return false;
       const saved=options.get(list);if(!saved||saved.ids.length!==m.ids.length||saved.ids.some((v,i)=>v!==m.ids[i]))refresh();
