@@ -120,7 +120,7 @@ function undoDeletion(scope){
 const waveTask = MusicEditor.createLatestTask();
 function say(message,error=false){$('status').textContent=message;$('status').className=error?'error':'';state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();state.audioAcceptanceReview?.refresh();state.deliveryPackage?.refresh();state.deliveryImport?.refresh();state.textVerification?.refresh();if(state.tab==='storyboard'){$('shot-status').textContent=message;$('shot-status').classList.toggle('error',error);}}
 function esc(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-function field(value,label,type='text',wide=false){return `<input type="text" value="${esc(value)}" aria-label="${esc(label)}" class="${wide?'wide':''}" ${type==='number'?'inputmode="decimal" data-raw-number="true"':''}>`;}
+function field(value,label,type='text',wide=false){return `<input type="text" value="${esc(value)}" aria-label="${esc(label)}" aria-keyshortcuts="Alt+ArrowUp Alt+ArrowDown" aria-describedby="${label.startsWith('段落 ')?'section-copy-note':'cue-copy-note'}" class="${wide?'wide':''}" ${type==='number'?'inputmode="decimal" data-raw-number="true"':''}>`;}
 async function api(route,data,binary=false,signal){const response=await fetch(route,{method:'POST',headers:{'Content-Type':binary?'application/octet-stream':'application/json'},body:binary?data:JSON.stringify(data),...(signal?{signal}:{})});const result=await response.json();if(!response.ok){const error=Error(result.error||'操作未完成');error.status=response.status;throw error;}return result;}
 async function run(button,task,scope=state.tab){
   if(state.busy)return;
@@ -208,11 +208,13 @@ function renderMusicOrder(view){
     '選擇一段再移動；順序依表格由上到下，文字、小節與能量一起保留。';
 }
 arrangementController=MusicArrangement.createController({capture:()=>entriesFor('arrangement'),apply:entries=>writeEntries('arrangement',entries),onState:renderMusicOrder});
-function moveMusicSection(delta){
+function moveMusicSection(delta,id=$('section-order').value,keepEditorFocus=false){
   if(state.busy){say('目前操作尚未完成，請稍候');return;}
-  try{const view=arrangementController.move($('section-order').value,delta);markDirty('music');
+  try{const view=arrangementController.move(id,delta);markDirty('music');
     say(`已把段落 ${view.record.from+1} 移至 ${view.record.to+1}；請重新建立歌曲成果與分鏡起稿`);
-    const action=$(delta<0?'section-earlier':'section-later');(action.disabled?$('section-order'):action).focus();
+    if(keepEditorFocus){$('section-order').value=view.record.id;refreshMusicSelection();}
+    else{const action=$(delta<0?'section-earlier':'section-later');(action.disabled?$('section-order'):action).focus();}
+    return view.record;
   }catch(e){say(e.message,true);}
 }
 $('section-order').onchange=()=>arrangementController.refresh();
@@ -367,7 +369,7 @@ $('shots-expand').onclick=()=>{$('shots').querySelectorAll('details').forEach(d=
 $('shot-go').onclick=()=>{focusShot(Number($('shot-jump').value));say(`已定位鏡頭 ${Number($('shot-jump').value)+1}`);};
 function renderShots(shots,openStates=shots.map((_,i)=>i===0),ids){
   const motifs=getMotifs(),keys=rowIds(shots,ids);
-  $('shots').innerHTML=shots.map((s,i)=>`<article class="shot" data-history-id="${esc(keys[i])}"><div class="shot-header"><h3>鏡頭 ${i+1}</h3><div class="entry-actions"><button type="button" class="subtle" data-copy-entry aria-label="複製鏡頭 ${i+1}" aria-describedby="shot-copy-note">複製</button><button class="subtle" data-remove-shot="${i}" aria-label="刪除鏡頭 ${i+1}" aria-describedby="shot-delete-note">刪除</button></div></div><details ${openStates[i]?'open':''}><summary aria-label="鏡頭 ${i+1} 摘要"><span data-shot-caption></span></summary><div class="shot-editor"><div class="fields">${['start','end'].map((key,j)=>`<label>${j?'結束':'開始'}（秒）<input data-key="${key}" type="text" inputmode="decimal" data-raw-number="true" value="${esc(s[key])}" aria-label="鏡頭 ${i+1} ${j?'結束':'開始'}"></label>`).join('')}</div><label>使用母題<select data-key="motif_id" aria-label="鏡頭 ${i+1} 使用母題">${motifOptions(motifs,s.motif_id)}</select></label>${shotFields.map(([key,label])=>`<label>${label}<textarea data-key="${key}" rows="2" aria-label="鏡頭 ${i+1} ${label}">${esc(s[key])}</textarea></label>`).join('')}<label>畫面方向<select data-key="screen_direction" aria-label="鏡頭 ${i+1} 畫面方向">${[['left','向左'],['right','向右'],['neutral','正面／中性']].map(([value,label])=>`<option value="${value}" ${value===s.screen_direction?'selected':''}>${label}</option>`).join('')}</select></label></div></details></article>`).join('');
+  $('shots').innerHTML=shots.map((s,i)=>`<article class="shot" data-history-id="${esc(keys[i])}"><div class="shot-header"><h3>鏡頭 ${i+1}</h3><div class="entry-actions"><button type="button" class="subtle" data-copy-entry aria-label="複製鏡頭 ${i+1}" aria-describedby="shot-copy-note">複製</button><button class="subtle" data-remove-shot="${i}" aria-label="刪除鏡頭 ${i+1}" aria-describedby="shot-delete-note">刪除</button></div></div><details ${openStates[i]?'open':''}><summary aria-label="鏡頭 ${i+1} 摘要"><span data-shot-caption></span></summary><div class="shot-editor"><div class="fields">${['start','end'].map((key,j)=>`<label>${j?'結束':'開始'}（秒）<input data-key="${key}" type="text" inputmode="decimal" data-raw-number="true" aria-keyshortcuts="Alt+ArrowUp Alt+ArrowDown" aria-describedby="shot-copy-note" value="${esc(s[key])}" aria-label="鏡頭 ${i+1} ${j?'結束':'開始'}"></label>`).join('')}</div><label>使用母題<select data-key="motif_id" aria-label="鏡頭 ${i+1} 使用母題">${motifOptions(motifs,s.motif_id)}</select></label>${shotFields.map(([key,label])=>`<label>${label}<textarea data-key="${key}" rows="2" aria-keyshortcuts="Alt+ArrowUp Alt+ArrowDown" aria-describedby="shot-copy-note" aria-label="鏡頭 ${i+1} ${label}">${esc(s[key])}</textarea></label>`).join('')}<label>畫面方向<select data-key="screen_direction" aria-label="鏡頭 ${i+1} 畫面方向">${[['left','向左'],['right','向右'],['neutral','正面／中性']].map(([value,label])=>`<option value="${value}" ${value===s.screen_direction?'selected':''}>${label}</option>`).join('')}</select></label></div></details></article>`).join('');
   [...$('shots').children].forEach((row,i)=>row.querySelectorAll('[data-key]').forEach(control=>writeValue(control,shots[i][control.dataset.key])));
   storyboardSearchController?.clear();refreshShotOverview();
   $('shots').querySelectorAll('[data-remove-shot]').forEach(button=>button.onclick=()=>{
@@ -515,7 +517,7 @@ function renderCues(cues,ids){
   lyricsSearchController?.clear();
   if(!ids){cueStampEdit?.clear();timingController?.reset();timingSay('新的逐句內容已載入；整批校時撤回紀錄已清除。');}
   const keys=rowIds(cues,ids);state.cues=cues;timingControls();
-  $('cues').innerHTML=cues.map((c,i)=>`<tr data-history-id="${esc(keys[i])}"><td>${i+1}</td><td>${field(c.start,`歌詞 ${i+1} 開始`,'number')}</td><td>${field(c.end,`歌詞 ${i+1} 結束`,'number')}</td><td><input class="lyric-field" value="${esc(c.text)}" aria-label="歌詞 ${i+1} 文字"></td><td><div class="actions"><button type="button" data-cue-seek="${esc(keys[i])}" aria-label="第 ${i+1} 句定位句首" aria-describedby="cue-position-help" disabled>定位句首</button>${[['start','記下開始'],['end','記下結束'],['move','整句移動']].map(([action,label])=>`<button data-stamp="${i}" data-stamp-action="${action}" aria-label="第 ${i+1} 句${label}">${label}</button>`).join('')}<button type="button" data-copy-entry aria-label="複製歌詞 ${i+1}" aria-describedby="cue-copy-note">複製</button><button data-delete-cue="${i}" aria-label="刪除第 ${i+1} 句">刪除</button></div></td></tr>`).join('');
+  $('cues').innerHTML=cues.map((c,i)=>`<tr data-history-id="${esc(keys[i])}"><td>${i+1}</td><td>${field(c.start,`歌詞 ${i+1} 開始`,'number')}</td><td>${field(c.end,`歌詞 ${i+1} 結束`,'number')}</td><td><input class="lyric-field" aria-keyshortcuts="Alt+ArrowUp Alt+ArrowDown" aria-describedby="cue-copy-note" value="${esc(c.text)}" aria-label="歌詞 ${i+1} 文字"></td><td><div class="actions"><button type="button" data-cue-seek="${esc(keys[i])}" aria-label="第 ${i+1} 句定位句首" aria-describedby="cue-position-help" disabled>定位句首</button>${[['start','記下開始'],['end','記下結束'],['move','整句移動']].map(([action,label])=>`<button data-stamp="${i}" data-stamp-action="${action}" aria-label="第 ${i+1} 句${label}">${label}</button>`).join('')}<button type="button" data-copy-entry aria-label="複製歌詞 ${i+1}" aria-describedby="cue-copy-note">複製</button><button data-delete-cue="${i}" aria-label="刪除第 ${i+1} 句">刪除</button></div></td></tr>`).join('');
   [...$('cues').children].forEach((row,i)=>['start','end','text'].forEach((key,j)=>writeValue(row.querySelectorAll('input')[j],cues[i][key])));
   $('cues').querySelectorAll('[data-stamp]').forEach(button=>button.onclick=()=>{
     const result=cueStampEdit.stamp(button.closest('tr').dataset.historyId,button.dataset.stampAction);
@@ -1165,6 +1167,9 @@ state.deliveryImport=MusicDeliveryImportDom.createAdapter(document,{
   restore:(bundle,revision)=>{if(bundle)setFiles(bundle.files,bundle.note,bundle.dirty||(!bundle.inputIndependent&&(state.revisions[state.tab]||0)!==revision),bundle.inputIndependent,bundle.deliveryLabel);else{delete state.bundles[state.tab];clearOutput();}say('已撤回成果匯入；後續表單編修與音檔保持。');},
   onError:error=>say(error.message,true),onReady:()=>say('ZIP核對完成；尚未載入，請確認文字成果與來源。')
 });
+const editorKeys=MusicEditorKeysDOM.bind(document,{busy:()=>state.busy,
+  onMove:(list,id,delta)=>list==='arrangement'?!!moveMusicSection(delta,id,true):!!editorOrder.move(list,id,delta),
+  onError:error=>say(error.message,true)});
 async function initialize(){refreshExampleControls();draftRetention.initialize(captureDraft());try{const response=await fetch('/api/examples');if(!response.ok)throw Error('範例讀取失敗');state.examples=await response.json();
   if(!state.busy&&draftRetention.status().atInitial){loadMusic();loadMv();writeValue($('lyrics-source'),'[00:00.000]空房剩一圈淡色的牆\n[00:04.000]紙箱裡裝不下那句話\n[00:08.000]我把聲音留在樓梯上\n[00:12.000]這次換我回答');draftRetention.initialize(captureDraft());say('已載入本次原創合成範例，修改後開始');}
   else if(!state.busy)say('載入期間的編修已保留；需要範例時可明確按「載入原創範例」。');drawWave();setupLibrary();}catch(e){say(e.message,true);}finally{refreshExampleControls();}}

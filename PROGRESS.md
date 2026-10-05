@@ -1,4 +1,9 @@
-# 進度：目前 v0.99.0
+# 進度：目前 v0.100.0
+
+## v0.100.0
+
+2026-10-06：段落、鏡頭與歌詞的文字或時間欄可按 Alt＋↑／↓ 移動目前列；保留同一欄位、游標選取、原文與時間。沿原順序撤回保留後續文字編修，移動後須重新建立成果。原生選單、一般方向鍵、組字／重複鍵、其他修飾鍵、等待中與首尾邊界保持原行為。editor-keys 純 gesture／相鄰 ID 提案 → injected controller current metadata／consume／writer／actual-after 核對 → editor-keys-dom 三容器 delegated keydown 與暫態欄位／caret bookmark → app 共用原 music-arrangement／editor-order 完整 raw-source 移動與撤回。keyboard 才回同一欄位，原工具列保持按鈕焦點；沒有新 history、創作 schema 或 Agent operation。兩個固定 JS assets；无新依賴、模型、外網、timer、路徑、auth 或寫檔權限。產品0.100.0／唯一 policy38–100共63／unknown101拒絕；16基本／23啟庫工具、23既有 input/output schemas、Agent1／draft3及 legal4 保持。PolyForm Noncommercial 1.0.0／private，創辦 ZOE. G／GitHub djguan-jpg；FreeTWAI not_submitted。585 Python（86.875秒，兩隔離 workers／120秒整體期限）／1175 JS／117 syntax／四 Skills；18新測試。v99真source ZIP還原583／1159，248歷史 ZIP／manifest bytes相同，23 schemas相同。57原生快照：19完整 raw-ID 排列、15同欄位／native display／caret 比較、8忽略操作的完整 panel／ID／revision 比較（含三 busy pairs）、四原值清理比較及三後續編修撤回。移動後舊成果停下載，撤回原順序仍须重建；晚回覆保留後來 title 與上一份成果。原生音檔 File身份及 blob／paused／0.5秒／8秒在全部57份保持，console0。8 native完整 HTTP回覆與7 operations實際 CLI／Agent／MCP、21直接 HTTP good/bad/good 與application一致；兩個observed draft3 reviews回讀，diagnostic2／invalid1無輸出／預設覆寫1保持bytes。兩bounded servers正常停止、兩tabs關閉／viewport reset、臨時HTTP thread joined／子程序EOF0。兩JPEG及合成音檔留在outputs，不進Git。完整視覺、screen-reader、Windows原生IME、瀏覽器實際保存、實聽、正式媒體、Host安裝與平台創始接受未驗證。native selectionRange證據限本輪Chromium；DOM display與canonical raw欄位分別核對，不能以畫面字串證明原檔bytes。最終盤點依本輪收據，latest100／99／98保護；rolling active。
+
 
 ## v0.99.0
 
