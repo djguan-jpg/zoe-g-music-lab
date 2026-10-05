@@ -323,3 +323,8 @@ pure cue-stamp-edit重用既有stamp毫秒及wave-position readiness→注入rea
 ## v0.80 發佈預期標籤
 
 projects.version及release_version精確等於selected commit policy.current及v+current，schema1 strict；release_version僅預期tag，不是remote publication或創始接受。pure release_metadata frozen identity／原policy grammar→strict marker64KiB/policy8192B→Git cat-file size前檢查/show同blob bytes→package mkdir前guard與archive完整metadata/policy再核對，working files不換来源、不靜默修復。manifest1只新增checks.release_metadata=passed，歷史ZIP/tag/原packager與maintenance判定保持。產品80／supported38–80／unknown81，14/21／Agent1/draft3/領域schemas/legal4/private/not_submitted保持，web/HTTP/Agent/CLI無diff，無新依賴/模型/路徑或網路權限。見docs/RELEASE-METADATA.md。
+
+
+## v0.81 目前歌詞原列定位
+
+current-cue純media/rows/visible/busy→既有wave-position/CueStamp/activeCueIndex→注入capture/focus controller→literal DOM與app。最多10000列、ID64、time4096；未知／不可定位媒體清舊句與高亮，busy只讀停focus、hidden等待、gap/exclusive end沿舊規則，部分可播放不等於完整匯出。明確focus雙capture同ID／原目標欄位／media source/current_source/duration，再DOM核對enabled/connected/raw fields並確認activeElement；同句自然前進／其他列編修保持，不自動focus，不改草稿／media／歷史。status只變更時寫入，dispose只清自有listener，沿原drawWave/tick/reset/loadstart/error/tab/busy/render更新、不新增timer。server僅兩固定JS路由，產品81／來源38–81／unknown82／expectedtag81，14/21／Agent1/draft3／領域schemas/legal4/private/not_submitted保持。見docs/CURRENT-CUE.md。

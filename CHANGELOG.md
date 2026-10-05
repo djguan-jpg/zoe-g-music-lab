@@ -1,5 +1,9 @@
 # v0.77.0 · 2026-10-05
 
+## v0.81.0
+
+目前歌詞與列高亮共用媒體就緒／來源核對；無音檔或換檔時清舊句，新增「前往目前這句」以滑鼠或Enter明確focus原列文字。pure current-cue／injected controller／literal DOM／app共同capture分層，穩定ID與雙snapshot、原欄位及媒體核對；自然播放／其他編修保持，部分有效句不冒充完整匯出。553 Python71.516秒／933 JS／88syntax／四Skills、38focus、172歷史ZIP、v80原包553／920還原、actual CLI/Agent/MCP bytes與good/bad/good、原生26觀察／136欄位不變／390px Enter／新歌詞包與draft媒體reset通過。native broken.wav ready0清舊句，但error=true未觀察，error純分支已測；QA錯選項failed fixture保留、fresh .json fixture通過。兩個自有tab／bounded server完成，無新timer／依賴／模型或HTTP operation，14/21／Agent1/draft3/legal4/private/not_submitted保持；latest81/80/79與rolling active。
+
 ## v0.80.0
 
 修正projects.release_version停在v77但product/remote已v79的缺口，明確expected tag v0.80.0；靜態宣告不冒充發佈成功。pure release_metadata→strict JSON→selected immutable Git blob size/show→package前及archive metadata/policy核對；64KiB marker/8192B policy、錯／stale／duplicate／unknown在mkdir前拒絕，working files不能換來源。manifest1只增加checks.release_metadata，原schema/Agent1/draft3/14/21保持。553 Python69.375秒／920 JS／86 syntax／四Skills，8新contract/7版本focus、168歷史ZIP、v79原包545／920還原、actual CLI/Agent/MCP bytes與good/bad/good通過。首輪oracle42漏改43及QA漏--input的failed records保留，fresh retries通過，產品CLI不改。web/HTTP/領域無diff、無新常駐server/tab，latest80/79/78、legal4/private/not_submitted保持，rolling active。

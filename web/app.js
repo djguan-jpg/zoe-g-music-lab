@@ -104,9 +104,9 @@ async function api(route,data,binary=false){const response=await fetch(route,{me
 async function run(button,task,scope=state.tab){
   if(state.busy)return;
   const tab=state.tab,revision=state.revisions[scope]||0,current=()=>state.tab===tab&&(state.revisions[scope]||0)===revision;
-  say('處理中，請稍候');state.busy=true;button.disabled=true;timingControls();cueStampEdit?.refresh();state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();state.audioAcceptanceReview?.refresh();state.deliveryPackage?.refresh();state.deliveryImport?.refresh();
+  say('處理中，請稍候');state.busy=true;button.disabled=true;timingControls();cueStampEdit?.refresh();state.currentCue?.refresh();state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();state.audioAcceptanceReview?.refresh();state.deliveryPackage?.refresh();state.deliveryImport?.refresh();
   try{await task(current);}catch(error){if(current())say(error.message,true);}
-  finally{if(!current()){markDirty(scope);say('處理期間輸入有修改，請重新建立成果');}state.busy=false;button.disabled=false;timingControls();cueStampEdit?.refresh();state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();state.audioAcceptanceReview?.refresh();state.deliveryPackage?.refresh();state.deliveryImport?.refresh();}
+  finally{if(!current()){markDirty(scope);say('處理期間輸入有修改，請重新建立成果');}state.busy=false;button.disabled=false;timingControls();cueStampEdit?.refresh();state.currentCue?.refresh();state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();state.audioAcceptanceReview?.refresh();state.deliveryPackage?.refresh();state.deliveryImport?.refresh();}
 }
 function setFiles(files,note,dirty=false,inputIndependent=false,deliveryLabel=null){state.resultRevisions[state.tab]=(state.resultRevisions[state.tab]||0)+1;state.files=files;state.bundles[state.tab]={files,note,dirty,inputIndependent,...(deliveryLabel===null?{}:{deliveryLabel})};const select=$('output-file');select.replaceChildren();Object.keys(files).forEach(name=>{const option=document.createElement('option');option.value=name;option.textContent=name;select.append(option);});select.disabled=false;$('download').disabled=dirty;$('output-note').textContent=note+(dirty?'（有修改尚未重新驗證）':'');previewOutput();state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();state.audioAcceptanceReview?.refresh();state.deliveryPackage?.refresh();state.deliveryImport?.refresh();}
 function markDirty(tab){draftRetention.refresh(tab);if(tab==='music'){arrangementController?.refresh();musicReadyController?.refresh();}if(tab==='storyboard'){storyboardDurationController?.refresh();storyboardReadyController?.refresh();storyboardTimingController?.refresh();}if(['music','storyboard'].includes(tab))stalePlanningReview(tab);if(tab==='audio'){staleAudioReview();state.audioAcceptanceReview?.refresh();}if(tab==='lyrics'){cueStampEdit?.refresh();staleLyricsExportReview();lyricsExportController?.invalidate();staleLyricsReview();lyricsReviewController?.invalidate();lyricsMediaController?.refresh();const pending=timingReading||timingReady;timingController?.invalidate();if(pending)timingSay('歌詞有修改，請重新預覽整批校時。');}state.revisions[tab]=(state.revisions[tab]||0)+1;const saved=state.bundles[tab];if(!saved||saved.inputIndependent){state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();state.audioAcceptanceReview?.refresh();state.deliveryPackage?.refresh();state.deliveryImport?.refresh();return;}saved.dirty=true;if(state.tab===tab){$('download').disabled=true;$('output-note').textContent=saved.note+'（有修改尚未重新驗證）';}state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();state.audioAcceptanceReview?.refresh();state.deliveryPackage?.refresh();state.deliveryImport?.refresh();}
@@ -122,7 +122,7 @@ function clearOutput(){state.resultRevisions[state.tab]=(state.resultRevisions[s
 function previewOutput(){const name=$('output-file').value,preview=MusicDeliveryReview.excerpt(Object.hasOwn(state.files,name)?state.files[name]:null);$('output-content').value=preview.text;$('output-preview-note').textContent=!preview.present?'尚無選定檔案':preview.truncated?'內容過長，預覽只顯示開頭；原文下載與 ZIP 保留全文。':'完整文字預覽；文字框只供閱讀，原文下載保持換行。';}
 $('output-file').onchange=previewOutput;
 textDownloader.bind($('export-form'),{select:()=>{const name=$('output-file').value;if(state.busy)throw Error('目前操作尚未完成，請稍候');if(state.bundles[state.tab]?.dirty)throw Error('輸入有修改，請重新建立成果後下載');if(!Object.hasOwn(state.files,name))throw Error('請先選擇本輪成果檔案');return {name,content:state.files[name]};},onSent:()=>say('已送出原文下載，請確認瀏覽器保存的檔案。'),onError:error=>say(error.message,true)});
-document.querySelectorAll('[data-tab]').forEach(button=>button.onclick=()=>{if(state.busy){say('目前操作尚未完成，請稍候');return;}state.tab=button.dataset.tab;document.querySelectorAll('.panel').forEach(section=>section.hidden=section.id!==state.tab);document.querySelectorAll('[data-tab]').forEach(b=>{b.classList.toggle('active',b===button);if(b===button)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});const saved=state.bundles[state.tab];if(saved)setFiles(saved.files,saved.note,saved.dirty,saved.inputIndependent,saved.deliveryLabel);else clearOutput();say(saved?.dirty?'有修改尚未重新驗證，請重新建立成果':'準備開始');});
+document.querySelectorAll('[data-tab]').forEach(button=>button.onclick=()=>{if(state.busy){say('目前操作尚未完成，請稍候');return;}state.tab=button.dataset.tab;document.querySelectorAll('.panel').forEach(section=>section.hidden=section.id!==state.tab);document.querySelectorAll('[data-tab]').forEach(b=>{b.classList.toggle('active',b===button);if(b===button)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});const saved=state.bundles[state.tab];if(saved)setFiles(saved.files,saved.note,saved.dirty,saved.inputIndependent,saved.deliveryLabel);else clearOutput();say(saved?.dirty?'有修改尚未重新驗證，請重新建立成果':'準備開始');state.currentCue?.refresh();});
 function renderSections(sections,ids){const keys=rowIds(sections,ids);$('arrangement').innerHTML=sections.map((s,i)=>`<tr data-history-id="${esc(keys[i])}"><td>${field(s.name,`段落 ${i+1} 名稱`)}</td><td>${field(s.bars,`段落 ${i+1} 小節`,'number')}</td><td>${field(s.energy,`段落 ${i+1} 能量`,'number')}</td><td>${field(s.focus,`段落 ${i+1} 任務`,'text',true)}</td><td>${field(s.texture,`段落 ${i+1} 聲音`,'text',true)}</td><td><button type="button" data-remove-section="${i}" aria-label="刪除段落 ${i+1}">刪除</button></td></tr>`).join('');[...$('arrangement').children].forEach((row,i)=>['name','bars','energy','focus','texture'].forEach((key,j)=>writeValue(row.querySelectorAll('input')[j],sections[i][key])));$('arrangement').querySelectorAll('[data-remove-section]').forEach((b,i)=>b.onclick=()=>deleteEntry('arrangement',i));arrangementController?.refresh();}
 function requirementValues(id){return [...$(id).querySelectorAll('textarea')].map(input=>readValue(input));}
 function clearRequirementError(id){
@@ -484,7 +484,7 @@ function renderCues(cues,ids){
     if(result&&!result.changed)say('播放位置與目前時間相同；原編修及撤回紀錄保留。');
   });
   $('cues').querySelectorAll('[data-delete-cue]').forEach(button=>button.onclick=()=>deleteEntry('cues',Number(button.dataset.deleteCue)));
-  cueStampEdit?.refresh();
+  cueStampEdit?.refresh();state.currentCue?.refresh();
 }
 function cueStampRow(id){return [...$('cues').children].find(row=>row.dataset.historyId===id)||null;}
 function captureLyricPlayer(){const player=$('lyrics-player');return {source:state.audioUrl,current_source:player.currentSrc||null,
@@ -589,20 +589,23 @@ $('timing-cancel').onclick=()=>{timingController.cancel();timingSay('已取消�
 $('lyrics-shift').oninput=()=>{timingController.cancel();timingSay('調整量已修改，請重新預覽。');};
 timingControls();
 let wavePosition=null;
+state.currentCue=MusicCurrentCueDOM.bind({button:$('current-cue-focus'),note:$('current-cue-note'),lyric:$('current-lyric'),
+  capture:()=>({media:captureLyricPlayer(),rows:entriesFor('cues').map(entry=>({id:entry.id,...entry.value})),visible:state.tab==='lyrics',busy:state.busy}),
+  highlight:id=>[...$('cues').children].forEach(row=>row.classList.toggle('playing',id!==null&&row.dataset.historyId===id)),
+  focusTarget:(id,expected)=>{if(state.tab!=='lyrics'||state.busy)return false;const row=cueStampRow(id);if(!row)return false;
+    const fields=row.querySelectorAll('input');if(fields.length!==3||fields[2].disabled||!fields[2].isConnected)return false;
+    if(['start','end','text'].some((key,i)=>readValue(fields[i])!==expected[key]))return false;
+    row.scrollIntoView({block:'nearest'});fields[2].focus({preventScroll:true});return document.activeElement===fields[2];},
+  onFocused:view=>say(`已前往第 ${view.index+1} 句歌詞欄位；原編修與播放位置保留。`),onError:error=>say(error.message,true)});
 function drawWave(){
+  state.currentCue?.refresh();
   const canvas=$('waveform'),ctx=canvas.getContext('2d'),w=canvas.width,h=canvas.height;
   ctx.clearRect(0,0,w,h);ctx.fillStyle='#e7ecdf';ctx.fillRect(0,0,w,h);ctx.strokeStyle='#b5c4ad';ctx.beginPath();ctx.moveTo(0,h/2);ctx.lineTo(w,h/2);ctx.stroke();
   if(state.waveform){ctx.strokeStyle='#4b745d';ctx.lineWidth=1;state.waveform.forEach((amplitude,i)=>{const x=(i+.5)*w/state.waveform.length;ctx.beginPath();ctx.moveTo(x,h/2-amplitude*52);ctx.lineTo(x,h/2+amplitude*52);ctx.stroke();});}
   const view=wavePosition?.refresh();
   if(view?.available){const x=view.ratio*w;ctx.strokeStyle='#c94b29';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}
 }
-function tick(){
-  const cues=MusicCueStamp.playableCues(entriesFor('cues').map(entry=>entry.value));
-  const active=MusicEditor.activeCueIndex(cues,$('lyrics-player').currentTime);
-  $('current-lyric').textContent=active>=0?cues[active].text:'…';
-  [...$('cues').children].forEach((row,i)=>row.classList.toggle('playing',active===i));
-  drawWave();
-}
+function tick(){drawWave();}
 function resetAudio(){
   waveTask.begin();
   const player=$('lyrics-player');player.pause();player.removeAttribute('src');player.load();player.hidden=true;
