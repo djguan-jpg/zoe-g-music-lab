@@ -295,3 +295,8 @@ shared library-revision.checkedMetadata→pure library-result exact save/list/re
 ## v0.75 全庫保存名稱搜尋
 
 pure library_search strict query/metadata index/canonical observed SHA/page/schema→DraftLibrary.metadata_snapshot→application四adapter；新唯讀draft_search僅明確啟庫，14基本/21啟庫需重新discovery。1–200codepoints/800UTF8/limit1–100/最多1000版本，literal case-sensitive保留Unicode/空白；只label與三title，不body/media。cursor pin query+全部可讀metadata及排序unreadable IDs，變更／end越界拒絕；不是disk bytes或原子snapshot/作者證明。browser pure envelope/data/current/search1/metadata/每列匹配/頁長/原stored_at+ID排序/cursor及前次boundary→latest/query/已顯示ID/controller→literal DOM；query改動、cancel、unknown/late保留清單/preview/edit/media；all refresh取消自身搜尋，明確成功才切all。search不進draft或新增write/path/model/依賴。新scripts/check_python_tests.py固定2隔離程序且120s整體期限，parent完整discovery逐ID核對coverage；package使用同runner，不提高期限。產品75／來源38–75／unknown76、Agent1/draft3/library1/backup1/legal4/private/not_submitted保持。見[契約](docs/LIBRARY-SEARCH.md)。
+
+
+## v0.76 保存搜尋呈現
+
+pure library_match/原生library-match：完整metadata/strict Unicode/query→四欄字面匹配與nonoverlap codepoint spans，原search重用，不增wire。pure library-presentation完整DTO/acceptedquery/selectedmetadata/零命中/空庫/unreadable/disabled→library-presentation-dom detached literal text/mark→原app controls；不讀目前editedquery冒充舊來源、不進draft/checkpoint/Agent。4欄/最多560marks、256px局部scroll/tabindex/窄版換行；未知或不符capture拒絕並保留既有DOM，非transactional DOM或通用HTML安全/作者/權利接受。原latest/cancel/selection preview/edit/media保持，14/21/Agent1/draft3/library1/backup1/search1/legal4/private/platform not_submitted保持。產品76/來源38–76/unknown77，見[契約](docs/LIBRARY-PRESENTATION.md)。

@@ -1,4 +1,8 @@
-# 進度：目前 v0.75.0
+# 進度：目前 v0.76.0
+
+## v0.76.0
+
+2026-10-05：保存清單分清空庫、搜尋零命中與摘要不可讀；選定版本顯示四種名稱的字面命中位置。查詢編修／等待／取消後仍標示原接受查詢，原稿、預覽、音檔保持。541 Python／892 JavaScript／81語法／四份Skill、152歷史ZIP及v75原封裝539／879還原通過；14／21工具與原schema保持。 原2版可讀／0命中被實際app誤寫成尚無保存版本已重現。pure Python／JS library-match共享字面語義與codepoint spans；純presentation→literal detached DOM，接受query留在暫態context，未知或不符拒絕。原生tab122共6search／3list／1read與13觀察：四欄/HTML字面、stale/pending/cancel/late、checked preview、空庫/不可讀、390px list279px/max256/鍵盤捲動38.5，console0；原3版及不可讀fixture bytes、編修/WAV/dirty保持。server原session76788正常exit0且deadline thread joined、tab關閉/viewport reset/無staging。Python70.032秒固定2workers/120s、v75原ZIP還原65.906秒；helper複製遺留舊顯示版本，corrected receipt依實際v75 SHA/commit記錄。latest76/75/74與legal4/private/not_submitted保持，rolling active。
 
 ## v0.75.0
 

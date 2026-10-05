@@ -83,3 +83,7 @@ current與metadata0.63.0，supported明確38–63共26項；validator不變。ac
 ## v0.75
 
 current=0.75.0、明確supported38–75共38項，unknown76拒絕。四scope×37共148份v74實際producer ZIP/manifest bytes保持。search1獨立，既有交付schemas／Agent1／draft3／library1／backup1保持；14／21工具。
+
+## v0.76
+
+current=0.76.0、明確supported38–76共39項，unknown77拒絕。四scope×38共152份v75實際producer ZIP/manifest bytes保持。搜尋名稱呈現只在browser暫態與共用純model；search1、既有交付schemas/Agent1/draft3/library1/backup1及14/21工具保持。

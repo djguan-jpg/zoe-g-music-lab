@@ -3,7 +3,7 @@
 (function(root){
   const node=typeof module==='object'&&module.exports;
   const D=node?require('./library-revision.js'):root.MusicLibraryRevision;
-  const J=node?require('../musiclab/assets/json-document.js'):root.MusicJsonDocument;
+  const M=node?require('./library-match.js'):root.MusicLibraryMatch;
   const versions=node?require('../musiclab/assets/delivery-versions.js'):root.MusicDeliveryVersions;
   const exact=(v,keys)=>v&&typeof v==='object'&&!Array.isArray(v)&&Object.keys(v).length===keys.length&&keys.every(k=>Object.hasOwn(v,k));
   const sha=v=>typeof v==='string'&&v.length===64&&/^[0-9a-f]{64}$/.test(v);
@@ -12,7 +12,7 @@
   const cursor=v=>exact(v,['start_index','search_sha256'])&&integer(v.start_index,1,1000)&&sha(v.search_sha256);
   const earlier=(a,b)=>a.stored_at<b.stored_at||a.stored_at===b.stored_at&&a.id<b.id;
   function checkedRequest(value){
-    if(typeof value?.query==='string')J.assertUnicode(value.query);
+    if(typeof value?.query==='string')M.checkedQuery(value.query);
     if(!exact(value,['query','limit','cursor'])||typeof value.query!=='string'||!integer([...value.query].length,1,200)||
        new TextEncoder().encode(value.query).length>800||!integer(value.limit,1,100)||value.cursor!==null&&!cursor(value.cursor))fail();
     return structuredClone(value);
@@ -39,7 +39,7 @@
     }
     const seen=new Set(),entries=data.entries.map(entry=>{
       const checked=D.checkedMetadata(entry?.id,entry);
-      if(seen.has(checked.id)||before&&!earlier(checked,before)||![checked.label,...Object.values(checked.titles)].some(v=>v.includes(request.query)))fail();
+      if(seen.has(checked.id)||before&&!earlier(checked,before)||!M.hasMatch(checked,request.query))fail();
       seen.add(checked.id);before=checked;return checked;
     });
     let priorIssue='';
