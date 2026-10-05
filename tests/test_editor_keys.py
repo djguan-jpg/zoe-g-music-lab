@@ -11,7 +11,8 @@ class EditorKeysAssetsTests(unittest.TestCase):
         self.assertEqual([page.index('src="/'+n+'"') for n in names],sorted(page.index('src="/'+n+'"') for n in names))
         for name in names[1:3]:
             status,headers,raw=self.get('/'+name);self.assertEqual(status,200);self.assertEqual(raw,(ROOT/'web'/name).read_bytes());self.assertEqual(headers['Cache-Control'],'no-store');self.assertIn("script-src 'self'",headers['Content-Security-Policy'])
-        self.assertEqual(page.count('在文字或時間欄按 Alt＋↑／↓ 移動目前列'),3)
+        self.assertEqual(page.count('在文字或時間欄按 Alt＋↑／↓ 移動目前列'),2)
+        self.assertEqual(page.count('在摘要、文字或時間欄按 Alt＋↑／↓ 移動目前鏡頭'),1)
     def test_keyboard_assets_do_not_expand_paths_or_operation_authority(self):
         for route in ['/editor-keys.js','/editor-keys-dom.js']:
             for headers in [{'Host':'foreign.example'},{'Origin':'https://foreign.example'}]:self.assertEqual(self.get(route,headers)[0],403)
