@@ -67,7 +67,12 @@
   function checkedResult(panel,reply){
     return Report.checkedResult({expected:report(panel),reply,jsonName:'storyboard-review.json',markdownName:'storyboard-review.md',markdown,label:'分鏡待辦報告'});
   }
-  function createController({capture,onState=()=>{}}){return Checkpoint.createController({capture,source,inspect:inspectSource,onState});}
+  function createController({capture,captureIds=null,onState=()=>{}}){
+    return Checkpoint.createController({capture:()=>({panel:capture(),ids:captureIds?captureIds():null}),
+      source:value=>{const panel=source(value.panel),ids=value.ids;
+        if(captureIds&&(!Array.isArray(ids)||ids.length!==panel.shots.length||ids.some(id=>typeof id!=='string'||!id)||new Set(ids).size!==ids.length))throw Error('分鏡鏡頭識別不完整；目前內容保留');
+        return {panel,ids:ids?[...ids]:null};},inspect:value=>inspectSource(value.panel),onState});
+  }
   const api={inspect,report,markdown,checkedResult,createController,labels};
   if(node)module.exports=api;else root.MusicStoryboardReadiness=api;
 })(typeof window==='object'?window:{});

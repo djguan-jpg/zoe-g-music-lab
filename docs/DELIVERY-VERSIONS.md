@@ -1,5 +1,9 @@
 # 固定交付版本契約 v1
 
+## v0.110
+
+單一policy current=0.110.0，supported38–110共73；unknown111拒絕。288份歷史ZIP／manifest bytes相同，17／24操作與24組schemas保持。單一新固定GET資產只用於工作台歌曲／分鏡待辦分頁；固定preview及schema保持。見[契約](READINESS-PAGE.md)。
+
 ## v0.109
 
 單一runtime policy current=0.109.0，supported38–109共72；unknown110拒絕。284份歷史ZIP／manifest bytes相同，17／24操作與24組既有schemas不變。兩個新資產只用於工作台歌詞診斷分頁；固定preview嵌入模組與schema不變。見[契約](ISSUE-PAGE.md)。

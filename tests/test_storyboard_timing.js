@@ -41,7 +41,7 @@ function controller(){const value={panel:panel('1','24','.06251','.0616'),ids:['
 test('locate checks original clock order and stable IDs even for identical raw rows',()=>{
   for(const edit of [v=>v.panel.fields['mv-fps']='25',v=>v.panel.shots[0].end='.2',v=>v.panel.shots.reverse(),v=>v.ids.reverse(),v=>v.ids[0]='replaced',v=>v.panel.shots.pop()]){const {value,c}=controller();c.check();edit(value);assert.equal(c.locate(0),null);assert.equal(c.refresh().stale,true);}
 });
-test('unchanged timing permits locate and clear removes old report without writing',()=>{const {value,c}=controller(),before=structuredClone(value);c.check();assert.equal(c.locate(0).row,2);assert.deepEqual(value,before);c.clear();assert.equal(c.locate(0),null);assert.deepEqual(c.refresh(),{report:null,stale:false});});
+test('unchanged timing permits locate and clear removes old report without writing',()=>{const {value,c}=controller(),before=structuredClone(value);c.check();assert.equal(c.locate(0).row,2);assert.deepEqual(value,before);c.clear();assert.equal(c.locate(0),null);assert.deepEqual(c.refresh(),{report:null,stale:false,revision:2});});
 test('invalid IDs and changed unsupported source refuse without mutating original controls',()=>{const {value,c}=controller();value.ids=['a','a'];assert.throws(()=>c.check());value.ids=['a','b'];c.check();value.panel.shots[1].end=null;assert.equal(c.locate(0),null);assert.throws(()=>c.check());});
 test('duration adoption shares the same decimal parser and frame diagnostics',()=>{
   const v={duration:'9',fps:'２４',shots:[{id:'a',start:'０',end:'.5'},{id:'b',start:'.5',end:'１'}]},before=structuredClone(v),p=D.proposal(v);assert.equal(p.after,'１');assert.equal(p.seconds,1);assert.equal(p.totalFrames,24);assert.deepEqual(v,before);
