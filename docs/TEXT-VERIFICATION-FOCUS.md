@@ -1,5 +1,7 @@
 # 取消原文核對後的鍵盤焦點
 
+現行四入口在實際選檔當下聚焦核對status note，不建立非同步選檔焦點意圖；原取消接續與兩份工作上限保持。見[選檔狀態契約](VERIFICATION-SELECTION.md)。以下保留歷史描述。
+
 現行焦點政策由純 verification-focus 與備份共用，三個原文 controller 的來源 epoch／兩個 read 上限不變。注入 metadata→純有限意圖→DOM 分層及備份完整 read→hash 上限見[現行契約](BACKUP-VERIFICATION-CAPACITY.md)。下方保留 v150 歷史描述。
 
 ## 純來源 view 與 DOM 意圖

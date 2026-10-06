@@ -1,5 +1,7 @@
 # 備份核對的讀取與雜湊名額
 
+現行四入口在實際選檔當下聚焦核對status note，不建立非同步選檔焦點意圖；原取消接續與兩份工作上限保持。見[選檔狀態契約](VERIFICATION-SELECTION.md)。以下保留歷史描述。
+
 ## 工作槽與來源
 
 原 backup-verification 純 proof／snapshot／metadata／inspect 保持；單檔上限32MiB、report1只確認選定檔案大小與SHA是否等於本輪已送出的ZIP。它不確認瀏覽器保存、ZIP內容語義、作者、權利或可恢復草稿库。無自動解壓／恢復或覆寫。
