@@ -8,6 +8,7 @@ import re
 DAY = 86400
 KEEP_VERSIONS = 3
 MIN_AGE_DAYS = 7
+MAX_PRUNE_BATCH_PACKAGES = 128
 CIM_SOURCE = 'windows-cim-process-v1'
 # CIM datetime exposes microseconds; preserve uncertainty around its 100ns tick value.
 CIM_CREATION_MARGIN = 9
@@ -133,3 +134,33 @@ def validate_candidate(value):
     if type(value['archive_bytes']) is not int or not 0 < value['archive_bytes'] <= 64 * 1024 * 1024:
         raise ValueError('Invalid candidate size')
     return dict(value)
+
+
+def prune_batch_directories(values):
+    """Explicit canonical identities, never an iterator or arbitrary source paths."""
+    if type(values) not in (list, tuple) or not 1 <= len(values) <= MAX_PRUNE_BATCH_PACKAGES:
+        raise ValueError('Prune batch requires 1–128 explicit package directories')
+    pattern = r'outputs/releases/v[0-9]{1,6}\.[0-9]{1,6}\.[0-9]{1,6}-[0-9a-f]{12}'
+    if any(type(value) is not str or not re.fullmatch(pattern, value) for value in values):
+        raise ValueError('Prune batch directories must be canonical release identities')
+    if len(set(values)) != len(values):
+        raise ValueError('Prune batch directories must be unique')
+    return sorted(values)
+
+
+def prune_batch_plan(candidates, directories):
+    """Bind an explicit subset to the complete eligible candidate preview."""
+    directories = prune_batch_directories(directories)
+    if type(candidates) not in (list, tuple) or len(candidates) > 1024:
+        raise ValueError('Invalid complete candidate catalog')
+    checked = [validate_candidate(value) for value in candidates]
+    by_directory = {value['directory']: value for value in checked}
+    if len(by_directory) != len(checked):
+        raise ValueError('Candidate catalog contains duplicate identities')
+    if any(directory not in by_directory for directory in directories):
+        raise ValueError('Selected package is not an eligible preview candidate')
+    plan = {'format': 'zoe-iteration-prune-batch', 'schema_version': 1,
+            'eligible_prune_token': prune_token(checked),
+            'selected': [by_directory[directory] for directory in directories]}
+    body = json.dumps(plan, sort_keys=True, separators=(',', ':'), ensure_ascii=False)
+    return {**plan, 'prune_token': hashlib.sha256(body.encode('utf-8')).hexdigest()}

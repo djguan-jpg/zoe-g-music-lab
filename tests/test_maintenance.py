@@ -30,12 +30,12 @@ def facts(version, age=8, verified=True):
 
 
 class PackageFixture:
-    def __init__(self, root):
+    def __init__(self, root, count=4):
         self.root = root
         self.git(['init', '--quiet']);self.git(['config', 'user.name', 'Synthetic maintenance test'])
         self.git(['config', 'user.email', 'synthetic@example.invalid']);self.git(['config', 'core.autocrlf', 'false'])
         self.packages=[]
-        for minor in range(1,5):
+        for minor in range(1,count+1):
             version=f'0.{minor}.0'
             (root/'projects.json').write_text(json.dumps({'suite':'ZOE. G Music Lab','version':version,'license':'PolyForm-Noncommercial-1.0.0'})+'\n',encoding='utf-8')
             (root/'README.md').write_text('Original synthetic source '+version+'\n',encoding='utf-8')
