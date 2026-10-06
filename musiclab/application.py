@@ -35,6 +35,7 @@ from .music_search import bundle as music_search_bundle, descriptor as music_sea
 from .lyrics_export_review import review_bundle as lyrics_export_review_bundle, descriptor as lyrics_export_review_descriptor
 from .music_review import review_bundle as music_review_bundle, descriptor as music_review_descriptor
 from .storyboard_review import review_bundle as storyboard_review_bundle, descriptor as storyboard_review_descriptor
+from .storyboard_shot_review import review_bundle as storyboard_shot_review_bundle, descriptor as storyboard_shot_review_descriptor
 from .storyboard_timing_review import review_bundle as storyboard_timing_review_bundle, descriptor as storyboard_timing_review_descriptor
 from .lyrics import read_cues, lyrics_bundle, edits
 from .lyrics_package import (PACKAGE_SCHEMA_VERSION, MAX_PACKAGE_BYTES, validate_package,
@@ -57,6 +58,7 @@ OPERATIONS = {
     "storyboard": "Shot timing and motif continuity; no media rendering",
     "music_search": "Find exact literal name, focus and texture fields in original song sections; source SHA pinned pagination; read-only, no paths, numbers, editing or model",
     "storyboard_search": "Find exact literal original narrative shot fields, first matching field per shot; source SHA pinned pagination; read-only, no paths, clocks, editing or model",
+    "storyboard_shot_review": "Diagnose one original storyboard shot and its motif reference; read-only; no complete-plan acceptance, paths or model",
     "storyboard_review": "Locate incomplete raw storyboard fields and motif references; read-only; no timing edits, complete plan acceptance or model",
     "storyboard_timing_review": "Locate raw storyboard numeric, seconds and exclusive-frame coverage issues; read-only; no time edits, complete creative acceptance or media",
     "lyrics": "Manual cue validation and LRC/SRT/JSON exports; no ASR",
@@ -122,6 +124,7 @@ def capabilities(draft_library=None, backup_source=None, delivery_source=None):
             "music_search": music_search_descriptor(),
             "lyrics_export_review": lyrics_export_review_descriptor(),
             "music_review": music_review_descriptor(),
+            "storyboard_shot_review": storyboard_shot_review_descriptor(),
             "storyboard_review": storyboard_review_descriptor(),
             "storyboard_timing_review": storyboard_timing_review_descriptor(),
             "delivery_package": {**delivery_descriptor(), "agent_max_request_bytes": MAX_REQUEST_BYTES},
@@ -182,7 +185,7 @@ def build(operation, payload, *, audio_source=None, draft_library=None, backup_s
     if operation in LIBRARY_OPERATIONS and draft_library is None:
         raise ValueError("草稿庫未啟用；請在啟動時明確指定 --draft-library 目錄")
     if operation not in available_operations(draft_library):
-        raise ValueError("未知操作；請使用 music、music_review、music_search、storyboard、storyboard_review、storyboard_search、storyboard_timing_review、lyrics、audio、audio_acceptance_review、storyboard_seed、lyrics_seed、lyrics_review、lyrics_search、lyrics_export_review 或 delivery_package、delivery_inspect")
+        raise ValueError("未知操作；請使用 music、music_review、music_search、storyboard、storyboard_review、storyboard_shot_review、storyboard_search、storyboard_timing_review、lyrics、audio、audio_acceptance_review、storyboard_seed、lyrics_seed、lyrics_review、lyrics_search、lyrics_export_review 或 delivery_package、delivery_inspect")
     if not isinstance(payload, dict):
         raise ValueError("輸入需為 JSON 物件")
     if operation in LIBRARY_OPERATIONS:
@@ -228,6 +231,9 @@ def build(operation, payload, *, audio_source=None, draft_library=None, backup_s
     elif operation == "music_review":
         files = music_review_bundle(payload)
         data = json.loads(files["music-review.json"])
+    elif operation == "storyboard_shot_review":
+        files = storyboard_shot_review_bundle(payload)
+        data = json.loads(files["storyboard-shot-review.json"])
     elif operation == "storyboard_review":
         files = storyboard_review_bundle(payload)
         data = json.loads(files["storyboard-review.json"])
@@ -317,7 +323,7 @@ def build(operation, payload, *, audio_source=None, draft_library=None, backup_s
         if document is not None:
             files["audio-acceptance-draft.json"] = json_text(document)
     review = bool(data.get("review_notes") or data.get("warnings") or data.get("duration_estimated"))
-    if operation in ('audio_acceptance_review', 'lyrics_review', 'lyrics_search', 'music_search', 'storyboard_search', 'lyrics_export_review', 'music_review', 'storyboard_review', 'storyboard_timing_review'):
+    if operation in ('audio_acceptance_review', 'lyrics_review', 'lyrics_search', 'music_search', 'storyboard_search', 'lyrics_export_review', 'music_review', 'storyboard_review', 'storyboard_timing_review', 'storyboard_shot_review'):
         review = True  # Diagnostic readiness never proves performance synchronization.
     if operation == 'lyrics':
         review = package_needs_review(data)

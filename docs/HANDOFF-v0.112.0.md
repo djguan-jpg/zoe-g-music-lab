@@ -8,4 +8,4 @@
 
 僅盤點本workspace outputs、封裝與typed owned jobs；最新三版保護，嚴格超七天且可由tag／Git archive重建才列清除候選。失敗36／53、未知檔、素材、草稿與備份保留；停止本輪QA程序後才最終稽核。實際遠端驗證與本輪inventory保留在忽略的outputs/v112-qa。
 
-見[單鏡契約](docs/STORYBOARD-SHOT-REVIEW.md)。
+見[單鏡契約](STORYBOARD-SHOT-REVIEW.md)。

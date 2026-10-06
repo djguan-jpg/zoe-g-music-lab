@@ -1,5 +1,11 @@
 # 本機 Agent 接口 v1
 
+## v0.112.0 選定鏡頭待辦
+
+新增選定原鏡號的必填欄位、方向與母題引用檢查，整份分鏡200明細上限保持。可定位後面的鏡頭，舊選擇／順序／來源與晚回覆不能替換新編修。Python／JS共用既有整份診斷規則，controller暫態與字面DOM分層；CLI／Agent／MCP／HTTP共用同一報告，18基本／25啟庫工具，原24組schemas保持。獨立shot-review1，Agent1／draft3保持；無新依賴／模型／媒體／外網或路徑權限。產品112／唯一policy38–112共75，未知113拒絕。
+
+見[契約](STORYBOARD-SHOT-REVIEW.md)。以下保留歷史迭代。
+
 v0.111只統一工作台三個待辦controller的ID來源。產品0.111.0／唯一runtime policy38–111共74，未知112拒絕；17基本／24啟庫工具與24組既有input/output schemas、Agent1／draft3及領域schema保持。只改三個純JS控制器的ID來源，不改editor-focus本體、DOM／app／HTML／CSS、固定資產、Python domain／producer／application、server／CLI／Agent／MCP或程序政策。沒有新依賴、模型、路徑或網路能力。 三份native完整wire／CLI／Agent／MCP／九HTTP及三份有效未完成draft3回讀相同。自訂iterator／prototype／getter案例是注入式JS控制器邊界，未宣稱HTTP JSON能攜帶這些方法或已發現遠端安全漏洞。共享reader仍可讀caller getter，不是通用Proxy／accessor副作用防護或原子快照；caller自行改動的ID陣列不回滾。ID是本頁暫態識別，不代表素材作者。分頁只讀已保留前200項；零待辦與診斷通過均不是作品／實聽接受。PNG只留ignored outputs；本輪未做完整視覺、screen reader、OS IME、實際瀏覽器保存、實聽、正式媒體、Host安裝及平台創始接受。固定離線預覽未修改。 見[契約](READINESS-IDS.md)。
 
 v0.110工作台歌曲／分鏡待辦分頁。產品0.110.0／唯一runtime policy38–110共73，未知111拒絕；17基本／24啟庫工具與24組既有input/output schemas保持，Agent1／draft3及領域schema保持。只新增一個固定GET資產；HTTP POST、application、Python producer、CLI／Agent／MCP、程序政策與授權邊界不變。沒有新依賴、模型、媒體生成或外網能力。 六份native来源与CLI／Agent／MCP／18HTTP完整一致；三份有效觀測draft3回讀一致。待辦診斷接受部分填寫資料，不表示它一定能保存為draft3。本輪合成部分分鏡的screen_direction空字串不在draft3選項內，候選有效但目前草稿不符時既有replacement snapshot拒絕預覽，完整原內容與成果保持。未放寬選項或自動修補；改用另一完整有效合成來源，才驗證明確預覽／載入。 見[契約](READINESS-PAGE.md)。

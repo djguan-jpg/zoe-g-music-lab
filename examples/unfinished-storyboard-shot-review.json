@@ -1,0 +1,83 @@
+{
+  "panel": {
+    "fields": {
+      "mv-title": "未完成的原創分鏡",
+      "mv-duration": "24",
+      "mv-fps": "24",
+      "mv-ratio": "16:9",
+      "mv-style": "白天的舊公寓，奶白牆面與窗外自然光，寫實動作搭配抽象回聲",
+      "mv-anchor": "成年人物，深灰上衣，米色紙箱；固定人物與服裝設定"
+    },
+    "motifs": [
+      {
+        "id": "motif-1",
+        "name": "紙箱",
+        "meaning": "把自己的話封在過去的容器"
+      },
+      {
+        "id": "motif-2",
+        "name": "紙箱",
+        "meaning": "另一個待區分的象徵"
+      }
+    ],
+    "shots": [
+      {
+        "start": "0",
+        "end": "6",
+        "motif_id": "motif-1",
+        "section": "前奏",
+        "purpose": "建立被壓住的話",
+        "visual": "她站在樓梯上，雙臂緊抱封好的紙箱。",
+        "camera": "固定全景，人物置於右側",
+        "transition": "沿手部切近",
+        "motif_state": "密封，緊抱",
+        "character_state": "深灰上衣，紙箱在胸前",
+        "change_reason": "",
+        "screen_direction": "left"
+      },
+      {
+        "start": "6",
+        "end": "12",
+        "motif_id": "motif-1",
+        "section": "主歌",
+        "purpose": "回聲使她停步",
+        "visual": "紙箱封口微微張開，她停下並轉頭。",
+        "camera": "側面中景，維持左向行進軸",
+        "transition": "停在膠帶邊緣",
+        "motif_state": "封口鬆開",
+        "character_state": "深灰上衣，紙箱在胸前",
+        "change_reason": "",
+        "screen_direction": "left"
+      },
+      {
+        "start": "12",
+        "end": "18",
+        "motif_id": "motif-1",
+        "section": "預副歌",
+        "purpose": "她開始主動回答",
+        "visual": "",
+        "camera": "正面近景，看見手與嘴的連續動作",
+        "transition": "同動作接到開箱",
+        "motif_state": "打開，放在平台",
+        "character_state": "深灰上衣，紙箱在平台",
+        "change_reason": "本鏡完整呈現放下紙箱",
+        "screen_direction": "neutral"
+      },
+      {
+        "start": "18",
+        "end": "24",
+        "motif_id": "motif-1",
+        "section": "副歌",
+        "purpose": "回聲變成自己的回答",
+        "visual": "她走回上層，紙箱保持打開，聲音仍留在平台。",
+        "camera": "平台固定全景，人物向右上層離開",
+        "transition": "在空平台留一秒尾鏡",
+        "motif_state": "開口，無人緊抱",
+        "character_state": "深灰上衣，紙箱在平台",
+        "change_reason": "由前鏡正面鏡頭重新建立方向",
+        "screen_direction": "right"
+      }
+    ]
+  },
+  "row": 3
+}

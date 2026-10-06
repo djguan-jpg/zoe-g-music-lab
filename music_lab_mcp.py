@@ -18,7 +18,8 @@ from musiclab.tool_contracts import input_schema, output_schema
 MCP_VERSION = "2025-11-25"
 TOOLS = {"music_plan": "music", "storyboard_plan": "storyboard",
          "lyrics_validate": "lyrics", "audio_report": "audio", "storyboard_seed": "storyboard_seed",
-         "lyrics_seed": "lyrics_seed", "lyrics_review": "lyrics_review", "lyrics_search": "lyrics_search", "storyboard_search": "storyboard_search", "music_search": "music_search", "lyrics_export_review": "lyrics_export_review", "music_review": "music_review", "storyboard_review": "storyboard_review", "storyboard_timing_review": "storyboard_timing_review", "delivery_package": "delivery_package", "delivery_inspect": "delivery_inspect", "audio_acceptance_review": "audio_acceptance_review"}
+         "lyrics_seed": "lyrics_seed", "lyrics_review": "lyrics_review", "lyrics_search": "lyrics_search", "storyboard_search": "storyboard_search", "music_search": "music_search", "lyrics_export_review": "lyrics_export_review", "music_review": "music_review",     "storyboard_shot_review": "storyboard_shot_review",
+"storyboard_review": "storyboard_review", "storyboard_timing_review": "storyboard_timing_review", "delivery_package": "delivery_package", "delivery_inspect": "delivery_inspect", "audio_acceptance_review": "audio_acceptance_review"}
 
 
 

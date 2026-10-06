@@ -53,7 +53,7 @@ test('actual full storyboard event refuses time issues before a complete HTTP re
   vm.createContext(ctx);vm.runInContext(code.slice(a,b),ctx);assert.throws(()=>button.onclick(),/分鏡時間有待辦/);assert.equal(planned,0);assert.equal(requested,0);
 });
 function adapter(){
-  const code=fs.readFileSync('web/app.js','utf8'),a=code.indexOf("$('mv-time-report').onclick="),b=code.indexOf("$('mv-ready-report').onclick=",a),nodes={'mv-time-report':{},'mv-visual':{hidden:false}},events=[],p=panel();let resolve;
+  const code=fs.readFileSync('web/app.js','utf8'),a=code.indexOf("$('mv-time-report').onclick="),b=code.indexOf("shotReviewDOM=",a),nodes={'mv-time-report':{},'mv-visual':{hidden:false}},events=[],p=panel();let resolve;
   const ctx={$:id=>nodes[id],captureStoryboardTiming:()=>({panel:p,ids:['a','b']}),storyboardTimingController:{check:()=>events.push('local')},MusicStoryboardTiming:T,
     api:(route,payload)=>{events.push({route,payload:structuredClone(payload)});return new Promise(r=>resolve=r);},setFiles:(files,note)=>events.push({files,note}),say:s=>events.push(s),current:true,run:(_b,fn)=>fn(()=>ctx.current)};
   vm.createContext(ctx);vm.runInContext(code.slice(a,b),ctx);return {ctx,p,nodes,events,start:()=>nodes['mv-time-report'].onclick(),reply:r=>resolve(r)};

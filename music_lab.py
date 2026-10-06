@@ -14,7 +14,7 @@ from musiclab.draft_library import DraftLibrary, revision_id
 def main(argv=None):
     parser = argparse.ArgumentParser(description=f"ZOE. G Music Lab · 本機 v{__version__}")
     commands = parser.add_subparsers(dest="command", required=True)
-    for name in ("music", "storyboard", "lyrics", "audio", "audio-acceptance-review", "storyboard-seed", "lyrics-seed", "lyrics-review", "lyrics-search", "storyboard-search", "music-search", "lyrics-export-review", "music-review", "storyboard-review", "storyboard-timing-review", "delivery-package", "delivery-inspect"):
+    for name in ("music", "storyboard", "lyrics", "audio", "audio-acceptance-review", "storyboard-seed", "lyrics-seed", "lyrics-review", "lyrics-search", "storyboard-search", "music-search", "lyrics-export-review", "music-review", "storyboard-review", "storyboard-timing-review", "storyboard-shot-review", "delivery-package", "delivery-inspect"):
         sub = commands.add_parser(name)
         sub.add_argument("--out", required=True, help="指定本輪輸出資料夾")
         sub.add_argument("--overwrite", action="store_true", help="明確替換此輸出目錄的同名成果")
@@ -30,7 +30,8 @@ def main(argv=None):
             sub.add_argument('--match-context',action='store_true',help='明確要求命中前後文；需text-file及find-text，每側最多64 UTF-8 bytes')
             sub.add_argument('--find-text',help='與text-file一起使用；搜尋原文完全相同的字串，只輸出命中位置摘要')
             sub.add_argument('--max-matches',type=int,help='字面搜尋每批1–50筆；預設20，可依摘要接續')
-        if name in ('music-review', 'storyboard-review', 'storyboard-timing-review'):
+        if name == 'storyboard-shot-review':sub.add_argument('--row',type=int,help='--draft 必須明確指定一開始的原始鏡號；--input 已含 row，不可覆蓋')
+        if name in ('music-review', 'storyboard-review', 'storyboard-timing-review', 'storyboard-shot-review'):
             source_group = sub.add_mutually_exclusive_group(required=True)
             source_group.add_argument('--input', help='含 panel 的原始工作台欄位 JSON')
             source_group.add_argument('--draft', help='明確選定 schema3 草稿，只檢查命令所選的工作台')
@@ -147,19 +148,24 @@ def main(argv=None):
                 result = build("draft_" + args.draft_action, payload, draft_library=library).wire()
             print(json.dumps(result, ensure_ascii=False, allow_nan=False))
             return 0
-        if args.command in ('music-review', 'storyboard-review', 'storyboard-timing-review'):
+        if args.command in ('music-review', 'storyboard-review', 'storyboard-timing-review', 'storyboard-shot-review'):
             if args.draft:
                 from musiclab.draft_contract import validate_draft, MAX_DRAFT_BYTES
                 if Path(args.draft).stat().st_size > MAX_DRAFT_BYTES + 3:
                     raise ValueError('欄位檢查的草稿檔最多1 MiB')
                 draft = validate_draft(read_json(args.draft))
-                if args.command == 'storyboard-timing-review':
+                if args.command == 'storyboard-shot-review':
+                    if args.row is None:raise ValueError('--draft 必須搭配 --row 原始鏡號')
+                    selected = draft['panels']['storyboard']
+                elif args.command == 'storyboard-timing-review':
                     from musiclab.storyboard_timing_review import timing_panel
                     selected = timing_panel(draft['panels']['storyboard'])
                 else:
                     selected = draft['panels'][args.command.removesuffix('-review')]
                 payload = {'panel': selected}
+                if args.command == 'storyboard-shot-review':payload['row'] = args.row
             else:
+                if args.command == 'storyboard-shot-review' and args.row is not None:raise ValueError('--input 已含 row；不能另用 --row 覆蓋')
                 payload = read_json(args.input)
             result = build(args.command.replace('-', '_'), payload)
             bundle = result.files
