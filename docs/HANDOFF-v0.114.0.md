@@ -8,4 +8,4 @@
 
 只盤點本workspace outputs與明確typed owned jobs；最新三版保護，嚴格超七天且可由tag／Git archive重建才列清除候選。失敗36／53、未知檔、素材、草稿、備份與失敗QA證據保留；實際程序結束後才最終稽核。遠端證據與inventory留在忽略的outputs/v114-qa。
 
-見[契約](docs/SHOT-ISSUE-NAVIGATION.md)。
+見[契約](SHOT-ISSUE-NAVIGATION.md)。
