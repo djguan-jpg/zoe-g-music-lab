@@ -17,7 +17,11 @@
    if(now.available){if(!attempt(focusPicker))attempt(focusNote);}
    else if(attempt(focusNote)&&now.waiting)invitation=now.contextRevision;
   }
-  return {clear,refresh,cancelled,dispose(){clear();disposed=true;}};
+  function selected(){
+   clear();if(disposed)return;let now;try{now=checked(capture());}catch{return;}if(!now||now.pending||!now.available)return;
+   attempt(focusNote);
+  }
+  return {clear,refresh,cancelled,selected,dispose(){clear();disposed=true;}};
  }
  const api=Object.freeze({createController});if(typeof module==='object'&&module.exports)module.exports=api;else root.MusicVerificationFocus=api;
 })(typeof globalThis==='object'?globalThis:this);

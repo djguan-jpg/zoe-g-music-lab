@@ -15,7 +15,7 @@
   const controller=P.createController({capture,describe:value=>{const f=native(value);return {name:f.name,size:f.size};},readFile:value=>native(value).arrayBuffer(),hash,onError,
    onState:view=>{file.disabled=!view.available||view.pending;cancel.disabled=!view.pending;source.textContent=view.source?`本輪備份：${view.source.entry_count} 版 · ${view.source.bytes} bytes · SHA-256 ${view.source.sha256}`:'尚無已送出的備份 ZIP。';note.textContent=(view.selected?`選定：${view.selected.name} · `:'')+view.message+(view.waitingForWork?' 仍有備份正在讀取或雜湊核對，完成後可再選檔。':'');note.dataset.match=view.report===null?'unknown':String(view.report.matched);focusController?.refresh(focusView(view));}});
   focusController=Focus.createController({capture:()=>focusView(controller.view()),noteFocused:()=>document.activeElement===note,focusPicker:()=>focus(file),focusNote:()=>focus(note)});
-  file.onchange=()=>{clearFocus();const selected=file.files[0];file.value='';if(selected)void controller.verify(selected);};cancel.onclick=()=>{clearFocus();controller.cancel();focusController.cancelled();};
+  file.onchange=()=>{clearFocus();const selected=file.files[0];file.value='';if(selected){focusController.selected();void controller.verify(selected);}};cancel.onclick=()=>{clearFocus();controller.cancel();focusController.cancelled();};
   const leave=()=>{clearFocus();controller.cancel();};events.addEventListener('pagehide',leave);controller.refresh();
   return {refresh:controller.refresh,dispose(){focusController.dispose();events.removeEventListener('pagehide',leave);note.removeEventListener?.('blur',clearFocus);file.onchange=null;cancel.onclick=null;cancel.disabled=true;controller.dispose();}};
  }

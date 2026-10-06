@@ -16,7 +16,7 @@
     focusController?.refresh(focusView(view));
    }});
   if(cancel)focusController=F.createController({capture:()=>focusView(controller.view()),noteFocused:()=>document.activeElement===note,focusPicker:()=>focus(file),focusNote:()=>focus(note)});
-  file.onchange=()=>{clearFocus();const value=file.files[0];file.value='';if(value)void controller.verify(value);};
+  file.onchange=()=>{clearFocus();const value=file.files[0];file.value='';if(value){focusController?.selected();void controller.verify(value);}};
   if(cancel)cancel.onclick=()=>{clearFocus();controller.cancel();focusController.cancelled();};
   const leave=()=>{clearFocus();controller.cancel();};events.addEventListener('pagehide',leave);controller.refresh();
   return {refresh:controller.refresh,dispose(){focusController?.dispose();events.removeEventListener('pagehide',leave);file.onchange=null;if(cancel){cancel.onclick=null;cancel.disabled=true;note.removeEventListener?.('blur',clearFocus);}controller.dispose();}};
