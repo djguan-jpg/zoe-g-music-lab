@@ -1175,7 +1175,7 @@ $('library-more').onclick=()=>libraryMode==='search'?librarySearch.search(true):
 $('library-search-form').onsubmit=event=>{event.preventDefault();if(!libraryAllowed())return;libraryController.cancelList();librarySearch.search();};
 $('library-search-query').oninput=()=>librarySearch.invalidate();
 $('library-search-cancel').onclick=()=>{librarySearch.cancel();librarySay('已取消搜尋等待；目前清單、草稿與音檔保留。');};
-$('library-select').onchange=()=>{clearLibraryReview();librarySelection();librarySay('選定版本已變更，請重新預覽；目前工作台與音檔保留。');};
+$('library-select').onchange=()=>{clearLibraryReview();librarySelection();backupControls();librarySay('選定版本已變更，請重新預覽；目前工作台與音檔保留。');};
 $('library-preview').onclick=async()=>{
   if(!libraryAllowed())return;const id=$('library-select').value;if(!id||libraryReadingId===id)return;
   clearLibraryReview();draftTask.begin();clearConversion();briefImporter.cancel();clearBriefReview();
@@ -1233,10 +1233,11 @@ $('backup-open').onchange=()=>{
 $('backup-restore').onclick=()=>{if(libraryAllowed())backupController.restore();};
 $('backup-cancel').onclick=()=>{if(backupController.cancel())backupSay('已取消恢復預覽；草稿庫與工作台保留。');};
 state.backupDownload=MusicBackupDownloadDom.createAdapter(document,{
-  prepare:async signal=>{
-    const response=await fetch('/api/drafts/backup/prepare',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}',signal});
+  prepare:async (signal,payload={})=>{
+    const response=await fetch('/api/drafts/backup/prepare',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),signal});
     const data=await response.json();if(!response.ok)throw Error(data.error||'備份未完成');return data;
   },maximum:()=>backupMaximum,allowed:libraryAllowed,verificationAllowed:()=>libraryEnabled&&!state.busy&&!backupRestoring,say:backupSay,
+  captureSelected:()=>libraryRecords.some(record=>record.id===$('library-select').value)?$('library-select').value:null,
   onState:({busy})=>{backupDownloading=busy;backupControls();}
 });
 async function setupLibrary(){

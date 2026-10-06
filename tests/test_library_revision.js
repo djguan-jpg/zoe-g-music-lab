@@ -85,8 +85,8 @@ test('controller requires an explicit read checker and changed selection never p
 test('actual selection event cancels late preview and keeps the new-selection notice with current edits',async()=>{
  const a=F.revision(),wait=later(),h=harness(()=>wait.promise),work=h.c.read(a.entry.id,a.entry),source=fs.readFileSync('web/app.js','utf8'),node={},messages=[];
  const line=source.split('\n').find(v=>v.startsWith("$('library-select').onchange="));
- vm.runInNewContext(line,{$:()=>node,clearLibraryReview:()=>h.c.cancelRead(),librarySelection:()=>{},librarySay:v=>messages.push(v)});
+ let backupRefreshes=0;vm.runInNewContext(line,{$:()=>node,clearLibraryReview:()=>h.c.cancelRead(),librarySelection:()=>{},backupControls:()=>{backupRefreshes++;},librarySay:v=>messages.push(v)});
  h.current.draft.panels.music.fields['music-title']='後續編修';const before=structuredClone(h.current.draft),media=h.current.media[0];node.onchange();wait.resolve(a);
  assert.equal(await work,false);assert.equal(h.ready.length,0);assert.equal(h.preview.proposal(),null);assert.deepEqual(h.current.draft,before);assert.equal(h.current.media[0],media);
- assert.deepEqual(h.errors,[]);assert.match(messages.at(-1),/選定版本已變更，請重新預覽/);
+ assert.deepEqual(h.errors,[]);assert.match(messages.at(-1),/選定版本已變更，請重新預覽/);assert.equal(backupRefreshes,1);
 });

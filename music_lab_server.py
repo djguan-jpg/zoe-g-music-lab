@@ -11,7 +11,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from musiclab.common import json_text
 from musiclab.application import build, capabilities, load_request, MAX_REQUEST_BYTES, export_library_backup, prepare_delivery, inspect_delivery
-from musiclab.draft_backup import MAX_BACKUP_BYTES
+from musiclab.draft_backup import MAX_BACKUP_BYTES, selected_ids
 from musiclab.backup_downloads import BackupDownloads
 from musiclab.delivery_package import MAX_ARCHIVE_BYTES as MAX_DELIVERY_ARCHIVE, MAX_REQUEST_BYTES as MAX_DELIVERY_REQUEST, decode as decode_delivery
 from musiclab.draft_contract import browser_contract
@@ -306,8 +306,9 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
             if not isinstance(data, dict):
                 raise ValueError("輸入需為物件")
             if route.path == '/api/drafts/backup/prepare':
-                if data or route.query:raise ValueError('備份下載不接受路徑或額外欄位')
-                archive,summary=export_library_backup(getattr(self.server,'draft_library',None))
+                if set(data)-{'ids'} or route.query:raise ValueError('備份下載只接受保存 ID，不接受路徑或額外欄位')
+                ids=selected_ids(data['ids']) if 'ids' in data else None
+                archive,summary=export_library_backup(getattr(self.server,'draft_library',None),ids)
                 return self.reply(200,json_text(backup_downloads(self.server).prepare(archive,summary)))
             operations = {"/api/music": "music", "/api/storyboard": "storyboard", "/api/lyrics": "lyrics",
                           "/api/storyboard-seed": "storyboard_seed",
