@@ -44,6 +44,7 @@ from .lyrics_package import (PACKAGE_SCHEMA_VERSION, MAX_PACKAGE_BYTES, validate
                              package_files, decode_document, is_legacy, needs_review as package_needs_review)
 from .tool_contracts import payload_schema, output_schema
 from .draft_contract import MAX_DRAFT_BYTES
+from .draft_compare import bundle as draft_compare_bundle, descriptor as draft_compare_descriptor
 from .draft_library import LIBRARY_SCHEMA_VERSION, MAX_ENTRIES
 from .draft_backup import (BACKUP_SCHEMA_VERSION, MAX_BACKUP_BYTES, MAX_EXPANDED_BYTES,
                            export_backup, inspect_backup, restore_backup)
@@ -53,6 +54,7 @@ from .library_search import checked_request as checked_library_search, prepare a
 PROTOCOL_VERSION = 1
 MAX_REQUEST_BYTES = MAX_JSON_BYTES
 OPERATIONS = {
+    "draft_compare": "Compare two explicit complete draft3 objects by original field and row position; bounded literal excerpts, full counts and canonical source hashes; read-only, no replacement, paths, model or media",
     "delivery_inspect": "Verify the complete selected canonical ZIP; explicit file_names returns original files within 512 KiB JSON, exclusive text_search returns bounded literal UTF-8 positions, or exclusive text_window returns <=16 KiB original UTF-8 bytes with pinned archive SHA for continuation; default metadata, baseline comparison or exclusive include_report; no paths, merging, automatic writes or model",
     "delivery_package": "Package explicitly provided text files with a SHA-256 manifest; metadata by default, archive_base64 only when include_archive=true and ZIP<=512 KiB; no source paths, media, creative acceptance or model",
     "music": "Song planning and AI task packaging; no model invocation",
@@ -116,6 +118,7 @@ def capabilities(draft_library=None, backup_source=None, delivery_source=None):
                              "max_archive_bytes": MAX_BACKUP_BYTES, "max_expanded_bytes": MAX_EXPANDED_BYTES},
             "draft_backup_export": backup_export_descriptor(),
             "draft_search": library_search_descriptor(),
+            "draft_comparison": draft_compare_descriptor(),
             "storyboard_seed": {"schema_version": SEED_SCHEMA_VERSION, "max_slots": MAX_SLOTS,
                                 "status": "timing_seed_incomplete", "media_generated": False},
             "lyrics_seed": {"schema_version": LYRICS_SEED_SCHEMA_VERSION, "max_source_bytes": MAX_SOURCE_BYTES,
@@ -231,7 +234,10 @@ def build(operation, payload, *, audio_source=None, draft_library=None, backup_s
         return inspect_delivery(delivery_source,payload.get('include_files',False),baseline=payload.get('baseline'),include_report=payload.get('include_report',False),file_names=payload.get('file_names'),text_window=payload.get('text_window'),text_search=payload.get('text_search'))
     if operation == "delivery_package":
         return Result({}, prepare_delivery(payload).summary(payload.get("include_archive", False)), True)
-    if operation == "audio_acceptance_review":
+    if operation == "draft_compare":
+        files = draft_compare_bundle(payload)
+        data = json.loads(files['draft-comparison.json'])
+    elif operation == "audio_acceptance_review":
         files = acceptance_review_bundle(payload)
         data = json.loads(files["audio-acceptance-review.json"])
     elif operation == "music_section_review":

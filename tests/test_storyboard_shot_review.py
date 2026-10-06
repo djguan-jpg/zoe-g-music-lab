@@ -63,8 +63,8 @@ class StoryboardShotReviewTests(unittest.TestCase):
         self.assertEqual(out.returncode,0,out.stderr);self.assertEqual(json.loads(out.stdout),[{'data':review(p),'markdown':markdown(review(p))} for p in rows])
 
     def test_discovery_adds_one_strict_readonly_operation(self):
-        c=capabilities();self.assertEqual(len(c['operations']),20);self.assertIn('storyboard_shot_review',c['operations'])
-        self.assertEqual(len(tool_list()),20);self.assertTrue(c['storyboard_shot_review']['read_only'])
+        c=capabilities();self.assertEqual(len(c['operations']),21);self.assertIn('storyboard_shot_review',c['operations'])
+        self.assertEqual(len(tool_list()),21);self.assertTrue(c['storyboard_shot_review']['read_only'])
         self.assertEqual(payload_schema('storyboard_shot_review')['required'],['panel','row'])
         schema=output_schema('storyboard_shot_review');self.assertFalse(schema['properties']['data']['additionalProperties'])
         self.assertTrue(schema['properties']['meta']['properties']['needs_review']['const'])

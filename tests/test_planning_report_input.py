@@ -37,7 +37,7 @@ class PlanningReportInputTests(unittest.TestCase):
    raw=reply['result']['files'][operation+'-review.json']
    result=node("const fs=require('fs'),m=require('./web/planning-report-input.js');const x=JSON.parse(fs.readFileSync(0,'utf8'));const b=new TextEncoder().encode(x.raw);console.log(JSON.stringify(m.decode(x.operation,b.buffer,b.length)));",{'operation':operation,'raw':raw})
    self.assertEqual(result['panel'],source)
-  self.assertEqual(len(capabilities()['operations']),20)
+  self.assertEqual(len(capabilities()['operations']),21)
  def test_fixed_browser_input_asset_matches_source_and_uses_existing_loopback_server(self):
   server=WorkbenchServer(('127.0.0.1',0),WorkbenchHandler);server.draft_library=None
   thread=threading.Thread(target=server.serve_forever,daemon=True);thread.start()

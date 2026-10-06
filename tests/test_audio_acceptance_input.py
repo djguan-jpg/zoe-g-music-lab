@@ -87,7 +87,7 @@ class AcceptanceInputTests(unittest.TestCase):
 
     def test_actual_agent_mcp_wire_stays_draft_only_and_discovery_is_explicit(self):
         source = draft(); report = review({'document': source}); cap = capabilities()
-        self.assertEqual(len(cap['operations']),20); self.assertEqual(cap['audio_acceptance_input'], descriptor())
+        self.assertEqual(len(cap['operations']),21); self.assertEqual(cap['audio_acceptance_input'], descriptor())
         self.assertEqual(cap['input_schemas']['audio_acceptance_review']['properties']['document']['properties']['format']['const'], source['format'])
         for script in ('music_lab_agent.py', 'music_lab_mcp.py'):
             messages = []

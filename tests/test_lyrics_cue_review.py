@@ -65,8 +65,8 @@ class LyricsCueReviewTests(unittest.TestCase):
             bad=subprocess.run(args+['--row','1'],cwd=ROOT,capture_output=True,timeout=10);self.assertEqual(bad.returncode,1)
 
     def test_new_read_only_tool_schemas_and_discovery(self):
-        self.assertEqual(len(capabilities()['operations']),20);self.assertEqual(capabilities()['lyrics_cue_review'],descriptor())
-        with tempfile.TemporaryDirectory() as folder:self.assertEqual(len(capabilities(DraftLibrary(folder))['operations']),27)
+        self.assertEqual(len(capabilities()['operations']),21);self.assertEqual(capabilities()['lyrics_cue_review'],descriptor())
+        with tempfile.TemporaryDirectory() as folder:self.assertEqual(len(capabilities(DraftLibrary(folder))['operations']),28)
         schema=payload_schema('lyrics_cue_review');self.assertFalse(schema['additionalProperties']);self.assertEqual(set(schema['required']),{'lyrics','row'})
         out=output_schema('lyrics_cue_review');self.assertEqual(out['properties']['data']['properties']['schema_version']['const'],1)
         self.assertTrue(out['properties']['meta']['properties']['needs_review']['const'])

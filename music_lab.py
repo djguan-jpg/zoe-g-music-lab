@@ -63,6 +63,11 @@ def main(argv=None):
         if name == 'storyboard-seed':
             sub.add_argument('--fps', type=float)
             sub.add_argument('--bars-per-shot', type=int)
+    comparison = commands.add_parser('draft-compare', help='唯讀比較两份完整 schema3 草稿；沒有替換或保存版本')
+    comparison.add_argument('--baseline', required=True, help='明確基準草稿 JSON，最多1 MiB')
+    comparison.add_argument('--current', required=True, help='明確目前草稿 JSON，最多1 MiB')
+    comparison.add_argument('--out', required=True, help='明確比較報告輸出目錄')
+    comparison.add_argument('--overwrite', action='store_true', help='只替換指定輸出報告；原草稿保持')
     drafts = commands.add_parser("draft", help="明確選定本機草稿庫；保存版本不覆寫")
     actions = drafts.add_subparsers(dest="draft_action", required=True)
     for action in ("save", "list", "search", "read", "backup", "backup-export", "inspect", "restore"):
@@ -148,7 +153,17 @@ def main(argv=None):
                 result = build("draft_" + args.draft_action, payload, draft_library=library).wire()
             print(json.dumps(result, ensure_ascii=False, allow_nan=False))
             return 0
-        if args.command == 'lyrics-cue-review':
+        if args.command == 'draft-compare':
+            from musiclab.draft_contract import MAX_DRAFT_BYTES
+            from musiclab.json_document import decode_json
+            payload = {}
+            for name in ('baseline', 'current'):
+                with Path(getattr(args, name)).open('rb') as source:
+                    payload[name] = decode_json(source.read(MAX_DRAFT_BYTES + 4), max_bytes=MAX_DRAFT_BYTES + 3, allow_bom=True, label='草稿比較 JSON')
+            result = build('draft_compare', payload)
+            bundle = result.files
+            status = 2 if result.data['change_count'] else 0
+        elif args.command == 'lyrics-cue-review':
             if args.draft:
                 from musiclab.draft_contract import validate_draft, MAX_DRAFT_BYTES
                 if Path(args.draft).stat().st_size > MAX_DRAFT_BYTES + 3:raise ValueError('欄位檢查的草稿檔最多1 MiB')
@@ -259,7 +274,8 @@ def main(argv=None):
     if args.command == 'lyrics-seed':
         print('未校時歌詞起稿已建立；沒有猜測時間，請依實際音檔標記開始與結束。')
     if status == 2:
-        print("已完成條件檢查；有待修正項目，詳見 audio-acceptance-review.md。" if args.command == 'audio-acceptance-review' else
+        print("兩份草稿有差異；比較已完成，原草稿保持，詳見 draft-comparison.json。" if args.command == 'draft-compare' else
+              "已完成條件檢查；有待修正項目，詳見 audio-acceptance-review.md。" if args.command == 'audio-acceptance-review' else
               "已完成分鏡欄位檢查；有待修正項目，詳見 storyboard-review.md。" if args.command == 'storyboard-review' else
               "已完成歌曲欄位檢查；有待修正項目，詳見 music-review.md。" if args.command == 'music-review' else
               "已完成校時檢查；有待修正項目，詳見 lyrics-review.md。" if args.command == 'lyrics-review' else

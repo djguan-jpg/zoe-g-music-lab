@@ -69,6 +69,7 @@ class MCPTests(unittest.TestCase):
             delivery=Path(folder)/'selected-delivery.zip';delivery.write_bytes(prepare({'scope':'music','files':{'plan.md':'原創文字'}}).archive)
             cases = [("music_plan", "music", json.loads((ROOT / "examples/first-light-music.json").read_text(encoding="utf-8"))),
                      ("storyboard_plan", "storyboard", json.loads((ROOT / "examples/first-light-mv.json").read_text(encoding="utf-8"))),
+                     ("draft_compare", "draft_compare", {"baseline":json.loads((ROOT/"examples/draft-comparison-baseline.json").read_text(encoding="utf-8")),"current":json.loads((ROOT/"examples/draft-comparison-current.json").read_text(encoding="utf-8"))}),
                      ("lyrics_validate", "lyrics", {"cues": [{"start": 0, "end": 3, "text": "原創"}]}),
                      ("audio_report", "audio", {"profile": "video"}),
                      ("storyboard_seed", "storyboard_seed", {"music": json.loads((ROOT / "examples/first-light-music.json").read_text(encoding="utf-8"))}),
