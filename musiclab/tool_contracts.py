@@ -94,6 +94,9 @@ def payload_schema(operation):
         panel = exact({'fields': exact({'mv-duration': deepcopy(raw), 'mv-fps': deepcopy(raw)}),
                        'shots': array_schema(exact({'start': deepcopy(raw), 'end': deepcopy(raw)}), 0, 1000)})
         return exact({'panel': panel})
+    if operation == 'storyboard_shot_review':
+        panel = payload_schema('storyboard_review')['properties']['panel']
+        return object_schema({'panel': panel, 'row': {'type':'integer','minimum':1,'maximum':1000,'description':'One-based original shot row; must exist in panel'}}, ('panel','row'), additionalProperties=False)
     if operation == 'storyboard_review':
         from .draft_contract import draft_schema
         panel = draft_schema()['properties']['panels']['properties']['storyboard']
@@ -382,6 +385,12 @@ def output_schema(operation=None):
                                                  "needs_review": {"type": "boolean"}},
                                                 ("version", "protocol_version", "needs_review"), additionalProperties=False)},
                          ("files", "data", "meta"), additionalProperties=False)
+    if operation == 'storyboard_shot_review':
+        from .storyboard_shot_review import data_schema
+        result['properties']['data'] = data_schema()
+        names = ('storyboard-shot-review.json','storyboard-shot-review.md')
+        result['properties']['files'] = object_schema({name:{'type':'string'} for name in names}, names, additionalProperties=False)
+        result['properties']['meta']['properties']['needs_review']['const'] = True
     if operation == 'music_search':
         from .music_search import data_schema
         result['properties']['data']=data_schema()

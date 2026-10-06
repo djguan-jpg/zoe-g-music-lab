@@ -1,5 +1,11 @@
 # 固定交付版本契約 v1
 
+## v0.112.0 選定鏡頭待辦
+
+新增選定原鏡號的必填欄位、方向與母題引用檢查，整份分鏡200明細上限保持。可定位後面的鏡頭，舊選擇／順序／來源與晚回覆不能替換新編修。Python／JS共用既有整份診斷規則，controller暫態與字面DOM分層；CLI／Agent／MCP／HTTP共用同一報告，18基本／25啟庫工具，原24組schemas保持。獨立shot-review1，Agent1／draft3保持；無新依賴／模型／媒體／外網或路徑權限。產品112／唯一policy38–112共75，未知113拒絕。
+
+見[契約](STORYBOARD-SHOT-REVIEW.md)。以下保留歷史迭代。
+
 ## v0.111
 
 單一policy current=0.111.0、supported38–111共74；unknown112拒絕。292份歷史ZIP／manifest bytes相同；17／24工具及24schemas保持。純工作台來源核對沒有新資產／producer／固定preview變更。見[契約](READINESS-IDS.md)。

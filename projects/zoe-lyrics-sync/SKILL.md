@@ -6,6 +6,10 @@ license: PolyForm-Noncommercial-1.0.0
 
 # ZOE Lyrics Sync
 
+## v0.112 選定鏡頭待辦
+
+新增選定原鏡號的必填欄位、方向與母題引用檢查，整份分鏡200明細上限保持。可定位後面的鏡頭，舊選擇／順序／來源與晚回覆不能替換新編修。Python／JS共用既有整份診斷規則，controller暫態與字面DOM分層；CLI／Agent／MCP／HTTP共用同一報告，18基本／25啟庫工具，原24組schemas保持。獨立shot-review1，Agent1／draft3保持；無新依賴／模型／媒體／外網或路徑權限。產品112／唯一policy38–112共75，未知113拒絕。 見[契約](../../docs/STORYBOARD-SHOT-REVIEW.md)。
+
 ## v0.111 待辦原列ID來源
 
 歌曲／分鏡待辦沿共用自有dense ID讀取層定位，不讀caller方法或iterator；缺項、超長、重複或讀取期間長度改變拒絕並保留上一份report。原欄位、媒體、draft3、17基本／24啟庫工具與PolyForm Noncommercial 1.0.0保持；沒有新AI／媒體能力。見[契約](../../docs/READINESS-IDS.md)。

@@ -470,3 +470,10 @@ v0.94 命中前後文：共享 search-excerpt 純來源／UTF-8 span與query核�
 ## v0.95 搜尋選字保護
 
 search-input 純三欄鍵盤 metadata → 三個原 DOM adapter → 既有搜尋 controller。isComposing 或 legacy keyCode229 不 preventDefault、不讀來源／清單或呼叫搜尋；只有有效普通 Enter 才執行原動作。純層無 DOM／事件副作用、timer、網路或持久狀態；固定一 JS asset。控制器、app、application／CLI／Agent／MCP、領域 schemas 與 23 operation input/output schemas不變。產品95／唯一policy38–95共58／unknown96拒絕，16基本／23啟庫、Agent1／draft3／legal4／private／FreeTWAI not_submitted保持。見[契約](docs/SEARCH-INPUT.md)。
+
+
+## v0.112 選定鏡頭待辦
+
+新增選定原鏡號的必填欄位、方向與母題引用檢查，整份分鏡200明細上限保持。可定位後面的鏡頭，舊選擇／順序／來源與晚回覆不能替換新編修。Python／JS共用既有整份診斷規則，controller暫態與字面DOM分層；CLI／Agent／MCP／HTTP共用同一報告，18基本／25啟庫工具，原24組schemas保持。獨立shot-review1，Agent1／draft3保持；無新依賴／模型／媒體／外網或路徑權限。產品112／唯一policy38–112共75，未知113拒絕。
+
+純共用shot診斷及完整回覆核對→注入current IDs／selected context checkpoint→literal DOM；IDs、report與preview不進draft3。單鏡JSON最多256 KiB、完整source8 MiB；CLI --draft必須--row，--input不可覆蓋原row。零待辦不代表完整時間／影格／连戏或媒體接受；舊選擇、source／revision及晚回覆保護原編修。見[契約](docs/STORYBOARD-SHOT-REVIEW.md)。

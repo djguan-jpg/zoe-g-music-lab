@@ -52,10 +52,16 @@ def review(payload):
     if not exact(payload, ('panel',)):
         raise ValueError('分鏡欄位檢查只接受 panel 原始分鏡欄位；不接受路徑或版本覆蓋')
     panel = source(payload['panel'])
+    return _analyze(panel)
+
+
+def _analyze(panel, selected_row=None):
     issues, names, motifs, blocked, count = [], {}, {}, set(), 0
 
     def add(scope, row, field, code, message, related_row=None):
         nonlocal count
+        if selected_row is not None and (scope != 'shots' or row != selected_row):
+            return
         count += 1
         if scope == 'shots': blocked.add(row)
         if len(issues) < MAX_ISSUES:
@@ -83,6 +89,8 @@ def review(payload):
     if not panel['shots']:
         add('fields', 0, 'shots', 'no_shots', '尚無鏡頭，請新增或接續分鏡起稿')
     for row, shot in enumerate(panel['shots'], 1):
+        if selected_row is not None and row != selected_row:
+            continue
         for field in COLUMNS:
             if field not in ('motif_id', 'change_reason') and not shot[field].strip():
                 missing('shots', row, field)

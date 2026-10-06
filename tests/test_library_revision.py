@@ -89,7 +89,7 @@ class LibraryRevisionTests(unittest.TestCase):
             requests = [{'jsonrpc': '2.0', 'id': 1, 'method': 'initialize', 'params': {'protocolVersion': '2025-11-25', 'capabilities': {}, 'clientInfo': {'name': 'synthetic-revision', 'version': '1'}}}, {'jsonrpc': '2.0', 'method': 'notifications/initialized'}, {'jsonrpc': '2.0', 'id': 2, 'method': 'tools/list'}]
             requests += [{'jsonrpc': '2.0', 'id': i + 3, 'method': 'tools/call', 'params': {'name': 'draft_read', 'arguments': {'payload': {'id': entry['id']}}}} for i, entry in enumerate([a, b])]
             mcp = [json.loads(v) for v in run([sys.executable, '-X', 'utf8', str(ROOT / 'music_lab_mcp.py'), '--draft-library', path], cwd=folder, requests=requests).splitlines()]
-            tools = {v['name']: v for v in mcp[1]['result']['tools']}; self.assertEqual(len(tools),24); self.assertTrue(tools['draft_read']['annotations']['readOnlyHint'])
+            tools = {v['name']: v for v in mcp[1]['result']['tools']}; self.assertEqual(len(tools),25); self.assertTrue(tools['draft_read']['annotations']['readOnlyHint'])
             mr, nr = [v['result']['structuredContent']['data'] for v in mcp[2:]]
             results = checked([[a['id'], value, a] for value in [cli, ar, br, mr, nr]])
             self.assertEqual([v['ok'] for v in results], [True, True, False, True, False]); self.assertEqual(cli, ar); self.assertEqual(ar, mr); self.assertEqual(br, nr)

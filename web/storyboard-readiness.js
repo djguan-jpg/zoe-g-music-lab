@@ -21,9 +21,10 @@
     const ordered={fields:Object.fromEntries(fields.map(k=>[k,panel.fields[k]])),motifs:panel.motifs.map(m=>({id:m.id,name:m.name,meaning:m.meaning})),shots:panel.shots.map(s=>Object.fromEntries(columns.map(k=>[k,s[k]])))};
     return J.parse(JSON.stringify(ordered),{maxBytes:8*1024*1024,label:'分鏡待辦來源'});
   }
-  function inspectSource(panel){
+  function inspectSource(panel,selectedRow=null){
     const issues=[],names=new Map(),motifs=new Map(),blocked=new Set();let issueCount=0;
     function add(scope,row,field,code,message,relatedRow=null){
+      if(selectedRow!==null&&(scope!=='shots'||row!==selectedRow))return;
       issueCount++;if(scope==='shots')blocked.add(row);
       if(issues.length<200)issues.push({scope,row,field,code,message,relatedRow});
     }
@@ -39,7 +40,7 @@
     for(const rows of names.values())if(rows.length>1)for(const row of rows)add('motifs',row,'name','duplicate_motif_name','母題名稱重複；請明確區分引用',rows.find(r=>r!==row));
     if(!panel.shots.length)add('fields',0,'shots','no_shots','尚無鏡頭，請新增或接續分鏡起稿');
     panel.shots.forEach((s,i)=>{
-      const row=i+1;
+      const row=i+1;if(selectedRow!==null&&row!==selectedRow)return;
       for(const field of columns.filter(k=>!['motif_id','change_reason'].includes(k)))if(!trim(s[field]))missing('shots',row,field);
       if(trim(s.screen_direction)&&!['left','right','neutral'].includes(s.screen_direction))add('shots',row,'screen_direction','invalid_direction','畫面方向需選向左、向右或正面／中性');
       const motif=motifs.get(s.motif_id);
@@ -74,6 +75,10 @@
         if(ids&&ids.length!==panel.shots.length)throw Error('分鏡鏡頭識別不完整；目前內容保留');
         return {panel,ids};},inspect:value=>inspectSource(value.panel),onState});
   }
-  const api={inspect,report,markdown,checkedResult,createController,labels};
+  function inspectRow(panel,row){
+    const selected=source(panel);if(!Number.isSafeInteger(row)||row<1||row>selected.shots.length)throw Error('請選擇目前分鏡中有效的原始鏡號');
+    return {source:{fields:selected.fields,motifs:selected.motifs,shot:selected.shots[row-1]},row,totalShots:selected.shots.length,...inspectSource(selected,row)};
+  }
+  const api={inspect,inspectRow,report,markdown,checkedResult,createController,labels};
   if(node)module.exports=api;else root.MusicStoryboardReadiness=api;
 })(typeof window==='object'?window:{});

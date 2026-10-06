@@ -1,5 +1,13 @@
 # 版本紀錄
 
+## v0.112.0 選定鏡頭待辦
+
+新增選定原鏡號的必填欄位、方向與母題引用檢查，整份分鏡200明細上限保持。可定位後面的鏡頭，舊選擇／順序／來源與晚回覆不能替換新編修。Python／JS共用既有整份診斷規則，controller暫態與字面DOM分層；CLI／Agent／MCP／HTTP共用同一報告，18基本／25啟庫工具，原24組schemas保持。獨立shot-review1，Agent1／draft3保持；無新依賴／模型／媒體／外網或路徑權限。產品112／唯一policy38–112共75，未知113拒絕。
+
+603 Python、1316 JavaScript、127 syntax、4 Skills及diff檢查通過；新增8 Python／15 JS。原v111封裝原樣還原595／1301；296份歷史ZIP／manifest bytes及原24組schema一致。原生第100鏡10項、後續9項及零待辦報告，定位、選擇／編修、同文字移動撤回、晚回覆保護、其他panel／原生File／0.5秒暫停音檔保持；CLI input／有效原生draft3、Agent／MCP good-bad-good與HTTP回覆一致。首次完整測試發現舊工具數量／清單期待，已更新且保留失敗證據；原生發現初次換台新按鈕未刷新，已補刷新並驗證。瀏覽器下載有送出click訊息，但download事件逾時，未取得保存檔案；不宣稱已保存或完整視覺／screen-reader／實聽驗收。
+
+見[契約](docs/STORYBOARD-SHOT-REVIEW.md)。以下保留歷史迭代。
+
 ## 0.111.0（2026-10-06）
 
 歌曲、分鏡創作與分鏡時間待辦的列ID來源統一使用既有有界讀取層。舊三個控制器用來源some／iterator讀ID，缺項可被prototype補出，自訂iterator能掩蓋ID換序，超64字元ID也被接受；本輪改成原始自有index與固定長度副本，再沿原checkpoint／revision判定定位。
