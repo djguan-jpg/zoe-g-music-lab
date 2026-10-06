@@ -40,5 +40,11 @@
   return report;
  }
  function markdown(data){const s=data.selection,lines=['# 草稿指定原列比較','',`原位置：${s.scope}.${s.collection}[${s.row}] · ${data.status}`,`集合列數：${data.baseline_rows} → ${data.current_rows}`,`基準 SHA-256：${data.source.baseline_sha256}`,`目前 SHA-256：${data.source.current_sha256}`,'','## 欄位',''];for(const f of data.fields)lines.push(`- ${f.field}：${f.changed?'有變動':'未變更'}；原文摘錄與完整欄位SHA／bytes見JSON。`);return [...lines,'',...data.review_notes,''].join('\n');}
- const api={prepare,selection,compare,canonical:Model.canonical,markdown};if(node)module.exports=api;else root.MusicDraftCompareRow=api;
+ function fullValues(payload){
+  const p=prepare(payload),s=p.selection,aRows=p.baseline.panels[s.scope][s.collection],bRows=p.current.panels[s.scope][s.collection];
+  let a=aRows[s.row-1]??null,b=bRows[s.row-1]??null;
+  if(['avoid','deliverables'].includes(s.collection)){a=a===null?null:{value:a};b=b===null?null:{value:b};}
+  return {selection:s,fields:collections[s.scope][s.collection].map(field=>({field,before:a===null?null:a[field],after:b===null?null:b[field]}))};
+ }
+ const api={prepare,selection,compare,canonical:Model.canonical,markdown,fullValues};if(node)module.exports=api;else root.MusicDraftCompareRow=api;
 })(typeof globalThis==='object'?globalThis:this);
