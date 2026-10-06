@@ -12,6 +12,7 @@
   function publish(){onState({busy:!!job,ready:!!report&&!stale,stale,available:!disposed&&gateSnapshot().allowed&&gateSnapshot().visible});}
   function invalidate(){if(disposed)return;const active=!!job||!!report;sequence++;job=null;if(active)stale=true;publish();}
   function current(selected){const now=gateSnapshot();return !disposed&&selected.token===sequence&&now.allowed&&now.visible&&sameGate(selected.gate,now);}
+  const ownsJob=selected=>!disposed&&job===selected&&selected.token===sequence;
   function refresh(){if(disposed)return;const now=gateSnapshot();if(job&&!current(job))invalidate();else if(stamp&&(!now.allowed||!now.visible||!sameGate(stamp.gate,now))){stale=true;publish();}else publish();}
   function checkedCurrent(){
    if(!report||stale||!stamp||!current(stamp)){if(report&&!disposed){stale=true;publish();}throw Error('工作台或預覽已有變更；請重新預覽後比較，原內容保留');}
@@ -25,10 +26,11 @@
     const payload=Model.prepare(capture());selected={token:++sequence,gate:start,key:contentKey(payload)};
     job=selected;report=null;stamp=null;stale=false;publish();
     const received=await generate(payload);
+    if(!ownsJob(selected))return false;
     if(!current(selected)){stale=true;return false;}
     if(contentKey(Model.prepare(capture()))!==selected.key)throw Error('比較期間來源已有編修，原內容保留；請重新預覽');
     report=structuredClone(received);stamp=selected;onReady(structuredClone(report));return true;
-   }catch(error){if(!disposed&&(!selected||current(selected)))onError(error);else if(!disposed&&selected)stale=true;return false;}
+   }catch(error){if(!disposed&&(!selected||ownsJob(selected))){if(!selected||current(selected))onError(error);else stale=true;}return false;}
    finally{if(job===selected){job=null;publish();}}
   }
   return {run,refresh,invalidate,cancel:invalidate,clear(){sequence++;job=null;report=null;stamp=null;stale=false;if(!disposed)publish();},
