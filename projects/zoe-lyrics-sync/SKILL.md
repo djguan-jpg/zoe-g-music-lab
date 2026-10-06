@@ -6,6 +6,10 @@ license: PolyForm-Noncommercial-1.0.0
 
 # ZOE Lyrics Sync
 
+## v0.111 待辦原列ID來源
+
+歌曲／分鏡待辦沿共用自有dense ID讀取層定位，不讀caller方法或iterator；缺項、超長、重複或讀取期間長度改變拒絕並保留上一份report。原欄位、媒體、draft3、17基本／24啟庫工具與PolyForm Noncommercial 1.0.0保持；沒有新AI／媒體能力。見[契約](../../docs/READINESS-IDS.md)。
+
 ## v0.110 歌曲與分鏡待辦分頁
 
 歌曲欄位／分鏡創作／時間待辦每頁20項、最多200項，依原報告順序定位原欄位；超過上限明示。編修或列ID換序後停舊定位，重新檢查回第一頁；精確恢復原來源沿guard核對。分頁不改原文、時間、媒體或草稿。17基本／24啟庫工具與PolyForm Noncommercial 1.0.0保持；沒有新的AI／媒體生成能力。見[契約](../../docs/READINESS-PAGE.md)。

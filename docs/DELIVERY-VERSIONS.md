@@ -1,5 +1,9 @@
 # 固定交付版本契約 v1
 
+## v0.111
+
+單一policy current=0.111.0、supported38–111共74；unknown112拒絕。292份歷史ZIP／manifest bytes相同；17／24工具及24schemas保持。純工作台來源核對沒有新資產／producer／固定preview變更。見[契約](READINESS-IDS.md)。
+
 ## v0.110
 
 單一policy current=0.110.0，supported38–110共73；unknown111拒絕。288份歷史ZIP／manifest bytes相同，17／24操作與24組schemas保持。單一新固定GET資產只用於工作台歌曲／分鏡待辦分頁；固定preview及schema保持。見[契約](READINESS-PAGE.md)。

@@ -6,6 +6,7 @@
   const F=node?require('./storyboard-frames.js'):root.MusicStoryboardFrames;
   const J=node?require('../musiclab/assets/json-document.js'):root.MusicJsonDocument;
   const Checkpoint=node?require('./readiness-state.js'):root.MusicReadinessState;
+  const Focus=node?require('./editor-focus.js'):root.MusicEditorFocus;
   const Report=node?require('./readiness-report.js'):root.MusicReadinessReport;
   const fields=['mv-duration','mv-fps'],labels={'mv-duration':'作品總長','mv-fps':'FPS',shots:'鏡頭清單',start:'開始',end:'結束'};
   const notes=['只檢查原秒數、FPS與影格覆蓋；局部有效秒數列不代表整份時間通過。','原字串、鏡號與順序保留；不排序、補時間、調整FPS或裁切。零待辦仍須完整創作／連戲與實際音畫驗證。'];
@@ -78,9 +79,9 @@
   function checkedResult(panel,reply){return Report.checkedResult({expected:report(panel),reply,jsonName:'storyboard-timing-review.json',markdownName:'storyboard-timing-review.md',markdown,label:'分鏡時間報告'});}
   function createController({capture,onState=()=>{}}){
     function checkpoint(value){
-      const panel=source(value.panel),ids=value.ids;
-      if(!Array.isArray(ids)||ids.length!==panel.shots.length||ids.some(id=>typeof id!=='string'||!id)||new Set(ids).size!==ids.length)throw Error('分鏡時間列來源不完整');
-      return {panel,ids:[...ids]};
+      const panel=source(value.panel),ids=Focus.checkedSource('shots',{ids:value.ids,visible:true,busy:false}).ids;
+      if(ids.length!==panel.shots.length)throw Error('分鏡時間列來源不完整');
+      return {panel,ids};
     }
     return Checkpoint.createController({capture,source:checkpoint,inspect:value=>inspectSource(value.panel),onState});
   }

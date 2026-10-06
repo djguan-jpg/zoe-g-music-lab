@@ -6,6 +6,7 @@
   const J=node?require('../musiclab/assets/json-document.js'):root.MusicJsonDocument;
   const Values=node?require('./planning-values.js'):root.MusicPlanningValues;
   const Checkpoint=node?require('./readiness-state.js'):root.MusicReadinessState;
+  const Focus=node?require('./editor-focus.js'):root.MusicEditorFocus;
   const Report=node?require('./readiness-report.js'):root.MusicReadinessReport;
   const fields=Editor.draftFields.storyboard,columns=Editor.draftRows.storyboard.columns;
   const labels={'mv-title':'片名','mv-duration':'作品總長','mv-fps':'FPS','mv-ratio':'畫幅','mv-style':'視覺基調','mv-anchor':'人物一致性',name:'母題名稱',meaning:'初始意義',start:'開始',end:'結束',section:'歌曲段落',purpose:'敘事用途',visual:'畫面動作',camera:'鏡頭運動',transition:'尾鏡與轉場',motif_id:'使用母題',motif_state:'母題狀態',character_state:'人物狀態',screen_direction:'畫面方向',motifs:'母題清單',shots:'鏡頭清單'};
@@ -69,9 +70,9 @@
   }
   function createController({capture,captureIds=null,onState=()=>{}}){
     return Checkpoint.createController({capture:()=>({panel:capture(),ids:captureIds?captureIds():null}),
-      source:value=>{const panel=source(value.panel),ids=value.ids;
-        if(captureIds&&(!Array.isArray(ids)||ids.length!==panel.shots.length||ids.some(id=>typeof id!=='string'||!id)||new Set(ids).size!==ids.length))throw Error('分鏡鏡頭識別不完整；目前內容保留');
-        return {panel,ids:ids?[...ids]:null};},inspect:value=>inspectSource(value.panel),onState});
+      source:value=>{const panel=source(value.panel),ids=captureIds?Focus.checkedSource('shots',{ids:value.ids,visible:true,busy:false}).ids:null;
+        if(ids&&ids.length!==panel.shots.length)throw Error('分鏡鏡頭識別不完整；目前內容保留');
+        return {panel,ids};},inspect:value=>inspectSource(value.panel),onState});
   }
   const api={inspect,report,markdown,checkedResult,createController,labels};
   if(node)module.exports=api;else root.MusicStoryboardReadiness=api;

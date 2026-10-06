@@ -1,4 +1,4 @@
-# v0.111.0 交接與可逆
+# 待辦原列ID來源
 
 歌曲、分鏡創作與分鏡時間待辦的列ID來源統一使用既有有界讀取層。舊三個控制器用來源some／iterator讀ID，缺項可被prototype補出，自訂iterator能掩蓋ID換序，超64字元ID也被接受；本輪改成原始自有index與固定長度副本，再沿原checkpoint／revision判定定位。
 
@@ -17,9 +17,3 @@
 自訂iterator／prototype／getter案例是注入式JS控制器邊界，未宣稱HTTP JSON能攜帶這些方法或已發現遠端安全漏洞。共享reader仍可讀caller getter，不是通用Proxy／accessor副作用防護或原子快照；caller自行改動的ID陣列不回滾。ID是本頁暫態識別，不代表素材作者。分頁只讀已保留前200項；零待辦與診斷通過均不是作品／實聽接受。PNG只留ignored outputs；本輪未做完整視覺、screen reader、OS IME、實際瀏覽器保存、實聽、正式媒體、Host安裝及平台創始接受。固定離線預覽未修改。
 
 LICENSE／NOTICE／LICENSING.md／FOUNDER-RECORD.md保持PolyForm Noncommercial 1.0.0／private；創辦ZOE. G、GitHub djguan-jpg；FreeTWAI not_submitted，不認領既有手冊原作者。
-
-本輪分支 `codex/iteration-v0.111.0`；基線main `0c44669ad75299e2687d01f9f0d82084c6625599`；還原tag `restore-v0.110.0-before-v0.111.0`。從還原tag另建 `codex/restore-*` 分支，以private PR回復，保留已發布main與使用者草稿。
-
-指定source commit由scripts/package_release.py封裝，ZIP／manifest SHA-256留ignored QA收據；private PR／prerelease需下載核對完整bytes／digest及refs／tree。只稽核本工作區outputs與本輪typed receipts，最新111／110／109受保護；嚴格超七天且exact tag／Git archive可重建才列候選。未知資料、素材、私人草稿／備份與失敗封裝保持；不以bare PID判定或強制終止。
-
-下一輪依實際可重現缺口擴充；原欄位與ID來源核對繼續共用純層，UI暫態不進草稿或Agent wire。
