@@ -10,4 +10,4 @@
 
 一個bounded loopback QA server與一個ephemeral HTTP thread已正常停止；實際子程序EOF、owned tab關閉及viewport reset已核對。只盤點本workspace outputs及typed owned jobs，最新三版保護；嚴格超七天且可從tag／Git archive重建才列清除候選。未知檔、素材、草稿、備份、失敗36／53及本輪失敗QA保留，actual session completion後才最終稽核。瀏覽器保存下載、完整視覺／screen reader、實聽／實際媒體同步、Host安裝與FreeTWAI創始接受未驗證。PolyForm Noncommercial 1.0.0／private，創辦ZOE. G／GitHub djguan-jpg保持，FreeTWAI not_submitted。
 
-見[契約](docs/LYRICS-CUE-REVIEW.md)。
+見[契約](LYRICS-CUE-REVIEW.md)。

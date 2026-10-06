@@ -181,7 +181,7 @@ class WorkbenchHTTPTests(unittest.TestCase):
         data = json.loads(raw)
         self.assertEqual(data["license"], "PolyForm-Noncommercial-1.0.0")
         self.assertEqual(data["protocol_version"], 1)
-        self.assertEqual(len(data["operations"]),19)
+        self.assertEqual(len(data["operations"]),20)
 
     def test_external_host_and_origin_are_rejected(self):
         # No unread body: Windows may reset before the early 403 can be read.

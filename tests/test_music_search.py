@@ -46,7 +46,7 @@ class MusicSearchTests(unittest.TestCase):
   raw=json.dumps(p['sections'],ensure_ascii=False,separators=(',',':')).encode()
   self.assertEqual(r.data['source_sha256'],hashlib.sha256(b'zoe-music-texts-v1\n'+raw).hexdigest())
  def test_discovery_exact_readonly_schema_and_independent_versions(self):
-  c=capabilities();self.assertEqual(len(c['operations']),19);self.assertEqual(c['music_search']['fields'],list(FIELDS));self.assertTrue(c['music_search']['read_only'])
+  c=capabilities();self.assertEqual(len(c['operations']),20);self.assertEqual(c['music_search']['fields'],list(FIELDS));self.assertTrue(c['music_search']['read_only'])
   p=input_schema('music_search')['properties']['payload'];self.assertFalse(p['additionalProperties']);self.assertEqual(p['allOf'][0]['then']['required'],['source_sha256'])
   d=output_schema('music_search')['properties']['data'];self.assertEqual(d['properties']['schema_version']['const'],1);self.assertFalse(d['additionalProperties'])
  def test_actual_cli_agent_mcp_good_bad_good_and_exclusive_outputs(self):

@@ -60,7 +60,7 @@ test('native adapter reports current target, blocks busy changes and owns only i
 });
 test('app clears new-content history and shares the source snapshot with waveform positioning',()=>{
  const fs=require('node:fs'),app=fs.readFileSync('web/app.js','utf8'),html=fs.readFileSync('web/index.html','utf8');
- assert.match(app,/if\(!ids\)\{cueStampEdit\?\.clear\(\)/);assert.match(app,/if\(tab==='lyrics'\)\{cueStampEdit\?\.refresh\(\)/);
+ assert.match(app,/if\(!ids\)\{cueReviewController\?\.clear\(\);cueStampEdit\?\.clear\(\)/);assert.match(app,/if\(tab==='lyrics'\)\{cueReviewController\?\.refresh\(\);cueStampEdit\?\.refresh\(\)/);
  assert.match(app,/captureMedia:captureLyricPlayer/);assert.match(app,/capture:captureLyricPlayer/);
  assert.ok(html.indexOf('/wave-position.js')<html.indexOf('/cue-stamp-edit.js')&&html.indexOf('/cue-stamp-edit-dom.js')<html.indexOf('/app.js'));
 });

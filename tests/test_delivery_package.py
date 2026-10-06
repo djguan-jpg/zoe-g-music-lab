@@ -73,7 +73,7 @@ class DeliveryTests(unittest.TestCase):
    session.response('{"jsonrpc":"2.0","method":"notifications/initialized"}')
    mcp=session.response(json.dumps({'jsonrpc':'2.0','id':2,'method':'tools/call','params':{'name':'delivery_package','arguments':{'payload':args}}}))
    self.assertEqual(mcp['result']['structuredContent'],agent['result']);self.assertEqual(agent['result'],build('delivery_package',args).wire())
-  self.assertEqual(len(capabilities()['operations']),19);t=next(t for t in tool_list() if t['name']=='delivery_package');self.assertTrue(t['annotations']['readOnlyHint']);self.assertFalse(t['annotations']['openWorldHint'])
+  self.assertEqual(len(capabilities()['operations']),20);t=next(t for t in tool_list() if t['name']=='delivery_package');self.assertTrue(t['annotations']['readOnlyHint']);self.assertFalse(t['annotations']['openWorldHint'])
  def test_download_staging_take_once_cancel_expiry_and_owned_cleanup(self):
   cache=BackupDownloads(max_bytes=1024*1024,prefix='zoe-delivery-test-',download_path='/api/delivery-package/download/',hash_key='sha256',label='交付');a=prepare(payload())
   try:

@@ -29,6 +29,7 @@ from .design import music_plan_bundle, motif_bundle
 from .storyboard_seed import storyboard_seed_bundle, SEED_SCHEMA_VERSION, MAX_SLOTS
 from .lyrics_seed import lyrics_seed_bundle, LYRICS_SEED_SCHEMA_VERSION, MAX_SOURCE_BYTES, MAX_LINES
 from .lyrics_review import review_bundle, descriptor as lyrics_review_descriptor
+from .lyrics_cue_review import review_bundle as lyrics_cue_review_bundle, descriptor as lyrics_cue_review_descriptor
 from .lyrics_search import bundle as lyrics_search_bundle, descriptor as lyrics_search_descriptor
 from .storyboard_search import bundle as storyboard_search_bundle, descriptor as storyboard_search_descriptor
 from .music_search import bundle as music_search_bundle, descriptor as music_search_descriptor
@@ -65,6 +66,7 @@ OPERATIONS = {
     "storyboard_timing_review": "Locate raw storyboard numeric, seconds and exclusive-frame coverage issues; read-only; no time edits, complete creative acceptance or media",
     "lyrics": "Manual cue validation and LRC/SRT/JSON exports; no ASR",
     "lyrics_review": "Locate incomplete lyric rows, duplicate starts, overlap and declared-duration limits; read-only; no guessed times or ASR",
+    "lyrics_cue_review": "Diagnose one original lyric row with whole-source duplicate/overlap and duration checks; read-only, bounded report, no paths, guessed times or model",
     "lyrics_search": "Find exact literal original lyric texts, first match per original row; bounded results and source SHA pinned continuation; read-only, no paths, clocks or model",
     "lyrics_export_review": "Review a complete modern lyric package for LRC leading-tag and SRT blank-line round-trip risks; compact source-pinned report by default, explicit include_package adds checked complete lyrics.json; read-only, no rewrite, paths or media acceptance",
     "audio_acceptance_review": "Review all three raw acceptance fields; read-only; no media, paths, automatic filling, audio acceptance or model",
@@ -121,6 +123,7 @@ def capabilities(draft_library=None, backup_source=None, delivery_source=None):
             "lyrics_package": {"schema_version": PACKAGE_SCHEMA_VERSION, "max_bytes": MAX_PACKAGE_BYTES,
                                "legacy_conversion": "explicit allow_legacy only", "media_generated": False},
             "lyrics_review": lyrics_review_descriptor(),
+            "lyrics_cue_review": lyrics_cue_review_descriptor(),
             "lyrics_search": lyrics_search_descriptor(),
             "storyboard_search": storyboard_search_descriptor(),
             "music_search": music_search_descriptor(),
@@ -188,7 +191,7 @@ def build(operation, payload, *, audio_source=None, draft_library=None, backup_s
     if operation in LIBRARY_OPERATIONS and draft_library is None:
         raise ValueError("草稿庫未啟用；請在啟動時明確指定 --draft-library 目錄")
     if operation not in available_operations(draft_library):
-        raise ValueError("未知操作；請使用 music、music_review、music_section_review、music_search、storyboard、storyboard_review、storyboard_shot_review、storyboard_search、storyboard_timing_review、lyrics、audio、audio_acceptance_review、storyboard_seed、lyrics_seed、lyrics_review、lyrics_search、lyrics_export_review 或 delivery_package、delivery_inspect")
+        raise ValueError("未知操作；請使用 music、music_review、music_section_review、music_search、storyboard、storyboard_review、storyboard_shot_review、storyboard_search、storyboard_timing_review、lyrics、audio、audio_acceptance_review、storyboard_seed、lyrics_seed、lyrics_review、lyrics_cue_review、lyrics_search、lyrics_export_review 或 delivery_package、delivery_inspect")
     if not isinstance(payload, dict):
         raise ValueError("輸入需為 JSON 物件")
     if operation in LIBRARY_OPERATIONS:
@@ -246,6 +249,9 @@ def build(operation, payload, *, audio_source=None, draft_library=None, backup_s
     elif operation == "storyboard_timing_review":
         files = storyboard_timing_review_bundle(payload)
         data = json.loads(files["storyboard-timing-review.json"])
+    elif operation == "lyrics_cue_review":
+        files = lyrics_cue_review_bundle(payload)
+        data = json.loads(files["lyrics-cue-review.json"])
     elif operation == "lyrics_review":
         files = review_bundle(payload)
         data = json.loads(files["lyrics-review.json"])
@@ -329,7 +335,7 @@ def build(operation, payload, *, audio_source=None, draft_library=None, backup_s
         if document is not None:
             files["audio-acceptance-draft.json"] = json_text(document)
     review = bool(data.get("review_notes") or data.get("warnings") or data.get("duration_estimated"))
-    if operation in ('audio_acceptance_review', 'lyrics_review', 'lyrics_search', 'music_search', 'storyboard_search', 'lyrics_export_review', 'music_review', 'music_section_review', 'storyboard_review', 'storyboard_timing_review', 'storyboard_shot_review'):
+    if operation in ('audio_acceptance_review', 'lyrics_cue_review', 'lyrics_review', 'lyrics_search', 'music_search', 'storyboard_search', 'lyrics_export_review', 'music_review', 'music_section_review', 'storyboard_review', 'storyboard_timing_review', 'storyboard_shot_review'):
         review = True  # Diagnostic readiness never proves performance synchronization.
     if operation == 'lyrics':
         review = package_needs_review(data)

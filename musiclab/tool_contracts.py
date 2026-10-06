@@ -111,6 +111,8 @@ def payload_schema(operation):
         panel = draft_schema()['properties']['panels']['properties']['music']
         panel['description'] = 'Raw draft3 music panel; all fields remain strings, including blank or malformed numeric strings; no paths or full-plan claim'
         return object_schema({'panel': panel}, ('panel',), additionalProperties=False)
+    if operation == 'lyrics_cue_review':
+        return object_schema({'lyrics':payload_schema('lyrics_review'),'row':{'type':'integer','minimum':1,'maximum':10000,'description':'One-based original lyric row; must exist in lyrics.cues'}},('lyrics','row'),additionalProperties=False)
     if operation == 'lyrics_review':
         clock={'type':['number','string','null','boolean'],'description':'Raw clock field; empty or malformed scalar is reported, never guessed'}
         cue=object_schema({'start':clock,'end':clock,'text':{'type':'string','maxLength':2000}},('start','end','text'),additionalProperties=False)
@@ -388,6 +390,12 @@ def output_schema(operation=None):
                                                  "needs_review": {"type": "boolean"}},
                                                 ("version", "protocol_version", "needs_review"), additionalProperties=False)},
                          ("files", "data", "meta"), additionalProperties=False)
+    if operation == 'lyrics_cue_review':
+        from .lyrics_cue_review import data_schema
+        result['properties']['data'] = data_schema()
+        names = ('lyrics-cue-review.json','lyrics-cue-review.md')
+        result['properties']['files'] = object_schema({name:{'type':'string'} for name in names}, names, additionalProperties=False)
+        result['properties']['meta']['properties']['needs_review']['const'] = True
     if operation == 'music_section_review':
         from .music_section_review import data_schema
         result['properties']['data'] = data_schema()
