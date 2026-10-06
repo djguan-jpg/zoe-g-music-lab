@@ -1257,10 +1257,10 @@ async function setupLibrary(){
   }catch(error){librarySay(error.message,true);libraryControls();}
 }
 const comparisonGate=(identity,section,modern=true)=>({identity,revision:Object.keys(MusicEditor.draftFields).map(scope=>state.revisions[scope]||0),media:[$('lyrics-audio').files[0]||null,$('audio-file').files[0]||null],tab:state.tab,allowed:!!identity&&modern&&!state.busy,visible:!$(section).hidden});
-state.draftComparison=MusicDraftCompareDom.bind(document,{prefix:'draft',
+state.draftComparison=MusicDraftCompareDom.bind(document,{prefix:'draft',downloads:textDownloader,
  gate:()=>comparisonGate(draftComparisonCandidate,'draft-conversion',!draftComparisonCandidate?.legacy),
  capture:()=>{const selected=draftPreview.proposal();if(!selected||selected.legacy)throw Error('請先預覽完整 v3 草稿；舊版須明確轉換後另存');return {baseline:captureDraft(),current:selected.draft};},onError:error=>say(error.message,true)});
-state.libraryComparison=MusicDraftCompareDom.bind(document,{prefix:'library',
+state.libraryComparison=MusicDraftCompareDom.bind(document,{prefix:'library',downloads:textDownloader,
  gate:()=>comparisonGate(pendingLibraryReview,'library-review'),
  capture:()=>{checkedLibraryReview();const selected=libraryPreview.proposal();if(!selected)throw Error('請先預覽保存版本');return {baseline:captureDraft(),current:selected.draft};},onError:error=>librarySay(error.message,true)});
 state.draftComparison.refresh();state.libraryComparison.refresh();

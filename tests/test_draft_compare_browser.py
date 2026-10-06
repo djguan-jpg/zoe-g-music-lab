@@ -8,10 +8,10 @@ ROOT=Path(__file__).resolve().parents[1]
 def draft():return json.loads((ROOT/'examples/draft-comparison-baseline.json').read_text(encoding='utf-8'))
 class BrowserDraftComparisonTests(unittest.TestCase):
  def checked(self,payload):
-  script="const M=require('./web/draft-compare.js');let t='';process.stdin.setEncoding('utf8');process.stdin.on('data',x=>t+=x);process.stdin.on('end',async()=>{try{const d=await M.compare(JSON.parse(t));process.stdout.write(JSON.stringify({data:d,markdown:M.markdown(d)}));}catch(e){process.stderr.write(e.message);process.exitCode=1;}});"
+  script="const M=require('./web/draft-compare.js'),D=require('./web/draft-compare-download.js');let t='';process.stdin.setEncoding('utf8');process.stdin.on('data',x=>t+=x);process.stdin.on('end',async()=>{try{const d=await M.compare(JSON.parse(t));process.stdout.write(JSON.stringify({data:d,markdown:M.markdown(d),files:[D.select(d,'json'),D.select(d,'markdown')]}));}catch(e){process.stderr.write(e.message);process.exitCode=1;}});"
   p=subprocess.run(['node','-e',script],cwd=ROOT,input=json.dumps(payload,ensure_ascii=False),capture_output=True,text=True,encoding='utf-8',timeout=20)
   self.assertEqual(p.returncode,0,p.stderr);self.assertLessEqual(len(p.stdout.encode('utf-8')),512*1024)
-  got=json.loads(p.stdout);self.assertEqual(got['data'],compare(payload));self.assertEqual(got['markdown'],bundle(payload)['draft-comparison.md'])
+  got=json.loads(p.stdout);self.assertEqual(got['data'],compare(payload));self.assertEqual(got['markdown'],bundle(payload)['draft-comparison.md']);self.assertEqual({f['name']:f['content'] for f in got['files']},bundle(payload))
  def test_identical_and_metadata_only_full_reports_match_python(self):
   a=draft();self.checked({'baseline':a,'current':copy.deepcopy(a)});b=copy.deepcopy(a);b.update(saved_at=' 時間\r\n🎵',tab='audio',tool_version='future');self.checked({'baseline':a,'current':b})
  def test_all_panels_and_literal_unicode_control_text_match_python(self):
