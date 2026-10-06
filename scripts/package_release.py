@@ -14,6 +14,7 @@ PREFIX = "zoe-g-music-lab/"
 sys.path.insert(0, str(ROOT))
 from musiclab.delivery_versions import decode_policy, MAX_CONTRACT_BYTES
 from musiclab.release_metadata import decode_metadata, validate_metadata, MAX_PROJECT_METADATA_BYTES
+from musiclab.test_run_summary import decode_summary
 
 
 def command(args, cwd=ROOT, input=None, timeout=60):
@@ -95,7 +96,7 @@ def package(ref):
                 # bounded execution deadline separately from each caller's wait.
                 # The runner owns a 120-second budget; allow it to collect and
                 # close both workers before this outer process can time out.
-                command([sys.executable, "-X", "utf8", "scripts/check_python_tests.py"], checkout, timeout=150)
+                python_summary = decode_summary(command([sys.executable, "-X", "utf8", "scripts/check_python_tests.py", "--report-json"], checkout, timeout=150))
                 command(["node", "--check", "web/app.js"], checkout)
                 javascript_tests = sorted(file.relative_to(checkout).as_posix() for file in (checkout / "tests").glob("test_*.js"))
                 if not javascript_tests:
@@ -128,7 +129,8 @@ def package(ref):
                     "sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
                     "bytes": source.stat().st_size, "files": hashes,
                     "checks": {"zip_integrity": "passed", "release_metadata": "passed", "packaged_python_tests": "passed",
-                               "packaged_javascript_tests": "passed", "agent_metadata": "passed", "mcp_metadata": "passed" if has_mcp else "not_in_this_version"},
+                               "packaged_javascript_tests": "passed", "agent_metadata": "passed", "mcp_metadata": "passed" if has_mcp else "not_in_this_version",
+                               "python_run": python_summary},
                     "restore": f"git archive --format=zip --prefix={PREFIX} --output=restored.zip {commit}"}
         (destination / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2)+"\n", encoding="utf-8")
         return destination, manifest
