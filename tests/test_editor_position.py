@@ -16,6 +16,7 @@ class EditorPositionAssetsTests(unittest.TestCase):
             self.assertIn('id="'+prefix+'-position" type="text" inputmode="numeric" maxlength="32" data-view-control="true"',page)
             self.assertIn('aria-describedby="'+prefix+'-position-note"',page)
             self.assertIn('id="'+prefix+'-position-move"',page)
+            self.assertIn('aria-describedby="'+prefix+'-position-note" aria-keyshortcuts="Enter"',page)
     def test_position_assets_keep_host_origin_and_no_external_operation_authority(self):
         for route in ['/editor-position.js','/editor-position-dom.js']:
             for headers in [{'Host':'foreign.example'},{'Origin':'https://foreign.example'}]:self.assertEqual(self.get(route,headers)[0],403)
