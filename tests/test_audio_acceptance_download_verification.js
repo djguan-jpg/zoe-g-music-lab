@@ -22,6 +22,13 @@ function harness(){
   sendMode:value=>sendMode=value,busy:value=>{busy=value;controller.refresh();},visible:value=>{visible=value;controller.refresh();},
   download:()=>node('audio-accept-export').onsubmit({preventDefault(){}}),file:(content=sent.at(-1).content,name)=>new File(content,name),verify,dispose:()=>controller.dispose()};
 }
+
+test('cancelling condition proof retains its pending sent snapshot, media and later conditions until retry',async()=>{
+ const h=harness();h.edit(draft({rates:'old'}));h.download();const old=h.file();let end;old.arrayBuffer=()=>new Promise(r=>end=()=>r(bytes(old.content).buffer));await h.verify(old);
+ assert.equal(h.node('audio-accept-verify-cancel').disabled,false);h.node('audio-accept-verify-cancel').onclick();h.edit(draft({rates:'new'}));const before=h.c.capture(),other=structuredClone(h.other),changes=h.changes();end();await flush();
+ assert.equal(h.c.status().pendingDownload,true);assert.equal(h.c.status().dirty,true);assert.equal(h.node('audio-accept-verify-note').dataset.match,'unknown');assert.deepEqual(h.c.capture(),before);assert.deepEqual(h.other,other);assert.equal(h.node('audio-file').files[0],h.media);assert.equal(h.changes(),changes);
+ await h.verify(h.file());assert.equal(h.c.status().pendingDownload,false);assert.equal(h.c.status().dirty,true);assert.deepEqual(h.c.capture(),before);h.dispose();
+});
 test('condition file verification is unavailable before a successful native send',()=>{
  const h=harness();assert.equal(h.node('audio-accept-verify-file').disabled,true);assert.match(h.node('audio-accept-verify-source').textContent,/先下載/);assert.equal(h.sent.length,0);h.dispose();
 });

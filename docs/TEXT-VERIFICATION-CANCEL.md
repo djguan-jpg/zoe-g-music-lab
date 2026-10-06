@@ -1,0 +1,19 @@
+# 原文核對取消與讀取上限
+
+## 分層與行為
+
+text-verification-controller保持純source snapshot／注入describe與readFile／callbacks。cancel清除pending、selected與report並增加generation，保留canonical來源及保存checkpoint。activeReads只在實際呼叫reader前增加、同次finally減少；每個controller最多2個，第三次verify不讀檔、不取代最新proof。metadata或容量早拒絕不占slot。source改變、cancel、pagehide或dispose都不提前釋放仍在讀取的slot；舊settle只refresh當前有限view以恢复可用性，不交出舊report／error。
+
+內部view增加waitingForReads，無全文／File／路徑。available同時核對原visible／busy／dirty／source與read slots，pending仍代表最新有效等待。取消不會中止已呼叫的native arrayBuffer，也不保證立即回收OS或JS記憶體；舊讀取完成前最多保留兩個，滿額時literal note提示等候，settle後picker恢復。其餘8MiB／1MiB草稿／64KiB條件的原限制保持。
+
+text-verification-dom只綁定可選ids.cancel，pending時啟用；click呼叫既有controller.cancel，idle與dispose停用，dispose清除自己onclick及pagehide listener。缺cancel節點或舊ids沒有cancel仍可使用。三個type=button控制以aria-controls／describedby指向各自live note：text-verify-cancel、draft-verify-cancel、audio-accept-verify-cancel。條件按鈕沿data-view-control=verification，不污染編修狀態。
+
+app與audio-acceptance-dom只提供各自cancel ID，成果由state.files canonical原文取來源；草稿與條件仍從成功送出的snapshot讀取。cancel／晚回應不能觸發confirmDownload／條件confirm、載入內容或還原後續編修；成功重新核對舊送出snapshot只確認它，後續內容仍dirty。HTTP／CLI／Agent／MCP／schema無變更，有限view不進draft3、wire或Git素材。
+
+## 驗證與可逆
+
+新10項JS含8個共用取消／上限／DOM契約測試與2個實際draft retention／接受條件callback整合；30次快速取消最多2read，晚success/error、slot recovery、metadata前檢／I/O失敗、source變更、pagehide、dispose與legacy保持。完整755 Python／1821 JS、150syntax及四Skills通過；444歷史ZIP、29schemas、原整份／原列比較不變。
+
+原生localhost Chrome測試完整合成candidate經File chooser讀回、全bytes一致／同大小尾差／重試，以及47controls保持與後續編修guard；四wire檔與上一版完全相同。前測DOM三取消控制缺失，注入controller實際可同時啟動3reader，修正後native三控制與測試reader上限2均有證據。這不是實際native慢檔取消、瀏覽器已保存下載或完整視覺認證。IAB／Chrome完成event均逾時；安全規則禁止下載紀錄頁，未繞過。只選回明確標記的本輪合成檔，不讀既有Downloads或其他專案。
+
+restore-v0.148.0-before-v0.149.0指向5dd8e52f430c8597c09734c48f3d699204cee368。從還原tag另建codex分支審閱；不覆蓋草稿或撤銷外部投稿。source／ZIP／SHA／PR／release與程序收尾以outputs/v149-qa/goal-turn.json實際核對為準。
