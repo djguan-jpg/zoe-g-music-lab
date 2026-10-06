@@ -16,9 +16,10 @@
   function refresh(){if(disposed)return;const now=gateSnapshot();if(job&&!current(job))invalidate();else if(stamp&&(!now.allowed||!now.visible||!sameGate(stamp.gate,now))){stale=true;publish();}else publish();}
   function checkedCurrent(){
    if(!report||stale||!stamp||!current(stamp)){if(report&&!disposed){stale=true;publish();}throw Error('工作台或預覽已有變更；請重新預覽後比較，原內容保留');}
-   let key;
-   try{key=contentKey(model.prepare(capture()));}catch(error){stale=true;publish();throw error;}
+   let key,payload;
+   try{payload=model.prepare(capture());key=contentKey(payload);}catch(error){stale=true;publish();throw error;}
    if(key!==stamp.key){stale=true;publish();throw Error('比較來源已有變更；請重新預覽後比較');}
+   return payload;
   }
   async function run(){
    if(disposed||job)return false;
@@ -32,11 +33,11 @@
     if(!current(selected)){stale=true;return false;}
     if(contentKey(model.prepare(capture()))!==selected.key)throw Error('比較期間來源已有編修，原內容保留；請重新預覽');
     report=structuredClone(received);stamp=selected;onReady(structuredClone(report));return true;
-   }catch(error){if(!disposed&&(!selected||ownsJob(selected))){if(!selected||current(selected))onError(error);else stale=true;}return false;}
+   }catch(error){if(!disposed&&(!selected||ownsJob(selected))){if(!selected&&report){stale=true;publish();}if(!selected||current(selected))onError(error);else stale=true;}return false;}
    finally{if(job===selected){job=null;publish();}}
   }
   return {run,refresh,invalidate,cancel:invalidate,clear(){sequence++;job=null;report=null;stamp=null;stale=false;if(!disposed)publish();},
-   read(){checkedCurrent();return structuredClone(report);},dispose(){sequence++;job=null;report=null;stamp=null;disposed=true;}};
+   read(){checkedCurrent();return structuredClone(report);},readPayload(){return structuredClone(checkedCurrent());},dispose(){sequence++;job=null;report=null;stamp=null;disposed=true;}};
  }
  const api={create};if(node)module.exports=api;else root.MusicDraftCompareController=api;
 })(typeof globalThis==='object'?globalThis:this);
