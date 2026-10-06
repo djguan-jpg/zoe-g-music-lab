@@ -68,6 +68,14 @@ def main(argv=None):
     comparison.add_argument('--current', required=True, help='明確目前草稿 JSON，最多1 MiB')
     comparison.add_argument('--out', required=True, help='明確比較報告輸出目錄')
     comparison.add_argument('--overwrite', action='store_true', help='只替換指定輸出報告；原草稿保持')
+    row_comparison = commands.add_parser('draft-compare-row', help='唯讀查看兩份完整草稿的指定原列，包含未變更欄位')
+    row_comparison.add_argument('--baseline', required=True)
+    row_comparison.add_argument('--current', required=True)
+    row_comparison.add_argument('--scope', choices=('music', 'storyboard', 'lyrics'), required=True)
+    row_comparison.add_argument('--collection', choices=('sections', 'avoid', 'deliverables', 'shots', 'motifs', 'cues'), required=True)
+    row_comparison.add_argument('--row', type=int, required=True, help='集合內原位置1起')
+    row_comparison.add_argument('--out', required=True, help='明確報告輸出目錄；原草稿保持')
+    row_comparison.add_argument('--overwrite', action='store_true')
     drafts = commands.add_parser("draft", help="明確選定本機草稿庫；保存版本不覆寫")
     actions = drafts.add_subparsers(dest="draft_action", required=True)
     for action in ("save", "list", "search", "read", "backup", "backup-export", "inspect", "restore"):
@@ -153,16 +161,18 @@ def main(argv=None):
                 result = build("draft_" + args.draft_action, payload, draft_library=library).wire()
             print(json.dumps(result, ensure_ascii=False, allow_nan=False))
             return 0
-        if args.command == 'draft-compare':
+        if args.command in ('draft-compare', 'draft-compare-row'):
             from musiclab.draft_contract import MAX_DRAFT_BYTES
             from musiclab.json_document import decode_json
             payload = {}
             for name in ('baseline', 'current'):
                 with Path(getattr(args, name)).open('rb') as source:
                     payload[name] = decode_json(source.read(MAX_DRAFT_BYTES + 4), max_bytes=MAX_DRAFT_BYTES + 3, allow_bom=True, label='草稿比較 JSON')
-            result = build('draft_compare', payload)
+            if args.command == 'draft-compare-row':
+                payload['selection'] = {'scope': args.scope, 'collection': args.collection, 'row': args.row}
+            result = build(args.command.replace('-', '_'), payload)
             bundle = result.files
-            status = 2 if result.data['change_count'] else 0
+            status = (2 if result.data['status'] != 'unchanged' else 0) if args.command == 'draft-compare-row' else (2 if result.data['change_count'] else 0)
         elif args.command == 'lyrics-cue-review':
             if args.draft:
                 from musiclab.draft_contract import validate_draft, MAX_DRAFT_BYTES
@@ -274,7 +284,8 @@ def main(argv=None):
     if args.command == 'lyrics-seed':
         print('未校時歌詞起稿已建立；沒有猜測時間，請依實際音檔標記開始與結束。')
     if status == 2:
-        print("兩份草稿有差異；比較已完成，原草稿保持，詳見 draft-comparison.json。" if args.command == 'draft-compare' else
+        print("指定原列有差異；比較已完成，原草稿保持，詳見 draft-row-comparison.json。" if args.command == 'draft-compare-row' else
+              "兩份草稿有差異；比較已完成，原草稿保持，詳見 draft-comparison.json。" if args.command == 'draft-compare' else
               "已完成條件檢查；有待修正項目，詳見 audio-acceptance-review.md。" if args.command == 'audio-acceptance-review' else
               "已完成分鏡欄位檢查；有待修正項目，詳見 storyboard-review.md。" if args.command == 'storyboard-review' else
               "已完成歌曲欄位檢查；有待修正項目，詳見 music-review.md。" if args.command == 'music-review' else

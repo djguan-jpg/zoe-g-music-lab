@@ -98,6 +98,6 @@ class StoryboardReadinessTests(unittest.TestCase):
             self.assertLess(html.index('/editor-state.js'),html.index('/storyboard-readiness.js'))
             self.assertLess(html.index('/storyboard-readiness.js'),html.index('/app.js'))
             self.assertIn('id="mv-ready-check"',html);connection.close()
-            self.assertEqual(len(available_operations()),21)
+            self.assertEqual(len(available_operations()),22)
         finally:
             server.shutdown();thread.join(5);server.server_close();self.assertFalse(thread.is_alive())

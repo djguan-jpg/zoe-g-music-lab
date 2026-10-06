@@ -71,11 +71,11 @@ class AcceptanceReviewTests(unittest.TestCase):
 
     def test_discovery_readonly_without_library_media_or_model(self):
         cap = capabilities()
-        self.assertEqual(len(cap['operations']),21); self.assertEqual(cap['audio_acceptance_review'], descriptor())
+        self.assertEqual(len(cap['operations']),22); self.assertEqual(cap['audio_acceptance_review'], descriptor())
         schema = cap['input_schemas']['audio_acceptance_review']
         self.assertEqual(schema['required'], ['document']); self.assertFalse(schema['additionalProperties'])
         with tempfile.TemporaryDirectory() as folder:
-            self.assertEqual(len(capabilities(DraftLibrary(folder))['operations']),28)
+            self.assertEqual(len(capabilities(DraftLibrary(folder))['operations']),29)
         session = Session()
         session.response(json.dumps({'jsonrpc': '2.0', 'id': 0, 'method': 'initialize', 'params': {
             'protocolVersion': '2025-11-25', 'capabilities': {}, 'clientInfo': {'name': 'qa', 'version': '1'}}}))

@@ -94,7 +94,7 @@ class LibrarySearchTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder:
             self.assertNotIn('draft_search', capabilities()['operations'])
             library = DraftLibrary(Path(folder)/'missing'); enabled = capabilities(library)
-            self.assertEqual(len(enabled['operations']),28); self.assertEqual(enabled['draft_search'], descriptor())
+            self.assertEqual(len(enabled['operations']),29); self.assertEqual(enabled['draft_search'], descriptor())
             self.assertEqual(output_schema('draft_search')['properties']['data'], data_schema())
             self.assertFalse(output_schema('draft_search')['properties']['meta']['properties']['needs_review']['const'])
             shape = request_schema(); shape['properties']['limit']['maximum'] = 0
@@ -117,7 +117,7 @@ class LibrarySearchTests(unittest.TestCase):
             self.assertEqual([v['ok'] for v in agent], [True, False, True]); self.assertEqual(agent[0]['result'], first); self.assertEqual(agent[2]['result'], cli)
             requests = [{'jsonrpc': '2.0', 'id': 1, 'method': 'initialize', 'params': {'protocolVersion': '2025-11-25', 'capabilities': {}, 'clientInfo': {'name': 'library-search-qa', 'version': '1'}}}, {'jsonrpc': '2.0', 'method': 'notifications/initialized'}, {'jsonrpc': '2.0', 'id': 2, 'method': 'tools/list'}, *[{'jsonrpc': '2.0', 'id': i+3, 'method': 'tools/call', 'params': {'name': 'draft_search', 'arguments': {'payload': value}}} for i, value in enumerate(payloads)]]
             mcp = [json.loads(v) for v in run([*prefix, str(ROOT/'music_lab_mcp.py'), '--draft-library', path], folder, requests).splitlines()]
-            tools = {v['name']: v for v in mcp[1]['result']['tools']}; self.assertEqual(len(tools),28)
+            tools = {v['name']: v for v in mcp[1]['result']['tools']}; self.assertEqual(len(tools),29)
             self.assertTrue(tools['draft_search']['annotations']['readOnlyHint']); self.assertFalse(tools['draft_search']['annotations']['destructiveHint']); self.assertFalse(tools['draft_search']['annotations']['openWorldHint'])
             self.assertEqual(mcp[2]['result']['structuredContent'], first); self.assertTrue(mcp[3]['result']['isError']); self.assertEqual(mcp[4]['result']['structuredContent'], cli)
             cases = [{'payload': p, 'wire': first}, {'payload': next_payload, 'wire': cli, 'previous': first['data']}]

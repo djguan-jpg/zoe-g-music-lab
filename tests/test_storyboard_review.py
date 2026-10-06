@@ -118,16 +118,16 @@ class StoryboardReviewTests(unittest.TestCase):
         requests += [{'jsonrpc':'2.0','id':i+3,'method':'tools/call','params':{'name':'storyboard_review','arguments':{'payload':p}}} for i,p in enumerate([{'panel':{},'schema_version':999},partial()])]
         with tempfile.TemporaryDirectory() as folder:
             r=subprocess.run([sys.executable,'-X','utf8',str(ROOT/'music_lab_mcp.py')],cwd=folder,input=''.join(json.dumps(p)+'\n' for p in requests),capture_output=True,text=True,encoding='utf-8',timeout=15)
-            self.assertEqual(r.returncode,0,r.stderr);replies=list(map(json.loads,r.stdout.splitlines()));self.assertEqual(len(replies[1]['result']['tools']),21)
+            self.assertEqual(r.returncode,0,r.stderr);replies=list(map(json.loads,r.stdout.splitlines()));self.assertEqual(len(replies[1]['result']['tools']),22)
             self.assertTrue(replies[2]['result']['isError']);self.assertEqual(replies[3]['result']['structuredContent'],build('storyboard_review',partial()).wire());self.assertEqual(list(Path(folder).iterdir()),[])
 
     def test_discovery_preserves_raw_blank_schema_and_read_only_annotations(self):
-        info=capabilities();self.assertEqual(info['storyboard_review']['schema_version'],1);self.assertEqual(len(info['operations']),21)
+        info=capabilities();self.assertEqual(info['storyboard_review']['schema_version'],1);self.assertEqual(len(info['operations']),22)
         tool={t['name']:t for t in tool_list()}['storyboard_review'];self.assertTrue(tool['annotations']['readOnlyHint']);self.assertFalse(tool['annotations']['openWorldHint'])
         schema=tool['inputSchema']['properties']['payload'];self.assertFalse(schema['additionalProperties']);self.assertEqual(schema['required'],['panel'])
         self.assertEqual(schema['properties']['panel']['properties']['fields']['properties']['mv-fps'],{'type':'string'})
         self.assertNotIn('minItems',schema['properties']['panel']['properties']['shots'])
-        with tempfile.TemporaryDirectory() as folder:self.assertEqual(len(tool_list(DraftLibrary(folder))),28)
+        with tempfile.TemporaryDirectory() as folder:self.assertEqual(len(tool_list(DraftLibrary(folder))),29)
 
     def test_loopback_http_uses_same_application_boundary(self):
         server=WorkbenchServer(('127.0.0.1',0),WorkbenchHandler);server.draft_library=None;thread=threading.Thread(target=server.serve_forever);thread.start()

@@ -81,6 +81,11 @@ def acceptance_draft_schema():
 
 
 def payload_schema(operation):
+    if operation == 'draft_compare_row':
+        from .draft_contract import draft_schema
+        from .draft_compare_row import selection_schema
+        return object_schema({'baseline': draft_schema(), 'current': draft_schema(), 'selection': selection_schema()},
+                             ('baseline', 'current', 'selection'), additionalProperties=False)
     if operation == 'draft_compare':
         from .draft_contract import draft_schema
         return object_schema({'baseline': draft_schema(), 'current': draft_schema()}, ('baseline', 'current'), additionalProperties=False)
@@ -393,6 +398,12 @@ def output_schema(operation=None):
                                                  "needs_review": {"type": "boolean"}},
                                                 ("version", "protocol_version", "needs_review"), additionalProperties=False)},
                          ("files", "data", "meta"), additionalProperties=False)
+    if operation == 'draft_compare_row':
+        from .draft_compare_row import data_schema
+        result['properties']['data'] = data_schema()
+        names = ('draft-row-comparison.json', 'draft-row-comparison.md')
+        result['properties']['files'] = object_schema({name: {'type': 'string'} for name in names}, names, additionalProperties=False)
+        result['properties']['meta']['properties']['needs_review']['const'] = True
     if operation == 'draft_compare':
         from .draft_compare import data_schema
         result['properties']['data'] = data_schema()
