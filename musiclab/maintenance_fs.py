@@ -23,7 +23,9 @@ from .run_identity import observe_process
 PREFIX = 'zoe-g-music-lab/'
 MAX_MANIFEST_BYTES = 2 * 1024 * 1024
 MAX_ARCHIVE_BYTES = 64 * 1024 * 1024
-MAX_PACKAGES = 128
+# Read-only catalog size is independent of the unchanged recovery write budget.
+MAX_RELEASE_ENTRIES = 1024
+MAX_RECOVERY_PACKAGES = 128
 MAX_JOURNAL_BYTES = 2 * 1024 * 1024
 
 
@@ -242,12 +244,15 @@ def audit(root, run_records=(), now=None):
     if release_root.exists():
         children = []
         for path in release_root.iterdir():
-            if len(children) == MAX_PACKAGES:
+            if len(children) == MAX_RELEASE_ENTRIES:
                 raise ValueError('Release directory capacity exceeded; no pruning permitted')
             children.append(path)
         for path in sorted(children):
             try:
-                packages.append(package_facts(root, path, now))
+                fact = package_facts(root, path, now)
+                # Keep only policy/identity facts, not every full source file ledger.
+                packages.append({key: fact[key] for key in ('directory', 'version', 'newest_mtime', 'verified', 'reasons', 'identity')})
+                del fact
             except (ValueError, OSError, subprocess.TimeoutExpired) as error:
                 excluded.append({'name': path.name, 'reason': str(error), 'action': 'preserved'})
     if len(run_records) > 32:
@@ -278,6 +283,8 @@ def prune(root, token, run_records=()):
     selected = report['candidates']
     if not selected:
         return {**report, 'mutation': 'pruned', 'removed': [], 'journal': None}
+    if len(selected) > MAX_RECOVERY_PACKAGES:
+        raise ValueError('Recovery package capacity exceeded; no pruning')
     facts = [package_facts(root, root/p['directory'], time.time()) for p in selected]
     if [f['identity'] for f in facts] != selected or any(not f['verified'] for f in facts):
         raise ValueError('Candidate bytes or identity changed; no pruning')
@@ -320,7 +327,7 @@ def restore(root, journal_path):
     if not journal_path.is_relative_to(root/'outputs/maintenance'):
         raise ValueError('Recovery journal must be in this project maintenance outputs')
     journal = read_document(journal_path, MAX_JOURNAL_BYTES)
-    if not isinstance(journal, dict) or set(journal) != {'format', 'schema_version', 'packages'} or journal['format'] != 'zoe-iteration-recovery' or type(journal['schema_version']) is not int or journal['schema_version'] != 1 or not isinstance(journal['packages'], list) or not 1 <= len(journal['packages']) <= MAX_PACKAGES:
+    if not isinstance(journal, dict) or set(journal) != {'format', 'schema_version', 'packages'} or journal['format'] != 'zoe-iteration-recovery' or type(journal['schema_version']) is not int or journal['schema_version'] != 1 or not isinstance(journal['packages'], list) or not 1 <= len(journal['packages']) <= MAX_RECOVERY_PACKAGES:
         raise ValueError('Unknown recovery journal version or shape')
     prepared = [];names = set()
     with tempfile.TemporaryDirectory(prefix='zoe-restore-') as temp:

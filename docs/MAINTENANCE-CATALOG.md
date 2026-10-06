@@ -1,0 +1,13 @@
+# 封裝目錄與復原容量
+
+v0.129.0 的開發維護CLI沿既有 workspace／safe_path／package_facts，沒有新增Agent或HTTP維護operation。只有本專案outputs/releases的direct entries進入catalog，未知、reparse、不完整、額外檔案與來源不符維持preserved。
+
+MAX_RELEASE_ENTRIES=1024只限制唯讀列舉：第1025筆使整輪拒絕，尚未開始封裝解析，也不回傳部分保留／清除決策。完整catalog排序後逐份核對manifest、ZIP ledger／CRC／SHA、tag與immutable source；嚴格超七天才以現場Git archive驗證重建bytes。retention_plan從全部已核實版本選最新三版。audit只保存directory／version／newest_mtime／verified／reasons／identity，不保留每份完整manifest ledger；package_facts本身的完整結果介面保持。
+
+MAX_RECOVERY_PACKAGES=128與MAX_JOURNAL_BYTES=2MiB是原復原契約。prune仍要求整份preview的exact token與沒有running／unverified記錄；候選129以上在任何來源重查、日誌及目錄move前拒絕。候選128以下仍受journal bytes、即時來源／latest3／recorded process重查與精確同root move／unlink限制。超限不靜默截取一批，不產生無法由同版restore讀回的日誌。若未來同輪超過128個清除候選，須另行設計明確可審閱的分批維護；本輪不提供自動批次清除。
+
+restore沿原嚴格shape、schema1、最多128項、完整manifest／identity／Git重建與拒絕覆寫。catalog提高不擴大restore或程序權限；audit1／recovery1／run1與32個明確same-host run records保持，產品版本與Agent／draft／領域schemas獨立。
+
+新增6項Python測試：真129-entry CLI及單份清除／精確restore、125個partial檔保留；1024完整盤點與1025在package I/O前拒絕；weakref證明上一份完整manifest在下一份處理前釋放；129候選在recheck／journal前拒絕；restore128仍完整驗每項、129在source讀取前拒絕。弱引用檢查只證明完整ledger未被audit pool持有，不能宣稱整個程序的固定RAM上限或外部改寫的原子快照。
+
+本workspace標準CLI已由舊版失敗轉為成功盤點129個目錄。v77 alternate source與正式v77 tag指向不同commit，判定未核實並保留，未追改歷史tag或ZIP；partial36／53保留。發佈後新增本輪封裝與final same-host程序盤點以outputs/v129-qa收據為準，無候選不刪。
