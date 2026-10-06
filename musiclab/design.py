@@ -5,6 +5,7 @@ import re
 from .common import json_text, number, text
 from .creative import music_bundle, storyboard_bundle
 from .markdown_table import cell as table_cell
+from .markdown_text import inline
 
 
 def music_plan_bundle(brief):
@@ -53,17 +54,18 @@ def music_plan_bundle(brief):
             "lyric_units": lyric_counts, "review_notes": warnings,
             "status": "design_only_not_generated", "timing_assumption": "constant_tempo_no_pickup",
             "unit_note": "中文字元與拉丁文字詞計數，不是實測音節"}
-    markdown = [f"# {saved['title']}：歌曲設計\n\n",
-                f"{bpm:g} BPM · 每小節 {beats:g} 拍 · 約 {elapsed:.3f} 秒\n\n記憶點：{hook}\n\n",
+    hook_display = inline(hook)
+    markdown = [f"# {inline(saved['title'])}：歌曲設計\n\n",
+                f"{bpm:g} BPM · 每小節 {beats:g} 拍 · 約 {elapsed:.3f} 秒\n\n記憶點：{hook_display}\n\n",
                 "| 段落 | 起訖秒 | 小節 | 能量 1–5 | 敘事任務 | 聲音配置 |\n|---|---|---|---|---|---|\n"]
     for s in plan:
         markdown.append(f"| {table_cell(s['section'])} | {s['start']}–{s['end']} | {s['bars']} | {s['energy']} | {table_cell(s['focus'])} | {table_cell(s['texture'])} |\n")
     markdown.append("\n## 三條可由 AI 發展的創作路徑\n\n"
-                    f"- 動作路徑：讓「{hook}」在主歌是逃避動作，在末副歌成為主動選擇。\n"
-                    f"- 對話路徑：同一句「{hook}」先對別人說，最後改成對自己說。\n"
-                    f"- 空間路徑：圍繞「{hook}」設計三個空間，每次回到同一聲音時讓位置改變。\n"
+                    f"- 動作路徑：讓「{hook_display}」在主歌是逃避動作，在末副歌成為主動選擇。\n"
+                    f"- 對話路徑：同一句「{hook_display}」先對別人說，最後改成對自己說。\n"
+                    f"- 空間路徑：圍繞「{hook_display}」設計三個空間，每次回到同一聲音時讓位置改變。\n"
                     "\n以上是構思框架，尚未生成歌詞或音樂。時間假設固定速度、沒有弱起或自由速度。\n")
-    markdown.extend(f"\n- 待聆聽確認：{note}\n" for note in warnings)
+    markdown.extend(f"\n- 待聆聽確認：{inline(note)}\n" for note in warnings)
     files.update({"music-plan.json": json_text(data), "music-plan.md": "".join(markdown)})
     files["task.md"] += "\n## 設計台補充\n\n依 music-plan.json 的段落任務與能量曲線完成創作。保留記憶點，但讓其前後意義改變；列出實唱與實聽仍需驗證的項目。\n"
     return files
@@ -115,12 +117,12 @@ def motif_bundle(brief):
             warnings.append({"shot": None, "message": f"母題「{name}」只有一種狀態；請確認是否刻意維持意義"})
     data.update(motifs=registry, continuity=continuity, review_notes=warnings)
     files["storyboard.json"] = json_text(data)
-    notes = [f"# {data['title']}：母題與連戲\n\n這是資料一致性檢查，不是自動導演評分。\n\n"]
+    notes = [f"# {inline(data['title'])}：母題與連戲\n\n這是資料一致性檢查，不是自動導演評分。\n\n"]
     for name, meaning in registry.items():
-        notes.append(f"## {name}\n\n原始意義：{meaning}\n\n")
-        notes.extend(f"- 鏡頭 {entry['shot']}：{entry['state']}\n" for entry in states[name])
+        notes.append(f"## {inline(name)}\n\n原始意義：{inline(meaning)}\n\n")
+        notes.extend(f"- 鏡頭 {entry['shot']}：{inline(entry['state'])}\n" for entry in states[name])
     notes.append("\n## 待審查\n\n")
-    notes.extend(f"- {note['message']}" + (f"（鏡頭 {note['shot']}）" if note['shot'] else "") + "\n" for note in warnings)
+    notes.extend(f"- {inline(note['message'])}" + (f"（鏡頭 {note['shot']}）" if note['shot'] else "") + "\n" for note in warnings)
     if not warnings:
         notes.append("本次資料未發現未說明的狀態／方向變化；仍需人工審查實際畫面。\n")
     files["continuity.md"] = "".join(notes)

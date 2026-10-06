@@ -3,6 +3,7 @@ import csv
 import io
 from .common import json_text, number, text, nonnegative_number
 from .storyboard_frames import frame_index, frame_timeline, SECONDS_TOLERANCE
+from .markdown_text import inline
 
 
 def music_bundle(brief):
@@ -23,8 +24,8 @@ def music_bundle(brief):
     if not isinstance(cleaned["existing_lyrics"], str):
         raise ValueError("existing_lyrics 必須是文字")
     # Known input is isolated from instructions; no claims of AI/media execution.
-    deliverable_list = "\n".join('- ' + value for value in cleaned['deliverables'])
-    task = f"""# {cleaned['title']}：AI 音樂製作任務包
+    deliverable_list = "\n".join('- ' + inline(value) for value in cleaned['deliverables'])
+    task = f"""# {inline(cleaned['title'])}：AI 音樂製作任務包
 
 此檔由本機工具包裝需求，尚未呼叫模型或生成音樂。使用者可將它交給自己選定的 AI。
 創辦：ZOE. G · GitHub：djguan-jpg
@@ -100,12 +101,12 @@ def storyboard_bundle(brief):
     writer = csv.DictWriter(stream, fieldnames=fields)
     writer.writeheader()
     writer.writerows({key: spreadsheet_cell(value) for key, value in shot.items()} for shot in shots)
-    prompts = [f"# {title}：鏡頭提示\n\n紙上企劃，尚未生成媒體。時間範圍以秒計，幀數結束採 exclusive。\n",
+    prompts = [f"# {inline(title)}：鏡頭提示\n\n紙上企劃，尚未生成媒體。時間範圍以秒計，幀數結束採 exclusive。\n",
                f"\n影格範圍：[0, {data['frame_timeline']['total_frames']})，{fps:g} FPS；以最近整數影格、正好半幀取偶數。秒數保持原輸入，影格未證明實際音畫同步。\n"]
     for shot in shots:
         prompts.append(f"\n## 鏡頭 {shot['shot']} · {shot['start']:g}–{shot['end']:g}s\n\n"
                        f"影格：[{shot['start_frame']}, {shot['end_frame_exclusive']}) · {shot['end_frame_exclusive'] - shot['start_frame']} 幀（結束不含）。\n\n"
-                       f"敘事用途：{shot['purpose']}\n\n一致性：{anchor}\n\n風格：{visual_style}\n\n"
-                       f"畫面：{shot['visual']}\n\n鏡頭：{shot['camera']}\n\n"
-                       f"結束／轉場：{shot['transition']}\n\n畫幅：{ratio}\n")
+                       f"敘事用途：{inline(shot['purpose'])}\n\n一致性：{inline(anchor)}\n\n風格：{inline(visual_style)}\n\n"
+                       f"畫面：{inline(shot['visual'])}\n\n鏡頭：{inline(shot['camera'])}\n\n"
+                       f"結束／轉場：{inline(shot['transition'])}\n\n畫幅：{inline(ratio)}\n")
     return {"storyboard.json": json_text(data), "storyboard.csv": stream.getvalue(), "prompts.md": "".join(prompts)}

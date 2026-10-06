@@ -1,8 +1,6 @@
 # SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 """Literal text for GFM table cells; authoritative source stays in JSON."""
-import string
-
-_PUNCTUATION = frozenset(string.punctuation)
+from .markdown_text import inline
 
 
 def cell(value):
@@ -14,7 +12,4 @@ def cell(value):
     """
     if not isinstance(value, str):
         raise ValueError("表格欄位需為文字")
-    normalized = value.replace("\r\n", "\n").replace("\r", "\n")
-    return "".join("<br>" if char == "\n" else
-                   f"&#{ord(char)};" if char in _PUNCTUATION else char
-                   for char in normalized)
+    return inline(value)
