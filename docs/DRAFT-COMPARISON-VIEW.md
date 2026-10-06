@@ -19,3 +19,5 @@ web/draft-compare-dom.js只讀完成report並建立literal text、native details
 ## 驗證範圍
 
 原生IAB兩個入口實際manual、page／filter、bulk和Enter收合通過，21欄、六個帶ID列集合與四份完整歌曲成果逐值保持。1280×720、390×844、1280×360各入口各一次，焦點控制hit、頁面無橫溢；六JPEG只保存於忽略QA目錄，未以圖片檢視宣稱完整視覺接受。JSONclick提示送出，但browser download observer在5000ms到期，未驗證實際保存路徑或檔案。screen reader、真媒體及平台作者／founder接受仍未驗證。
+
+封裝補充：首份指定source的外層與Python runner同為120秒，外層timeout後Windows暫存目錄仍被使用，未發成功manifest。保留失敗ZIP與receipt；只移除核對的自有空暫存目錄，未signal外部程序。外層封裝改150秒，runner仍120秒／兩worker，留出正常收集與清理時間；重新從新提交封裝並核對，原失敗不宣稱成功。

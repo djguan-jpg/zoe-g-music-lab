@@ -19,3 +19,5 @@ CLI metadata snapshot 19598檔／688481144logical bytes，超七天0檔；獨立
 本次live核對四份投稿PUBLIC頁、ZOE. G／djguan-jpg、PolyForm Noncommercial 1.0.0與已登入。平台明示作者自行聲明未核實，收錄不代表官方採用；自動license欄NOASSERTION不當成另授權。六法律／平台收據保持，未重送投稿。
 
 未驗證：browser真正保存檔（observer 5000ms timeout）、完整視覺／screen reader、真媒體實聽／音畫同步、Host安裝、平台正式founder。GitHub CI未配置。原生幾何／焦點、source測試與remote ZIP核對分開記錄，不互相替代。
+
+封裝補充：首份指定source的外層與Python runner同為120秒，外層timeout後Windows暫存目錄仍被使用，未發成功manifest。保留失敗ZIP與receipt；只移除核對的自有空暫存目錄，未signal外部程序。外層封裝改150秒，runner仍120秒／兩worker，留出正常收集與清理時間；重新從新提交封裝並核對，原失敗不宣稱成功。

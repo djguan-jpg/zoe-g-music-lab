@@ -33,3 +33,5 @@ CLI metadata snapshot 19598檔／688481144logical bytes，超七天0檔；獨立
 未驗證：browser真正保存檔（observer 5000ms timeout）、完整視覺／screen reader、真媒體實聽／音畫同步、Host安裝、平台正式founder。GitHub CI未配置。原生幾何／焦點、source測試與remote ZIP核對分開記錄，不互相替代。
 
 指定source commit／tree、ZIP／SHA、PR與remote asset bytes見manifest及outputs/v141-qa/source-evidence.json、release-remote-evidence.json、goal-turn.json。managed jobs須same-host typed身份及原handle EOF，不能只信狀態檔；無外部程序signal。rolling goal active，後續只延續本新工作區的可重現功能／Agent缺口；保留真媒體／平台作者接受gate。
+
+封裝補充：首份指定source的外層與Python runner同為120秒，外層timeout後Windows暫存目錄仍被使用，未發成功manifest。保留失敗ZIP與receipt；只移除核對的自有空暫存目錄，未signal外部程序。外層封裝改150秒，runner仍120秒／兩worker，留出正常收集與清理時間；重新從新提交封裝並核對，原失敗不宣稱成功。
