@@ -1205,6 +1205,7 @@ function backupControls(){
   $('backup-open').disabled=!libraryEnabled||backupRestoring||backupDownloading;
   $('backup-restore').disabled=!libraryEnabled||backupReading||backupRestoring||backupDownloading||!backupReady||!backupCanRestore;
   $('backup-cancel').disabled=backupRestoring;
+  state.backupDownload?.refresh();
 }
 async function backupRequest(operation,file,sha){
   const response=await fetch('/api/drafts/backup/'+operation+(sha?'?sha256='+encodeURIComponent(sha):''),{method:'POST',body:file});
@@ -1235,7 +1236,7 @@ state.backupDownload=MusicBackupDownloadDom.createAdapter(document,{
   prepare:async signal=>{
     const response=await fetch('/api/drafts/backup/prepare',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}',signal});
     const data=await response.json();if(!response.ok)throw Error(data.error||'備份未完成');return data;
-  },maximum:()=>backupMaximum,allowed:libraryAllowed,say:backupSay,
+  },maximum:()=>backupMaximum,allowed:libraryAllowed,verificationAllowed:()=>libraryEnabled&&!state.busy&&!backupRestoring,say:backupSay,
   onState:({busy})=>{backupDownloading=busy;backupControls();}
 });
 async function setupLibrary(){
