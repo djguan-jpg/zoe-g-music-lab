@@ -88,7 +88,7 @@ class SeedTests(unittest.TestCase):
         self.assertIn('arrangement',schema['properties']['music']['required'])
         tool={t['name']:t for t in tool_list()}['storyboard_seed']
         self.assertTrue(tool['annotations']['readOnlyHint']);self.assertFalse(tool['annotations']['openWorldHint'])
-        self.assertEqual(len(capabilities()['operations']),18)
+        self.assertEqual(len(capabilities()['operations']),19)
 
     def test_real_cli_from_another_directory_matches_bytes_and_refuses_overwrite(self):
         source=ROOT/'examples/first-light-music.json';before=source.read_bytes()

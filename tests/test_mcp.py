@@ -56,7 +56,7 @@ class MCPTests(unittest.TestCase):
             self.assertIn("接入測試", replies[1]["result"]["structuredContent"]["files"]["lyrics.lrc"])
             self.assertEqual(list(Path(folder).iterdir()), [])
 
-    def test_real_subprocess_eighteen_tools_match_application_and_exit_on_eof(self):
+    def test_real_subprocess_nineteen_tools_match_application_and_exit_on_eof(self):
         with tempfile.TemporaryDirectory() as folder:
             source = Path(folder) / "synthetic.wav"
             with wave.open(str(source), "wb") as wav:
@@ -79,6 +79,7 @@ class MCPTests(unittest.TestCase):
                      ("music_search", "music_search", {"sections":[{"name":"原文","focus":"任務","texture":"聲音"}],"query":"原文"}),
                      ("lyrics_export_review", "lyrics_export_review", {"package": build("lyrics", {"cues":[{"start":0,"end":1,"text":"[00:04]原句"}],"duration":2}).data}),
                      ("music_review", "music_review", json.loads((ROOT / "examples/unfinished-song-review.json").read_text(encoding="utf-8"))),
+                     ("music_section_review", "music_section_review", {**json.loads((ROOT / "examples/unfinished-song-review.json").read_text(encoding="utf-8")), "row":2}),
                      ("storyboard_shot_review", "storyboard_shot_review", {**json.loads((ROOT / "examples/unfinished-storyboard-review.json").read_text(encoding="utf-8")), "row":3}),
                      ("storyboard_review", "storyboard_review", json.loads((ROOT / "examples/unfinished-storyboard-review.json").read_text(encoding="utf-8"))),
                      ("storyboard_timing_review", "storyboard_timing_review", json.loads((ROOT / "examples/unfinished-storyboard-timing-review.json").read_text(encoding="utf-8"))),

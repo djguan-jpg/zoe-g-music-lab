@@ -50,6 +50,15 @@ def review(payload):
     if not exact(payload, ('panel',)):
         raise ValueError('歌曲欄位檢查只接受 panel 原始歌曲欄位；不接受路徑或版本覆蓋')
     panel = source(payload['panel'])
+    checked = _analyze(panel)
+    return {'format': 'zoe-music-review', 'schema_version': SCHEMA_VERSION,
+            'status': checked['status'], 'source': copy.deepcopy(panel),
+            'total_sections': checked['total_sections'], 'filled_sections': checked['filled_sections'],
+            'issue_count': checked['issue_count'], 'issues': checked['issues'],
+            'details_truncated': checked['details_truncated'], 'review_notes': list(NOTES)}
+
+
+def _analyze(panel, selected_row=None):
     issues, blocked, count = [], set(), 0
 
     def add(scope, row, field, code, message):
@@ -74,25 +83,27 @@ def review(payload):
         if not low <= parsed <= high or integer and not parsed.is_integer():
             add(scope, row, field, 'invalid_range', f'需為 {low}–{high}' + (' 整數' if integer else ''))
 
-    for field in FIELDS:
-        if field not in ('music-bpm', 'music-beats', 'music-lyrics'):
-            required('fields', 0, field, panel['fields'][field])
-    numeric('fields', 0, 'music-bpm', panel['fields']['music-bpm'], 20, 300)
-    numeric('fields', 0, 'music-beats', panel['fields']['music-beats'], 1, 12, True)
-    if not panel['sections']: add('fields', 0, 'sections', 'no_sections', '尚無段落，請新增')
+    if selected_row is None:
+        for field in FIELDS:
+            if field not in ('music-bpm', 'music-beats', 'music-lyrics'):
+                required('fields', 0, field, panel['fields'][field])
+        numeric('fields', 0, 'music-bpm', panel['fields']['music-bpm'], 20, 300)
+        numeric('fields', 0, 'music-beats', panel['fields']['music-beats'], 1, 12, True)
+        if not panel['sections']: add('fields', 0, 'sections', 'no_sections', '尚無段落，請新增')
     for row, section in enumerate(panel['sections'], 1):
+        if selected_row is not None and row != selected_row: continue
         for field in ('name', 'focus', 'texture'): required('sections', row, field, section[field])
         numeric('sections', row, 'bars', section['bars'], 1, 128, True)
         numeric('sections', row, 'energy', section['energy'], 1, 5)
-    if not panel['deliverables']:
-        add('fields', 0, 'deliverables', 'no_deliverables', '至少需要一個交付項目')
-    for scope in ('avoid', 'deliverables'):
-        for row, value in enumerate(panel[scope], 1): required(scope, row, 'text', value)
-    return {'format': 'zoe-music-review', 'schema_version': SCHEMA_VERSION,
-            'status': 'needs_correction' if count else 'fields_checked', 'source': copy.deepcopy(panel),
+    if selected_row is None:
+        if not panel['deliverables']:
+            add('fields', 0, 'deliverables', 'no_deliverables', '至少需要一個交付項目')
+        for scope in ('avoid', 'deliverables'):
+            for row, value in enumerate(panel[scope], 1): required(scope, row, 'text', value)
+    return {'status': 'needs_correction' if count else 'fields_checked',
             'total_sections': len(panel['sections']), 'filled_sections': len(panel['sections']) - len(blocked),
             'issue_count': count, 'issues': issues, 'details_truncated': count > len(issues),
-            'review_notes': list(NOTES)}
+            }
 
 
 def markdown(data):

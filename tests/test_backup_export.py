@@ -154,7 +154,7 @@ class BackupExportTests(unittest.TestCase):
                         *[{'jsonrpc': '2.0', 'id': i+3, 'method': 'tools/call', 'params': {'name': 'draft_backup_export', 'arguments': {'payload': p}}} for i, p in enumerate([{}, {'include_archive': True, 'ids': [IDS[1]]}, {'include_archive': 'true'}])]]
             output = run([sys.executable, '-X', 'utf8', str(ROOT/'music_lab_mcp.py'), '--draft-library', str(library.root)], folder, ('\n'.join(json.dumps(v) for v in requests)+'\n').encode())
             replies = [json.loads(line) for line in output.splitlines()]; tools = {v['name']: v for v in replies[1]['result']['tools']}
-            self.assertEqual(len(tools),25); self.assertTrue(tools['draft_backup_export']['annotations']['readOnlyHint'])
+            self.assertEqual(len(tools),26); self.assertTrue(tools['draft_backup_export']['annotations']['readOnlyHint'])
             self.assertFalse(tools['draft_backup_export']['annotations']['destructiveHint']); self.assertFalse(tools['draft_backup_export']['annotations']['openWorldHint'])
             shape = tools['draft_backup_export']['outputSchema']['properties']
             self.assertEqual(shape['files']['maxProperties'], 0); self.assertTrue(shape['meta']['properties']['needs_review']['const'])
@@ -189,8 +189,8 @@ class BackupExportTests(unittest.TestCase):
     def test_discovery_independent_schema_and_library_tools_require_explicit_launch_selection(self):
         with tempfile.TemporaryDirectory() as folder:
             missing = DraftLibrary(Path(folder)/'uncreated')
-            self.assertNotIn('draft_backup_export', capabilities()['operations']); self.assertEqual(len(tool_list()),18)
-            enabled = capabilities(missing); self.assertIn('draft_backup_export', enabled['operations']); self.assertEqual(len(tool_list(missing)),25)
+            self.assertNotIn('draft_backup_export', capabilities()['operations']); self.assertEqual(len(tool_list()),19)
+            enabled = capabilities(missing); self.assertIn('draft_backup_export', enabled['operations']); self.assertEqual(len(tool_list(missing)),26)
             self.assertEqual(enabled['draft_backup_export'], descriptor()); self.assertEqual(descriptor()['schema_version'], 1)
             shape = output_schema('draft_backup_export'); shape['properties']['data']['properties']['schema_version']['const'] = 99
             self.assertEqual(output_schema('draft_backup_export')['properties']['data']['properties']['schema_version']['const'], 1)

@@ -104,7 +104,7 @@ class LyricsReviewTests(unittest.TestCase):
         rows=[{'jsonrpc':'2.0','id':1,'method':'initialize','params':{'protocolVersion':'2025-11-25','capabilities':{},'clientInfo':{'name':'review-qa','version':'1'}}},{'jsonrpc':'2.0','method':'notifications/initialized'},
               {'jsonrpc':'2.0','id':2,'method':'tools/list'},*({'jsonrpc':'2.0','id':i+3,'method':'tools/call','params':{'name':'lyrics_review','arguments':{'payload':v}}} for i,v in enumerate([{'cues':[],'schema_version':999},PARTIAL]))]
         p=subprocess.run([sys.executable,'-X','utf8',str(ROOT/'music_lab_mcp.py')],cwd=ROOT,input=''.join(json.dumps(x)+'\n' for x in rows),capture_output=True,encoding='utf-8',timeout=15)
-        self.assertEqual(p.returncode,0,p.stderr);replies=list(map(json.loads,p.stdout.splitlines()));self.assertEqual(len(replies[1]['result']['tools']),18);self.assertTrue(replies[2]['result']['isError']);self.assertEqual(replies[3]['result']['structuredContent'],build('lyrics_review',PARTIAL).wire())
+        self.assertEqual(p.returncode,0,p.stderr);replies=list(map(json.loads,p.stdout.splitlines()));self.assertEqual(len(replies[1]['result']['tools']),19);self.assertTrue(replies[2]['result']['isError']);self.assertEqual(replies[3]['result']['structuredContent'],build('lyrics_review',PARTIAL).wire())
         tool={t['name']:t for t in tool_list()}['lyrics_review'];self.assertTrue(tool['annotations']['readOnlyHint']);self.assertFalse(tool['annotations']['openWorldHint']);self.assertEqual(capabilities()['lyrics_review']['schema_version'],1)
 
     def test_real_http_recovers_and_serves_actual_deferred_dependency(self):

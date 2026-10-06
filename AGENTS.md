@@ -498,3 +498,10 @@ search-input 純三欄鍵盤 metadata → 三個原 DOM adapter → 既有搜尋
 歌曲工作台新增「檢查選定段落」：即使整份待辦200明細已滿，也能檢查原第40段的五個編曲欄位並定位。既有music-readiness共用規則 → 選定原列／stable IDs的純checkpoint controller → 字面DOM → app原欄位focus分層；不補寫、改原值或提交成果。選擇／順序／選定欄位改變停舊定位，精確復原可接續；其他段落與全域欄位的合法編修不影響這五欄的診斷。零待辦仍需整首歌曲、總長與實聽驗證。產品115／唯一policy38–115共78，未知116拒絕；18基本／25啟庫及原25組schemas、Agent1／draft3保持，新增兩個固定GET。
 
 選定診斷只保留五欄原值、完整stable IDs與原列；沒有新Agent operation，整首報告與dirty規則保持。來源改變拒絕舊定位，暫態不進draft3；literal DOM與current capture分層。見[契約](docs/MUSIC-SECTION-REVIEW.md)。
+
+
+## v0.116 單段報告跨工具
+
+新增「建立單段報告」與唯讀 music_section_review：共用 Python music_review 的 required／numeric 規則，獨立 section-review1 保留原段落1起、總段數與選定五欄原字串；JSON／Markdown 經完整 data／files／meta 核對才提交成果。共享注入 readiness-request 管理來源／晚回覆／取消／重試，既有單鏡 wrapper 沿相同 controller。CLI／Agent／MCP／HTTP 共用 application，19基本／明確啟庫26工具，需重新 discovery；原25組 input/output schemas 不變。產品116／唯一 policy38–116共79，未知117拒絕；Agent1／draft3保持。新增一個固定GET與一個唯讀POST，沒有新路徑、模型、外網或寫入權限。零待辦仍須整首歌曲、總長與實聽驗證。
+
+共享領域／完整來源與回覆guard → 注入純request → literal DOM／成果，late／cancel／retry不覆蓋後續編修。既有單鏡wrapper API保持，25 schemas保持；selected local context與app完整revision明確分開。見[契約](docs/MUSIC-SECTION-REPORT.md)。

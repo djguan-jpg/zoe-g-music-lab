@@ -281,6 +281,12 @@ sectionReviewDOM=MusicSectionReviewDOM.bind(document,{labels:MusicReadiness.labe
   onLocate:(index,revision)=>{if(state.busy||state.tab!=='music')return false;const issue=sectionReviewController.locate(index,revision);if(!issue)return false;const target=musicIssueTarget(issue);if(!target||!target.isConnected||target.disabled)return false;target.focus();return document.activeElement===target;},onError:error=>say(error.message,true)});
 sectionReviewController=MusicSectionReview.createController({capture:()=>({panel:capturePanel('music'),ids:entriesFor('arrangement').map(e=>e.id),selectedId:$('section-order').value}),onState:sectionReviewDOM.render});
 $('section-order').addEventListener('change',()=>sectionReviewController.refresh());
+const sectionReviewRequest=MusicReadinessRequest.createController({source:sectionReviewController,checkedResult:MusicSectionReview.checkedResult,
+  request:(payload,current)=>api('/api/music-section-review',payload,false,current.signal),
+  onReport:accepted=>{$('music-visual').hidden=true;setFiles(accepted.files,`選定歌曲段落待辦 · 待辦 ${accepted.data.issue_count} 項`);say('單段待辦報告已建立；原歌曲保留，仍須整首歌曲與實聽驗證。');},
+  onError:error=>say(error.message,true),onStale:()=>say('選定段落來源已有變更；目前編修與上一份成果保留，請重新建立。'),onState:()=>sectionReviewDOM.refresh()
+});
+$('section-review-report').onclick=()=>run($('section-review-report'),current=>sectionReviewRequest.check(current));
 function checkMusicReady(){const view=musicReadyController.check();if(!view.report.issueCount)return true;locateMusicIssue(0);say(`${view.report.issueCount} 項歌曲欄位待辦，已定位第一項`,true);return false;}
 $('music-ready-check').onclick=()=>{if(state.busy)return;try{checkMusicReady();}catch(error){say(error.message,true);}};
 $('music-ready-report').onclick=()=>run($('music-ready-report'),async current=>{

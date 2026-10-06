@@ -33,6 +33,7 @@ from .lyrics_search import bundle as lyrics_search_bundle, descriptor as lyrics_
 from .storyboard_search import bundle as storyboard_search_bundle, descriptor as storyboard_search_descriptor
 from .music_search import bundle as music_search_bundle, descriptor as music_search_descriptor
 from .lyrics_export_review import review_bundle as lyrics_export_review_bundle, descriptor as lyrics_export_review_descriptor
+from .music_section_review import review_bundle as music_section_review_bundle, descriptor as music_section_review_descriptor
 from .music_review import review_bundle as music_review_bundle, descriptor as music_review_descriptor
 from .storyboard_review import review_bundle as storyboard_review_bundle, descriptor as storyboard_review_descriptor
 from .storyboard_shot_review import review_bundle as storyboard_shot_review_bundle, descriptor as storyboard_shot_review_descriptor
@@ -54,6 +55,7 @@ OPERATIONS = {
     "delivery_inspect": "Verify the complete selected canonical ZIP; explicit file_names returns original files within 512 KiB JSON, exclusive text_search returns bounded literal UTF-8 positions, or exclusive text_window returns <=16 KiB original UTF-8 bytes with pinned archive SHA for continuation; default metadata, baseline comparison or exclusive include_report; no paths, merging, automatic writes or model",
     "delivery_package": "Package explicitly provided text files with a SHA-256 manifest; metadata by default, archive_base64 only when include_archive=true and ZIP<=512 KiB; no source paths, media, creative acceptance or model",
     "music": "Song planning and AI task packaging; no model invocation",
+    "music_section_review": "Diagnose five fields of one original song section; read-only; no whole-song acceptance, paths or model",
     "music_review": "Locate incomplete raw song draft fields and numeric ranges; read-only; no content filling, complete plan acceptance or model",
     "storyboard": "Shot timing and motif continuity; no media rendering",
     "music_search": "Find exact literal name, focus and texture fields in original song sections; source SHA pinned pagination; read-only, no paths, numbers, editing or model",
@@ -124,6 +126,7 @@ def capabilities(draft_library=None, backup_source=None, delivery_source=None):
             "music_search": music_search_descriptor(),
             "lyrics_export_review": lyrics_export_review_descriptor(),
             "music_review": music_review_descriptor(),
+            "music_section_review": music_section_review_descriptor(),
             "storyboard_shot_review": storyboard_shot_review_descriptor(),
             "storyboard_review": storyboard_review_descriptor(),
             "storyboard_timing_review": storyboard_timing_review_descriptor(),
@@ -185,7 +188,7 @@ def build(operation, payload, *, audio_source=None, draft_library=None, backup_s
     if operation in LIBRARY_OPERATIONS and draft_library is None:
         raise ValueError("草稿庫未啟用；請在啟動時明確指定 --draft-library 目錄")
     if operation not in available_operations(draft_library):
-        raise ValueError("未知操作；請使用 music、music_review、music_search、storyboard、storyboard_review、storyboard_shot_review、storyboard_search、storyboard_timing_review、lyrics、audio、audio_acceptance_review、storyboard_seed、lyrics_seed、lyrics_review、lyrics_search、lyrics_export_review 或 delivery_package、delivery_inspect")
+        raise ValueError("未知操作；請使用 music、music_review、music_section_review、music_search、storyboard、storyboard_review、storyboard_shot_review、storyboard_search、storyboard_timing_review、lyrics、audio、audio_acceptance_review、storyboard_seed、lyrics_seed、lyrics_review、lyrics_search、lyrics_export_review 或 delivery_package、delivery_inspect")
     if not isinstance(payload, dict):
         raise ValueError("輸入需為 JSON 物件")
     if operation in LIBRARY_OPERATIONS:
@@ -228,6 +231,9 @@ def build(operation, payload, *, audio_source=None, draft_library=None, backup_s
     if operation == "audio_acceptance_review":
         files = acceptance_review_bundle(payload)
         data = json.loads(files["audio-acceptance-review.json"])
+    elif operation == "music_section_review":
+        files = music_section_review_bundle(payload)
+        data = json.loads(files["music-section-review.json"])
     elif operation == "music_review":
         files = music_review_bundle(payload)
         data = json.loads(files["music-review.json"])
@@ -323,7 +329,7 @@ def build(operation, payload, *, audio_source=None, draft_library=None, backup_s
         if document is not None:
             files["audio-acceptance-draft.json"] = json_text(document)
     review = bool(data.get("review_notes") or data.get("warnings") or data.get("duration_estimated"))
-    if operation in ('audio_acceptance_review', 'lyrics_review', 'lyrics_search', 'music_search', 'storyboard_search', 'lyrics_export_review', 'music_review', 'storyboard_review', 'storyboard_timing_review', 'storyboard_shot_review'):
+    if operation in ('audio_acceptance_review', 'lyrics_review', 'lyrics_search', 'music_search', 'storyboard_search', 'lyrics_export_review', 'music_review', 'music_section_review', 'storyboard_review', 'storyboard_timing_review', 'storyboard_shot_review'):
         review = True  # Diagnostic readiness never proves performance synchronization.
     if operation == 'lyrics':
         review = package_needs_review(data)
