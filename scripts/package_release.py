@@ -93,7 +93,9 @@ def package(ref):
                 checkout = Path(folder) / "zoe-g-music-lab"
                 # The full suite includes real Git/Windows process fixtures; use a
                 # bounded execution deadline separately from each caller's wait.
-                command([sys.executable, "-X", "utf8", "scripts/check_python_tests.py"], checkout, timeout=120)
+                # The runner owns a 120-second budget; allow it to collect and
+                # close both workers before this outer process can time out.
+                command([sys.executable, "-X", "utf8", "scripts/check_python_tests.py"], checkout, timeout=150)
                 command(["node", "--check", "web/app.js"], checkout)
                 javascript_tests = sorted(file.relative_to(checkout).as_posix() for file in (checkout / "tests").glob("test_*.js"))
                 if not javascript_tests:
