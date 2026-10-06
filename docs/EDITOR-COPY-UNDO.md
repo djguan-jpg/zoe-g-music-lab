@@ -1,0 +1,11 @@
+# 撤回最近複製
+
+複製原段落、鏡頭或歌詞後，該台的「撤回最近複製」可移除新增列。原列或其他列後續編修保留；原句／鏡頭時間、作品總長及其他工作台保持。段落copy保留五編曲原字串，鏡頭／歌詞copy的開始／結束留白。三個工作台各自一筆，新的成功copy替換該台；成功undo消耗紀錄，没有更早一步或redo。切台不清除；新內容載入沿既有clearDeletionHistory(scope)只清該台copy紀錄。
+
+純checkpoint只保存list、完整after IDs、sourceId、copiedId和複製列value；不留其他原列完整值。controller私有Map最多三份，IDs沿40／1000／10000列及既有64字ID界限；字段字串保持原值，不宣稱固定總RAM上限。view只回canUndo，不外露checkpoint，refresh無需capture完整欄位。上述暫態資料不進draft3、domain report、backup或Agent wire；實際新增列仍可沿原草稿形狀保存。
+
+undoProposal先沿checkedSource核對全部當前列形狀、ID唯一及原字串，再要求完整IDs、列數、順序吻合copy後；複製列每個創作欄位精確相同才剔除，其他列原值由當前來源保留。鏡頭open是展示狀態，不參與copy值判定；其他open狀態由當前來源保留，成功後為焦點可達而展開原鏡。新增／刪除／移動／更換列ID、複製內容／時間變更均整份拒絕且不寫入；修回原ID順序／值可重試。pure record不是外部來源或通用getter／Proxy安全介面，不接受來源路徑。
+
+controller先確認visibility／busy及checkpoint，再整份capture，提案與apply前重查完整source和gate，apply後核對實際全部after才消耗紀錄／宣布成功。這些同步檢查不能宣稱外部原子快照；writer或callback部分失敗不自動rollback、不能覆蓋後續編修。copy失败、无变化或未知來源不取代先前成功checkpoint；先前state已不符時舊checkpoint會在undo時拒絕。
+
+DOM三個可選undo controls沿既有原生click／ARIA list與live note。隱藏／busy停用，copy滿容量仍允許undo；快速refresh不讀全部原欄位。成功undo沿app只write目標scope及markDirty，重新選定／聚焦原列；資料回到原值也仍須重新建立成果。pagehide dispose移除自身listeners及釋放records；未知或過期source保持目前資料。旧無undo元素fixture仍相容。沒有新HTTP／CLI／Agent operation、持久schema、依賴、model或網路權限。
