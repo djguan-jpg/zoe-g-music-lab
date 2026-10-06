@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 'use strict';
 const test=require('node:test'),assert=require('node:assert/strict'),{execFileSync}=require('node:child_process'),path=require('node:path');
-const R=require('../musiclab/assets/lyrics-review.js');
+const R=require('../musiclab/assets/lyrics-review.js'),V=require('../musiclab/assets/delivery-versions.js');
 const partial={title:'原創待辦 🎵',duration:'10',cues:[{start:'',end:'',text:'未標記'},{start:'0',end:'2',text:'  保留原文  '},{start:'3',end:'',text:'缺少句尾'}]};
-const wire=p=>({data:R.review(p),files:{'lyrics-review.json':JSON.stringify(R.review(p)),'lyrics-review.md':R.markdown(R.review(p))},meta:{version:'0.25.0',protocol_version:1,needs_review:true}});
+const wire=p=>({data:R.review(p),files:{'lyrics-review.json':JSON.stringify(R.review(p)),'lyrics-review.md':R.markdown(R.review(p))},meta:{version:V.current,protocol_version:1,needs_review:true}});
 function harness(request=async p=>wire(p)){
   let payload=structuredClone(partial);const reports=[],errors=[],states=[];
   const controller=R.createController({capture:()=>payload,request,onReport:(...v)=>reports.push(v),onError:e=>errors.push(e.message),onState:s=>states.push(s)});

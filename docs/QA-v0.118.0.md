@@ -1,11 +1,7 @@
-# v0.118.0 交接與可逆
-
-歌詞校時診斷先以共用strict JSON值核對來源，再讀取欄位與建立隔離副本；getter、稀疏陣列、隱藏／symbol／undefined／無效Unicode拒絕。完整回覆精確核對root data／files／meta、當前唯一產品版本、protocol1及needs_review=true，再核對完整report與JSON／Markdown，checkedResult交付自有data／files副本。舊inspect API保留。Controller將capture放在try內，失敗不送transport，當前pending才釋放；晚回應／錯誤／finally不覆蓋後續工作。原request可省略title／duration，僅report明示既有defaults；時間規則與診斷格式保持。19基本／26啟庫、原26組schemas及Agent1／draft3／review1保持，沒有新operation或GET。產品118／唯一policy38–118共81，未知119拒絕。
+# v0.118.0 QA
 
 611 Python（95.266秒）、1413 JavaScript、134 syntax、4 Skills與diff通過；新增16 JS。v117基線接受未知產品版本及未知root／meta，source getter讀4次、reply getter讀3次，稀疏一列可錯稱timing_checked；新純模型拒絕上述值且測試getter零次讀取。初次完整JS有兩項舊成功fixture缺少version或寫死0.90.0，改為唯一current完整metadata後1413全過，失敗記錄保留；Python已過且來源未再改，不重跑。原v117指定source ZIP還原611／1397，320份歷史ZIP／manifest bytes及原26組schemas一致；八份既有Python report data／兩檔bytes和JS data／Markdown一致，跨語言相同，只有產品meta.version變更。原生22快照／18組完整草稿僅排除saved_at比較，三種錯誤回覆拒絕並保留上一份完整files／report／result revision，busy停用與正常retry恢復通過。四份正常回覆，完整1／4／0診斷；原生滑鼠定位句1開始與Tab到結束，Unicode／首尾空白／literal文字、stable IDs及其他三台保持。1280×720及390×844，窄頁面無水平溢出；PNG在忽略QA目錄，未宣稱完整視覺／screen reader接受。CLI input exit2／2／0、重覆輸出exit1保留原bytes、無效input exit1不建目錄，Agent／MCP三組good-bad-good、9筆HTTP及3固定JS bytes一致。lyrics-review CLI仍只接受input，本輪未新增draft入口。原生File身份、暫停0.5秒及8秒合成WAV保持，console warn/error零。一個bounded QA server、一個ephemeral HTTP thread、實際子程序及owned tab正常結束，viewport reset。瀏覽器保存下載、完整視覺／screen reader、實聽、媒體同步、Host安裝與FreeTWAI創始接受未驗證。
 
+歌詞校時診斷先以共用strict JSON值核對來源，再讀取欄位與建立隔離副本；getter、稀疏陣列、隱藏／symbol／undefined／無效Unicode拒絕。完整回覆精確核對root data／files／meta、當前唯一產品版本、protocol1及needs_review=true，再核對完整report與JSON／Markdown，checkedResult交付自有data／files副本。舊inspect API保留。Controller將capture放在try內，失敗不送transport，當前pending才釋放；晚回應／錯誤／finally不覆蓋後續工作。原request可省略title／duration，僅report明示既有defaults；時間規則與診斷格式保持。19基本／26啟庫、原26組schemas及Agent1／draft3／review1保持，沒有新operation或GET。產品118／唯一policy38–118共81，未知119拒絕。
+
 分支 `codex/iteration-v0.118.0`、基線main `5c3538e6367f3d3630bc5ca9de0d52f6a417c519`、還原tag `restore-v0.117.0-before-v0.118.0`。由tag建立codex/restore-*分支經private PR還原，保留main歷史、原素材及草稿；指定source commit封裝、SHA及遠端bytes另留outputs/v118-qa。
-
-只盤點本workspace outputs與明確typed owned jobs；最新三版保護，嚴格超七天且可由tag／Git archive重建才列清除候選。未知檔、素材、草稿、備份及失敗36／53與本輪失敗QA證據保留，actual process completion後才最終稽核。
-
-見[契約](docs/LYRICS-REVIEW-GUARD.md)。

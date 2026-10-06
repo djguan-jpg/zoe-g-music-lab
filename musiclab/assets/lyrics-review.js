@@ -3,6 +3,7 @@
 (function(root){
   const T=typeof module==='object'&&module.exports?require('./lyric-time.js'):root.LyricTime;
   const J=typeof module==='object'&&module.exports?require('./json-document.js'):root.MusicJsonDocument;
+  const V=typeof module==='object'&&module.exports?require('./delivery-versions.js'):root.MusicDeliveryVersions;
   const maxRows=10000,maxIssues=200;
   const messages={missing_time:'時間尚未標記',invalid_time:'時間需為非負、有限且可保留毫秒的十進位數字',invalid_end:'結束需晚於開始',multiline_text:'每句需為單行歌詞',duplicate_start:'開始時間與另一句相同',overlap:'時間與另一句重疊',past_duration:'時間超過作品宣告總長',invalid_duration:'作品宣告需為正數且可保留毫秒',no_cues:'尚無逐句內容，請先接續歌詞'};
   const notes=['只檢查資料時間，不表示已實聽同步或完成辨識。','原始列順序與文字保留；未填時間不猜測，不裁切或移動句子。'];
@@ -11,13 +12,18 @@
   const empty=v=>v===null||typeof v==='string'&&blank(v);
   const scalar=v=>v===null||['string','boolean'].includes(typeof v)||typeof v==='number'&&Number.isFinite(v);
   const exact=(v,keys)=>v&&typeof v==='object'&&!Array.isArray(v)&&Object.keys(v).length===keys.length&&keys.every(k=>Object.hasOwn(v,k));
-  function review(payload){
+  function checkedSource(payload){
+    if(!J.sameValue(payload,payload))throw Error('校時檢查來源需為完整自有JSON值；原內容保留');
     if(!payload||typeof payload!=='object'||Array.isArray(payload)||!Object.hasOwn(payload,'cues')||Object.keys(payload).some(k=>!['title','duration','cues'].includes(k)))throw Error('校時檢查欄位不支援');
     const title=Object.hasOwn(payload,'title')?payload.title:'歌詞校時檢查',duration=Object.hasOwn(payload,'duration')?payload.duration:null,cues=payload.cues;
     if(typeof title!=='string'||blank(title)||Array.from(title).length>200||!Array.isArray(cues)||cues.length>maxRows||!scalar(duration)||cues.some(c=>!exact(c,['start','end','text'])||typeof c.text!=='string'||Array.from(c.text).length>2000||!scalar(c.start)||!scalar(c.end)))throw Error('校時檢查來源格式或容量不支援');
     const source=structuredClone({title,duration,cues});
     const values=[title,duration,...cues.flatMap(c=>[c.start,c.end,c.text])],encoder=new TextEncoder();
     if(values.reduce((sum,v)=>sum+(typeof v==='string'?encoder.encode(JSON.stringify(v)).length:32),0)>2*1024*1024)throw Error('校時檢查欄位容量最多2 MiB');
+    return source;
+  }
+  function review(payload){
+    const source=checkedSource(payload),{duration,cues}=source;
     const issues=[],blocked=new Set();let count=0,total=null,timed=0;
     const add=(row,field,code,related=null)=>{count++;if(row)blocked.add(row);if(issues.length<maxIssues)issues.push({row,field,code,related_row:related,message:messages[code]});};
     const declared=!empty(duration);
@@ -51,19 +57,21 @@
   }
 
   const equal=J.sameValue;
-  function inspect(reply,payload){
+  function checkedResult(payload,reply){
     const expected=review(payload);
-    if(!reply?.meta||reply.meta.protocol_version!==1||reply.meta.needs_review!==true||!equal(reply.data,expected)||!exact(reply.files,['lyrics-review.json','lyrics-review.md'])||!equal(J.parse(reply.files['lyrics-review.json'],{maxBytes:8*1024*1024,label:'校時報告'}),expected)||reply.files['lyrics-review.md']!==markdown(expected))throw Error('校時報告與目前來源或版本不一致；目前內容保留');
-    return expected;
+    if(!reply||!equal(reply,reply)||!exact(reply,['data','files','meta'])||!equal(reply.meta,{version:V.current,protocol_version:1,needs_review:true})||!equal(reply.data,expected)||!exact(reply.files,['lyrics-review.json','lyrics-review.md'])||!equal(J.parse(reply.files['lyrics-review.json'],{maxBytes:8*1024*1024,label:'校時報告'}),expected)||reply.files['lyrics-review.md']!==markdown(expected))throw Error('校時報告與目前來源或版本不一致；目前內容保留');
+    return {data:expected,files:{'lyrics-review.json':reply.files['lyrics-review.json'],'lyrics-review.md':reply.files['lyrics-review.md']}};
   }
+  function inspect(reply,payload){return checkedResult(payload,reply).data;}
   function createController({capture,request,onReport,onError,onState}){
     let token=0,pending=false;const state=()=>onState({pending});
     function invalidate(){token++;pending=false;state();}
-    return {invalidate,async check(isCurrent=()=>true){const current=++token,payload=structuredClone(capture());pending=true;state();try{
+    return {invalidate,async check(isCurrent=()=>true){const current=++token;pending=true;state();try{
+      const raw=capture();checkedSource(raw);const payload=structuredClone(raw);if(current!==token||isCurrent()!==true)return false;
       const reply=await request(payload,isCurrent);if(current!==token||!isCurrent())return false;
       if(!equal(capture(),payload))throw Error('檢查期間內容有修改；請重新檢查');
-      const data=inspect(reply,payload);onReport(data,reply.files);return true;
+      const accepted=checkedResult(payload,reply);onReport(accepted.data,accepted.files);return true;
     }catch(error){if(current===token&&isCurrent())onError(error);return false;}finally{if(current===token){pending=false;state();}}}};
   }
-  const api={review,markdown,inspect,createController};if(typeof module==='object'&&module.exports)module.exports=api;else root.MusicLyricsReview=api;
+  const api={review,markdown,inspect,checkedSource,checkedResult,createController};if(typeof module==='object'&&module.exports)module.exports=api;else root.MusicLyricsReview=api;
 })(typeof globalThis==='object'?globalThis:this);

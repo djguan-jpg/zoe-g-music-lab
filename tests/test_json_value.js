@@ -54,7 +54,7 @@ for(const kind of ['music','storyboard','lyrics']){
  });
 }
 test('lyrics review distinguishes nullable source and related row from raw overflowing numbers',()=>{
- const P=require('../musiclab/assets/lyrics-review.js'),payload={cues:[{start:'',end:'',text:'原文🎵'}]},data=P.review(payload),good={data,files:{'lyrics-review.json':JSON.stringify(data),'lyrics-review.md':P.markdown(data)},meta:{protocol_version:1,needs_review:true}};
+ const P=require('../musiclab/assets/lyrics-review.js'),payload={cues:[{start:'',end:'',text:'原文🎵'}]},data=P.review(payload),good={data,files:{'lyrics-review.json':JSON.stringify(data),'lyrics-review.md':P.markdown(data)},meta:{version:require('../musiclab/assets/delivery-versions.js').current,protocol_version:1,needs_review:true}};
  for(const field of ['duration','related_row']){const bad=JSON.parse(JSON.stringify(good).replace('"'+field+'":null','"'+field+'":1e400'));assert.throws(()=>P.inspect(bad,payload));}
  assert.deepEqual(P.inspect(good,payload),data);
 });
