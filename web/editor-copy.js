@@ -9,7 +9,7 @@
   function checkedSource(list,source){
     const spec=specs[list];
     if(!Object.hasOwn(specs,list)||!exact(source,['entries','visible','busy'])||typeof source.visible!=='boolean'||typeof source.busy!=='boolean'||!Array.isArray(source.entries)||source.entries.length>spec.limit)throw Error('複製來源無效；原編修保留');
-    const entries=source.entries.map(entry=>{
+    const entries=[...source.entries].map(entry=>{
       if(!exact(entry,['id','value'])||typeof entry.id!=='string'||!entry.id||entry.id.length>64||!exact(entry.value,spec.fields))throw Error('複製列無效；原編修保留');
       const value=Object.fromEntries(spec.fields.map(key=>{const v=entry.value[key];if(typeof v!==(key==='open'?'boolean':'string'))throw Error('複製欄位無效；原編修保留');return [key,v];}));
       return {id:entry.id,value};
