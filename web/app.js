@@ -276,9 +276,17 @@ function renderMusicReady(view){
 musicReadyPager=MusicReadinessPageDOM.bind(document,{prefix:'music-ready',visible:()=>state.tab==='music'&&!$('music').hidden,busy:()=>state.busy,
   renderItem:(issue,locate,disabled)=>{const li=document.createElement('li'),button=document.createElement('button');button.type='button';button.className='subtle';button.disabled=disabled;button.textContent=(issue.scope==='sections'?`段落 ${issue.row} · `:issue.scope==='avoid'?`避免事項 ${issue.row} · `:issue.scope==='deliverables'?`交付項目 ${issue.row} · `:'')+(MusicReadiness.labels[issue.field]||issue.field)+'：'+issue.message;button.onclick=locate;li.append(button);return li;},onLocate:locateMusicIssue,onError:error=>say(error.message,true)});
 musicReadyController=MusicReadiness.createController({capture:()=>capturePanel('music'),captureIds:()=>entriesFor('arrangement').map(e=>e.id),onState:renderMusicReady});
+function focusMusicSectionIssue(issue){
+  const target=musicIssueTarget(issue);if(!target||!target.isConnected||target.disabled)return false;
+  target.focus();const field=target.getBoundingClientRect(),toolbar=$('section-issue-toolbar').getBoundingClientRect(),height=window.innerHeight;
+  const coverBottom=toolbar.top>=0&&toolbar.top<height?toolbar.bottom:0;
+  const offset=MusicEditorFieldPosition.scrollOffset({top:field.top,bottom:field.bottom,height,coverBottom});
+  if(offset)window.scrollBy({top:offset,behavior:'auto'});
+  return document.activeElement===target;
+}
 sectionReviewDOM=MusicSectionReviewDOM.bind(document,{labels:MusicReadiness.labels,visible:()=>state.tab==='music'&&!$('music').hidden,busy:()=>state.busy,
   onCheck:()=>{const view=sectionReviewController.check();say(`段落 ${view.report.row} 待辦 ${view.report.issueCount} 項；原歌曲保持。`);return true;},
-  onLocate:(index,revision)=>{if(state.busy||state.tab!=='music')return false;const issue=sectionReviewController.locate(index,revision);if(!issue)return false;const target=musicIssueTarget(issue);if(!target||!target.isConnected||target.disabled)return false;target.focus();return document.activeElement===target;},onError:error=>say(error.message,true)});
+  onLocate:(index,revision)=>{if(state.busy||state.tab!=='music')return false;const issue=sectionReviewController.locate(index,revision);if(!issue)return false;return focusMusicSectionIssue(issue);},onError:error=>say(error.message,true)});
 sectionReviewController=MusicSectionReview.createController({capture:()=>({panel:capturePanel('music'),ids:entriesFor('arrangement').map(e=>e.id),selectedId:$('section-order').value}),onState:sectionReviewDOM.render});
 $('section-order').addEventListener('change',()=>sectionReviewController.refresh());
 const sectionReviewRequest=MusicReadinessRequest.createController({source:sectionReviewController,checkedResult:MusicSectionReview.checkedResult,

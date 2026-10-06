@@ -1,4 +1,12 @@
-# 進度：目前 v0.116.0
+# 進度：目前 v0.117.0
+
+## v0.117.0 單段逐項定位
+
+歌曲單段待辦新增工具列「上一項／下一項／重查這一段」。共享 issue-cursor 只保留report revision／有界index，明確定位成功才前進；重查重設而不自動搶焦點，來源／stable IDs／選擇／busy／換台拒絕舊定位。共用純 editor-field-position 幾何與既有shot wrapper，明確focus原欄位後核對工具列遮擋；窄視窗維持表格內水平捲動，height≤400px改static流。單段DOM使用注入的literal段落訊息，既有單鏡預設文字與API保持。新增一個固定GET，沒有POST、Agent權限或schema變更；19基本／26啟庫、原26組工具schemas、Agent1／draft3／section-review1／shot-review1保持。產品117／唯一policy38–117共80，未知118拒絕。
+
+611 Python（95.407秒）、1397 JavaScript、134 syntax、4 Skills與diff通過；新增16 JS。原v116指定source ZIP還原611／1381，316份歷史ZIP／manifest bytes及原26組schemas一致；六份既有整首／單段report data與兩檔bytes保持，只有產品meta.version變更。原生34快照／28組完整草稿除saved_at比較、13次實際滑鼠／鍵盤原第40段定位，五欄完整前進／上一項／邊界、list revision單元核對、重查不搶焦點及重設、選擇與同文字換序／精確復原、局部來源編修／全域scope、busy／換台通過。1280×720、390×844、390×500定位欄位在viewport且低於sticky工具列，390×360改static並仍可定位，無頁面水平溢出；PNG保存於忽略的QA目錄，幾何與截圖不冒充完整視覺或screen reader驗收。三份原生完整單段5／4／0 reports均needs_review=true；CLI input／原生draft3 status2／2／0、Agent／MCP三組good-bad-good、9筆HTTP及5固定JS bytes一致。原生File身份、暫停0.5秒及8秒合成WAV保持，console warn/error零。一個bounded QA server、一個ephemeral HTTP thread、實際子程序及一個owned tab正常結束，viewport reset。初次新測試誤讀QA fixture形狀且依賴ignored outputs，改為自建合成raw panel；第二次一項訊息測試用hasReport=false與detailCount=1的不合法metadata，改為正確0／1 transition後41個focused checks及完整檢查通過。初次唯讀觀察helper用message而非status ID，修正後讀取，沒有app變更；失敗紀錄保留。瀏覽器保存下載本輪未重測，完整視覺／screen reader、實聽、媒體同步、Host安裝與FreeTWAI創始接受未驗證。
+
+見[契約](docs/SECTION-ISSUE-NAVIGATION.md)。以下保留歷史迭代。
 
 ## v0.116.0 單段報告跨工具
 

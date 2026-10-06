@@ -3,17 +3,23 @@
 (function(root){
  const J=typeof module==='object'&&module.exports?require('../musiclab/assets/json-document.js'):root.MusicJsonDocument;
  const keys=['busy','detailCount','hasReport','revision','stale','visible'];
+ const defaultMessages={missing:'先檢查選定鏡頭待辦，再逐項定位。',stale:'選定來源已有修改，請重查這一鏡。',empty:'這一鏡沒有欄位待辦；仍須整份分鏡驗證。',progress:'這一鏡待辦'};
+ function checkedMessages(value){
+  if(!value||!J.sameValue(value,value)||!J.sameValue(Object.keys(value).sort(),['empty','missing','progress','stale'])||!Object.values(value).every(v=>typeof v==='string'&&v.length>0&&v.length<=1024))throw Error('待辦定位訊息無效；原內容保留');
+  return {...value};
+ }
  function checked(value){
   if(!value||!J.sameValue(value,value)||!J.sameValue(Object.keys(value).sort(),keys)||!Number.isSafeInteger(value.detailCount)||value.detailCount<0||value.detailCount>32||!Number.isSafeInteger(value.revision)||value.revision<0||!['hasReport','stale','busy','visible'].every(k=>typeof value[k]==='boolean')||!value.hasReport&&value.detailCount!==0)throw Error('單鏡待辦定位狀態無效；原內容保留');
   return {...value};
  }
- function createController({capture,onLocate,onState=()=>{}}){
+ function createController({capture,onLocate,onState=()=>{},messages=defaultMessages}){
+  const text=checkedMessages(messages);
   let index=null,revision=null,count=null;
   function read(){const source=checked(capture());if(source.revision!==revision||source.detailCount!==count){index=null;revision=source.revision;count=source.detailCount;}return source;}
   const allowed=s=>s.hasReport&&!s.stale&&!s.busy&&s.visible&&s.detailCount>0;
   function publish(s){
    const ready=allowed(s),view={index,revision:s.revision,detailCount:s.detailCount,canPrevious:ready&&index!==null&&index>0,canNext:ready&&(index===null||index<s.detailCount-1),
-    message:!s.hasReport?'先檢查選定鏡頭待辦，再逐項定位。':s.stale?'選定來源已有修改，請重查這一鏡。':s.detailCount===0?'這一鏡沒有欄位待辦；仍須整份分鏡驗證。':`這一鏡待辦 ${index===null?'尚未定位':`${index+1}／${s.detailCount}`}；上一項／下一項只定位原欄位。`};
+    message:!s.hasReport?text.missing:s.stale?text.stale:s.detailCount===0?text.empty:`${text.progress} ${index===null?'尚未定位':`${index+1}／${s.detailCount}`}；上一項／下一項只定位原欄位。`};
    onState({...view});return view;
   }
   function locate(target,expectedRevision){
