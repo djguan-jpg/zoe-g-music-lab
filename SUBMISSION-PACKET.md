@@ -2,7 +2,7 @@
 
 發起／創辦署名：**ZOE. G** · GitHub 帳號：**djguan-jpg** · 日期：2026-10-01。
 
-儲存庫：<https://github.com/djguan-jpg/zoe-g-music-lab>（目前 private）。四個專案共用一個儲存庫，各有獨立 ID、Skill 與可操作成果。不可將這份資料用來認領既有 FreeTWAI 手冊的原作者。
+儲存庫：<https://github.com/djguan-jpg/zoe-g-music-lab>（2026-10-06 已依使用者授權公開）。四個專案共用一個儲存庫，各有獨立 ID、Skill 與可操作成果。不可將這份資料用來認領既有 FreeTWAI 手冊的原作者。
 
 本次由 ZOE. G 提出四個方向與創办意願，與 Codex 共同完成第一版；Codex 協助範圍為規格、文字、程式和驗證。沒有使用其其他本機專案、GitHub Repo 或作品。第三方公開 README 只作需求比較，具體來源見 CONCEPT.md，未搬入第三方程式或素材。
 
@@ -29,4 +29,4 @@
 
 ## 目前流程狀態
 
-已建立 private GitHub Repo，尚未公開或送出自由工坊投稿。自由工坊表單要求公開 GitHub 網址，作品關係列為自行聲明，並明示不以登錄驗證作者或擁有權。自 v0.3.0 採用 PolyForm Noncommercial 1.0.0 非商用授權。需取得公開授權後才可按表單流程登錄；不能把自行聲明寫成平台已認證。
+2026-10-06 已依使用者明確授權公開此新 Repo，並將上列四個新專案逐份以原作者關係送出。四份均已建立公開介紹頁；作者關係仍是自行聲明，正式收錄另由工坊審核，尚未取得作者／創始身分核實。PolyForm Noncommercial 1.0.0 禁止商用授權及 LICENSE／NOTICE 保留。平台自動授權欄顯示 NOASSERTION，介紹已明示實際授權；網址與核對結果見 [PLATFORM-STATUS.md](PLATFORM-STATUS.md)。

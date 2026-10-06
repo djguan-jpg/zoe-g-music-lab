@@ -7,38 +7,42 @@
     "github_username": "djguan-jpg"
   },
   "ai_collaboration": "Codex assisted with scope, original skill text, implementation and validation",
-  "publication": "github_private",
+  "publication": "github_public",
   "repository": "https://github.com/djguan-jpg/zoe-g-music-lab",
   "release_version": "v0.121.0",
-  "platform_claim": "not_submitted",
+  "platform_claim": "submitted_unverified",
   "projects": [
     {
       "id": "zoe-music-production",
       "title": "ZOE Music Production",
       "entry": "projects/zoe-music-production/SKILL.md",
       "cli": "music",
-      "scope": "musical memory hook, bar timing, energy plan, raw draft field diagnostics and AI task packaging; read-only literal name, focus and texture search with source-pinned pagination"
+      "scope": "musical memory hook, bar timing, energy plan, raw draft field diagnostics and AI task packaging; read-only literal name, focus and texture search with source-pinned pagination",
+      "platform_submission_url": "https://freetwai.com/development/submissions/486c436d-1145-4314-96b9-cb81e9c27581"
     },
     {
       "id": "zoe-mv-storyboard",
       "title": "ZOE MV Storyboard",
       "entry": "projects/zoe-mv-storyboard/SKILL.md",
       "cli": "storyboard",
-      "scope": "visual motif development, original draft field and motif-reference diagnostics, partial raw clock diagnostics, contiguous exclusive frame coverage, shot timing and continuity review; read-only literal narrative shot field search with source-pinned pagination"
+      "scope": "visual motif development, original draft field and motif-reference diagnostics, partial raw clock diagnostics, contiguous exclusive frame coverage, shot timing and continuity review; read-only literal narrative shot field search with source-pinned pagination",
+      "platform_submission_url": "https://freetwai.com/development/submissions/3328607d-2f2a-431f-b275-5594ea60ac6f"
     },
     {
       "id": "zoe-lyrics-sync",
       "title": "ZOE Lyrics Sync",
       "entry": "projects/zoe-lyrics-sync/SKILL.md",
       "cli": "lyrics",
-      "scope": "source-preserving lyric seeds, original-row timing diagnostics, explicit media/declaration duration adoption, manual waveform timing and validated exports; complete source and fixed-template HTML preview validation; standalone export diagnostics with current-row navigation; bounded standalone text download handoff with portable fixed filenames; consistent Unicode source validation before editing or export"
+      "scope": "source-preserving lyric seeds, original-row timing diagnostics, explicit media/declaration duration adoption, manual waveform timing and validated exports; complete source and fixed-template HTML preview validation; standalone export diagnostics with current-row navigation; bounded standalone text download handoff with portable fixed filenames; consistent Unicode source validation before editing or export",
+      "platform_submission_url": "https://freetwai.com/development/submissions/eb499312-d0dd-479d-8d1b-0e68a6760803"
     },
     {
       "id": "zoe-audio-delivery",
       "title": "ZOE Audio Delivery",
       "entry": "projects/zoe-audio-delivery/SKILL.md",
       "cli": "audio",
-      "scope": "PCM evidence, gated integrated loudness, quiet edges, stereo correlation and portable raw delivery-condition drafts; whole-source reviewed condition file handoff and scoped explicit Apply undo"
+      "scope": "PCM evidence, gated integrated loudness, quiet edges, stereo correlation and portable raw delivery-condition drafts; whole-source reviewed condition file handoff and scoped explicit Apply undo",
+      "platform_submission_url": "https://freetwai.com/development/submissions/dee541c2-0b57-4e5b-bd04-68535ae7db6a"
     }
   ],
   "license": "PolyForm-Noncommercial-1.0.0",
@@ -82,5 +86,6 @@
   "music_search_schema_version": 1,
   "storyboard_shot_review_schema_version": 1,
   "music_section_review_schema_version": 1,
-  "lyrics_cue_review_schema_version": 1
+  "lyrics_cue_review_schema_version": 1,
+  "platform_status_record": "PLATFORM-STATUS.json"
 }
