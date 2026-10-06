@@ -26,7 +26,7 @@
      const result=P.inspectWithContext(source.source,bytes);if(!current())return false;const checked=result.report;
      report=checked;difference=result.context;message=checked.matched?`選定檔案與 ${checked.expected_name} 原文位元組完全一致（${checked.expected_bytes} bytes）。請繼續保留這份檔案。`:`選定檔案與 ${checked.expected_name} 不一致；第一個差異在 byte ${checked.first_difference_byte}（從0起）。目前 ${checked.expected_bytes} bytes，選定 ${checked.selected_bytes} bytes。`;
      onReport({...checked},{...info});return true;
-    }catch(error){if(current()){message=error.message;onError(error);}return false;}
+    }catch(error){if(current()){difference=null;message=error.message;onError(error);}return false;}
     finally{if(ownsRead)activeReads--;if(token===sequence&&!disposed){pending=false;if(!current())clear('核對期間核對來源或操作狀態已改變，請重新核對。');emit();}else if(ownsRead&&!disposed)refresh();}
    }};
  }

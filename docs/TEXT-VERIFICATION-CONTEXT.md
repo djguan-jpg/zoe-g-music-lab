@@ -18,7 +18,7 @@ Controller沿同scope／revision／完整原名與原文、visible／busy／dirt
 
 僅一固定GET與固定script依賴次序：text-byte-context在text-verification前；主工作台script一次。没有新POST、operation、domain/wire schema、模型、路徑、權限、外網或依賴。22基本／29啟庫、Agent1／draft3、舊29組input/output schemas保持。唯一執行期policy38–153共116；未知154拒絕。
 
-22新增測試涵蓋舊七鍵report逐序列值、8MiB尾端差異與匹配、strict option／type／capacity、BOM／CRLF／NUL／HTML／bidi、emoji視窗邊界、invalid／truncated UTF8／EOF／空檔、隔離DTO、取消／失效／late／讀取錯誤及三literal DOM入口／legacy。集中148、完整755Python／1891JS、152syntax與四Skills通過。
+23新增測試涵蓋舊七鍵report逐序列值、8MiB尾端差異與匹配、strict option／type／capacity、BOM／CRLF／NUL／HTML／bidi、emoji視窗邊界、invalid／truncated UTF8／EOF／空檔、隔離DTO、取消／失效／late／讀取錯誤及三literal DOM入口／legacy。集中148、完整755Python／1892JS、152syntax與四Skills通過。
 
 Native13次實際File選取；before由restore tag的三原模組鎖定，第18byte同大小差異只列位置。after12次選取：三入口同大小差異文字與hex、所有scriptChildren=0、invalid UTF8、emptyEOF、三匹配重試、取消舊read、來源F9清除與後續編修、QA注入讀取拒絕及重試。讀取完成閘門只延後真正File.arrayBuffer結果，不是慢磁碟；部分早期snapshot處於pending，驗證使用其後仍保留的實際settled DOM，不補寫原證據。12/12settled、gates0、console0；正式三區塊、asset一次及CSScomputed文字換行核對。兩自有server原handle63043／83175均EOF0、context closed及deadline joined，兩頁關閉。沒有saved download、完整窄尺寸視覺／screen reader、實聽／媒體／Host接受。
 
@@ -29,3 +29,5 @@ QA preparation第一次固定asset文字anchor不符，版本／HTML／CSS已寫
 restore-v0.152.0-before-v0.153.0 →392655b2cf64ee0689608fafc437615cb1f32920；codex/iteration-v0.153.0。原v152封裝2954468bytes／SHA b0c22af54f9ed3acea5b738b9789cca92f638b17b2b150a90df01133eabbfd5a，原launcher／deadline順序755Python／1869JS還原與CRC通過，暫存移除。四scope460歷史ZIP／manifest逐bytes與29舊schemas／原整份／原列比較保持。
 
 六法律／平台文件原bytes保留；PolyForm Noncommercial1.0.0、public、ZOE. G／djguan-jpg，無AGPL／商用追加。本輪唯讀登入與四公開投稿核對；會員清單同Repo只列一項，四個公開submission頁各自存在，原作者自行聲明／未核實，不能宣稱創始認證。不改平台、不重送。最新三封裝保護、strict超七天可重建才清理，partial36/53/141／unverified77／草稿／素材保持；rolling goal active。
+
+最後補查保存確認onReport回呼錯誤：保留原七欄report／callback契約，只清除差異片段並沿原onError提示。新增一項回呼失敗測試、完整755Python／1892JS與集中149JS重驗。此條件在原生13次選檔後以注入controller驗證；沒有將它冒充native回呼失敗或磁碟错误。
