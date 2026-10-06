@@ -18,4 +18,4 @@ Skills章節更新第一次插在frontmatter第一行之後，提交前quick val
 
 本輪只唯讀盤點本workspace outputs、直接release封裝與typed owned runs；最新121／120／119三版保護。嚴格超七天且exact tag／Git archive可重建才列清除候選，未知檔、素材、草稿、備份、失敗36／53及失敗QA保持。取得各session實際EOF後再做最終稽核，不以bare PID終止外部程序。瀏覽器保存下載、完整視覺／screen reader、實聽／實際音畫同步、Host安裝與FreeTWAI創始接受未驗證。PolyForm Noncommercial 1.0.0／private、創辦ZOE. G／GitHub djguan-jpg保持，FreeTWAI not_submitted。
 
-見[契約](docs/ISSUE-SUMMARY.md)。
+見[契約](ISSUE-SUMMARY.md)。

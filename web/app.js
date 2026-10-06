@@ -277,6 +277,13 @@ function renderMusicReady(view){
 musicReadyPager=MusicReadinessPageDOM.bind(document,{prefix:'music-ready',visible:()=>state.tab==='music'&&!$('music').hidden,busy:()=>state.busy,
   renderItem:(issue,locate,disabled)=>{const li=document.createElement('li'),button=document.createElement('button');button.type='button';button.className='subtle';button.disabled=disabled;button.textContent=(issue.scope==='sections'?`段落 ${issue.row} · `:issue.scope==='avoid'?`避免事項 ${issue.row} · `:issue.scope==='deliverables'?`交付項目 ${issue.row} · `:'')+(MusicReadiness.labels[issue.field]||issue.field)+'：'+issue.message;button.onclick=locate;li.append(button);return li;},onLocate:locateMusicIssue,onError:error=>say(error.message,true)});
 musicReadyController=MusicReadiness.createController({capture:()=>capturePanel('music'),captureIds:()=>entriesFor('arrangement').map(e=>e.id),onState:renderMusicReady});
+function revealActiveIssue(target,toolbar){
+  if(!target||!target.isConnected||target.disabled||document.activeElement!==target)return false;
+  const rect=target.getBoundingClientRect(),cover=toolbar.getBoundingClientRect(),height=window.innerHeight;
+  const coverBottom=cover.top<height&&cover.bottom>0?cover.bottom:0;
+  const offset=MusicEditorFieldPosition.scrollOffset({top:rect.top,bottom:rect.bottom,height,coverBottom});
+  if(offset)window.scrollBy({top:offset,behavior:'instant'});return document.activeElement===target;
+}
 function focusMusicSectionIssue(issue){
   const target=musicIssueTarget(issue);if(!target||!target.isConnected||target.disabled)return false;
   target.focus();const field=target.getBoundingClientRect(),toolbar=$('section-issue-toolbar').getBoundingClientRect(),height=window.innerHeight;
@@ -285,7 +292,7 @@ function focusMusicSectionIssue(issue){
   if(offset)window.scrollBy({top:offset,behavior:'auto'});
   return document.activeElement===target;
 }
-sectionReviewDOM=MusicSectionReviewDOM.bind(document,{labels:MusicReadiness.labels,visible:()=>state.tab==='music'&&!$('music').hidden,busy:()=>state.busy,
+sectionReviewDOM=MusicSectionReviewDOM.bind(document,{onReveal:issue=>revealActiveIssue(musicIssueTarget(issue),$('section-issue-toolbar')),labels:MusicReadiness.labels,visible:()=>state.tab==='music'&&!$('music').hidden,busy:()=>state.busy,
   onCheck:()=>{const view=sectionReviewController.check();say(`段落 ${view.report.row} 待辦 ${view.report.issueCount} 項；原歌曲保持。`);return true;},
   onLocate:(index,revision)=>{if(state.busy||state.tab!=='music')return false;const issue=sectionReviewController.locate(index,revision);if(!issue)return false;return focusMusicSectionIssue(issue);},onError:error=>say(error.message,true)});
 sectionReviewController=MusicSectionReview.createController({capture:()=>({panel:capturePanel('music'),ids:entriesFor('arrangement').map(e=>e.id),selectedId:$('section-order').value}),onState:sectionReviewDOM.render});
@@ -514,7 +521,7 @@ $('mv-time-report').onclick=()=>run($('mv-time-report'),async current=>{
   $('mv-visual').hidden=true;setFiles(accepted.files,`分鏡時間檢查 · 待辦 ${accepted.data.issue_count} 項`);
   say('分鏡時間報告已建立；原時間保留，仍須完整創作與實際音畫驗證');
 });
-shotReviewDOM=MusicStoryboardShotReviewDOM.bind(document,{labels:MusicStoryboardShotReview.labels,visible:()=>state.tab==='storyboard'&&!$('storyboard').hidden,busy:()=>state.busy,onCheck:()=>$('shot-review-check').click(),onError:error=>say(error.message,true),
+shotReviewDOM=MusicStoryboardShotReviewDOM.bind(document,{onReveal:issue=>revealActiveIssue(storyboardIssueTarget(issue),document.querySelector('.shot-tools')),labels:MusicStoryboardShotReview.labels,visible:()=>state.tab==='storyboard'&&!$('storyboard').hidden,busy:()=>state.busy,onCheck:()=>$('shot-review-check').click(),onError:error=>say(error.message,true),
   onLocate:(index,revision)=>{if(state.busy||state.tab!=='storyboard')return false;const issue=shotReviewController.locate(index,revision);if(!issue)return false;focusShot(issue.row-1,issue.field);return document.activeElement===storyboardIssueTarget(issue);}});
 shotReviewController=MusicStoryboardShotReview.createController({capture:()=>({panel:capturePanel('storyboard'),ids:entriesFor('shots').map(e=>e.id),selectedId:$('shots-order').value}),onState:shotReviewDOM.render});
 $('shots-order').addEventListener('change',()=>shotReviewController.refresh());
@@ -543,7 +550,7 @@ function focusCueReviewIssue(issue){
   const offset=MusicEditorFieldPosition.scrollOffset({top:rect.top,bottom:rect.bottom,height:window.innerHeight,coverBottom});
   if(offset)window.scrollBy({top:offset,behavior:'instant'});return document.activeElement===target;
 }
-cueReviewDOM=MusicLyricsCueReviewDOM.bind(document,{visible:()=>state.tab==='lyrics'&&!$('lyrics').hidden,busy:()=>state.busy,
+cueReviewDOM=MusicLyricsCueReviewDOM.bind(document,{onReveal:issue=>revealActiveIssue(cueIssueTarget(issue),$('cue-issue-toolbar')),visible:()=>state.tab==='lyrics'&&!$('lyrics').hidden,busy:()=>state.busy,
   onCheck:()=>{const view=cueReviewController.check();say(`原句 ${view.report.row} 待辦 ${view.report.issue_count} 項；原歌詞與音檔保持。`);return true;},
   onLocate:(index,revision)=>{if(state.busy||state.tab!=='lyrics')return false;const issue=cueReviewController.locate(index,revision);if(!issue)return false;
     return focusCueReviewIssue(issue);},onError:error=>say(error.message,true)});
