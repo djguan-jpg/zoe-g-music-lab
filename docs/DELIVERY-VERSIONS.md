@@ -1,5 +1,9 @@
 # 固定交付版本契約 v1
 
+## v0.109
+
+單一runtime policy current=0.109.0，supported38–109共72；unknown110拒絕。284份歷史ZIP／manifest bytes相同，17／24操作與24組既有schemas不變。兩個新資產只用於工作台歌詞診斷分頁；固定preview嵌入模組與schema不變。見[契約](ISSUE-PAGE.md)。
+
 ## v0.108
 
 單一runtime policy current=0.108.0，supported38–108共71；unknown109拒絕。280份歷史ZIP／manifest bytes相同，17／24操作、24組既有schemas不變。固定HTML仍核對本安裝範本／模組；新比較器改變嵌入模組bytes，舊HTML保留，完整JSON重新建立現版預覽。見[契約](JSON-VALUE.md)。

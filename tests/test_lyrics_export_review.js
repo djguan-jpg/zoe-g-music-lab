@@ -42,9 +42,10 @@ test('actual DOM adapter labels and focuses the original unsorted table row, and
   const start=source.indexOf('function renderLyricsExportReview('),end=source.indexOf('lyricsExportController=MusicLyricsExport.createController(',start);
   assert.ok(start>=0&&end>start);
   const node=()=>({dataset:{},children:[],append(child){this.children.push(child);},replaceChildren(){this.children=[];}}),box=node(),list=node(),status=node();
-  let focused=null;const rows=['tag','blank','ordinary'],inputs=rows.map(id=>[{},{},{focus(){focused=id;}}]);
-  const nodes={'lyrics-export-box':box,'lyrics-export-issues':list,'lyrics-export-status':status,cues:{children:inputs.map(a=>({querySelectorAll:()=>a}))}};
-  const context={state:{busy:false},$:id=>nodes[id],entriesFor:()=>rows.map(id=>({id})),document:{createElement:node}};
+  let focused=null;const document={createElement:node,activeElement:null},rows=['tag','blank','ordinary'],inputs=rows.map(id=>[{},{},{isConnected:true,disabled:false,scrollIntoView(){},focus(){focused=id;document.activeElement=this;}}]);
+  const nodes={'lyrics-export-box':box,'lyrics-export-issues':list,'lyrics-export-status':status,lyrics:{hidden:false},cues:{children:inputs.map(a=>({querySelectorAll:()=>a}))}};
+  for(const suffix of ['previous','next','pages','page-note'])nodes['lyrics-export-'+suffix]=node();document.getElementById=id=>nodes[id];
+  const context={state:{busy:false,tab:'lyrics'},$:id=>nodes[id],entriesFor:()=>rows.map(id=>({id})),document,MusicIssuePageDOM:require('../web/issue-page-dom.js'),lyricsExportData:null,lyricsExportIds:[],lyricsExportRevision:0,lyricsExportPager:null,say(){}};
   vm.createContext(context);vm.runInContext(source.slice(start,end),context);
   context.renderLyricsExportReview(reply.data,['tag','blank','ordinary']);
   assert.match(list.children[0].children[0].textContent,/表格第 1 句 · LRC/);
