@@ -24,6 +24,7 @@ def main(argv=None):
     action.add_argument('--prune', action='store_true', help='Apply the exact reviewed eligible package set')
     action.add_argument('--restore-journal', type=Path, help='Restore exact source packages without overwrite')
     action.add_argument('--record-self', metavar='JOB', help='Record this Python process identity for managed job wrappers')
+    action.add_argument('--space-report', action='store_true', help='Read-only outputs size/age categories; does not evaluate deletion eligibility')
     parser.add_argument('--expected-token', help='Required SHA-256 of the preview candidate identities for pruning')
     parser.add_argument('--run-record', type=Path, action='append', default=[], help='Explicit same-host run record within selected project outputs')
     parser.add_argument('--package-directory', action='append', help='Preview or prune only these exact eligible release identities; repeat 1–128 times')
@@ -37,9 +38,9 @@ def main(argv=None):
             raise ValueError('--expected-token is only valid with --prune')
         if args.prune and (not args.expected_token or not re.fullmatch('[0-9a-f]{64}', args.expected_token)):
             raise ValueError('--prune requires the exact preview --expected-token')
-        if (args.restore_journal or args.record_self) and records:
+        if (args.restore_journal or args.record_self or args.space_report) and records:
             raise ValueError('Run records are only used by audit and pruning')
-        if args.package_directory and (args.restore_journal or args.record_self):
+        if args.package_directory and (args.restore_journal or args.record_self or args.space_report):
             raise ValueError('--package-directory is only valid with audit or pruning')
         # Validate receipt location first; pruning independently journals recovery before moving.
         if args.out:
@@ -54,6 +55,9 @@ def main(argv=None):
             result = restore(root, selected(args.restore_journal))
         elif args.record_self:
             result = record_current_run(args.record_self)
+        elif args.space_report:
+            from musiclab.maintenance_space_fs import space_report
+            result = space_report(root)
         else:
             result = audit(root, records) if args.package_directory is None else audit_batch(root, args.package_directory, records)
         if args.out:
