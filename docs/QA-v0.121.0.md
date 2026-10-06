@@ -1,6 +1,4 @@
-# v0.121.0 交接與可逆
-
-單鏡、單段與單句工具列現在顯示最後成功定位待辦的原位置、欄位、原因及關聯列，讓長表格編修時也能知道正在處理什麼。純 issue-summary 只格式化有界嚴格 JSON metadata；三個 DOM adapter 共用清單與工具列文字，在來源失效、busy、隱藏、無選列、未定位或新 revision 時清除說明。回復精確來源可恢復上一個成功位置；不因手動焦點改動重寫 cursor。說明換行後由 app 重新量測活動欄位，僅對已活動的原欄位調整捲動，不重新聚焦其他控制。實際窄畫面發現單鏡長待辦按鈕造成31px溢出，改為有界換行；空鏡頭選列也停用清單與 cursor。新增一個固定 GET asset，沒有新 operation。產品121／唯一交付policy38–121共84，未知122拒絕；20／27 tools、旧27組schemas、Agent1／draft3與其他domain保持。
+# v0.121.0 QA
 
 619 Python（100.000秒）、1484 JavaScript、137 syntax、4 Skills與diff通過；新增31 JS、0 Python。上一版v120指定source ZIP（2223876 bytes、SHA 8f68ce674539114811517e1faea16460a7b04231cf4150a0c1482e7731194052）實際還原619／1453，暫存還原移除。四scope×83個歷史producer的332份ZIP／manifest bytes保持；舊27組operation input/output schemas與20／27 operations集合相同。八份whole lyrics Python data／files、JS data／Markdown與跨語言診斷相同，只更新產品meta。31新測試含Unicode／首尾空白／literal HTML、exact keys、getter不讀、hidden／symbol拒絕、容量、stale／busy／hidden／empty selector、false／throw focus、新revision／零待辦與exact restore；app原函式VM驗證toolbar增高後只移活動欄位，adapter layout錯誤保留已成功cursor。
 
@@ -17,5 +15,3 @@ Skills章節更新第一次插在frontmatter第一行之後，提交前quick val
 分支 `codex/iteration-v0.121.0`、基線main `670977695ef74f7b835dac6d94a5f65d1ac53180`、還原tag `restore-v0.120.0-before-v0.121.0`。由tag建立codex/restore-*分支經private PR還原，保留main歷史、原素材與草稿。固定source commit建立ZIP／SHA；merge tree、四個遠端refs與實際release兩個asset下載bytes另留outputs/v121-qa。GitHub CI未設定，測試為本機與封裝版實際檢查。
 
 本輪只唯讀盤點本workspace outputs、直接release封裝與typed owned runs；最新121／120／119三版保護。嚴格超七天且exact tag／Git archive可重建才列清除候選，未知檔、素材、草稿、備份、失敗36／53及失敗QA保持。取得各session實際EOF後再做最終稽核，不以bare PID終止外部程序。瀏覽器保存下載、完整視覺／screen reader、實聽／實際音畫同步、Host安裝與FreeTWAI創始接受未驗證。PolyForm Noncommercial 1.0.0／private、創辦ZOE. G／GitHub djguan-jpg保持，FreeTWAI not_submitted。
-
-見[契約](docs/ISSUE-SUMMARY.md)。
