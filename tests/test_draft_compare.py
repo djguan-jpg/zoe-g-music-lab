@@ -148,7 +148,7 @@ class DraftComparisonTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, '1 MiB'): compare(p)
 
     def test_discovery_exposes_exact_readonly_tool_and_independent_schema(self):
-        c = capabilities(); self.assertEqual(len(c['operations']), 21); self.assertTrue(c['draft_comparison']['read_only'])
+        c = capabilities(); self.assertEqual(len(c['operations']), 22); self.assertTrue(c['draft_comparison']['read_only'])
         t = next(x for x in tool_list() if x['name'] == 'draft_compare')
         self.assertTrue(t['annotations']['readOnlyHint']); self.assertFalse(t['annotations']['destructiveHint']); self.assertFalse(t['annotations']['openWorldHint'])
         self.assertEqual(payload_schema('draft_compare')['required'], ['baseline', 'current'])

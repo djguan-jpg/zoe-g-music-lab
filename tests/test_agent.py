@@ -104,7 +104,7 @@ class AgentTests(unittest.TestCase):
                                  capture_output=True, text=True, encoding="utf-8", timeout=20)
         self.assertEqual(process.returncode, 0)
         data = json.loads(process.stdout)
-        self.assertEqual(set(data["operations"]), {"draft_compare", "lyrics_cue_review", "music", "storyboard", "lyrics", "audio", "storyboard_seed", "lyrics_seed", "lyrics_review", "lyrics_search", "storyboard_search", "music_search", "lyrics_export_review", "music_review", "storyboard_review", "storyboard_timing_review", "storyboard_shot_review", "music_section_review", "delivery_package", "delivery_inspect", "audio_acceptance_review"})
+        self.assertEqual(set(data["operations"]), {"draft_compare_row", "draft_compare", "lyrics_cue_review", "music", "storyboard", "lyrics", "audio", "storyboard_seed", "lyrics_seed", "lyrics_review", "lyrics_search", "storyboard_search", "music_search", "lyrics_export_review", "music_review", "storyboard_review", "storyboard_timing_review", "storyboard_shot_review", "music_section_review", "delivery_package", "delivery_inspect", "audio_acceptance_review"})
         self.assertEqual(data["protocol_version"], 1)
         self.assertFalse(data["media_generated"])
 

@@ -5,17 +5,18 @@
  const Controller=node?require('./draft-compare-controller.js'):root.MusicDraftCompareController;
  const Download=node?require('./draft-compare-download.js'):root.MusicDraftCompareDownload;
  const View=node?require('./draft-compare-view.js'):root.MusicDraftCompareView;
+ const Row=node?require('./draft-compare-row-dom.js'):root.MusicDraftCompareRowDom;
  const scopes={music:'歌曲設計',storyboard:'MV 分鏡',lyrics:'歌詞校時',audio:'音檔交付',metadata:'版本與頁籤資料'};
  const collections={fields:'欄位',sections:'段落',avoid:'避免事項',deliverables:'交付項目',shots:'鏡頭',motifs:'母題',cues:'歌詞句',metadata:'資料'};
  function bind(document,{prefix,capture,gate,downloads,onError=()=>{}}){
   const get=s=>document.getElementById(prefix+'-compare-'+s),button=get('start'),cancel=get('cancel'),status=get('status'),box=get('report'),list=get('list'),filter=get('scope'),previous=get('previous'),next=get('next'),pageNote=get('page');
   const expand=get('expand'),collapse=get('collapse'),openNote=get('open-note'),kindFilter=get('kind'),kindNote=get('kind-note'),view=View.create();
-  let disposed=false,ready=false,available=false,busy=false,renderToken={},entries=[];
+  let disposed=false,ready=false,available=false,busy=false,renderToken={},entries=[],rowAdapter=null;
   const jsonButton=get('download-json'),markdownButton=get('download-markdown'),downloadStatus=get('download-status');
   const label=key=>document.querySelector(`[id="${key}"]`)?.closest('label')?.childNodes[0]?.textContent?.trim()||({name:'名稱',bars:'小節',energy:'能量',focus:'敘事任務',texture:'音色',start:'開始',end:'結束',text:'歌詞原文',value:'內容',id:'母題 ID',saved_at:'保存時間',tool_version:'工具版本',tab:'頁籤'}[key]||key);
   function element(tag,text,cls){const el=document.createElement(tag);if(text!==undefined)el.textContent=text;if(cls)el.className=cls;return el;}
   function detach(){renderToken={};for(const {element,listener} of entries)element.removeEventListener('toggle',listener);entries=[];}
-  function resetView(){detach();view.clear();list.replaceChildren();openNote.textContent='';kindNote.textContent='';filter.value=kindFilter.value='all';}
+  function resetView(){detach();view.clear();list.replaceChildren();openNote.textContent='';kindNote.textContent='';filter.value=kindFilter.value='all';rowAdapter?.clear();}
   function controls(){
    const v=view.view(),active=ready&&available&&!busy&&!disposed,focused=document.activeElement;
    filter.disabled=kindFilter.disabled=!active;previous.disabled=!active||!v.canPrevious;next.disabled=!active||!v.canNext;expand.disabled=!active||!v.canExpand;collapse.disabled=!active||!v.canCollapse;
@@ -53,7 +54,7 @@
    jsonButton.disabled=markdownButton.disabled=!v.ready||!v.available||v.busy;
    if(v.busy){resetView();status.textContent='正在核對兩份完整草稿；目前内容保留。';status.classList.remove('error');box.hidden=true;}
    else if(v.stale){resetView();status.textContent='工作台或預覽已有變更；此份比較已過期，請重新預覽後比較。';box.hidden=true;}
-   controls();
+   controls();rowAdapter?.refresh();
   },onReady:report=>{
    downloadStatus.textContent='';downloadStatus.classList.remove('error');
    status.classList.remove('error');status.textContent=`作品差異 ${Object.values(report.panels).reduce((n,p)=>n+p.change_count,0)} 項：${Object.entries(report.panels).map(([s,p])=>`${scopes[s]} ${p.change_count}`).join('、')}。版本與頁籤資料 ${report.metadata.changed_fields.length} 項。${report.details_truncated?'只保留有界明細，完整計數已核對。':''}尚未套用。`;
@@ -61,6 +62,7 @@
    // publish marks ready after this callback; read already has the completed source.
    render();
   }});
+  rowAdapter=Row.bind(document,{prefix,capture:()=>{controller.read();return capture();},gate:()=>{const v=gate();return {...v,allowed:v.allowed&&ready&&available&&!busy&&!disposed};},onError});
   const active=()=>ready&&available&&!busy&&!disposed;
   const start=()=>controller.run(),stop=()=>{controller.cancel();status.textContent='已取消比較等待；目前內容與預覽保持。';button.focus({preventScroll:true});},change=()=>{if(active())render(()=>view.selectScope(filter.value));},changeKind=()=>{if(active())render(()=>view.selectKind(kindFilter.value));},back=()=>{if(active())render(()=>view.move(-1));},forward=()=>{if(active())render(()=>view.move(1));};
   const setOpen=open=>{if(!active())return;try{controller.read();const v=view.setPageExpanded(open);for(const row of entries)row.element.open=v.expandedIndices.includes(row.index);controls();}catch(error){onError(error);}},expandPage=()=>setOpen(true),collapsePage=()=>setOpen(false);
@@ -69,7 +71,7 @@
   button.addEventListener('click',start);cancel.addEventListener('click',stop);filter.addEventListener('change',change);kindFilter.addEventListener('change',changeKind);previous.addEventListener('click',back);next.addEventListener('click',forward);
   expand.addEventListener('click',expandPage);collapse.addEventListener('click',collapsePage);
   jsonButton.addEventListener('click',downloadJson);markdownButton.addEventListener('click',downloadMarkdown);
-  const hide=()=>{if(disposed)return;disposed=true;resetView();controller.dispose();button.removeEventListener('click',start);cancel.removeEventListener('click',stop);filter.removeEventListener('change',change);kindFilter.removeEventListener('change',changeKind);previous.removeEventListener('click',back);next.removeEventListener('click',forward);expand.removeEventListener('click',expandPage);collapse.removeEventListener('click',collapsePage);jsonButton.removeEventListener('click',downloadJson);markdownButton.removeEventListener('click',downloadMarkdown);root.removeEventListener?.('pagehide',hide);};root.addEventListener?.('pagehide',hide);
+  const hide=()=>{if(disposed)return;disposed=true;resetView();rowAdapter.dispose();controller.dispose();button.removeEventListener('click',start);cancel.removeEventListener('click',stop);filter.removeEventListener('change',change);kindFilter.removeEventListener('change',changeKind);previous.removeEventListener('click',back);next.removeEventListener('click',forward);expand.removeEventListener('click',expandPage);collapse.removeEventListener('click',collapsePage);jsonButton.removeEventListener('click',downloadJson);markdownButton.removeEventListener('click',downloadMarkdown);root.removeEventListener?.('pagehide',hide);};root.addEventListener?.('pagehide',hide);
   return {refresh:()=>controller.refresh(),invalidate:()=>controller.invalidate(),clear(){controller.clear();resetView();controls();box.hidden=true;downloadStatus.textContent='';downloadStatus.classList.remove('error');status.textContent='先比較目前工作台與預覽草稿，再決定是否載入。';status.classList.remove('error');},dispose:hide};
  }
  const api={bind};if(node)module.exports=api;else root.MusicDraftCompareDom=api;

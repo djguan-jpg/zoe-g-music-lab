@@ -55,8 +55,8 @@ class MusicSectionReviewTests(unittest.TestCase):
         self.assertEqual(p.returncode,0,p.stderr);self.assertEqual(json.loads(p.stdout),[{'data':review(x),'json':json.dumps(review(x),ensure_ascii=False,indent=2)+'\n','markdown':markdown(review(x))} for x in rows])
 
     def test_discovery_adds_exact_readonly_schemas_with_no_paths_or_media(self):
-        c=capabilities();self.assertEqual(len(c['operations']),21);self.assertEqual(len(tool_list()),21);self.assertTrue(c['music_section_review']['read_only'])
-        with tempfile.TemporaryDirectory() as folder:self.assertEqual(len(capabilities(DraftLibrary(folder))['operations']),28)
+        c=capabilities();self.assertEqual(len(c['operations']),22);self.assertEqual(len(tool_list()),22);self.assertTrue(c['music_section_review']['read_only'])
+        with tempfile.TemporaryDirectory() as folder:self.assertEqual(len(capabilities(DraftLibrary(folder))['operations']),29)
         self.assertEqual(payload_schema('music_section_review')['required'],['panel','row'])
         schema=output_schema('music_section_review');self.assertFalse(schema['properties']['data']['additionalProperties']);self.assertTrue(schema['properties']['meta']['properties']['needs_review']['const'])
         t=next(t for t in tool_list() if t['name']=='music_section_review');self.assertTrue(t['annotations']['readOnlyHint']);self.assertFalse(t['annotations']['openWorldHint'])
