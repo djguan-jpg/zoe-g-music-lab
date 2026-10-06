@@ -152,3 +152,5 @@ td input[data-raw-number]{width:63px}.raw-value-note{display:block;font-size:.78
 #shot-review-issues button{max-width:100%;white-space:normal;overflow-wrap:anywhere;text-align:left}
 
 .draft-file-check{flex-basis:100%;min-width:0;max-width:540px;overflow-wrap:anywhere}.draft-file-check [data-match="true"]{color:var(--green)}.draft-file-check [data-match="false"]{color:#9e3827}
+
+.backup-selection ul{max-height:14rem;overflow:auto;padding:0;list-style:none;min-width:0;border-top:1px solid var(--line)}.backup-selection li{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}.backup-selection li span{min-width:0;overflow-wrap:anywhere}.backup-selection li button{flex-shrink:0;white-space:normal}@media(max-width:720px){.backup-selection li{align-items:flex-start;flex-direction:column;gap:6px}}
