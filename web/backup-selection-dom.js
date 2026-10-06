@@ -7,9 +7,13 @@
   const add=document.getElementById('backup-selection-add'),clear=document.getElementById('backup-selection-clear'),list=document.getElementById('backup-selection-list'),note=document.getElementById('backup-selection-note');
   const bulk=document.getElementById('backup-selection-add-displayed'),bulkNote=document.getElementById('backup-selection-displayed-note');
   const removeBulk=document.getElementById('backup-selection-remove-displayed'),removeNote=document.getElementById('backup-selection-remove-note');
+  const undo=document.getElementById('backup-selection-undo'),undoNote=document.getElementById('backup-selection-undo-note');
+  const undoNames={'add':'加入版本','add-displayed':'整批加入','remove':'移出版本','remove-displayed':'整批移出','clear':'清空清單'};
   let rendered=[],buttons=[],disposed=false,canDownload=null;
   const controller=model.createController({capture,onError,onState:view=>{
    add.disabled=!view.canAdd;clear.disabled=!view.canClear;
+   if(undo){undo.disabled=!view.canUndo;undo.textContent=view.undoKind?`撤回上次${undoNames[view.undoKind]}`:'撤回上次選取變更';}
+   if(undoNote)undoNote.textContent=view.undoProblem||(view.undoKind?`可還原到上次變更前的 ${view.undoCount} 版選取；只撤回最近一次成功操作，不改保存原檔或已送出的備份。`:'加入、移出或清空後，可撤回最近一次成功的選取變更；重新開啟頁面後需重新選取。');
    if(bulk){bulk.disabled=!view.canAddDisplayed;bulk.textContent=`加入目前顯示版本（${view.displayedCount} 版）`;}
    if(removeBulk){removeBulk.disabled=!view.canRemoveDisplayed;removeBulk.textContent=`移出目前顯示版本（${view.removableDisplayedCount} 版）`;}
    if(removeNote)removeNote.textContent=view.displayedRemoveProblem||`目前已載入的 ${view.displayedCount} 版中，${view.removableDisplayedCount} 版在備份清單內；移出只改本頁清單，其他已選版本與保存原檔保留。`;
@@ -29,8 +33,9 @@
    if(changed||availabilityChanged)onChange();
   }});
   function focusAfter(control,changed){if(changed&&document.activeElement===control&&control.disabled){const batch=document.getElementById('backup-save-batch');(bulk&&!bulk.disabled?bulk:batch&&!batch.disabled?batch:!clear.disabled?clear:!add.disabled?add:list).focus();}return changed;}
-  add.onclick=()=>focusAfter(add,controller.add());if(bulk)bulk.onclick=()=>focusAfter(bulk,controller.addDisplayed());if(removeBulk)removeBulk.onclick=()=>focusAfter(removeBulk,controller.removeDisplayed());clear.onclick=()=>{const focused=document.activeElement===clear;if(controller.clear()&&focused)(!add.disabled?add:list).focus();};controller.refresh();
-  function dispose(){if(disposed)return;disposed=true;add.onclick=null;if(bulk)bulk.onclick=null;if(removeBulk)removeBulk.onclick=null;clear.onclick=null;controller.dispose();for(const button of buttons)button.onclick=null;events.removeEventListener('pagehide',dispose);}
+  if(undo)undo.onclick=()=>focusAfter(undo,controller.undo());
+  add.onclick=()=>focusAfter(add,controller.add());if(bulk)bulk.onclick=()=>focusAfter(bulk,controller.addDisplayed());if(removeBulk)removeBulk.onclick=()=>focusAfter(removeBulk,controller.removeDisplayed());clear.onclick=()=>{const focused=document.activeElement===clear;if(controller.clear()&&focused)(undo&&!undo.disabled?undo:!add.disabled?add:list).focus();};controller.refresh();
+  function dispose(){if(disposed)return;disposed=true;add.onclick=null;if(bulk)bulk.onclick=null;if(removeBulk)removeBulk.onclick=null;if(undo)undo.onclick=null;clear.onclick=null;controller.dispose();for(const button of buttons)button.onclick=null;events.removeEventListener('pagehide',dispose);}
   events.addEventListener('pagehide',dispose);
   return {refresh:()=>!disposed&&controller.refresh(),request:()=>disposed?null:controller.request(),dispose};
  }
