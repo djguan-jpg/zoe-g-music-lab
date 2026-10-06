@@ -6,6 +6,7 @@
   const J=node?require('../musiclab/assets/json-document.js'):root.MusicJsonDocument;
   const Values=node?require('./planning-values.js'):root.MusicPlanningValues;
   const Checkpoint=node?require('./readiness-state.js'):root.MusicReadinessState;
+  const Focus=node?require('./editor-focus.js'):root.MusicEditorFocus;
   const Report=node?require('./readiness-report.js'):root.MusicReadinessReport;
   const fields=Editor.draftFields.music,columns=Editor.draftRows.music.columns;
   const labels={'music-title':'歌名','music-hook':'記憶點','music-theme':'故事核心','music-style':'曲風與聲音','music-vocal':'人聲表現','music-audience':'聽眾','music-bpm':'BPM','music-beats':'每小節拍數','music-language':'創作語言',sections:'段落清單',deliverables:'交付清單',name:'名稱',bars:'小節',energy:'能量',focus:'敘事任務',texture:'聲音配置',text:'內容'};
@@ -54,9 +55,9 @@
   }
   function createController({capture,captureIds=null,onState=()=>{}}){
     return Checkpoint.createController({capture:()=>({panel:capture(),ids:captureIds?captureIds():null}),
-      source:value=>{const panel=source(value.panel),ids=value.ids;
-        if(captureIds&&(!Array.isArray(ids)||ids.length!==panel.sections.length||ids.some(id=>typeof id!=='string'||!id)||new Set(ids).size!==ids.length))throw Error('歌曲段落識別不完整；目前內容保留');
-        return {panel,ids:ids?[...ids]:null};},inspect:value=>inspectSource(value.panel),onState});
+      source:value=>{const panel=source(value.panel),ids=captureIds?Focus.checkedSource('arrangement',{ids:value.ids,visible:true,busy:false}).ids:null;
+        if(ids&&ids.length!==panel.sections.length)throw Error('歌曲段落識別不完整；目前內容保留');
+        return {panel,ids};},inspect:value=>inspectSource(value.panel),onState});
   }
   const api={inspect,report,markdown,checkedResult,createController,labels};if(node)module.exports=api;else root.MusicReadiness=api;
 })(typeof globalThis==='object'?globalThis:this);
