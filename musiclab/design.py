@@ -4,6 +4,7 @@ import json
 import re
 from .common import json_text, number, text
 from .creative import music_bundle, storyboard_bundle
+from .markdown_table import cell as table_cell
 
 
 def music_plan_bundle(brief):
@@ -56,7 +57,7 @@ def music_plan_bundle(brief):
                 f"{bpm:g} BPM · 每小節 {beats:g} 拍 · 約 {elapsed:.3f} 秒\n\n記憶點：{hook}\n\n",
                 "| 段落 | 起訖秒 | 小節 | 能量 1–5 | 敘事任務 | 聲音配置 |\n|---|---|---|---|---|---|\n"]
     for s in plan:
-        markdown.append(f"| {s['section']} | {s['start']}–{s['end']} | {s['bars']} | {s['energy']} | {s['focus']} | {s['texture']} |\n")
+        markdown.append(f"| {table_cell(s['section'])} | {s['start']}–{s['end']} | {s['bars']} | {s['energy']} | {table_cell(s['focus'])} | {table_cell(s['texture'])} |\n")
     markdown.append("\n## 三條可由 AI 發展的創作路徑\n\n"
                     f"- 動作路徑：讓「{hook}」在主歌是逃避動作，在末副歌成為主動選擇。\n"
                     f"- 對話路徑：同一句「{hook}」先對別人說，最後改成對自己說。\n"
