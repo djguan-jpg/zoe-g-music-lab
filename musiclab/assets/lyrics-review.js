@@ -49,8 +49,8 @@
     if(data.details_truncated)lines.push(`- 明細僅列前${maxIssues}項；全部句子已檢查，修正後請重查。`);
     if(!data.issue_count)lines.push('時間資料可再驗證建立歌詞包；仍需實聽核對。');return [...lines,'',...data.review_notes,''].join('\n');
   }
-  const canonical=v=>Array.isArray(v)?v.map(canonical):v&&typeof v==='object'?Object.fromEntries(Object.keys(v).sort().map(k=>[k,canonical(v[k])])):v;
-  const equal=(a,b)=>JSON.stringify(canonical(a))===JSON.stringify(canonical(b));
+
+  const equal=J.sameValue;
   function inspect(reply,payload){
     const expected=review(payload);
     if(!reply?.meta||reply.meta.protocol_version!==1||reply.meta.needs_review!==true||!equal(reply.data,expected)||!exact(reply.files,['lyrics-review.json','lyrics-review.md'])||!equal(J.parse(reply.files['lyrics-review.json'],{maxBytes:8*1024*1024,label:'校時報告'}),expected)||reply.files['lyrics-review.md']!==markdown(expected))throw Error('校時報告與目前來源或版本不一致；目前內容保留');

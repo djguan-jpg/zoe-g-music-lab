@@ -7,8 +7,8 @@
   const maxIssues=200,messages={leading_time_tag:'歌詞以時間標籤開頭，LRC回讀會解讀為額外時間或拒絕；請以完整JSON保存。',blank_srt_line:'這句只有空白或tab，SRT回讀無法保留；請以完整JSON保存。'};
   const notes=['LRC只保存開始與文字，結束時間回讀時會重新推估。','LRC／SRT不保存名稱、作品總長或校時歷史；完整JSON保存全部歌詞包資料。','只核對本工具的格式表達，不保證其他播放器、實聽、作者或版權。'];
   const exact=(v,keys)=>v&&typeof v==='object'&&!Array.isArray(v)&&Object.keys(v).length===keys.length&&keys.every(k=>Object.hasOwn(v,k));
-  const canonical=v=>Array.isArray(v)?v.map(canonical):v&&typeof v==='object'?Object.fromEntries(Object.keys(v).sort().map(k=>[k,canonical(v[k])])):v;
-  const equal=(a,b)=>JSON.stringify(canonical(a))===JSON.stringify(canonical(b));
+
+  const equal=J.sameValue;
   function checkedSource(payload){
     if(!exact(payload,['package'])&&!exact(payload,['package','include_package']))throw Error('格式檢查只接受完整package及明確include_package');
     if(Object.hasOwn(payload,'include_package')&&typeof payload.include_package!=='boolean')throw Error('include_package需為明確布林值');

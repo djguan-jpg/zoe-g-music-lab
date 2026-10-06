@@ -1,5 +1,9 @@
 # 固定交付版本契約 v1
 
+## v0.108
+
+單一runtime policy current=0.108.0，supported38–108共71；unknown109拒絕。280份歷史ZIP／manifest bytes相同，17／24操作、24組既有schemas不變。固定HTML仍核對本安裝範本／模組；新比較器改變嵌入模組bytes，舊HTML保留，完整JSON重新建立現版預覽。見[契約](JSON-VALUE.md)。
+
 ## v0.107
 
 單一runtime policy current=0.107.0，supported38–107共70；unknown108拒絕。276份歷史封裝位元組相同。新music_search_schema_version=1獨立於Agent1／draft3及原交付schemas。

@@ -8,12 +8,7 @@
   const strip=Values.trim;
   const fail=()=>{throw Error('設計回應、需求或 JSON 成果不一致；目前成果與編修保留');};
   const object=v=>v&&typeof v==='object'&&!Array.isArray(v);
-  function canonical(v){
-    if(Array.isArray(v))return v.map(canonical);
-    if(object(v))return Object.fromEntries(Object.keys(v).sort().map(k=>[k,canonical(v[k])]));
-    return v;
-  }
-  const same=(a,b)=>JSON.stringify(canonical(a))===JSON.stringify(canonical(b));
+  const same=J.sameValue;
   function text(v,blank=false){if(typeof v!=='string'||!blank&&!strip(v))fail();return strip(v);}
   function number(v){try{return Values.number(v);}catch{fail();}}
   function nonnegative(v){try{return Values.nonnegativeNumber(v);}catch{fail();}}
