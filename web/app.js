@@ -195,6 +195,7 @@ $('music-example').onclick=()=>{if(!exampleAllowed())return;loadMusic();markDirt
 function refreshMusicSelection(){
   const rows=[...$('arrangement').children],selected=$('section-order').value,index=rows.findIndex(row=>row.dataset.historyId===selected);
   $('section-earlier').disabled=state.busy||index<=0;$('section-later').disabled=state.busy||index<0||index>=rows.length-1;
+  $('section-order-show').disabled=state.busy||index<0;
   rows.forEach(row=>row.toggleAttribute('data-section-selected',row.dataset.historyId===selected));
 }
 function renderMusicOrder(view){
@@ -228,6 +229,12 @@ function moveMusicSectionTo(id,index){
     say(`已把段落 ${view.record.from+1} 移至 ${view.record.to+1}；請重新建立歌曲成果與分鏡起稿`);return view.record;
   }catch(error){say(error.message,true);return null;}
 }
+function showMusicSection(){
+  const button=$('section-order-show'),panel=$('music'),container=$('arrangement');
+  if(state.busy||button.disabled||!button.isConnected||button.hidden||!panel.isConnected||panel.hidden||!container.isConnected)return false;
+  return editorFocus.focusId('arrangement',$('section-order').value);
+}
+$('section-order-show').onclick=showMusicSection;
 $('section-earlier').onclick=()=>moveMusicSection(-1);
 $('section-later').onclick=()=>moveMusicSection(1);
 $('section-order-undo').onclick=()=>{

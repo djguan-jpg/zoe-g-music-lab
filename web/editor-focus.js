@@ -19,20 +19,29 @@
     if(index>=s.ids.length)throw Error('編修目標列已不存在');
     return {list,id:s.ids[index],mode};
   }
+  function byId(list,source,id,mode='entry'){
+    const s=checkedSource(list,source);
+    if(typeof id!=='string'||!id||id.length>64||!['entry','new'].includes(mode))throw Error('編修定位請求無效');
+    if(!s.visible||s.busy)return null;
+    const index=s.ids.indexOf(id);if(index<0)throw Error('編修目標列已不存在');
+    return proposal(list,s,index,mode);
+  }
   function createController({capture,focusTarget,onError=()=>{}}){
     let disposed=false;
-    return Object.freeze({focus(list,index,mode='entry'){
+    function request(list,targetFor){
       if(disposed)return false;
       try{
         if(!Object.hasOwn(limits,list))throw Error('編修定位來源無效');
-        const before=checkedSource(list,capture(list)),target=proposal(list,before,index,mode);
+        const before=checkedSource(list,capture(list)),target=targetFor(before);
         if(!target)return false;
         const after=checkedSource(list,capture(list));
         if(!after.visible||after.busy||before.ids.length!==after.ids.length||before.ids.some((id,i)=>id!==after.ids[i]))return false;
         return focusTarget(target)===true;
       }catch(error){onError(error);return false;}
-    },dispose(){disposed=true;}});
+    }
+    return Object.freeze({focus(list,index,mode='entry'){return request(list,s=>proposal(list,s,index,mode));},
+      focusId(list,id,mode='entry'){return request(list,s=>byId(list,s,id,mode));},dispose(){disposed=true;}});
   }
-  const api=Object.freeze({limits,checkedSource,proposal,createController});
+  const api=Object.freeze({limits,checkedSource,proposal,byId,createController});
   if(typeof module==='object'&&module.exports)module.exports=api;else root.MusicEditorFocus=api;
 })(typeof globalThis==='object'?globalThis:this);
