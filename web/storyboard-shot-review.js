@@ -23,7 +23,7 @@
  function checkedResult(payload,reply){
   const expected=report(payload),names=['storyboard-shot-review.json','storyboard-shot-review.md'];
   const invalid=()=>{throw Error('單鏡待辦報告與目前來源不符；原內容與成果保留');};
-  if(!reply||!J.sameValue(Object.keys(reply).sort(),['data','files','meta'])||!J.sameValue(reply.meta,{version:V.current,protocol_version:1,needs_review:true})||!J.sameValue(reply.data,expected)||!reply.files||!J.sameValue(Object.keys(reply.files).sort(),names)||typeof reply.files[names[0]]!=='string'||typeof reply.files[names[1]]!=='string')invalid();
+  if(!reply||!J.sameValue(reply,reply)||!J.sameValue(Object.keys(reply).sort(),['data','files','meta'])||!J.sameValue(reply.meta,{version:V.current,protocol_version:1,needs_review:true})||!J.sameValue(reply.data,expected)||!reply.files||!J.sameValue(Object.keys(reply.files).sort(),names)||typeof reply.files[names[0]]!=='string'||typeof reply.files[names[1]]!=='string')invalid();
   const data=J.parse(reply.files[names[0]],{maxBytes:256*1024,label:'單鏡待辦報告'});
   if(!J.sameValue(data,expected)||reply.files[names[1]]!==markdown(expected))invalid();
   return {data:structuredClone(expected),files:{[names[0]]:reply.files[names[0]],[names[1]]:reply.files[names[1]]}};

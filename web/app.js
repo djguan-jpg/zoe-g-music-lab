@@ -492,13 +492,12 @@ shotReviewDOM=MusicStoryboardShotReviewDOM.bind(document,{labels:MusicStoryboard
 shotReviewController=MusicStoryboardShotReview.createController({capture:()=>({panel:capturePanel('storyboard'),ids:entriesFor('shots').map(e=>e.id),selectedId:$('shots-order').value}),onState:shotReviewDOM.render});
 $('shots-order').addEventListener('change',()=>shotReviewController.refresh());
 $('shot-review-check').onclick=()=>{if(state.busy||state.tab!=='storyboard')return;try{const view=shotReviewController.check();say(`鏡頭 ${view.report.row} 待辦 ${view.report.issue_count} 項；原分鏡保持。`);}catch(error){say(error.message,true);}};
-$('shot-review-report').onclick=()=>run($('shot-review-report'),async current=>{
-  const payload=shotReviewController.payload();shotReviewController.check();
-  const reply=await api('/api/storyboard-shot-review',payload,false,current.signal);if(!current()||!shotReviewController.isCurrent(payload))return;
-  const accepted=MusicStoryboardShotReview.checkedResult(payload,reply);
-  $('mv-visual').hidden=true;setFiles(accepted.files,`鏡頭 ${accepted.data.row} 待辦 ${accepted.data.issue_count} 項`);
-  say('單鏡待辦報告已建立；仍須整份分鏡建立與實際音畫驗證');
+const shotReviewRequest=MusicStoryboardShotRequest.createController({source:shotReviewController,
+  request:(payload,current)=>api('/api/storyboard-shot-review',payload,false,current.signal),
+  onReport:accepted=>{$('mv-visual').hidden=true;setFiles(accepted.files,`鏡頭 ${accepted.data.row} 待辦 ${accepted.data.issue_count} 項`);say('單鏡待辦報告已建立；仍須整份分鏡建立與實際音畫驗證');},
+  onError:error=>say(error.message,true),onStale:()=>say('選定鏡頭來源已有變更；目前編修與上一份成果保留，請重新建立。'),onState:()=>shotReviewDOM.refresh()
 });
+$('shot-review-report').onclick=()=>run($('shot-review-report'),current=>shotReviewRequest.check(current));
 $('mv-ready-report').onclick=()=>run($('mv-ready-report'),async current=>{
   const panel=capturePanel('storyboard');storyboardReadyController.check();
   const reply=await api('/api/storyboard-review',{panel},false,current.signal);if(!current())return;
