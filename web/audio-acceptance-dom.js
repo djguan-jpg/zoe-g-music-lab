@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 'use strict';
 (function(root){
-  function createAdapter(document,{readValue,writeValue,events,allowed,downloadText,onChange,onError}){
+  function createAdapter(document,{readValue,writeValue,events,allowed,visible=()=>true,downloadText,onChange,onError}){
     const $=id=>document.getElementById(id),model=root.MusicAudioAcceptance,keys=['rates','bits','channels'];
+    let sentSource=null,sentRevision=0,verification=null;
     const capture=()=>({format:model.format,schema_version:1,profile:readValue($('audio-profile')),custom:$('audio-custom').checked,
       fields:Object.fromEntries(keys.map(k=>[k,readValue($('audio-accept-'+k))]))});
     const replace=d=>{writeValue($('audio-profile'),d.profile);$('audio-custom').checked=d.custom;keys.forEach(k=>writeValue($('audio-accept-'+k),d.fields[k]));};
@@ -23,6 +24,7 @@
           catch(error){note='草稿保留未完成原值，可以套用後繼續編修；分析前請補齊接受值。 '+error.message;}
           $('audio-accept-preview-note').textContent=(value.previewKind==='review'?'來自條件檢查報告；接續其中原始條件，音檔仍須另行分析。 ':'')+note;
         }
+        verification?.refresh();
       }});
     keys.forEach(k=>$('audio-accept-'+k).addEventListener('input',()=>controller.changed()));
     $('audio-custom').addEventListener('change',()=>controller.changed());
@@ -32,7 +34,19 @@
     $('audio-accept-apply').onclick=()=>controller.apply();$('audio-accept-cancel').onclick=()=>controller.cancel();
     $('audio-accept-undo').onclick=()=>{const changed=controller.undo();if(changed)($('audio-custom').checked?$('audio-accept-rates'):$('audio-profile')).focus();return changed;};
     $('audio-accept-confirm').onclick=()=>controller.confirm();
-    $('audio-accept-export').onsubmit=event=>{event.preventDefault();try{controller.download(content=>{if(downloadText('audio-acceptance-draft.json',content)!==true)throw Error('條件草稿下載未送出');});}catch(error){onError(error);}};
+    $('audio-accept-export').onsubmit=event=>{event.preventDefault();try{
+      const content=controller.download(content=>{if(downloadText('audio-acceptance-draft.json',content)!==true)throw Error('條件草稿下載未送出');});
+      sentSource={name:'audio-acceptance-draft.json',content};sentRevision++;verification.refresh();
+    }catch(error){onError(error);}};
+    verification=root.MusicTextVerificationDOM.bind(document,{
+      capture:()=>({scope:'audio',revision:sentRevision,busy:!allowed(),dirty:false,visible:visible(),source:sentSource}),
+      maxBytes:model.maxBytes,events,
+      ids:{file:'audio-accept-verify-file',note:'audio-accept-verify-note',source:'audio-accept-verify-source'},
+      emptyText:'先下載這輪條件草稿，再選回檔案核對。',sourceLabel:'本輪送出的條件草稿：',
+      onReport:report=>{if(report.matched)controller.confirm();},onError
+    });
+    const dispose=controller.dispose;
+    controller.dispose=()=>{verification.dispose();sentSource=null;sentRevision++;dispose();};
     controller.refresh();return controller;
   }
   root.MusicAudioAcceptanceDom={createAdapter};

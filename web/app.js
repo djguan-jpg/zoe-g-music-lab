@@ -1247,7 +1247,7 @@ async function setupLibrary(){
 }
 state.deliveryNavigation=MusicDeliveryNavigationDom.createAdapter(document,()=>({scope:state.tab,names:Object.keys(state.files),busy:state.busy,dirty:!!state.bundles[state.tab]?.dirty,message:$('status').textContent,error:$('status').classList.contains('error')}));
 state.operationControl=MusicOperationControlDOM.createAdapter(document,{capture:()=>operationGate.view(),cancel:cancelRun});
-state.audioAcceptance=MusicAudioAcceptanceDom.createAdapter(document,{readValue,writeValue,events:window,allowed:()=>!state.busy,downloadText:(name,content)=>textDownloader.send(name,content),onChange:()=>markDirty('audio'),onError:error=>say(error.message,true)});
+state.audioAcceptance=MusicAudioAcceptanceDom.createAdapter(document,{readValue,writeValue,events:window,allowed:()=>!state.busy,visible:()=>state.tab==='audio',downloadText:(name,content)=>textDownloader.send(name,content),onChange:()=>markDirty('audio'),onError:error=>say(error.message,true)});
 state.deliveryPackage=MusicDeliveryPackageDom.createAdapter(document,{capture:()=>({scope:state.tab,label:state.bundles[state.tab]?.deliveryLabel??state.bundles[state.tab]?.note??'',files:state.files,busy:state.busy,dirty:!!state.bundles[state.tab]?.dirty}),run,request:(payload,current)=>api('/api/delivery-package/prepare',payload,false,current?.signal),discard:id=>api('/api/delivery-package/discard',{id}),say});
 state.deliveryImport=MusicDeliveryImportDom.createAdapter(document,{
   downloadText:(name,content)=>textDownloader.send(name,content),
