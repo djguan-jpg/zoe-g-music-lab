@@ -16,7 +16,9 @@
   let page=0;
   const read=()=>checked(capture()),same=(a,b)=>keys.every(k=>a[k]===b[k]);
   const view=()=>present(read(),page),publish=()=>{const v=view();page=v.page;onState({...v,indices:[...v.indices]});return v;};
-  return {view,refresh:publish,reset(){page=0;return publish();},move(direction){if(direction!==-1&&direction!==1)return false;const before=read(),v=present(before,page);if(direction<0?!v.canPrevious:!v.canNext)return false;if(!same(before,read()))return false;page=v.page+direction;publish();return true;},locate(index,revision){const before=read(),v=present(before,page);if(!v.canLocate||!Number.isSafeInteger(index)||!v.indices.includes(index)||revision!==before.revision||!same(before,read()))return null;return {index,revision:before.revision};}};
+  return {view,refresh:publish,reset(){page=0;return publish();},move(direction){if(direction!==-1&&direction!==1)return false;const before=read(),v=present(before,page);if(direction<0?!v.canPrevious:!v.canNext)return false;if(!same(before,read()))return false;page=v.page+direction;publish();return true;},
+   reveal(index,revision){const before=read(),v=present(before,page);if(!v.canLocate||!Number.isSafeInteger(index)||index<0||index>=before.detailCount||revision!==before.revision||!same(before,read()))return false;const next=Math.floor(index/pageSize);if(next!==v.page){page=next;publish();}return true;},
+   locate(index,revision){const before=read(),v=present(before,page);if(!v.canLocate||!Number.isSafeInteger(index)||!v.indices.includes(index)||revision!==before.revision||!same(before,read()))return null;return {index,revision:before.revision};}};
  }
  const api=Object.freeze({pageSize,maxDetails,checked,present,createController});if(typeof module==='object'&&module.exports)module.exports=api;else root.MusicIssuePage=api;
 })(typeof globalThis==='object'?globalThis:this);

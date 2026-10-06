@@ -1,6 +1,4 @@
-# v0.120.0 交接與可逆
-
-選定歌詞新增「重查這一句／上一項單句待辦／下一項單句待辦」工具列，成功定位後同步目前明細頁；修正長表格需返回上方清單逐項處理的操作缺口。純 issue-cursor 明確 maxDetails 1–200，舊鏡頭／段落預設32保持；純 issue-page.reveal 核對 revision／可定位狀態及兩次metadata後，顯示選定保留項所在頁。單句沿原200明細／20頁內項與全部issue_count，頁面／cursor／焦點不改時間或進draft。可見黏附工具列與既有field-position共用幾何，global作品宣告忽略畫面外工具列；高度≤400px回普通流。產品120／唯一交付policy38–120共83，未知121拒絕；20／27 tools、舊27組schemas與Agent1／draft3保持。
+# v0.120.0 QA
 
 619 Python（100.672秒）、1453 JavaScript、136 syntax、4 Skills及diff通過；新增24 JS、0 Python。原v119指定source ZIP（SHA 9bb573cb7cc9c301dfa9ab8de3b55679678a857b4c008d0b951466ee8a6f89ed、2204492 bytes）還原619／1429；四scope×82個歷史producer的328份ZIP／manifest bytes相同。舊27組operation input/output schemas及operations集合保持，沒有新增operation或靜態asset。八份既有whole lyrics Python data／兩檔bytes、JS data／Markdown及跨語言來源診斷保持。新tests驗證全200項跨10頁再返回、手動翻頁不移cursor、false／throw focus不前進、metadata二次改變／late revision／getter不讀、legacy32與明確200、invalid capacity在capture前拒絕；VM focus helper與實際native驗證分開。
 
@@ -10,8 +8,6 @@
 
 本輪QA唯讀snapshot初次錯把state.bundles寫為bundles，Runtime.evaluate回ReferenceError，未成功保存或改動頁面；修正為state後取得37份有效快照。第一次回復其他句原值時原生focus已選句1，因此仍stale；同時復原選句221後才核對恢復，沒有把原值單獨復原當成完整source復原。
 
-分支 `codex/iteration-v0.120.0`、基線main `e3fac742ac7a35d07d9b6c43e819b9f7d80fede0`、還原tag `restore-v0.119.0-before-v0.120.0`。由tag建立codex/restore-*分支經private PR還原，保留main歷史、原素材及草稿；指定source commit封裝、SHA與實際遠端bytes另留outputs/v120-qa。
-
 本輪僅盤點本workspace outputs、封裝及typed owned jobs；最新120／119／118三版保護。嚴格超七天且可從exact tag／Git archive重建才列候選；未知檔、素材、草稿、備份、失敗36／53及失敗QA保持。實際session完成後再做最終稽核，沒有bare PID終止。瀏覽器保存下載、完整視覺／screen reader、實聽／實際音畫同步、Host安裝與FreeTWAI創始接受未驗證。PolyForm Noncommercial 1.0.0／private、創辦ZOE. G／GitHub djguan-jpg保持，FreeTWAI not_submitted。
 
-見[契約](docs/LYRICS-CUE-NAVIGATION.md)。
+分支 `codex/iteration-v0.120.0`、基線main `e3fac742ac7a35d07d9b6c43e819b9f7d80fede0`、還原tag `restore-v0.119.0-before-v0.120.0`。由tag建立codex/restore-*分支經private PR還原，保留main歷史、原素材及草稿；指定source commit封裝、SHA與實際遠端bytes另留outputs/v120-qa。
