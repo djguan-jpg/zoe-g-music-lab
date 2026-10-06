@@ -19,7 +19,7 @@
   function read(){const source=checked(capture(),maxDetails);if(source.revision!==revision||source.detailCount!==count){index=null;revision=source.revision;count=source.detailCount;}return source;}
   const allowed=s=>s.hasReport&&!s.stale&&!s.busy&&s.visible&&s.detailCount>0;
   function publish(s){
-   const ready=allowed(s),view={index,revision:s.revision,detailCount:s.detailCount,canPrevious:ready&&index!==null&&index>0,canNext:ready&&(index===null||index<s.detailCount-1),
+   const ready=allowed(s),view={index,revision:s.revision,detailCount:s.detailCount,canReturn:ready&&index!==null,canPrevious:ready&&index!==null&&index>0,canNext:ready&&(index===null||index<s.detailCount-1),
     message:!s.hasReport?text.missing:s.stale?text.stale:s.detailCount===0?text.empty:`${text.progress} ${index===null?'尚未定位':`${index+1}／${s.detailCount}`}；上一項／下一項只定位原欄位。`};
    onState({...view});return view;
   }
@@ -29,7 +29,7 @@
    if(moved&&allowed(after)&&after.revision===before.revision&&after.detailCount===before.detailCount){index=target;publish(after);return true;}
    publish(after);return false;
   }
-  return Object.freeze({refresh(){return publish(read());},locate,move(direction){if(direction!==1&&direction!==-1)return false;const s=read();return locate(index===null?(direction===1?0:-1):index+direction,s.revision);}});
+  return Object.freeze({refresh(){return publish(read());},locate,returnCurrent(){const s=read();return locate(index,s.revision);},move(direction){if(direction!==1&&direction!==-1)return false;const s=read();return locate(index===null?(direction===1?0:-1):index+direction,s.revision);}});
  }
  const api=Object.freeze({createController});if(typeof module==='object'&&module.exports)module.exports=api;else root.MusicIssueCursor=api;
 })(typeof globalThis==='object'?globalThis:this);
