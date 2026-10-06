@@ -1,5 +1,7 @@
 # v0.121.0 交接與可逆
 
+2026-10-06：Repo 已依使用者授權公開，四個新專案均已送出自由工坊並建立公開介紹頁；原作者為自行聲明、尚未核實，PolyForm 非商用授權保持。最新實際狀態與網址見 [PLATFORM-STATUS.md](PLATFORM-STATUS.md)；下方版本中的 private／not_submitted 為各次提交當時的歷史快照。
+
 單鏡、單段與單句工具列現在顯示最後成功定位待辦的原位置、欄位、原因及關聯列，讓長表格編修時也能知道正在處理什麼。純 issue-summary 只格式化有界嚴格 JSON metadata；三個 DOM adapter 共用清單與工具列文字，在來源失效、busy、隱藏、無選列、未定位或新 revision 時清除說明。回復精確來源可恢復上一個成功位置；不因手動焦點改動重寫 cursor。說明換行後由 app 重新量測活動欄位，僅對已活動的原欄位調整捲動，不重新聚焦其他控制。實際窄畫面發現單鏡長待辦按鈕造成31px溢出，改為有界換行；空鏡頭選列也停用清單與 cursor。新增一個固定 GET asset，沒有新 operation。產品121／唯一交付policy38–121共84，未知122拒絕；20／27 tools、旧27組schemas、Agent1／draft3與其他domain保持。
 
 619 Python（100.000秒）、1484 JavaScript、137 syntax、4 Skills與diff通過；新增31 JS、0 Python。上一版v120指定source ZIP（2223876 bytes、SHA 8f68ce674539114811517e1faea16460a7b04231cf4150a0c1482e7731194052）實際還原619／1453，暫存還原移除。四scope×83個歷史producer的332份ZIP／manifest bytes保持；舊27組operation input/output schemas與20／27 operations集合相同。八份whole lyrics Python data／files、JS data／Markdown與跨語言診斷相同，只更新產品meta。31新測試含Unicode／首尾空白／literal HTML、exact keys、getter不讀、hidden／symbol拒絕、容量、stale／busy／hidden／empty selector、false／throw focus、新revision／零待辦與exact restore；app原函式VM驗證toolbar增高後只移活動欄位，adapter layout錯誤保留已成功cursor。

@@ -25,11 +25,11 @@ Codex 的本輪協作：協助提出可共創方向、界定第一版功能、�
 
 ## 可查閱的專案證據
 
-- 新建儲存庫：[djguan-jpg/zoe-g-music-lab](https://github.com/djguan-jpg/zoe-g-music-lab)，private，由實際登入帳號持有。
+- 新建儲存庫：[djguan-jpg/zoe-g-music-lab](https://github.com/djguan-jpg/zoe-g-music-lab)，建立時為 private，2026-10-06 依使用者明確授權公開，由實際登入帳號持有。
 - 初始四專案紀錄：[b3c2c59](https://github.com/djguan-jpg/zoe-g-music-lab/commit/b3c2c59)。
 - 第一版程式與工作台：[b6f7e70](https://github.com/djguan-jpg/zoe-g-music-lab/commit/b6f7e70)。
 - 四個入口、具體用途及投稿文字：[SUBMISSION-PACKET.md](SUBMISSION-PACKET.md)。
 
 Repo 的首次上傳保留本次施工的提交歷史。Git 提交是專案版本證據，不單獨證明法律權利或平台認證；AI 協作紀錄亦保留。
 
-自由工坊要求公開網址才能登錄。此 Repo 仍為 private，尚未提交平台認領／投稿，自 v0.3.0 採用 PolyForm Noncommercial 1.0.0 非商用授權，沒有取得平台創始人核實。
+2026-10-06 四個新專案已以「原作者（自行聲明）」送出自由工坊，四個公開介紹頁實際核對完成；Repo 已公開，創辦署名 ZOE. G、GitHub djguan-jpg 與 AI 協作紀錄保持。平台明示作者身分尚未核實，尚未取得平台創始人認證。PolyForm Noncommercial 1.0.0 禁止商用授權保持，沒有另授予 AGPL 或商用許可。詳見 [PLATFORM-STATUS.md](PLATFORM-STATUS.md)。
