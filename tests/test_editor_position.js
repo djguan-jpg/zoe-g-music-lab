@@ -45,3 +45,30 @@ test('storyboard and cue destination movement share full raw source guards and l
 test('raw ordering entry guards reject sparse creative arrays before new destination mapping',()=>{
  const rows=song();delete rows[2];assert.throws(()=>M.moveTo(rows,'r5',0));for(const list of ['shots','cues'])assert.throws(()=>C.checkedSource(list,{entries:new Array(1),visible:true,busy:false}));
 });
+
+const enterGesture=(extra={})=>({key:'Enter',altKey:false,ctrlKey:false,metaKey:false,shiftKey:false,repeat:false,isComposing:false,keyCode:13,...extra});
+test('position Enter policy requires exact native metadata and preserves composition modifiers and ordinary keys',()=>{
+ assert.equal(P.enterIntent(enterGesture()),'move');assert.equal(P.enterIntent(enterGesture({repeat:true})),'hold');
+ for(const extra of [{key:'ArrowUp'},{key:'NumpadEnter'},{altKey:true},{ctrlKey:true},{metaKey:true},{shiftKey:true},{isComposing:true},{keyCode:229}])assert.equal(P.enterIntent(enterGesture(extra)),'none');
+ for(const value of [null,{},[],enterGesture({extra:true}),enterGesture({repeat:1}),enterGesture({keyCode:NaN}),enterGesture({keyCode:256}),enterGesture({keyCode:-1}),enterGesture({keyCode:1.5})])assert.throws(()=>P.enterIntent(value));
+});
+test('Enter consumes the owned native default before a single full current-checked move and notification',()=>{
+ let s=raw(),reads=0;const sequence=[],c=P.createController({allowed:()=>true,capture:()=>{reads++;return s;},moveTarget:plan=>{sequence.push('write');s={...s,ids:[...plan.afterIds]};return true;},onMoved:()=>sequence.push('moved')});
+ assert.equal(c.enter('shots',enterGesture(),()=>{sequence.push('consume');return true;}),true);assert.deepEqual(sequence,['consume','write','moved']);assert.equal(reads,4);assert.deepEqual(s.ids,['a','c','d','b']);
+});
+test('empty invalid current and repeated position Enter consume submission without writing source or focus notification',()=>{
+ for(const [s,gesture] of [[raw(undefined,'b',''),enterGesture()],[raw(undefined,'b','0'),enterGesture()],[raw(undefined,'b','1e0'),enterGesture()],[raw(undefined,'b','2'),enterGesture()],[raw([],'','1'),enterGesture()],[raw(),enterGesture({repeat:true})]]){
+  let consumed=0,writes=0,notify=0;const before=structuredClone(s),c=P.createController({allowed:()=>true,capture:()=>s,moveTarget:()=>{writes++;return true;},onMoved:()=>notify++});assert.equal(c.enter('cues',gesture,()=>{consumed++;return true;}),true);assert.equal(consumed,1);assert.equal(writes,0);assert.equal(notify,0);assert.deepEqual(s,before);c.dispose();assert.equal(c.enter('cues',gesture,()=>assert.fail()),false);
+ }
+});
+test('Enter refuses consumption races false defaults and mismatched actual writes without hiding external edits',()=>{
+ for(const mode of ['before','consume','false','after']){
+  let s=raw(),reads=0,consumed=0,writes=0,notify=0;const c=P.createController({allowed:()=>true,capture:()=>{reads++;if(mode==='before'&&reads===2)s.position='3';return s;},moveTarget:plan=>{writes++;s={...s,ids:[...plan.afterIds]};if(mode==='after')s.position='3';return true;},onMoved:()=>notify++});
+  assert.equal(c.enter('shots',enterGesture(),()=>{consumed++;if(mode==='consume')s.position='3';return mode!=='false';}),false);assert.equal(consumed,mode==='before'?0:1);assert.equal(writes,mode==='after'?1:0);assert.equal(notify,0);if(mode!=='false')assert.equal(s.position,'3');
+ }
+});
+test('non-Enter composition gated and unknown position input never consume or call a writer',()=>{
+ let reads=0;const c=P.createController({allowed:()=>false,capture:()=>{reads++;throw Error();},moveTarget:()=>assert.fail()});
+ for(const list of ['shots','unknown'])for(const gesture of [enterGesture(),enterGesture({isComposing:true}),enterGesture({ctrlKey:true})])assert.equal(c.enter(list,gesture,()=>assert.fail()),false);assert.equal(reads,0);
+ for(const s of [{...raw(),visible:false},{...raw(),busy:true}]){const c=P.createController({allowed:()=>true,capture:()=>s,moveTarget:()=>assert.fail()});assert.equal(c.enter('shots',enterGesture(),()=>assert.fail()),false);}
+});
