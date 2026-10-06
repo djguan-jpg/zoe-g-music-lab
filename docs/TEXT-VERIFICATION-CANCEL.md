@@ -1,5 +1,7 @@
 # 原文核對取消與讀取上限
 
+現行取消後的鍵盤焦點契約見[焦點分層](TEXT-VERIFICATION-FOCUS.md)。明確意圖只留在 DOM adapter，來源 context epoch 為共用內部 view metadata；原取消及 read 上限保持。以下保留歷史契約。
+
 ## 分層與行為
 
 text-verification-controller保持純source snapshot／注入describe與readFile／callbacks。cancel清除pending、selected與report並增加generation，保留canonical來源及保存checkpoint。activeReads只在實際呼叫reader前增加、同次finally減少；每個controller最多2個，第三次verify不讀檔、不取代最新proof。metadata或容量早拒絕不占slot。source改變、cancel、pagehide或dispose都不提前釋放仍在讀取的slot；舊settle只refresh當前有限view以恢复可用性，不交出舊report／error。
