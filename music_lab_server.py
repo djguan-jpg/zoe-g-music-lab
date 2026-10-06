@@ -56,6 +56,7 @@ ASSETS = {**{path: ("web"+path,"text/javascript") for path in ("/draft-compare-r
           "/delivery-navigation.js": ("web/delivery-navigation.js", "text/javascript"),
           "/delivery-navigation-dom.js": ("web/delivery-navigation-dom.js", "text/javascript"),
           "/editor-state.js": ("web/editor-state.js", "text/javascript"),
+          "/text-byte-context.js": ("web/text-byte-context.js", "text/javascript"),
           "/text-verification.js": ("web/text-verification.js", "text/javascript"),
           "/verification-focus.js": ("web/verification-focus.js", "text/javascript"),
           "/text-verification-controller.js": ("web/text-verification-controller.js", "text/javascript"),
