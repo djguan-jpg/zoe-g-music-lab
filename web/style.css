@@ -161,3 +161,10 @@ td input[data-raw-number]{width:63px}.raw-value-note{display:block;font-size:.78
 
 .draft-compare-filters{display:flex;flex-wrap:wrap;align-items:flex-start;gap:12px;min-width:0}.draft-compare-filters>label{flex:1 1 16rem;min-width:0}.draft-compare-filters select{width:100%;min-width:0}
 #text-verify-note:focus,#draft-verify-note:focus,#audio-accept-verify-note:focus,#backup-verify-note:focus{outline:2px solid var(--green);outline-offset:4px;border-radius:4px}
+
+/* Bounded literal verification excerpts; full bytes remain the proof source. */
+.verification-context { min-width:0; max-width:100%; margin-block:0.75rem; padding:0.75rem; border:1px solid var(--line); border-radius:0.75rem; }
+.verification-context[hidden] { display:none; }
+.verification-context dl,.verification-context dd { margin:0; min-width:0; }
+.verification-context dt { font-weight:600; margin-block:0.5rem 0.25rem; }
+.verification-context pre { margin:0; max-width:100%; white-space:pre-wrap; overflow-wrap:anywhere; font-size:0.8rem; line-height:1.5; }

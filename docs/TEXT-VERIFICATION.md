@@ -1,5 +1,7 @@
 # 完整原文核對契約 v1
 
+現行三文字入口提供有界差異前後文，完整七欄proof與即時選檔焦點保持，晚回覆不搶焦點。見[契約](TEXT-VERIFICATION-CONTEXT.md)。以下保留歷史描述。
+
 現行取消後的鍵盤焦點契約見[焦點分層](TEXT-VERIFICATION-FOCUS.md)。明確意圖只留在 DOM adapter，來源 context epoch 為共用內部 view metadata；原取消及 read 上限保持。以下保留歷史契約。
 
 現行三入口取消與每個核對器最多兩個實際未結束read，見[取消契約](TEXT-VERIFICATION-CANCEL.md)。以下保留原v86契約與版本資料；現行版本支持以唯一policy及DELIVERY-VERSIONS為準。
