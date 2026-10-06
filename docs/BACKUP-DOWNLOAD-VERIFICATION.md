@@ -1,5 +1,7 @@
 # 備份下載檔案核對 v0.126.0
 
+現行備份核對新增每個 verifier 的兩份未完成 read→hash 工作上限及共用取消焦點政策；取消不能提前歸還工作名額。純備份大小／SHA／report1與保存證明邊界保持，見[現行契約](BACKUP-VERIFICATION-CAPACITY.md)。下方保留歷史描述。
+
 草稿庫備份旁新增「核對下載的備份 ZIP」。成功送出後可選回本機檔案，先核對1 byte至32 MiB容量，再以完整檔案SHA-256及大小核對本輪備份。來源只保留bytes／摘要／版本數；不持有完整備份，不恢復、載入、保存版本或确认未保存編修。新的成功送出遞增revision，即使內容相同也使舊讀取失效；下載失敗保留上一份來源。舊ZIP不能確認新ZIP。
 
 純backup-verification嚴格原值模型、注入controller、原生File DOM adapter與原有backup-download sender分層。讀取與hash後重查本輪source／revision／busy、完整ArrayBuffer大小與選檔metadata，latest／cancel／pagehide／dispose保護晚回覆。原始32 MiB可完整核對；超限在arrayBuffer前拒絕。同大小錯bytes、短讀及來源失效保留原工作台、成果、列ID及草稿庫；選檔標為verification view control，不誤觸編修。單獨純verificationAllowed避免availability refresh寫入library訊息。
