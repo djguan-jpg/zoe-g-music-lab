@@ -1234,7 +1234,7 @@ $('backup-open').onchange=()=>{
 $('backup-restore').onclick=()=>{if(libraryAllowed())backupController.restore();};
 $('backup-cancel').onclick=()=>{if(backupController.cancel())backupSay('已取消恢復預覽；草稿庫與工作台保留。');};
 state.backupSelection=MusicBackupSelectionDom.bind(document,{
-  capture:()=>({enabled:libraryEnabled,busy:state.busy||backupRestoring||backupDownloading,selected:libraryRecords.find(record=>record.id===$('library-select').value)||null}),
+  capture:()=>({enabled:libraryEnabled,busy:state.busy||backupRestoring||backupDownloading,selected:libraryRecords.find(record=>record.id===$('library-select').value)||null,displayed:libraryRecords}),
   onChange:()=>state.backupDownload?.refresh(),
   onError:error=>backupSay(error.message,true)
 });
