@@ -140,3 +140,6 @@ td input[data-raw-number]{width:63px}.raw-value-note{display:block;font-size:.78
 .shot-issue-tools{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;border-top:1px solid var(--line);padding-top:12px;min-width:0}.shot-issue-tools button{max-width:100%;white-space:normal}.shot-issue-tools .hint{flex:1 1 100%;margin:0;overflow-wrap:anywhere}.shot{scroll-margin-top:310px}@media(max-width:720px){.shot{scroll-margin-top:360px}.shot-issue-tools{gap:6px;padding-top:10px}.shot-issue-tools button{padding:8px 10px}}
 
 @media(max-height:620px){.shot-tools{position:static}.shot{scroll-margin-top:16px}}
+
+/* Selected section actions stay available within narrow editors. */
+#section-review-box .section-row{flex-wrap:wrap;gap:10px}#section-review-box .actions{display:flex;flex-wrap:wrap;gap:8px;max-width:100%}#section-review-box button{white-space:normal;max-width:100%}
