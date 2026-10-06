@@ -8,4 +8,4 @@
 
 只盤點本workspace outputs與明確typed owned jobs；最新三版保護，嚴格超七天且可由tag／Git archive重建才列清除候選。未知檔、素材、草稿、備份及失敗36／53與本輪失敗QA證據保留，actual process completion後才最終稽核。
 
-見[契約](docs/MUSIC-SECTION-REVIEW.md)。
+見[契約](MUSIC-SECTION-REVIEW.md)。

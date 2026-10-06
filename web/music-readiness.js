@@ -18,7 +18,7 @@
     const ordered={fields:Object.fromEntries(fields.map(k=>[k,panel.fields[k]])),sections:panel.sections.map(s=>Object.fromEntries(columns.map(k=>[k,s[k]]))),avoid:[...panel.avoid],deliverables:[...panel.deliverables]};
     return J.parse(JSON.stringify(ordered),{maxBytes:8*1024*1024,label:'歌曲待辦來源'});
   }
-  function inspectSource(panel){
+  function inspectSource(panel,selectedRow=null){
     const issues=[],blocked=new Set();let issueCount=0;
     function add(scope,row,field,code,message){issueCount++;if(scope==='sections')blocked.add(row);if(issues.length<200)issues.push({scope,row,field,code,message});}
     function required(scope,row,field,value){if(!Values.trim(value)){add(scope,row,field,'missing_field','尚未填寫');return false;}return true;}
@@ -27,16 +27,27 @@
       let n;try{n=Values.number(value);}catch{add(scope,row,field,'invalid_number','請填寫有限十進位數字');return;}
       if(n<min||n>max||integer&&!Number.isInteger(n))add(scope,row,field,'invalid_range',`需為 ${min}–${max}${integer?' 整數':''}`);
     }
+    if(selectedRow===null){
     for(const field of fields.filter(k=>!['music-bpm','music-beats','music-lyrics'].includes(k)))required('fields',0,field,panel.fields[field]);
     numeric('fields',0,'music-bpm',panel.fields['music-bpm'],20,300);
     numeric('fields',0,'music-beats',panel.fields['music-beats'],1,12,true);
     if(!panel.sections.length)add('fields',0,'sections','no_sections','尚無段落，請新增');
-    panel.sections.forEach((s,i)=>{const row=i+1;for(const field of ['name','focus','texture'])required('sections',row,field,s[field]);numeric('sections',row,'bars',s.bars,1,128,true);numeric('sections',row,'energy',s.energy,1,5);});
+    }
+    panel.sections.forEach((s,i)=>{const row=i+1;if(selectedRow!==null&&row!==selectedRow)return;for(const field of ['name','focus','texture'])required('sections',row,field,s[field]);numeric('sections',row,'bars',s.bars,1,128,true);numeric('sections',row,'energy',s.energy,1,5);});
+    if(selectedRow===null){
     if(!panel.deliverables.length)add('fields',0,'deliverables','no_deliverables','至少需要一個交付項目');
     for(const scope of ['avoid','deliverables'])panel[scope].forEach((v,i)=>required(scope,i+1,'text',v));
+    }
     return {totalSections:panel.sections.length,filledSections:panel.sections.length-blocked.size,issueCount,issues,truncated:issueCount>issues.length};
   }
   function inspect(panel){return inspectSource(source(panel));}
+  function inspectRow(panel,row){
+    if(!J.sameValue(panel,panel))throw Error('選定段落來源需為完整 JSON 值；目前內容保留');
+    const selected=source(panel);
+    if(!Number.isSafeInteger(row)||row<1||row>selected.sections.length)throw Error('請選擇存在的原始段落');
+    const data=inspectSource(selected,row);
+    return {row,totalSections:selected.sections.length,section:structuredClone(selected.sections[row-1]),issueCount:data.issueCount,issues:data.issues};
+  }
   const notes=['只檢查歌曲必填欄位、數值範圍與需求清單；仍須完整建立驗證總時長與資料。','原字串、順序與留白保留；沒有補寫創作或呼叫模型，實唱／實聽及素材授權另行核對。'];
   function report(panel){
     const selected=source(panel),data=inspectSource(selected);
@@ -59,5 +70,5 @@
         if(ids&&ids.length!==panel.sections.length)throw Error('歌曲段落識別不完整；目前內容保留');
         return {panel,ids};},inspect:value=>inspectSource(value.panel),onState});
   }
-  const api={inspect,report,markdown,checkedResult,createController,labels};if(node)module.exports=api;else root.MusicReadiness=api;
+  const api={inspect,inspectRow,report,markdown,checkedResult,createController,labels};if(node)module.exports=api;else root.MusicReadiness=api;
 })(typeof globalThis==='object'?globalThis:this);
