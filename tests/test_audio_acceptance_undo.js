@@ -86,11 +86,11 @@ test('project load and disposal clear only the transient undo record',async()=>{
 });
 
 test('browser module order resolves history at controller creation and DOM returns undo focus to an editable field',async()=>{
- let focused=null;const nodes=new Map(),node=id=>{if(!nodes.has(id))nodes.set(id,{value:'',checked:false,disabled:false,hidden:false,files:[],textContent:'',addEventListener(){},focus(){focused=id;}});return nodes.get(id);};
+ let focused=null;const nodes=new Map(),node=id=>{if(!nodes.has(id))nodes.set(id,{value:'',checked:false,disabled:false,hidden:false,files:[],textContent:'',dataset:{},addEventListener(){},focus(){focused=id;}});return nodes.get(id);};
  node('audio-profile').value='video';node('audio-custom').checked=true;for(const [k,v]of Object.entries(draft().fields))node('audio-accept-'+k).value=v;
  const media={name:'synthetic.wav'};node('audio-file').files=[media];
  const context={MusicEditor:require('../web/editor-state.js'),MusicPlanningValues:require('../web/planning-values.js'),MusicJsonDocument:require('../musiclab/assets/json-document.js'),
-  MusicAudioAcceptanceInput:input,structuredClone};context.globalThis=context;context.window=context;
+  MusicAudioAcceptanceInput:input,MusicTextVerificationDOM:require('../web/text-verification-dom.js'),structuredClone};context.globalThis=context;context.window=context;
  for(const path of ['web/audio-acceptance.js','web/draft-undo.js','web/audio-acceptance-dom.js'])vm.runInNewContext(fs.readFileSync(path,'utf8'),context);
  const errors=[];const adapter=context.MusicAudioAcceptanceDom.createAdapter({getElementById:node},{readValue:n=>n.value,writeValue:(n,v)=>n.value=v,
   events:{addEventListener(){},removeEventListener(){}},allowed:()=>true,downloadText:()=>true,onChange(){},onError:e=>errors.push(e.message)});

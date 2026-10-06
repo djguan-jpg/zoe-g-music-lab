@@ -51,10 +51,10 @@ test('late, changed native media, busy and source edits cannot commit preview or
  const late=controller(),last=late.c.inspect(late.file(report));late.c.cancel();late.reject(Error('late read'));assert.equal(await last,false);assert.equal(late.errors.length,0);
 });
 test('actual DOM adapter injects checked decoder and explains review provenance before explicit apply',async()=>{
- const nodes=new Map(),node=id=>{if(!nodes.has(id))nodes.set(id,{id,value:'',checked:false,disabled:false,hidden:false,textContent:'',files:[],addEventListener(){}});return nodes.get(id);};
+ const nodes=new Map(),node=id=>{if(!nodes.has(id))nodes.set(id,{id,value:'',checked:false,disabled:false,hidden:false,textContent:'',dataset:{},files:[],addEventListener(){}});return nodes.get(id);};
  node('audio-profile').value='video';node('audio-custom').checked=true;for(const [k,v] of Object.entries(draft().fields))node('audio-accept-'+k).value=v;
  const media={name:'native.wav'};node('audio-file').files=[media];let changes=0;const errors=[];
- const context={MusicAudioAcceptance:a,MusicAudioAcceptanceInput:input};context.globalThis=context;vm.runInNewContext(fs.readFileSync('web/audio-acceptance-dom.js','utf8'),context);
+ const context={MusicAudioAcceptance:a,MusicAudioAcceptanceInput:input,MusicTextVerificationDOM:require('../web/text-verification-dom.js')};context.globalThis=context;vm.runInNewContext(fs.readFileSync('web/audio-acceptance-dom.js','utf8'),context);
  const adapter=context.MusicAudioAcceptanceDom.createAdapter({getElementById:node},{readValue:n=>n.value,writeValue:(n,v)=>n.value=v,
   events:{addEventListener(){},removeEventListener(){}},allowed:()=>true,downloadText:()=>true,onChange:()=>changes++,onError:e=>errors.push(e.message)});
  const d=draft({rates:'',bits:'16.5'}),b=bytes(r.review(d)),file={size:b.byteLength,arrayBuffer:async()=>b};

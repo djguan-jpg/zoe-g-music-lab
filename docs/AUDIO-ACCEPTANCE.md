@@ -1,5 +1,16 @@
 # 接受條件草稿（v0.37）
 
+## v0.125.0 條件草稿下載核對
+
+接受條件草稿下載旁新增「核對下載的條件草稿」。成功送出後可選回本次完整 JSON，以共享純 UTF-8 位元組核對確認該次保存快照；條件原值、工作台、列ID、媒體及既有報告保持。核對舊送出稿只確認它當時的條件，後來編修仍需另存；新的成功送出即使內容相同也使舊讀取失效。原本「已確認條件草稿檔案」按鈕保留。
+
+既有純 audio-acceptance 保存模型不變；DOM adapter 只在 downloadText 成功後保留完整送出文字／遞增 revision，注入共享 text-verification controller／原生 File adapter，容量64 KiB在 arrayBuffer 前核對，沿 busy／visibility／latest／pagehide／dispose 保護。來源不取預覽或後來編修；失敗下載保留上一份有效來源。核對無需條件數值可解析，但分析仍完整驗證；BOM、重排、缺尾、同長錯文字、未知版本與額外欄位只要 bytes 不同就不確認。核對不是載入來源，不套用外部 JSON，也不改音檔。
+
+原生測試重現核對選檔的 input 被通用 editor listener 視為編修，導致未改條件的報告過期。新 File 控制明確標示 data-view-control="verification"，重用既有唯讀排除；實際條件 input 仍照常標過期。沒有新增固定 asset、operation、POST、依賴、模型、外網或路徑權限。產品125／唯一policy來源38–125共88，未知126拒絕；20／27 tools、27組schemas、Agent1／draft3與獨立domain schemas保持。
+
+見[契約](AUDIO-ACCEPTANCE-DOWNLOAD.md)。以下保留歷史迭代。
+
+
 v0.66 條件套用撤回：共享pure validated value history→audio controller限定before／實際after→明確Undo→DOM成功焦點回原欄位。後續raw／profile／custom改動拒絕整份撤回，record保留；最近loaded復原與confirmed分開，媒體／其他台保持。Agent／CLI／HTTP與保存schemas無變更。見[契約](AUDIO-ACCEPTANCE-UNDO.md)。下列各版本為歷史記錄。
 
 v0.65 接續接受條件報告：pure input1→完整review1來源派生核對→隔離draft1→CLI或browser注入controller→明確預覽／套用。已載入與已確認下載各保留最近一個指紋，不以舊確認取代新載入。原Agent／MCP／HTTP payload、14／19 tools及Agent1／draft3保持；沒有報告路徑或媒體權限。見[契約](AUDIO-ACCEPTANCE-INPUT.md)。下列各版為歷史記錄。
