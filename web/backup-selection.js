@@ -29,12 +29,14 @@
  function createController({capture,onState=()=>{},onError=()=>{}}){
   if(typeof capture!=='function')fail();
   const entries=new Map();let disposed=false;
-  function plan(source){
-   const pending=new Map();for(const entry of source.displayed||[]){const previous=entries.get(entry.id)||pending.get(entry.id);if(previous&&!same.sameValue(previous,entry))throw Error('目前顯示版本與已選版本資料不一致；整批未加入，原清單保留');if(!previous)pending.set(entry.id,entry);}
-   if(entries.size+pending.size>download.maxEntries)throw Error('加入目前顯示版本後會超過 1000 版；整批未加入，請明確分批下載');return pending;
+  function plan(source,removing=false){
+   const pending=new Map(),seen=new Map();for(const entry of source.displayed||[]){const previous=entries.get(entry.id)||seen.get(entry.id);if(previous&&!same.sameValue(previous,entry))throw Error(`目前顯示版本與已選版本資料不一致；整批未${removing?'移出':'加入'}，原清單保留`);seen.set(entry.id,entry);if(removing?entries.has(entry.id):!entries.has(entry.id))pending.set(entry.id,entry);}
+   if(!removing&&entries.size+pending.size>download.maxEntries)throw Error('加入目前顯示版本後會超過 1000 版；整批未加入，請明確分批下載');return pending;
   }
-  const view=source=>{let pending=null,problem=null;try{pending=plan(source);}catch(error){problem=error.message;}return {entries:[...entries.values()].map(e=>({id:e.id,label:e.label,stored_at:e.stored_at})),count:entries.size,
+  const view=source=>{let pending=null,removals=null,problem=null,removeProblem=null;try{pending=plan(source);}catch(error){problem=error.message;}try{removals=plan(source,true);}catch(error){removeProblem=error.message;}return {entries:[...entries.values()].map(e=>({id:e.id,label:e.label,stored_at:e.stored_at})),count:entries.size,
    displayedCount:source.displayed?.length||0,newDisplayedCount:pending?.size||0,displayedProblem:problem,
+   removableDisplayedCount:removals?.size||0,displayedRemoveProblem:removeProblem,
+   canRemoveDisplayed:!disposed&&source.enabled&&!source.busy&&removals!==null&&removals.size>0,
    canAddDisplayed:!disposed&&source.enabled&&!source.busy&&pending!==null&&pending.size>0,
    canAdd:!disposed&&source.enabled&&!source.busy&&source.selected!==null&&!entries.has(source.selected.id)&&entries.size<download.maxEntries,
    canClear:!disposed&&source.enabled&&!source.busy&&entries.size>0,canDownload:!disposed&&source.enabled&&!source.busy&&entries.size>0};};
@@ -44,6 +46,7 @@
   return {refresh,
    add:()=>act(source=>{const entry=source.selected;if(!entry)return false;if(entries.has(entry.id)){if(!same.sameValue(entries.get(entry.id),entry))fail();return false;}if(entries.size>=download.maxEntries)throw Error('備份選取清單最多 1000 版；請明確分批下載');entries.set(entry.id,entry);return true;}),
    addDisplayed:()=>act(source=>{const pending=plan(source);if(!pending.size)return false;for(const [id,entry] of pending)entries.set(id,entry);return true;}),
+   removeDisplayed:()=>act(source=>{const pending=plan(source,true);if(!pending.size)return false;for(const id of pending.keys())entries.delete(id);return true;}),
    remove:id=>act(()=>{download.request({ids:[id]});return entries.delete(id);}),
    clear:()=>act(()=>{if(!entries.size)return false;entries.clear();return true;}),
    request(){if(!allowed()||!entries.size)return null;return download.request({ids:[...entries.keys()]});},
