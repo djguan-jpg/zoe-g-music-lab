@@ -84,6 +84,7 @@ ASSETS = {"/issue-summary.js": ("web/issue-summary.js", "text/javascript"), "/ly
           "/library-revision.js": ("web/library-revision.js", "text/javascript"),
           "/library-result.js": ("web/library-result.js", "text/javascript"),
           "/draft-retention.js": ("web/draft-retention.js", "text/javascript"),
+          "/draft-difference.js": ("web/draft-difference.js", "text/javascript"),
           "/backup-transfer.js": ("web/backup-transfer.js", "text/javascript"),
           "/backup-file.js": ("web/backup-file.js", "text/javascript"),
           "/backup-result.js": ("web/backup-result.js", "text/javascript"),
