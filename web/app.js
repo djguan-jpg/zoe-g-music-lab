@@ -375,6 +375,11 @@ function focusShot(index,key){
   article.scrollIntoView({block:'start',behavior:'auto'});
   const target=key?article.querySelector(`[data-key="${key}"]`):article.querySelector('summary');
   target.focus({preventScroll:true});
+  if(key){const field=target.getBoundingClientRect(),toolbar=document.querySelector('.shot-tools').getBoundingClientRect(),height=window.innerHeight;
+    const coverBottom=toolbar.top>=0&&toolbar.top<height?toolbar.bottom:0;
+    const offset=MusicShotFieldPosition.scrollOffset({top:field.top,bottom:field.bottom,height,coverBottom});
+    if(offset)window.scrollBy({top:offset,behavior:'auto'});
+  }
 }
 $('shots-collapse').onclick=()=>{$('shots').querySelectorAll('details').forEach(d=>d.open=false);say('所有鏡頭已收合；編修欄位與草稿完整保留');};
 $('shots-expand').onclick=()=>{$('shots').querySelectorAll('details').forEach(d=>d.open=true);say('所有鏡頭已展開');};
@@ -487,7 +492,7 @@ $('mv-time-report').onclick=()=>run($('mv-time-report'),async current=>{
   $('mv-visual').hidden=true;setFiles(accepted.files,`分鏡時間檢查 · 待辦 ${accepted.data.issue_count} 項`);
   say('分鏡時間報告已建立；原時間保留，仍須完整創作與實際音畫驗證');
 });
-shotReviewDOM=MusicStoryboardShotReviewDOM.bind(document,{labels:MusicStoryboardShotReview.labels,visible:()=>state.tab==='storyboard'&&!$('storyboard').hidden,busy:()=>state.busy,
+shotReviewDOM=MusicStoryboardShotReviewDOM.bind(document,{labels:MusicStoryboardShotReview.labels,visible:()=>state.tab==='storyboard'&&!$('storyboard').hidden,busy:()=>state.busy,onCheck:()=>$('shot-review-check').click(),onError:error=>say(error.message,true),
   onLocate:(index,revision)=>{if(state.busy||state.tab!=='storyboard')return false;const issue=shotReviewController.locate(index,revision);if(!issue)return false;focusShot(issue.row-1,issue.field);return document.activeElement===storyboardIssueTarget(issue);}});
 shotReviewController=MusicStoryboardShotReview.createController({capture:()=>({panel:capturePanel('storyboard'),ids:entriesFor('shots').map(e=>e.id),selectedId:$('shots-order').value}),onState:shotReviewDOM.render});
 $('shots-order').addEventListener('change',()=>shotReviewController.refresh());

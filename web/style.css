@@ -135,3 +135,8 @@ td input[data-raw-number]{width:63px}.raw-value-note{display:block;font-size:.78
 .position-tools{display:flex;flex-wrap:wrap;align-items:flex-end;gap:8px;margin-top:12px;min-width:0}.position-tools label{flex:1 1 140px;max-width:240px;margin:0}.position-tools input{width:100%;min-width:0}.position-tools button{white-space:normal;max-width:100%}
 
 .issue-page-tools{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:12px 0;min-width:0}.issue-page-tools button{flex:0 0 auto;max-width:100%;white-space:normal}.issue-page-tools .hint{flex:1 1 100%;margin:0;overflow-wrap:anywhere}
+
+/* Single-shot issues remain reachable from the fixed shot toolbar. */
+.shot-issue-tools{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;border-top:1px solid var(--line);padding-top:12px;min-width:0}.shot-issue-tools button{max-width:100%;white-space:normal}.shot-issue-tools .hint{flex:1 1 100%;margin:0;overflow-wrap:anywhere}.shot{scroll-margin-top:310px}@media(max-width:720px){.shot{scroll-margin-top:360px}.shot-issue-tools{gap:6px;padding-top:10px}.shot-issue-tools button{padding:8px 10px}}
+
+@media(max-height:620px){.shot-tools{position:static}.shot{scroll-margin-top:16px}}
