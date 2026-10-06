@@ -72,3 +72,37 @@ test('non-Enter composition gated and unknown position input never consume or ca
  for(const list of ['shots','unknown'])for(const gesture of [enterGesture(),enterGesture({isComposing:true}),enterGesture({ctrlKey:true})])assert.equal(c.enter(list,gesture,()=>assert.fail()),false);assert.equal(reads,0);
  for(const s of [{...raw(),visible:false},{...raw(),busy:true}]){const c=P.createController({allowed:()=>true,capture:()=>s,moveTarget:()=>assert.fail()});assert.equal(c.enter('shots',enterGesture(),()=>assert.fail()),false);}
 });
+
+const invokePosition=(controller,entry,list)=>entry==='request'?controller.request(list):controller.enter(list,enterGesture(),()=>true);
+test('button and Enter refuse writer-mutated expected orders or selected IDs in all three lists',()=>{
+ for(const list of P.lists)for(const entry of ['request','enter'])for(const mode of ['replace-order','edit-order','selection']){
+  let s=raw(),notices=0;const c=P.createController({allowed:()=>true,capture:()=>s,moveTarget:p=>{
+   s={...s,ids:[...p.afterIds]};
+   if(mode==='selection'){s.selected='a';p.id='a';}else{s.ids.reverse();if(mode==='replace-order')p.afterIds=[...s.ids];else p.afterIds.reverse();}
+   return true;
+  },onMoved:()=>notices++});
+  assert.equal(invokePosition(c,entry,list),false);assert.equal(notices,0);
+  if(mode==='selection')assert.equal(s.selected,'a');else assert.deepEqual(s.ids,['b','d','c','a']);
+ }
+});
+test('correct writes keep original success metadata even when the writer edits every proposal field',()=>{
+ for(const list of P.lists)for(const entry of ['request','enter']){
+  let s=raw(),notice=null;const original=structuredClone(s),c=P.createController({allowed:()=>true,capture:()=>s,moveTarget:p=>{
+   s={...s,ids:[...p.afterIds]};p.list='unknown';p.id='a';p.index=0;p.from=3;p.before.ids.reverse();p.before.selected='a';p.before.position='1';p.before.visible=false;p.before.busy=true;p.afterIds.length=0;return true;
+  },onMoved:p=>notice=p});
+  assert.equal(invokePosition(c,entry,list),true);assert.deepEqual(notice,{list,id:'b',index:3,from:1});assert.deepEqual(s,{...original,ids:['a','c','d','b']});
+ }
+});
+test('retained callback proposals are independent of the caller source and later moves',()=>{
+ for(const list of P.lists)for(const entry of ['request','enter']){
+  let s=raw(),retained;const firstSource=s,notices=[],c=P.createController({allowed:()=>true,capture:()=>s,moveTarget:p=>{retained=p;s={...s,ids:[...p.afterIds]};return true;},onMoved:p=>notices.push(p)});
+  assert.equal(invokePosition(c,entry,list),true);retained.before.ids.splice(0);retained.afterIds.splice(0);retained.id='foreign';retained.index=-1;
+  assert.deepEqual(firstSource,raw());assert.deepEqual(s.ids,['a','c','d','b']);s.position='1';assert.equal(invokePosition(c,entry,list),true);assert.deepEqual(s.ids,['b','a','c','d']);assert.deepEqual(notices,[{list,id:'b',index:3,from:1},{list,id:'b',index:0,from:3}]);
+ }
+});
+test('a capture callback changing the retained writer proposal cannot hide a mismatched actual result',()=>{
+ for(const list of P.lists)for(const entry of ['request','enter']){
+  let s=raw(),retained,notices=0;const c=P.createController({allowed:()=>true,capture:()=>{if(retained){s.ids.reverse();retained.afterIds=[...s.ids];retained.id=s.selected='a';}return s;},moveTarget:p=>{retained=p;s={...s,ids:[...p.afterIds]};return true;},onMoved:()=>notices++});
+  assert.equal(invokePosition(c,entry,list),false);assert.equal(notices,0);assert.deepEqual(s.ids,['b','d','c','a']);assert.equal(s.selected,'a');
+ }
+});

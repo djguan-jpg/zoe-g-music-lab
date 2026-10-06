@@ -31,7 +31,8 @@
     let disposed=false;
     function current(list,before){return allowed(list)&&same(before,source(list,capture(list)));}
     function finish(list,before,plan){
-      if(moveTarget(plan)!==true)return false;
+      // Writer-owned metadata must not replace the expected actual-after source.
+      if(moveTarget({...plan,before:{...plan.before,ids:[...plan.before.ids]},afterIds:[...plan.afterIds]})!==true)return false;
       const after=source(list,capture(list));
       if(!allowed(list)||!after.visible||after.busy||after.selected!==plan.id||after.position!==before.position||!O.same(plan.afterIds,after.ids))return false;
       onMoved({list,id:plan.id,index:plan.index,from:plan.from});return true;
