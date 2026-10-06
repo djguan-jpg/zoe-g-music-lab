@@ -13,12 +13,15 @@
     let initial=null,current=null,pending=null,sequence=0;
     const retained=new Map();
     function status(){
-      if(!initial)return {ready:false,dirty:false,mode:'loading',pendingDownload:false,atInitial:false};
+      if(!initial)return {ready:false,dirty:false,mode:'loading',pendingDownload:false,atInitial:false,difference:{reference:null,panels:[]}};
       const found=[...retained.values()].filter(item=>equal(current,item.keys)).sort((a,b)=>b.sequence-a.sequence)[0];
       const atInitial=equal(current,initial),dirty=!atInitial&&!found;
+      const latest=[...retained.values()].sort((a,b)=>b.sequence-a.sequence)[0];
+      const reference=latest?.keys||initial;
+      const difference=dirty?{reference:latest?.kind||'initial',panels:Object.keys(initial).filter(name=>current[name]!==reference[name])}:{reference:null,panels:[]};
       return {ready:true,dirty,atInitial,mode:found?found.kind:atInitial?'initial':
         pending?(equal(current,pending)?'download_unconfirmed':'changed_after_download'):'unretained',
-        label:found?.label||'',pendingDownload:pending!==null};
+        label:found?.label||'',pendingDownload:pending!==null,difference};
     }
     function remember(value,kind,label=''){
       if(!kinds.includes(kind)||typeof label!=='string')throw Error('不支援的草稿另存確認');

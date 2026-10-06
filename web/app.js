@@ -847,6 +847,8 @@ function renderRetention(value){
   const note=$('draft-retention-note'),message=messages[value.mode]+(value.mode==='library'&&value.label?' '+value.label:'');
   if(note.textContent!==message)note.textContent=message;
   note.dataset.dirty=String(value.dirty);$('draft-confirm-download').hidden=!value.pendingDownload;
+  const difference=$('draft-retention-difference'),text=MusicDraftDifference.describe(value.difference);
+  if(difference.textContent!==text)difference.textContent=text;difference.hidden=!text;
 }
 function capturePanel(panel){
   const value={fields:Object.fromEntries(MusicEditor.draftFields[panel].map(id=>[id,readValue($(id))]))};
