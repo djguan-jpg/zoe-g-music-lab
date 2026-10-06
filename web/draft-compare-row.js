@@ -46,5 +46,15 @@
   if(['avoid','deliverables'].includes(s.collection)){a=a===null?null:{value:a};b=b===null?null:{value:b};}
   return {selection:s,fields:collections[s.scope][s.collection].map(field=>({field,before:a===null?null:a[field],after:b===null?null:b[field]}))};
  }
- const api={prepare,selection,compare,canonical:Model.canonical,markdown,fullValues};if(node)module.exports=api;else root.MusicDraftCompareRow=api;
+ function navigation(payload){
+  const p=prepare(payload),s=p.selection,a=p.baseline.panels[s.scope][s.collection],b=p.current.panels[s.scope][s.collection],rows=Math.max(a.length,b.length),strings=['avoid','deliverables'].includes(s.collection);
+  let changes=0,ordinal=null,previous=null,next=null;
+  for(let i=0;i<rows;i++){
+   const left=a[i]??null,right=b[i]??null,changed=left===null||right===null||(strings?left!==right:collections[s.scope][s.collection].some(key=>left[key]!==right[key]));
+   if(!changed)continue;
+   changes++;const position=i+1;if(position<s.row)previous=position;else if(position===s.row)ordinal=changes;else if(next===null)next=position;
+  }
+  return {selection:s,rows,changes,ordinal,previous,next};
+ }
+ const api={prepare,selection,compare,canonical:Model.canonical,markdown,fullValues,navigation};if(node)module.exports=api;else root.MusicDraftCompareRow=api;
 })(typeof globalThis==='object'?globalThis:this);
