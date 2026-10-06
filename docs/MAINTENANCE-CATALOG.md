@@ -1,5 +1,7 @@
 # 封裝目錄與復原容量
 
+v0.133.0 新增明確選取批次：完整catalog與既有full prune容量保持；batch1可由完整合格候選選1–128份，每批独立token與原recovery1，沒有自動連續批次。見[分批契約](MAINTENANCE-BATCH.md)。以下是v129歷史契約，原整批129候選拒絕仍適用預設操作。
+
 v0.129.0 的開發維護CLI沿既有 workspace／safe_path／package_facts，沒有新增Agent或HTTP維護operation。只有本專案outputs/releases的direct entries進入catalog，未知、reparse、不完整、額外檔案與來源不符維持preserved。
 
 MAX_RELEASE_ENTRIES=1024只限制唯讀列舉：第1025筆使整輪拒絕，尚未開始封裝解析，也不回傳部分保留／清除決策。完整catalog排序後逐份核對manifest、ZIP ledger／CRC／SHA、tag與immutable source；嚴格超七天才以現場Git archive驗證重建bytes。retention_plan從全部已核實版本選最新三版。audit只保存directory／version／newest_mtime／verified／reasons／identity，不保留每份完整manifest ledger；package_facts本身的完整結果介面保持。

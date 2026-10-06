@@ -13,7 +13,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from musiclab.maintenance_fs import workspace, audit, prune, restore, write_new
+from musiclab.maintenance_fs import workspace, audit, audit_batch, prune, restore, write_new
 from musiclab.run_identity import record_current_run
 
 
@@ -26,6 +26,7 @@ def main(argv=None):
     action.add_argument('--record-self', metavar='JOB', help='Record this Python process identity for managed job wrappers')
     parser.add_argument('--expected-token', help='Required SHA-256 of the preview candidate identities for pruning')
     parser.add_argument('--run-record', type=Path, action='append', default=[], help='Explicit same-host run record within selected project outputs')
+    parser.add_argument('--package-directory', action='append', help='Preview or prune only these exact eligible release identities; repeat 1–128 times')
     parser.add_argument('--out', type=Path, help='Save a new receipt within outputs; default refuses overwrite')
     args = parser.parse_args(argv)
     try:
@@ -38,6 +39,8 @@ def main(argv=None):
             raise ValueError('--prune requires the exact preview --expected-token')
         if (args.restore_journal or args.record_self) and records:
             raise ValueError('Run records are only used by audit and pruning')
+        if args.package_directory and (args.restore_journal or args.record_self):
+            raise ValueError('--package-directory is only valid with audit or pruning')
         # Validate receipt location first; pruning independently journals recovery before moving.
         if args.out:
             target = selected(args.out)
@@ -46,13 +49,13 @@ def main(argv=None):
             if not target.is_relative_to(root/'outputs') or target.exists():
                 raise ValueError('Receipt path must be a new file within project outputs')
         if args.prune:
-            result = prune(root, args.expected_token, records)
+            result = prune(root, args.expected_token, records, package_directories=args.package_directory)
         elif args.restore_journal:
             result = restore(root, selected(args.restore_journal))
         elif args.record_self:
             result = record_current_run(args.record_self)
         else:
-            result = audit(root, records)
+            result = audit(root, records) if args.package_directory is None else audit_batch(root, args.package_directory, records)
         if args.out:
             write_new(root, target, result)
         print(json.dumps(result, ensure_ascii=False, allow_nan=False))

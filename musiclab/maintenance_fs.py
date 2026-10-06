@@ -17,7 +17,7 @@ import uuid
 import zipfile
 from pathlib import Path, PurePosixPath
 from .json_document import decode_json
-from .maintenance import retention_plan, prune_token, version_key, validate_run, classify_run, validate_candidate
+from .maintenance import retention_plan, prune_token, version_key, validate_run, classify_run, validate_candidate, prune_batch_directories, prune_batch_plan
 from .run_identity import observe_process
 
 PREFIX = 'zoe-g-music-lab/'
@@ -273,16 +273,25 @@ def audit(root, run_records=(), now=None):
             'running_or_unverified': sum(r['status'] in ('running', 'unverified') for r in runs), 'mutation': 'none'}
 
 
-def prune(root, token, run_records=()):
+def audit_batch(root, package_directories, run_records=(), now=None):
+    """Full read-only audit plus an explicit, independently versioned batch preview."""
+    directories = prune_batch_directories(package_directories)
+    report = audit(root, run_records, now)
+    return {**prune_batch_plan(report['candidates'], directories), 'audit': report, 'mutation': 'none'}
+
+
+def prune(root, token, run_records=(), *, package_directories=None):
     """Re-audit, journal, move within root, recheck, unlink exact files only."""
+    directories = None if package_directories is None else prune_batch_directories(package_directories)
     root = workspace(root);report = audit(root, run_records)
-    if report['prune_token'] != token:
+    preview = report if directories is None else {**prune_batch_plan(report['candidates'], directories), 'audit': report}
+    if preview['prune_token'] != token:
         raise ValueError('Preview changed; audit again before pruning')
     if report['running_or_unverified']:
         raise ValueError('Recorded run is still active or unverified; no pruning')
-    selected = report['candidates']
+    selected = report['candidates'] if directories is None else preview['selected']
     if not selected:
-        return {**report, 'mutation': 'pruned', 'removed': [], 'journal': None}
+        return {**preview, 'mutation': 'pruned', 'removed': [], 'journal': None}
     if len(selected) > MAX_RECOVERY_PACKAGES:
         raise ValueError('Recovery package capacity exceeded; no pruning')
     facts = [package_facts(root, root/p['directory'], time.time()) for p in selected]
@@ -318,7 +327,7 @@ def prune(root, token, run_records=()):
         archive.unlink();manifest.unlink();target.rmdir()
         removed.append(identity['directory'])
     quarantine.rmdir()
-    return {**report, 'mutation': 'pruned', 'removed': removed, 'journal': journal_path.relative_to(root).as_posix()}
+    return {**preview, 'mutation': 'pruned', 'removed': removed, 'journal': journal_path.relative_to(root).as_posix()}
 
 
 def restore(root, journal_path):
