@@ -8,8 +8,8 @@
   const attempt=action=>{try{return action();}catch(error){onError(error);return false;}};
   const detail=issue=>({location:`鏡頭 ${issue.row}`,field:labels[issue.field],message:issue.message,relation:issue.related_row?`母題 ${issue.related_row}`:null});
   const cursor=Cursor.createController({capture:()=>({detailCount:view.report?.issues.length||0,hasReport:view.report!==null,revision:view.revision,stale:view.stale,busy:busy(),visible:visible()&&!!get('shots-order').value}),onLocate,
-   onState:v=>{get('shot-issue-previous').disabled=!v.canPrevious;get('shot-issue-next').disabled=!v.canNext;const current=!!view.report&&!view.stale&&view.revision===v.revision&&!busy()&&visible()&&!!get('shots-order').value&&v.index!==null;get('shot-issue-note').textContent=v.message+Summary.present({current,index:v.index,detail:current?detail(view.report.issues[v.index]):null});if(current)attempt(()=>onReveal(view.report.issues[v.index]));}});
-  get('shot-issue-previous').onclick=()=>attempt(()=>cursor.move(-1));get('shot-issue-next').onclick=()=>attempt(()=>cursor.move(1));
+   onState:v=>{get('shot-issue-return').disabled=!v.canReturn;get('shot-issue-previous').disabled=!v.canPrevious;get('shot-issue-next').disabled=!v.canNext;const current=!!view.report&&!view.stale&&view.revision===v.revision&&!busy()&&visible()&&!!get('shots-order').value&&v.index!==null;get('shot-issue-note').textContent=v.message+Summary.present({current,index:v.index,detail:current?detail(view.report.issues[v.index]):null});if(current)attempt(()=>onReveal(view.report.issues[v.index]));}});
+  get('shot-issue-return').onclick=()=>attempt(()=>cursor.returnCurrent());get('shot-issue-previous').onclick=()=>attempt(()=>cursor.move(-1));get('shot-issue-next').onclick=()=>attempt(()=>cursor.move(1));
   get('shot-issue-check').onclick=()=>{if(!visible()||busy()||!get('shots-order').value)return false;return attempt(onCheck);};
   function render(next){
    view=next;const d=view.report,blocked=!visible()||busy()||view.stale||!get('shots-order').value;

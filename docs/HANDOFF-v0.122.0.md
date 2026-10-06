@@ -18,4 +18,4 @@ Repo已獲使用者當次授權公開，四個FreeTWAI新作品公開介紹頁�
 
 只唯讀盤點本workspace outputs、直接release封裝與typed owned runs；發佈後最新122／121／120三版保護。嚴格超七天且exact tag／現場Git archive可重建才列清除候選；未知檔、素材、草稿、備份、失敗36／53及失敗QA保持。各session實際EOF後才最終稽核，不終止外部程序。瀏覽器落盤下載、完整視覺／screen reader、實聽／實際音畫同步、Host安裝及平台創始核實仍未驗證。
 
-見[契約](docs/ISSUE-RETURN.md)，平台實際狀態見[PLATFORM-STATUS.md](PLATFORM-STATUS.md)。
+見[契約](ISSUE-RETURN.md)，平台實際狀態見[PLATFORM-STATUS.md](../PLATFORM-STATUS.md)。
