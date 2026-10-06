@@ -84,7 +84,7 @@ class BackupResultTests(unittest.TestCase):
             requests=[{'jsonrpc':'2.0','id':1,'method':'initialize','params':{'protocolVersion':'2025-11-25','capabilities':{},'clientInfo':{'name':'synthetic-backup','version':'1'}}},{'jsonrpc':'2.0','method':'notifications/initialized'},{'jsonrpc':'2.0','id':2,'method':'tools/list'}]
             requests += [{'jsonrpc':'2.0','id':i+3,'method':'tools/call','params':{'name':op,'arguments':{'payload':payload}}} for i,(op,payload) in enumerate([('draft_backup_inspect',{}),('draft_backup_restore',{'backup_sha256':proof['sha256']})])]
             mcp=[json.loads(v) for v in run([sys.executable,'-X','utf8',str(ROOT/'music_lab_mcp.py'),'--draft-library',str(Path(folder)/'mcp'),'--draft-backup',str(backup)],folder,requests).splitlines()]
-            tools={t['name']:t for t in mcp[1]['result']['tools']};self.assertEqual(len(tools),27);self.assertTrue(tools['draft_backup_inspect']['annotations']['readOnlyHint']);self.assertFalse(tools['draft_backup_restore']['annotations']['readOnlyHint'])
+            tools={t['name']:t for t in mcp[1]['result']['tools']};self.assertEqual(len(tools),28);self.assertTrue(tools['draft_backup_inspect']['annotations']['readOnlyHint']);self.assertFalse(tools['draft_backup_restore']['annotations']['readOnlyHint'])
             x,y=[v['result']['structuredContent'] for v in mcp[2:]]
             cases=[['inspect',w,proof,None] for w in [cli,a,x]]+[['restore',w,proof,a['data']] for w in [b,c,y]]
             self.assertTrue(all(v['ok'] for v in checked(cases)));self.assertEqual(a,cli);self.assertEqual(x,cli);self.assertEqual(b,y);self.assertEqual(c['data']['reused_count'],2);self.assertEqual(backup.read_bytes(),raw)

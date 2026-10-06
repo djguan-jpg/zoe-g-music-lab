@@ -35,7 +35,7 @@ class PreviewTests(unittest.TestCase):
     def test_actual_mcp_preview_default_tool_set_and_read_only_contract(self):
         rows=[{'jsonrpc':'2.0','id':1,'method':'initialize','params':{'protocolVersion':'2025-11-25','capabilities':{},'clientInfo':{'name':'preview-test','version':'1'}}},{'jsonrpc':'2.0','method':'notifications/initialized'},{'jsonrpc':'2.0','id':2,'method':'tools/list'},{'jsonrpc':'2.0','id':3,'method':'tools/call','params':{'name':'lyrics_validate','arguments':{'payload':PAYLOAD}}}]
         r=subprocess.run([sys.executable,'-X','utf8','music_lab_mcp.py'],cwd=ROOT,input='\n'.join(json.dumps(v) for v in rows)+'\n',capture_output=True,text=True,encoding='utf-8',timeout=15);self.assertEqual(r.returncode,0,r.stderr)
-        reply={s['id']:s for s in (json.loads(v) for v in r.stdout.split('\n') if v)};self.assertEqual(len(reply[2]['result']['tools']),20)
+        reply={s['id']:s for s in (json.loads(v) for v in r.stdout.split('\n') if v)};self.assertEqual(len(reply[2]['result']['tools']),21)
         good=reply[3]['result']['structuredContent'];self.assertEqual(inspect(good['data'],good['files']['preview.html']),good['data'])
     def test_actual_loopback_contract_asset_order_and_source_checked_http_preview(self):
         with WorkbenchServer(('127.0.0.1',0),WorkbenchHandler) as server:

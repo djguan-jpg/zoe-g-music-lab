@@ -1,0 +1,60 @@
+{
+  "format": "zoe-music-lab-draft",
+  "schema_version": 3,
+  "tool_version": "0.8.0",
+  "saved_at": "2026-10-01T00:00:00Z",
+  "tab": "music",
+  "panels": {
+    "music": {
+      "fields": {
+        "music-title": "合成草稿比較範例",
+        "music-hook": "",
+        "music-theme": "",
+        "music-style": "",
+        "music-vocal": "",
+        "music-audience": "",
+        "music-bpm": "",
+        "music-beats": "",
+        "music-lyrics": "",
+        "music-language": ""
+      },
+      "sections": [
+        {
+          "name": "主歌",
+          "bars": "8",
+          "energy": "3",
+          "focus": "保留原句",
+          "texture": ""
+        }
+      ],
+      "avoid": [],
+      "deliverables": []
+    },
+    "storyboard": {
+      "fields": {
+        "mv-title": "",
+        "mv-duration": "",
+        "mv-fps": "",
+        "mv-ratio": "",
+        "mv-style": "",
+        "mv-anchor": ""
+      },
+      "shots": [],
+      "motifs": []
+    },
+    "lyrics": {
+      "fields": {
+        "lyrics-title": "",
+        "lyrics-source": "",
+        "lyrics-format": ".lrc",
+        "lyrics-duration": ""
+      },
+      "cues": []
+    },
+    "audio": {
+      "fields": {
+        "audio-profile": "distribution"
+      }
+    }
+  }
+}

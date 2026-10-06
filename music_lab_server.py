@@ -313,6 +313,7 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
                 archive,summary=export_library_backup(getattr(self.server,'draft_library',None),ids)
                 return self.reply(200,json_text(backup_downloads(self.server).prepare(archive,summary)))
             operations = {"/api/music": "music", "/api/storyboard": "storyboard", "/api/lyrics": "lyrics",
+                          "/api/draft-compare": "draft_compare",
                           "/api/storyboard-seed": "storyboard_seed",
                           "/api/lyrics-seed": "lyrics_seed", "/api/lyrics-review": "lyrics_review", "/api/lyrics-cue-review": "lyrics_cue_review", "/api/lyrics-search": "lyrics_search", "/api/storyboard-search": "storyboard_search", "/api/music-search": "music_search", "/api/lyrics-export-review": "lyrics_export_review", "/api/audio-acceptance-review": "audio_acceptance_review", "/api/music-review": "music_review", "/api/music-section-review": "music_section_review", "/api/storyboard-review": "storyboard_review", "/api/storyboard-shot-review": "storyboard_shot_review", "/api/storyboard-timing-review": "storyboard_timing_review",
                           "/api/drafts/save": "draft_save", "/api/drafts/list": "draft_list", "/api/drafts/read": "draft_read",

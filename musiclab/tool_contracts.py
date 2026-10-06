@@ -81,6 +81,9 @@ def acceptance_draft_schema():
 
 
 def payload_schema(operation):
+    if operation == 'draft_compare':
+        from .draft_contract import draft_schema
+        return object_schema({'baseline': draft_schema(), 'current': draft_schema()}, ('baseline', 'current'), additionalProperties=False)
     if operation == 'draft_search':
         from .library_search import request_schema
         return request_schema()
@@ -390,6 +393,12 @@ def output_schema(operation=None):
                                                  "needs_review": {"type": "boolean"}},
                                                 ("version", "protocol_version", "needs_review"), additionalProperties=False)},
                          ("files", "data", "meta"), additionalProperties=False)
+    if operation == 'draft_compare':
+        from .draft_compare import data_schema
+        result['properties']['data'] = data_schema()
+        names = ('draft-comparison.json', 'draft-comparison.md')
+        result['properties']['files'] = object_schema({name: {'type': 'string'} for name in names}, names, additionalProperties=False)
+        result['properties']['meta']['properties']['needs_review']['const'] = True
     if operation == 'lyrics_cue_review':
         from .lyrics_cue_review import data_schema
         result['properties']['data'] = data_schema()
