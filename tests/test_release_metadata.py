@@ -129,5 +129,24 @@ class CommittedReleaseTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'metadata limit'):packager.package(selected)
         self.assertFalse(any(call[1]=='show' for call in self.calls));self.assertFalse((self.root/'outputs').exists())
 
+    def test_successful_process_with_invalid_test_summary_cannot_issue_manifest(self):
+        value=dict(metadata(),license='PolyForm-Noncommercial-1.0.0')
+        self.commit(value)
+        for name in ['LICENSE','NOTICE','README.md','music_lab_agent.py','music_lab_server.py']:
+            (self.root/name).write_text('Synthetic packaging boundary fixture\n',encoding='utf-8')
+        self.git('add','--',*['LICENSE','NOTICE','README.md','music_lab_agent.py','music_lab_server.py'])
+        self.git('commit','--quiet','-m','Synthetic archive boundary fixture');selected=self.git('rev-parse','HEAD')
+        self.calls.clear()
+        def invalid_summary(args,cwd=None,input=None,timeout=60):
+            if 'scripts/check_python_tests.py' in args:
+                self.calls.append(list(args));self.assertIn('--report-json',args);return b'{}'
+            return self.command(args,cwd,input,timeout)
+        with patch.object(packager,'command',invalid_summary),self.assertRaisesRegex(ValueError,'Unsupported test-run summary'):
+            packager.package(selected)
+        folder=self.root/'outputs/releases'/('v0.79.0-'+selected[:12])
+        self.assertTrue((folder/'FAILED.txt').is_file());self.assertTrue((folder/'zoe-g-music-lab-v0.79.0.zip').is_file())
+        self.assertFalse((folder/'manifest.json').exists())
+        self.assertFalse(any(call[0]=='node' for call in self.calls))
+
 
 if __name__=='__main__':unittest.main()
