@@ -14,7 +14,7 @@ from musiclab.draft_library import DraftLibrary, revision_id
 def main(argv=None):
     parser = argparse.ArgumentParser(description=f"ZOE. G Music Lab · 本機 v{__version__}")
     commands = parser.add_subparsers(dest="command", required=True)
-    for name in ("music", "storyboard", "lyrics", "audio", "audio-acceptance-review", "storyboard-seed", "lyrics-seed", "lyrics-review", "lyrics-search", "storyboard-search", "lyrics-export-review", "music-review", "storyboard-review", "storyboard-timing-review", "delivery-package", "delivery-inspect"):
+    for name in ("music", "storyboard", "lyrics", "audio", "audio-acceptance-review", "storyboard-seed", "lyrics-seed", "lyrics-review", "lyrics-search", "storyboard-search", "music-search", "lyrics-export-review", "music-review", "storyboard-review", "storyboard-timing-review", "delivery-package", "delivery-inspect"):
         sub = commands.add_parser(name)
         sub.add_argument("--out", required=True, help="指定本輪輸出資料夾")
         sub.add_argument("--overwrite", action="store_true", help="明確替換此輸出目錄的同名成果")
@@ -171,7 +171,7 @@ def main(argv=None):
             result = build('audio_acceptance_review', {'document': document})
             bundle = result.files
             status = 2 if result.data['issue_count'] else 0
-        elif args.command in ('lyrics-search', 'storyboard-search'):
+        elif args.command in ('lyrics-search', 'storyboard-search', 'music-search'):
             result=build(args.command.replace('-', '_'),read_json(args.input));bundle=result.files
         elif args.command in ('lyrics-review','lyrics-export-review'):
             payload=read_json(args.input)

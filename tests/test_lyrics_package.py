@@ -98,7 +98,7 @@ class LyricsPackageTests(unittest.TestCase):
         self.assertEqual(build('lyrics',{'content':'[{"start":0,"end":1,"text":"句"}]','suffix':'.json'}).data['cues'][0]['end'],1)
 
     def test_contract_discovery_describes_package_and_versions_independently(self):
-        c=capabilities();self.assertEqual(c['protocol_version'],1);self.assertEqual(len(c['operations']),16)
+        c=capabilities();self.assertEqual(c['protocol_version'],1);self.assertEqual(len(c['operations']),17)
         self.assertEqual(c['lyrics_package']['schema_version'],1)
         schema=payload_schema('lyrics');self.assertFalse(schema['additionalProperties']);self.assertEqual(len(schema['oneOf']),3)
         self.assertEqual(schema['properties']['package']['anyOf'][0]['properties']['format']['const'],'zoe-lyrics-package')
@@ -144,7 +144,7 @@ class LyricsPackageTests(unittest.TestCase):
               {'jsonrpc':'2.0','method':'notifications/initialized'},{'jsonrpc':'2.0','id':2,'method':'tools/list'}]
         rows += [{'jsonrpc':'2.0','id':i+3,'method':'tools/call','params':{'name':'lyrics_validate','arguments':{'payload':{'package':v}}}} for i,v in enumerate([bad,p])]
         r=subprocess.run([sys.executable,'-X','utf8',str(ROOT/'music_lab_mcp.py')],input='\n'.join(json.dumps(s) for s in rows)+'\n',capture_output=True,text=True,encoding='utf-8',timeout=15)
-        self.assertEqual(r.returncode,0);a={x['id']:x for x in map(json.loads,r.stdout.splitlines())};self.assertEqual(len(a[2]['result']['tools']),16);self.assertTrue(a[3]['result']['isError']);self.assertEqual(a[4]['result']['structuredContent']['data'],p)
+        self.assertEqual(r.returncode,0);a={x['id']:x for x in map(json.loads,r.stdout.splitlines())};self.assertEqual(len(a[2]['result']['tools']),17);self.assertTrue(a[3]['result']['isError']);self.assertEqual(a[4]['result']['structuredContent']['data'],p)
 
 
 if __name__=='__main__':unittest.main()

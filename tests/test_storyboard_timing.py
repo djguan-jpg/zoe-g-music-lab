@@ -101,7 +101,7 @@ class StoryboardTimingTests(unittest.TestCase):
         with self.assertRaises(ValueError):build('storyboard',{'duration_seconds':1,'fps':24,'shots':[{'start':0,'end':1}]})
 
     def test_discovery_is_additive_and_input_is_strict_read_only(self):
-        info=capabilities();self.assertEqual(len(info['operations']),16);self.assertEqual(info['storyboard_timing_review']['schema_version'],1);self.assertEqual(info['storyboard_review']['schema_version'],1)
+        info=capabilities();self.assertEqual(len(info['operations']),17);self.assertEqual(info['storyboard_timing_review']['schema_version'],1);self.assertEqual(info['storyboard_review']['schema_version'],1)
         tool={t['name']:t for t in tool_list()}['storyboard_timing_review'];self.assertTrue(tool['annotations']['readOnlyHint']);self.assertFalse(tool['annotations']['openWorldHint']);self.assertFalse(tool['annotations']['destructiveHint'])
         schema=info['input_schemas']['storyboard_timing_review'];self.assertFalse(schema['additionalProperties']);self.assertEqual(schema['properties']['panel']['properties']['shots']['maxItems'],1000)
 
@@ -124,7 +124,7 @@ class StoryboardTimingTests(unittest.TestCase):
         rows=[dict(protocol_version=1,id=str(i),operation='storyboard_timing_review',payload=p) for i,p in enumerate([dict(payload,path='bad'),payload])]
         r=subprocess.run([sys.executable,'-X','utf8','music_lab_agent.py'],cwd=ROOT,input=''.join(json.dumps(row)+'\n' for row in rows),capture_output=True,text=True,encoding='utf-8',timeout=10);self.assertEqual(r.returncode,0,r.stderr);a=list(map(json.loads,r.stdout.splitlines()));self.assertFalse(a[0]['ok']);self.assertEqual(a[1]['result'],expected)
         rows=[dict(jsonrpc='2.0',id=1,method='initialize',params=dict(protocolVersion='2025-11-25',capabilities={},clientInfo=dict(name='timing-qa',version='1'))),dict(jsonrpc='2.0',method='notifications/initialized'),dict(jsonrpc='2.0',id=2,method='tools/list'),dict(jsonrpc='2.0',id=3,method='tools/call',params=dict(name='storyboard_timing_review',arguments=dict(payload=payload)))]
-        r=subprocess.run([sys.executable,'-X','utf8','music_lab_mcp.py'],cwd=ROOT,input=''.join(json.dumps(row)+'\n' for row in rows),capture_output=True,text=True,encoding='utf-8',timeout=10);self.assertEqual(r.returncode,0,r.stderr);a=list(map(json.loads,r.stdout.splitlines()));self.assertEqual(len(a[1]['result']['tools']),16);self.assertEqual(a[2]['result']['structuredContent'],expected)
+        r=subprocess.run([sys.executable,'-X','utf8','music_lab_mcp.py'],cwd=ROOT,input=''.join(json.dumps(row)+'\n' for row in rows),capture_output=True,text=True,encoding='utf-8',timeout=10);self.assertEqual(r.returncode,0,r.stderr);a=list(map(json.loads,r.stdout.splitlines()));self.assertEqual(len(a[1]['result']['tools']),17);self.assertEqual(a[2]['result']['structuredContent'],expected)
 
     def test_real_http_routes_and_module_defer_order(self):
         server=WorkbenchServer(('127.0.0.1',0),WorkbenchHandler);server.draft_library=None;thread=threading.Thread(target=server.serve_forever);thread.start()

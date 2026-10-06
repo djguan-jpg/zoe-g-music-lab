@@ -2,10 +2,10 @@
 'use strict';
 const test=require('node:test'),assert=require('node:assert/strict'),crypto=require('node:crypto');
 const R=require('../web/search-request.js'),hash=b=>crypto.createHash('sha256').update(b).digest('hex');
-const profiles=['lyrics','storyboard'].map(kind=>({kind,P:require('../musiclab/assets/'+kind+'-search.js'),C:require('../web/'+kind+'-search-controller.js'),D:require('../web/'+kind+'-search-dom.js')}));
+const profiles=['lyrics','storyboard','music'].map(kind=>({kind,P:require('../musiclab/assets/'+kind+'-search.js'),C:require('../web/'+kind+'-search-controller.js'),D:require('../web/'+kind+'-search-dom.js')}));
 function harness(profile,{defer=false,ignoreAbort=false,localHash=false}={}){
- const {kind,P,C}=profile,s={ids:Array.from({length:45},(_,i)=>'id'+i),visible:true,busy:false,resultRevision:0},calls=[],signals=[],reports=[],errors=[],hashes=[],effects=[];
- if(kind==='lyrics')s.texts=Array.from({length:45},(_,i)=>'a b 原文 '+i);else s.shots=Array.from({length:45},(_,i)=>Object.fromEntries(P.fields.map(k=>[k,k==='visual'?'a b 原文 '+i:''])));
+ const {kind,P,C}=profile,length=kind==='music'?40:45,s={ids:Array.from({length},(_,i)=>'id'+i),visible:true,busy:false,resultRevision:0},calls=[],signals=[],reports=[],errors=[],hashes=[],effects=[];
+ if(kind==='lyrics')s.texts=Array.from({length:45},(_,i)=>'a b 原文 '+i);else if(kind==='music')s.sections=Array.from({length},(_,i)=>Object.fromEntries(P.fields.map(k=>[k,k==='focus'?'a b 原文 '+i:''])));else s.shots=Array.from({length:45},(_,i)=>Object.fromEntries(P.fields.map(k=>[k,k==='visual'?'a b 原文 '+i:''])));
  const search=p=>P.search(p,{hash}),wire=d=>({data:d,files:{[kind+'-search.json']:JSON.stringify(d),[kind+'-search.md']:P.markdown(d)},meta:{version:'0.93.0',protocol_version:1,needs_review:true}});
  const options={version:'0.93.0',capture:()=>s,createAbort:()=>{const a=new AbortController();signals.push(a.signal);return a;},search:localHash?p=>new Promise(r=>hashes.push(async()=>r(await search(p)))):search,
   request:async(p,{signal})=>{const reply=wire(await search(p));if(!defer)return reply;return new Promise((resolve,reject)=>{const call={payload:p,signal,resolve:()=>resolve(reply),reject};calls.push(call);if(!ignoreAbort)signal.addEventListener('abort',()=>reject(Object.assign(Error('aborted'),{name:'AbortError'})),{once:true});});},
@@ -31,7 +31,7 @@ for(const profile of profiles){
   p=h.c.next();await settle();h.calls[2].resolve();assert.equal(await p,true);assert.equal(h.c.view().startRow,21);assert.equal(h.signals[2].aborted,false);
  });
  test(kind+' query source ID navigation busy and clear abort only the owned old transport',async()=>{
-  for(const change of [h=>h.c.setQuery('b'),h=>{if(kind==='lyrics')h.s.texts[0]='changed';else h.s.shots[0].camera='changed';h.c.refresh();},h=>{h.s.ids[0]='new';h.c.refresh();},h=>{h.s.visible=false;h.c.refresh();},h=>{h.s.busy=true;h.c.refresh();},h=>h.c.clear()]){
+  for(const change of [h=>h.c.setQuery('b'),h=>{if(kind==='lyrics')h.s.texts[0]='changed';else if(kind==='music')h.s.sections[0].texture='changed';else h.s.shots[0].camera='changed';h.c.refresh();},h=>{h.s.ids[0]='new';h.c.refresh();},h=>{h.s.visible=false;h.c.refresh();},h=>{h.s.busy=true;h.c.refresh();},h=>h.c.clear()]){
    const h=harness(profile,{defer:true});h.c.setQuery('a');const p=h.c.find();await settle();change(h);assert.equal(h.calls[0].signal.aborted,true);assert.equal(await p,false);assert.equal(h.reports.length,0);assert.equal(h.errors.length,0);assert.equal(h.c.view().pending,false);
   }
  });
@@ -55,5 +55,5 @@ for(const profile of profiles){
  });
 }
 test('both fixed adapters forward only their explicitly owned signal and load the shared asset first',()=>{
- const fs=require('node:fs'),html=fs.readFileSync('web/index.html','utf8'),app=fs.readFileSync('web/app.js','utf8');for(const kind of ['lyrics','storyboard']){assert.ok(html.indexOf('/search-request.js')<html.indexOf('/'+kind+'-search-controller.js'));assert.match(html,new RegExp('id="'+kind+'-search-cancel"[^>]*hidden disabled'));assert.ok(app.includes("request:(payload,{signal})=>api('/api/"+kind+"-search',payload,false,signal)"));}
+ const fs=require('node:fs'),html=fs.readFileSync('web/index.html','utf8'),app=fs.readFileSync('web/app.js','utf8');for(const kind of ['lyrics','storyboard','music']){assert.ok(html.indexOf('/search-request.js')<html.indexOf('/'+kind+'-search-controller.js'));assert.match(html,new RegExp('id="'+kind+'-search-cancel"[^>]*hidden disabled'));assert.ok(app.includes("request:(payload,{signal})=>api('/api/"+kind+"-search',payload,false,signal)"));}
 });

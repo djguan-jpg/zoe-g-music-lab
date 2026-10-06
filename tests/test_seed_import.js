@@ -78,7 +78,7 @@ test('actual output marks imports independent while generation still becomes dir
     capturePanel:scope=>{retentionScopes.push(scope);return retentionDraft.panels[scope];},
     events:{addEventListener:()=>{},removeEventListener:()=>{}},onState:()=>{}});draftRetention.initialize(retentionDraft);
   let orderRefreshes=0;
-  const context={state,draftRetention,arrangementController:{refresh:()=>orderRefreshes++},musicReadyController:null,storyboardTimingController:null,$:id=>nodes[id],stalePlanningReview:()=>{},staleAudioReview:()=>{}};vm.runInNewContext(source.slice(a,b),context);
+  const context={state,draftRetention,arrangementController:{refresh:()=>orderRefreshes++},musicReadyController:null,musicSearchController:null,storyboardTimingController:null,$:id=>nodes[id],stalePlanningReview:()=>{},staleAudioReview:()=>{}};vm.runInNewContext(source.slice(a,b),context);
   context.markDirty('music');assert.equal(state.revisions.music,1);assert.equal(state.bundles.music.dirty,false);assert.equal(nodes.download.disabled,false);
   state.bundles.music.inputIndependent=false;context.markDirty('music');assert.equal(state.bundles.music.dirty,true);assert.equal(nodes.download.disabled,true);
   assert.equal(orderRefreshes,2);assert.deepEqual(retentionScopes,['music','music']);assert.equal(draftRetention.status().dirty,false);

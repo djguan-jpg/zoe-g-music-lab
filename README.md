@@ -1,6 +1,12 @@
 # ZOE. G Music Lab
 
-## 目前版本 v0.106.0：完整列身份核對
+## 目前版本 v0.107.0：歌曲段落搜尋
+
+歌曲段落表新增原文搜尋，查找名稱、敘事任務、聲音配置；每批20段，可前後分頁，點命中直接回到目前原欄位。保留重複段落、原文、小節、能量與音檔。文字、列ID或順序改變清除舊定位；數值編修保留命中，但原成果仍依既有規則停用下載。取消等待保留上一批，晚回覆不覆蓋後來編修或成果。 見[契約](docs/MUSIC-SEARCH.md)、[驗證](docs/QA-v0.107.0.md)。
+
+17基本／24啟庫工具，Agent1／draft3保持；LICENSE／NOTICE／LICENSING.md／FOUNDER-RECORD.md保持 PolyForm Noncommercial 1.0.0／private；創辦 ZOE. G、GitHub djguan-jpg；FreeTWAI not_submitted，不認領既有手冊原作者。
+
+## v0.106.0：完整列身份核對
 
 修正共用編修焦點來源驗證跳過空洞 ID、接受繼承的數字位置，或被來源自訂 mapper 替換列 ID 的問題。完整自己的 ID 位置才可進入定位與選列；錯誤來源拒絕，正常請求可繼續。原生 UI 本來產生完整 ID 陣列，本輪沒有宣稱瀏覽器內存在惡意回呼或外部漏洞。見[契約](docs/EDITOR-FOCUS-IDS.md)、[驗證](docs/QA-v0.106.0.md)。
 

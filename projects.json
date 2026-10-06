@@ -1,6 +1,6 @@
 {
   "suite": "ZOE. G Music Lab",
-  "version": "0.106.0",
+  "version": "0.107.0",
   "created_on": "2026-10-01",
   "founder": {
     "display_name": "ZOE. G",
@@ -9,7 +9,7 @@
   "ai_collaboration": "Codex assisted with scope, original skill text, implementation and validation",
   "publication": "github_private",
   "repository": "https://github.com/djguan-jpg/zoe-g-music-lab",
-  "release_version": "v0.106.0",
+  "release_version": "v0.107.0",
   "platform_claim": "not_submitted",
   "projects": [
     {
@@ -17,7 +17,7 @@
       "title": "ZOE Music Production",
       "entry": "projects/zoe-music-production/SKILL.md",
       "cli": "music",
-      "scope": "musical memory hook, bar timing, energy plan, raw draft field diagnostics and AI task packaging"
+      "scope": "musical memory hook, bar timing, energy plan, raw draft field diagnostics and AI task packaging; read-only literal name, focus and texture search with source-pinned pagination"
     },
     {
       "id": "zoe-mv-storyboard",
@@ -78,5 +78,6 @@
   "draft_backup_export_schema_version": 1,
   "draft_library_search_schema_version": 1,
   "lyrics_search_schema_version": 1,
-  "storyboard_search_schema_version": 1
+  "storyboard_search_schema_version": 1,
+  "music_search_schema_version": 1
 }
