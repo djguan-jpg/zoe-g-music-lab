@@ -1,5 +1,7 @@
 # outputs 唯讀空間報告
 
+v140補充：明確empty維護option在reader前拒絕；見[CLI契約](MAINTENANCE-CLI.md)。原space1／filesystem reader與下列metadata限制保持。
+
 ```powershell
 python scripts/iteration_audit.py --space-report
 python scripts/iteration_audit.py --space-report --out outputs/space-report.json

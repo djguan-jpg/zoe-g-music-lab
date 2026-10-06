@@ -36,13 +36,18 @@ def validate_identity(value):
     return dict(value)
 
 
+def validate_job(value):
+    if not isinstance(value, str) or not re.fullmatch(r'[a-z0-9][a-z0-9-]{0,79}', value):
+        raise ValueError('Use a short non-sensitive job label')
+    return value
+
+
 def validate_run(value):
     if not isinstance(value, dict) or set(value) != {'format', 'schema_version', 'job', 'identity'}:
         raise ValueError('Unknown run record shape; a bare PID cannot establish job ownership')
     if value['format'] != 'zoe-iteration-run' or type(value['schema_version']) is not int or value['schema_version'] != 1:
         raise ValueError('Unsupported run record version')
-    if not isinstance(value['job'], str) or not re.fullmatch(r'[a-z0-9][a-z0-9-]{0,79}', value['job']):
-        raise ValueError('Use a short non-sensitive job label')
+    validate_job(value['job'])
     return {**value, 'identity': validate_identity(value['identity'])}
 
 
