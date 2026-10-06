@@ -37,6 +37,7 @@
    if(v.busy){status.textContent='正在核對兩份完整草稿；目前内容保留。';status.classList.remove('error');box.hidden=true;}
    else if(v.stale){status.textContent='工作台或預覽已有變更；此份比較已過期，請重新預覽後比較。';box.hidden=true;}
   },onReady:report=>{
+   downloadStatus.textContent='';downloadStatus.classList.remove('error');
    status.classList.remove('error');status.textContent=`作品差異 ${Object.values(report.panels).reduce((n,p)=>n+p.change_count,0)} 項：${Object.entries(report.panels).map(([s,p])=>`${scopes[s]} ${p.change_count}`).join('、')}。版本與頁籤資料 ${report.metadata.changed_fields.length} 項。${report.details_truncated?'只保留有界明細，完整計數已核對。':''}尚未套用。`;
    box.hidden=false;filter.value='all';page=0;
    // publish marks ready after this callback; read already has the completed source.
@@ -48,7 +49,7 @@
   button.addEventListener('click',start);cancel.addEventListener('click',stop);filter.addEventListener('change',change);previous.addEventListener('click',back);next.addEventListener('click',forward);
   jsonButton.addEventListener('click',downloadJson);markdownButton.addEventListener('click',downloadMarkdown);
   const hide=()=>{if(disposed)return;disposed=true;controller.dispose();button.removeEventListener('click',start);cancel.removeEventListener('click',stop);filter.removeEventListener('change',change);previous.removeEventListener('click',back);next.removeEventListener('click',forward);jsonButton.removeEventListener('click',downloadJson);markdownButton.removeEventListener('click',downloadMarkdown);root.removeEventListener?.('pagehide',hide);};root.addEventListener?.('pagehide',hide);
-  return {refresh:()=>controller.refresh(),invalidate:()=>controller.invalidate(),clear(){controller.clear();box.hidden=true;list.replaceChildren();downloadStatus.textContent='';status.textContent='先比較目前工作台與預覽草稿，再決定是否載入。';status.classList.remove('error');},dispose:hide};
+  return {refresh:()=>controller.refresh(),invalidate:()=>controller.invalidate(),clear(){controller.clear();box.hidden=true;list.replaceChildren();downloadStatus.textContent='';downloadStatus.classList.remove('error');status.textContent='先比較目前工作台與預覽草稿，再決定是否載入。';status.classList.remove('error');},dispose:hide};
  }
  const api={bind};if(node)module.exports=api;else root.MusicDraftCompareDom=api;
 })(typeof globalThis==='object'?globalThis:this);
