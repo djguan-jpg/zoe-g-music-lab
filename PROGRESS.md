@@ -1,6 +1,13 @@
-# 進度：目前 v0.105.0
+# 進度：目前 v0.106.0
 
-## 目前 v0.105.0
+## 目前 v0.106.0
+
+2026-10-06：修正共用編修焦點來源驗證跳過空洞 ID、接受繼承的數字位置，或被來源自訂 mapper 替換列 ID 的問題。完整自己的 ID 位置才可進入定位與選列；錯誤來源拒絕，正常請求可繼續。原生 UI 本來產生完整 ID 陣列，本輪沒有宣稱瀏覽器內存在惡意回呼或外部漏洞。editor-focus.checkedSource 純有界 length／own-index／ID 字串及唯一性檢查 → 隔離 dense ID 副本 → 原 index／ID proposal 與兩capture controller → 未改 editor-focus-dom。editor-selection 共用同一來源再沿原三capture／actual-after與DOM；不呼叫 caller map／iterator。固定原 length 控制讀取次數，讀完長度改變拒絕，不因 getter 增長超出上限。產品0.106.0／唯一 policy38–106共69／unknown107拒絕；16基本／23啟庫工具、23既有 input/output schemas、Agent1／draft3保持。只改既有純焦點模型，app／HTML／DOM／domain/application/server/adapters與固定資產清單無diff，沒有新依賴、路徑、模型或網路權限。legal4保持 PolyForm Noncommercial 1.0.0／private；創辦 ZOE. G、GitHub djguan-jpg；FreeTWAI not_submitted。
+
+587 Python（99.063秒，兩隔離 workers／120秒整體期限）、1232 JavaScript、119 syntax、四份 Skill 通過；新增六 JS 測試。基線63案例錯誤接受，修正後全部拒絕或正確複製：六list的空洞／首中末缺列／delete slot／inherited index、caller map、index／ID focus及被替換空洞的second capture，另三list繼承來源的選列。正規請求good/bad/good保持；first／second capture拒絕不調focus/select，selection第三capture拒絕不回滾既已發生的外部操作。v105真source ZIP還原587／1226；272歷史ZIP／manifest bytes相同、23組schema相同，相容QA按scope分批，每批約129–130KiB且小於512KiB。57原生快照核對六集合完整原值刪除／還原與同列焦點、三完整來源選列對、三句清空到新增按鈕再完整還原、390×844 Enter原值保持、七busy來源對。七native完整wire、七CLI／Agent／MCP操作及21HTTP good/bad/good全回覆等於application；兩observed draft3 reviews回讀、預設覆寫1保留bytes、invalid1無輸出、diagnostic2保持。全部已选音檔快照保持同blob／paused／0.5秒／8秒及最終原File身份；console0、一tab關閉／viewport reset、一bounded server正常停止、HTTP thread joined與子程序EOF0。异常metadata僅以純注入回呼測試，普通DOM產生dense自有IDs；不宣稱外部可利用漏洞、通用prototype/Proxy/accessor安全或原子快照。PNG留ignored outputs；完整視覺、screen reader、各OS IME、瀏覽器保存、實聽、正式媒體、Host安裝及平台創始接受未驗證。
+
+
+## v0.105.0
 
 2026-10-06：歌曲段落選單新增「查看選定段落」，按一下或以原生 Enter 將焦點移到目前選定段落的名稱欄。首、中、末段與排序、複製、刪除還原後均按目前列 ID 定位；空清單或等待中停用。查看保留創作原文、順序、撤回紀錄、成果下載與音檔。editor-focus 純 byId 完整來源驗證與目前 ID 提案 → injected request controller 兩次 metadata capture 核對列序／visible／busy → 原 editor-focus-dom 依 ID 查實際名稱欄並核對可聚焦狀態 → app 原生 type=button／aria-controls／點擊。新 focusId 與原 index focus 共用 controller，保留原空列 add 行為；ID 查找不回退到新增。沒有新 keyboard listener，Tab／Enter 使用原生按鈕。產品0.105.0／唯一 policy38–105共68／unknown106拒絕；16基本／23啟庫工具、23既有 input/output schemas、Agent1／draft3保持。只改既有純焦點模組及 app／HTML，沒有新增静態 asset、依賴、domain/application/server/adapter operation、路徑、模型或網路權限。legal4保持 PolyForm Noncommercial 1.0.0／private；創辦 ZOE. G、GitHub djguan-jpg；FreeTWAI not_submitted。
 

@@ -5,9 +5,15 @@
   function checkedSource(list,source){
     if(!Object.hasOwn(limits,list)||!source||typeof source!=='object'||Array.isArray(source)||
       Object.keys(source).length!==3||!['ids','visible','busy'].every(k=>Object.hasOwn(source,k))||
-      typeof source.visible!=='boolean'||typeof source.busy!=='boolean'||!Array.isArray(source.ids)||
-      source.ids.length>limits[list])throw Error('編修定位來源無效');
-    const ids=source.ids.map(id=>{if(typeof id!=='string'||!id||id.length>64)throw Error('編修列識別無效');return id;});
+      typeof source.visible!=='boolean'||typeof source.busy!=='boolean')throw Error('編修定位來源無效');
+    const raw=source.ids,length=raw?.length;
+    if(!Array.isArray(raw)||!Number.isSafeInteger(length)||length<0||length>limits[list])throw Error('編修定位來源無效');
+    const ids=[];
+    for(let i=0;i<length;i++){
+      if(!Object.hasOwn(raw,i))throw Error('編修列識別無效');
+      const id=raw[i];if(typeof id!=='string'||!id||id.length>64)throw Error('編修列識別無效');ids.push(id);
+    }
+    if(raw.length!==length)throw Error('編修定位來源無效');
     if(new Set(ids).size!==ids.length)throw Error('編修列識別重複');
     return {ids,visible:source.visible,busy:source.busy};
   }

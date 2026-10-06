@@ -3,6 +3,49 @@
 const test=require('node:test'),assert=require('node:assert/strict');
 const P=require('../web/editor-focus.js'),D=require('../web/editor-focus-dom.js');
 const source=ids=>({ids,visible:true,busy:false});
+
+function incompleteIds(kind){
+ if(kind==='only')return new Array(1);
+ if(kind==='first')return [, 'b'];
+ if(kind==='middle')return ['a',,'b'];
+ if(kind==='last')return ['a','b',,];
+ if(kind==='deleted'){const ids=['a','b'];delete ids[0];return ids;}
+ const ids=new Array(2),prototype=Object.create(Array.prototype);prototype[0]='ancestor';Object.setPrototypeOf(ids,prototype);ids[1]='b';return ids;
+}
+
+test('focus metadata rejects every missing or inherited position before either locator can create a target',()=>{
+ for(const list of Object.keys(P.limits))for(const kind of ['only','first','middle','last','deleted','inherited']){
+  const s=source(incompleteIds(kind));assert.throws(()=>P.checkedSource(list,s));assert.throws(()=>P.proposal(list,s,0));assert.throws(()=>P.byId(list,s,'b'));
+  for(const flags of [{visible:false},{busy:true}])assert.throws(()=>P.checkedSource(list,{...s,...flags}));
+ }
+});
+
+test('focus copies actual own IDs without calling caller map or iterator hooks',()=>{
+ for(const list of Object.keys(P.limits)){
+  const ids=['a','b'];let hooks=0;ids.map=()=>{hooks++;return ['injected','b'];};ids[Symbol.iterator]=()=>{hooks++;throw Error('caller iterator');};
+  const checked=P.checkedSource(list,source(ids));assert.deepEqual(checked,source(['a','b']));assert.equal(hooks,0);assert.notEqual(checked.ids,ids);
+  assert.deepEqual(P.proposal(list,source(ids),0),{list,id:'a',mode:'entry'});assert.deepEqual(P.byId(list,source(ids),'b'),{list,id:'b',mode:'entry'});assert.equal(hooks,0);
+  ids[0]='later';assert.deepEqual(checked.ids,['a','b']);
+ }
+});
+
+test('invalid first or second ID capture cannot invoke focus and good bad good requests keep working',()=>{
+ for(const list of Object.keys(P.limits))for(const entry of ['focus','focusId']){
+  for(const malformedAt of [1,2]){
+   let reads=0,writes=0,errors=0;const c=P.createController({capture:()=>source(++reads===malformedAt?incompleteIds('first'):['a','b']),focusTarget:()=>{writes++;return true;},onError:()=>errors++});
+   assert.equal(entry==='focus'?c.focus(list,1):c.focusId(list,'b'),false);assert.equal(writes,0);assert.equal(errors,1);assert.equal(reads,malformedAt);
+  }
+  let bad=false,writes=0;const c=P.createController({capture:()=>source(bad?incompleteIds('first'):['a','b']),focusTarget:target=>{assert.equal(target.id,'b');writes++;return true;}});
+  const call=()=>entry==='focus'?c.focus(list,1):c.focusId(list,'b');assert.equal(call(),true);bad=true;assert.equal(call(),false);bad=false;assert.equal(call(),true);assert.equal(writes,2);
+ }
+});
+
+test('bounded ID capture rejects changed length or oversized sources without traversing caller hooks',()=>{
+ const ids=['a'];Object.defineProperty(ids,0,{get(){ids.push('later');return 'a';},configurable:true});assert.throws(()=>P.checkedSource('cues',source(ids)));assert.equal(ids.length,2);
+ for(const [list,limit] of Object.entries(P.limits)){
+  const ids=new Array(limit+1);Object.defineProperty(ids,0,{get(){assert.fail('capacity should reject before values');}});assert.throws(()=>P.checkedSource(list,source(ids)));
+ }
+});
 test('empty collections return their add target and existing rows retain their stable ID and requested mode',()=>{
  for(const list of Object.keys(P.limits)){
   assert.deepEqual(P.proposal(list,source([]),0),{list,id:null,mode:'add'});
