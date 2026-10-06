@@ -109,13 +109,13 @@ test('native text download and retention assets load before the app; binary fram
   assert.ok(html.indexOf('/text-download.js')<html.indexOf('/text-download-dom.js'));assert.ok(html.indexOf('/text-download-dom.js')<html.indexOf('/app.js'));
 });
 test('actual draft export records a submitted snapshot, while an oversized refusal creates no confirmation',()=>{
-  const source=fs.readFileSync(require.resolve('../web/app.js'),'utf8'),start=source.indexOf("textDownloader.bind($('draft-export')"),end=source.indexOf("$('draft-open').onchange=",start);
+  const source=fs.readFileSync(require.resolve('../web/app.js'),'utf8'),start=source.indexOf('let draftDownloadSource='),end=source.indexOf("$('draft-open').onchange=",start);
   for(const failure of ['none','oversized','send']){
     const oversized=failure==='oversized',download=require('../web/text-download.js'),sent=[];
     const h=harness();h.set(draft(oversized?'x'.repeat(1024*1024):'download click'));h.guard.refresh();
-    const nodes={'draft-export':{},'draft-content':{value:''},'draft-confirm-download':{}},notes=[];
+    const nodes={'draft-export':{},'draft-content':{value:''},'draft-confirm-download':{},'draft-download-stamp':{}},notes=[];
     const textDownloader={bind:(form,options)=>{const c=download.createController({...options,send:prepared=>{if(failure==='send')throw Error('synthetic send refusal');sent.push(Buffer.from(prepared.bytes).toString('utf8'));return true;}});form.onsubmit=event=>{event.preventDefault();return c.download();};}};
-    vm.runInNewContext(source.slice(start,end),{$:id=>nodes[id],state:{busy:false},MusicEditor:Editor,captureDraft:h.current,draftRetention:h.guard,TextEncoder,textDownloader,say:message=>notes.push(message)});
+    vm.runInNewContext(source.slice(start,end),{$:id=>nodes[id],state:{busy:false},document:{},MusicTextVerificationDOM:{bind:()=>({refresh(){}})},MusicEditor:Editor,captureDraft:h.current,draftRetention:h.guard,TextEncoder,textDownloader,say:message=>notes.push(message)});
     let refused=false;nodes['draft-export'].onsubmit({preventDefault:()=>refused=true});
     assert.equal(refused,true);assert.equal(h.guard.status().pendingDownload,failure==='none');assert.equal(h.guard.status().dirty,true);
     if(failure==='none')assert.equal(JSON.parse(sent[0]).panels.music.fields['music-title'],'download click');
