@@ -133,9 +133,9 @@ async function run(button,task,scope=state.tab){
   state.operationControl?.begin({scope,action:button.textContent||'建立成果'});
   const job=operationGate.begin(),tab=state.tab,revision=state.revisions[scope]||0,current=()=>operationGate.current(job)&&state.tab===tab&&(state.revisions[scope]||0)===revision;
   current.signal=job.signal;
-  say('處理中，請稍候');state.busy=true;button.disabled=true;timingControls();cueStampEdit?.refresh();state.currentCue?.refresh();state.cuePosition?.refresh();state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();state.audioAcceptanceReview?.refresh();state.deliveryPackage?.refresh();state.deliveryImport?.refresh();state.textVerification?.refresh();state.draftVerification?.refresh();
+  say('處理中，請稍候');state.busy=true;button.disabled=true;timingControls();cueStampEdit?.refresh();state.currentCue?.refresh();state.cuePosition?.refresh();state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();state.audioAcceptanceReview?.refresh();state.deliveryPackage?.refresh();state.deliveryImport?.refresh();state.textVerification?.refresh();state.draftVerification?.refresh();state.backupSelection?.refresh();
   try{await task(current);}catch(error){if(current())say(error.message,true);}
-  finally{const cancelled=operationGate.cancelled(job);if(!cancelled&&!current()){markDirty(scope);say('處理期間輸入有修改，請重新建立成果');}operationGate.finish(job);state.busy=false;button.disabled=false;timingControls();cueStampEdit?.refresh();state.currentCue?.refresh();state.cuePosition?.refresh();state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();state.audioAcceptanceReview?.refresh();state.deliveryPackage?.refresh();state.deliveryImport?.refresh();state.textVerification?.refresh();state.draftVerification?.refresh();if(cancelled)say('已取消本次等待；目前編修與上一份成果保留，可重新建立。');state.operationControl?.finishFocus(button);}
+  finally{const cancelled=operationGate.cancelled(job);if(!cancelled&&!current()){markDirty(scope);say('處理期間輸入有修改，請重新建立成果');}operationGate.finish(job);state.busy=false;button.disabled=false;timingControls();cueStampEdit?.refresh();state.currentCue?.refresh();state.cuePosition?.refresh();state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();state.audioAcceptanceReview?.refresh();state.deliveryPackage?.refresh();state.deliveryImport?.refresh();state.textVerification?.refresh();state.draftVerification?.refresh();state.backupSelection?.refresh();if(cancelled)say('已取消本次等待；目前編修與上一份成果保留，可重新建立。');state.operationControl?.finishFocus(button);}
 }
 function cancelRun(){if(!operationGate.cancel())return;say('正在取消等待；目前編修與上一份成果保留。');timingControls();}
 function setFiles(files,note,dirty=false,inputIndependent=false,deliveryLabel=null){state.resultRevisions[state.tab]=(state.resultRevisions[state.tab]||0)+1;state.files=files;state.bundles[state.tab]={files,note,dirty,inputIndependent,...(deliveryLabel===null?{}:{deliveryLabel})};const select=$('output-file');select.replaceChildren();Object.keys(files).forEach(name=>{const option=document.createElement('option');option.value=name;option.textContent=name;select.append(option);});select.disabled=false;$('download').disabled=dirty;$('output-note').textContent=note+(dirty?'（有修改尚未重新驗證）':'');previewOutput();state.deliveryNavigation?.refresh();state.audioAcceptance?.refresh();state.audioAcceptanceReview?.refresh();state.deliveryPackage?.refresh();state.deliveryImport?.refresh();state.textVerification?.refresh();state.draftVerification?.refresh();}
@@ -1206,6 +1206,7 @@ function backupControls(){
   $('backup-restore').disabled=!libraryEnabled||backupReading||backupRestoring||backupDownloading||!backupReady||!backupCanRestore;
   $('backup-cancel').disabled=backupRestoring;
   state.backupDownload?.refresh();
+  state.backupSelection?.refresh();
 }
 async function backupRequest(operation,file,sha){
   const response=await fetch('/api/drafts/backup/'+operation+(sha?'?sha256='+encodeURIComponent(sha):''),{method:'POST',body:file});
@@ -1232,12 +1233,18 @@ $('backup-open').onchange=()=>{
 };
 $('backup-restore').onclick=()=>{if(libraryAllowed())backupController.restore();};
 $('backup-cancel').onclick=()=>{if(backupController.cancel())backupSay('已取消恢復預覽；草稿庫與工作台保留。');};
+state.backupSelection=MusicBackupSelectionDom.bind(document,{
+  capture:()=>({enabled:libraryEnabled,busy:state.busy||backupRestoring||backupDownloading,selected:libraryRecords.find(record=>record.id===$('library-select').value)||null}),
+  onChange:()=>state.backupDownload?.refresh(),
+  onError:error=>backupSay(error.message,true)
+});
 state.backupDownload=MusicBackupDownloadDom.createAdapter(document,{
   prepare:async (signal,payload={})=>{
     const response=await fetch('/api/drafts/backup/prepare',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),signal});
     const data=await response.json();if(!response.ok)throw Error(data.error||'備份未完成');return data;
   },maximum:()=>backupMaximum,allowed:libraryAllowed,verificationAllowed:()=>libraryEnabled&&!state.busy&&!backupRestoring,say:backupSay,
   captureSelected:()=>libraryRecords.some(record=>record.id===$('library-select').value)?$('library-select').value:null,
+  captureBatch:()=>state.backupSelection.request(),
   onState:({busy})=>{backupDownloading=busy;backupControls();}
 });
 async function setupLibrary(){
