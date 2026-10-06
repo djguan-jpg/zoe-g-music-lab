@@ -5,6 +5,7 @@
  const model=node?require('./backup-download.js'):root.MusicBackupDownload;
  const source=node?require('./backup-file.js'):root.MusicBackupFile;
  const downloads=node?require('./text-download-dom.js'):root.MusicTextDownloadDom;
+ const verificationDom=node?require('./backup-verification-dom.js'):root.MusicBackupVerificationDOM;
  async function readArchive(descriptor,{fetch=root.fetch,signal,isCurrent=()=>true}={}){
   descriptor=model.checked(descriptor,{selection:descriptor.selection});if(!isCurrent())return null;
   const response=await fetch(descriptor.download_url,{method:'GET',redirect:'error',cache:'no-store',signal});
@@ -26,21 +27,23 @@
    complete=true;return raw;
   }finally{if(!complete){try{await reader.cancel();}catch{}}reader.releaseLock();}
  }
- function createAdapter(document,{prepare,maximum,allowed,say,onState=()=>{},events=root,fetch=root.fetch,hash=source.sha256,AbortType=root.AbortController,byteOptions={}}){
+ function createAdapter(document,{prepare,maximum,allowed,verificationAllowed=allowed,say,onState=()=>{},events=root,fetch=root.fetch,hash=source.sha256,AbortType=root.AbortController,byteOptions={},verificationOptions={}}){
   const form=document.getElementById('backup-download'),cancelButton=document.getElementById('backup-download-cancel'),bytes=downloads.createByteSender(document,{...byteOptions,events});let active=null,disposed=false;
+  let sentProof=null,sentRevision=0,verification=null;
   const controller=model.createController({
    prepare:()=>{active=new AbortType();return prepare(active.signal);},maximum,hash,send:bytes.send,
    read:(descriptor,current)=>readArchive(descriptor,{fetch,signal:active?.signal,isCurrent:current}),
-   onState:state=>{if(!state.busy)active=null;cancelButton.disabled=!state.busy;onState(state);},
-   onSent:descriptor=>say(`備份 ZIP 已核對 ${descriptor.entry_count} 版並送出下載；請核對本機檔案。未保存編修、音檔與成果另存。`),
+   onState:state=>{if(!state.busy)active=null;cancelButton.disabled=!state.busy;onState(state);verification?.refresh();},
+   onSent:descriptor=>{sentProof={bytes:descriptor.bytes,sha256:descriptor.backup_sha256,entry_count:descriptor.entry_count};sentRevision++;verification.refresh();say(`備份 ZIP 已核對 ${descriptor.entry_count} 版並送出下載；可選回本機檔案核對。未保存編修、音檔與成果另存。`);},
    onError:error=>say(error.message+'；目前工作台與音檔保留。',true)
   });
+  verification=verificationDom.bind(document,{...verificationOptions,events,hash,capture:()=>({revision:sentRevision,busy:disposed||!verificationAllowed()||controller.status().busy,proof:sentProof}),onError:error=>say(error.message+'；草稿庫與目前編修保留。',true)});
   form.onsubmit=event=>{event.preventDefault();if(disposed||!allowed()||controller.status().busy)return false;say('正在核對保存版本與備份 ZIP；完成後送出下載，工作台保留。');return controller.download();};
   function pageHide(){const previous=active;controller.cancel();previous?.abort();}
   cancelButton.disabled=true;cancelButton.onclick=()=>{if(disposed||!controller.status().busy)return;pageHide();say('已取消備份下載；草稿庫與目前編修保留。');};
-  function dispose(){if(disposed)return;const previous=active;disposed=true;controller.dispose();previous?.abort();bytes.dispose();events.removeEventListener('pagehide',pageHide);}
+  function dispose(){if(disposed)return;const previous=active;disposed=true;controller.dispose();previous?.abort();verification.dispose();sentProof=null;sentRevision++;bytes.dispose();events.removeEventListener('pagehide',pageHide);}
   events.addEventListener('pagehide',pageHide);
-  return {dispose,controller,pending:bytes.pending};
+  return {dispose,controller,pending:bytes.pending,refresh:()=>verification.refresh()};
  }
  const api={readArchive,createAdapter};if(node)module.exports=api;else root.MusicBackupDownloadDom=api;
 })(typeof globalThis==='object'?globalThis:this);
