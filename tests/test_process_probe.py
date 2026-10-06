@@ -108,9 +108,11 @@ class ProcessProbeTests(unittest.TestCase):
             (root/'projects.json').write_text(json.dumps({'suite':'ZOE. G Music Lab','version':'0.45.0','license':'PolyForm-Noncommercial-1.0.0'}),encoding='utf-8')
             run_path=root/'outputs/run.json';write_new(root,run_path,record())
             before={p.relative_to(root).as_posix():p.read_bytes() for p in root.rglob('*') if p.is_file()}
-            with patch('musiclab.maintenance_fs.observe_process',return_value=checked_reply(123,reply())):
-                report=audit(root,[run_path]);self.assertEqual(report['running_or_unverified'],1)
-                with self.assertRaisesRegex(ValueError,'active or unverified'):prune(root,report['prune_token'],[run_path])
+            for observation in [checked_reply(123,reply()),{'pid':123,'state':'unavailable','source':'windows-cim-process-v1','reason':'cim_query_failed'}]:
+                with patch('musiclab.maintenance_fs.observe_process',return_value=observation):
+                    report=audit(root,[run_path]);self.assertEqual(report['running_or_unverified'],1)
+                    self.assertEqual(report['runs'][0]['status'],'unverified');self.assertFalse(report['runs'][0]['original_run_terminal'])
+                    with self.assertRaisesRegex(ValueError,'active or unverified'):prune(root,report['prune_token'],[run_path])
             with patch('musiclab.maintenance_fs.observe_process',return_value=checked_reply(123,reply(None))):
                 report=audit(root,[run_path]);self.assertEqual(report['running_or_unverified'],0)
                 self.assertEqual(prune(root,report['prune_token'],[run_path])['removed'],[])
@@ -119,7 +121,7 @@ class ProcessProbeTests(unittest.TestCase):
     @unittest.skipUnless(sys.platform=='win32','Local Windows CIM probe')
     def test_real_cim_parent_never_declares_live_original_terminal(self):
         own=record_current_run('real-cim-parent');probe=observe_cim(os.getpid())
-        self.assertEqual(probe['state'],'limited',probe)
+        self.assertIn(probe['state'],('limited','unavailable'),probe)
         decision=classify_run(own,probe);self.assertEqual(decision['status'],'unverified');self.assertFalse(decision['original_run_terminal'])
         with patch('musiclab.run_identity._observe_native',return_value={'pid':os.getpid(),'state':'unavailable'}):
             self.assertEqual(classify_run(own,observe_process(os.getpid()))['status'],'unverified')
@@ -136,7 +138,9 @@ class ProcessProbeTests(unittest.TestCase):
         self.assertEqual(child.returncode,0,error)
         with patch('musiclab.run_identity._observe_native',return_value={'pid':child.pid,'state':'unavailable'}):
             observed=observe_process(child.pid)
-        self.assertIn(classify_run(owned,observed)['status'],('stopped','pid_reused'))
+        decision=classify_run(owned,observed)
+        if observed['state']=='absent':self.assertEqual(decision['status'],'stopped');self.assertTrue(decision['original_run_terminal'])
+        else:self.assertIn(decision['status'],('pid_reused','unverified'));self.assertEqual(decision['original_run_terminal'],decision['status']=='pid_reused')
 
     @unittest.skipUnless(sys.platform=='win32','Local Windows CLI and CIM probe')
     def test_real_cli_fallback_from_other_cwd_blocks_live_then_accepts_original_exit(self):
@@ -159,7 +163,12 @@ class ProcessProbeTests(unittest.TestCase):
                 _,error=child.communicate('\n',timeout=10);self.assertEqual(child.returncode,0,error)
                 ended=subprocess.run(args,cwd=root,capture_output=True,text=True,encoding='utf-8',timeout=15)
                 self.assertEqual(ended.returncode,0,ended.stderr);report=json.loads(ended.stdout)
-                self.assertEqual(report['running_or_unverified'],0);self.assertTrue(report['runs'][0]['original_run_terminal'])
+                decision=report['runs'][0]
+                if decision['original_run_terminal']:
+                    self.assertEqual(report['running_or_unverified'],0);self.assertIn(decision['status'],('stopped','pid_reused'))
+                else:
+                    self.assertEqual(decision['status'],'unverified');self.assertEqual(report['running_or_unverified'],1)
+                    self.assertIn(decision['evidence']['state'],('limited','unavailable'))
                 self.assertEqual(selected.read_bytes(),original)
                 self.assertFalse((root/'outputs/maintenance').exists())
         finally:

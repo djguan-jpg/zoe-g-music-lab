@@ -6,6 +6,10 @@ license: PolyForm-Noncommercial-1.0.0
 
 # ZOE Audio Delivery
 
+## v0.109 歌詞待辦分頁
+
+工作台歌詞校時／匯出格式報告可每頁20項翻閱最多200項明細，依原報告順序定位原欄位。編修後可讀舊報告但停定位，重新檢查回到第一頁；不改原句、時間、媒體或草稿。17基本／24啟庫工具及PolyForm Noncommercial 1.0.0保持；沒有新的AI或媒體生成能力。見[契約](../../docs/ISSUE-PAGE.md)。
+
 ## v0.108 回應核對與預覽接續
 
 異常回覆會保留目前內容、上一份成果與音檔；修正後重新操作。三種原文搜尋、歌曲／分鏡來源與歌詞診斷共用完整值核對，17基本／24啟庫工具保持。保留舊preview.html與完整lyrics.json；現版只接受本安裝模組的固定HTML，需要接續時以完整JSON重新建立預覽。沒有新的AI或媒體生成能力，授權保持PolyForm Noncommercial 1.0.0。見[契約](../../docs/JSON-VALUE.md)。
