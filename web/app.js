@@ -534,11 +534,19 @@ $('mv-ready-report').onclick=()=>run($('mv-ready-report'),async current=>{
   say('分鏡待辦報告已建立；仍須完整建立與實際音畫驗證');
 });
 function lyricsReviewPayload(){return {title:readValue($('lyrics-title')),duration:readValue($('lyrics-duration')),cues:entriesFor('cues').map(e=>e.value)};}
+function cueIssueTarget(issue){return issue.row?$('cues').children[issue.row-1]?.querySelectorAll('input')[['start','end','text'].indexOf(issue.field)]:$('lyrics-duration');}
+function focusCueReviewIssue(issue){
+  const target=cueIssueTarget(issue);if(!target||!target.isConnected||target.disabled)return false;
+  target.focus();if(document.activeElement!==target)return false;
+  const rect=target.getBoundingClientRect(),toolbar=$('cue-issue-toolbar').getBoundingClientRect();
+  const coverBottom=toolbar.top<window.innerHeight&&toolbar.bottom>0?toolbar.bottom:0;
+  const offset=MusicEditorFieldPosition.scrollOffset({top:rect.top,bottom:rect.bottom,height:window.innerHeight,coverBottom});
+  if(offset)window.scrollBy({top:offset,behavior:'instant'});return document.activeElement===target;
+}
 cueReviewDOM=MusicLyricsCueReviewDOM.bind(document,{visible:()=>state.tab==='lyrics'&&!$('lyrics').hidden,busy:()=>state.busy,
   onCheck:()=>{const view=cueReviewController.check();say(`原句 ${view.report.row} 待辦 ${view.report.issue_count} 項；原歌詞與音檔保持。`);return true;},
   onLocate:(index,revision)=>{if(state.busy||state.tab!=='lyrics')return false;const issue=cueReviewController.locate(index,revision);if(!issue)return false;
-    const target=issue.row?$('cues').children[issue.row-1]?.querySelectorAll('input')[['start','end','text'].indexOf(issue.field)]:$('lyrics-duration');
-    if(!target||!target.isConnected||target.disabled)return false;target.focus();return document.activeElement===target;},onError:error=>say(error.message,true)});
+    return focusCueReviewIssue(issue);},onError:error=>say(error.message,true)});
 cueReviewController=MusicLyricsCueReview.createController({capture:()=>({lyrics:lyricsReviewPayload(),ids:entriesFor('cues').map(e=>e.id),selectedId:$('cues-order').value}),onState:cueReviewDOM.render});
 $('cues-order').addEventListener('change',()=>cueReviewController.refresh());
 const cueReviewRequest=MusicReadinessRequest.createController({source:cueReviewController,checkedResult:MusicLyricsCueReview.checkedResult,

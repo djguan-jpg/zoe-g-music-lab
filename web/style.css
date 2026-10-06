@@ -146,3 +146,6 @@ td input[data-raw-number]{width:63px}.raw-value-note{display:block;font-size:.78
 
 .section-issue-tools{position:sticky;top:8px;z-index:2;display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:12px;background:#f0f1e7;border:1px solid var(--line);border-left:3px solid var(--green);margin:12px 0;max-width:100%}.section-issue-tools button{white-space:normal;max-width:100%}.section-issue-tools .hint{flex-basis:100%;margin:0;overflow-wrap:anywhere}
 @media(max-height:400px){.section-issue-tools{position:static}}
+
+.cue-issue-tools{position:sticky;top:8px;z-index:2;display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:12px;background:#f0f1e7;border:1px solid var(--line);border-left:3px solid var(--green);margin:12px 0;max-width:100%}.cue-issue-tools button{white-space:normal;max-width:100%}.cue-issue-tools .hint{flex-basis:100%;margin:0;overflow-wrap:anywhere}
+@media(max-height:400px){.cue-issue-tools{position:static}}

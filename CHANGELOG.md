@@ -1,5 +1,17 @@
 # 版本紀錄
 
+## v0.120.0 單句逐項導覽
+
+選定歌詞新增「重查這一句／上一項單句待辦／下一項單句待辦」工具列，成功定位後同步目前明細頁；修正長表格需返回上方清單逐項處理的操作缺口。純 issue-cursor 明確 maxDetails 1–200，舊鏡頭／段落預設32保持；純 issue-page.reveal 核對 revision／可定位狀態及兩次metadata後，顯示選定保留項所在頁。單句沿原200明細／20頁內項與全部issue_count，頁面／cursor／焦點不改時間或進draft。可見黏附工具列與既有field-position共用幾何，global作品宣告忽略畫面外工具列；高度≤400px回普通流。產品120／唯一交付policy38–120共83，未知121拒絕；20／27 tools、舊27組schemas與Agent1／draft3保持。
+
+619 Python（100.672秒）、1453 JavaScript、136 syntax、4 Skills及diff通過；新增24 JS、0 Python。原v119指定source ZIP（SHA 9bb573cb7cc9c301dfa9ab8de3b55679678a857b4c008d0b951466ee8a6f89ed、2204492 bytes）還原619／1429；四scope×82個歷史producer的328份ZIP／manifest bytes相同。舊27組operation input/output schemas及operations集合保持，沒有新增operation或靜態asset。八份既有whole lyrics Python data／兩檔bytes、JS data／Markdown及跨語言來源診斷保持。新tests驗證全200項跨10頁再返回、手動翻頁不移cursor、false／throw focus不前進、metadata二次改變／late revision／getter不讀、legacy32與明確200、invalid capacity在capture前拒絕；VM focus helper與實際native驗證分開。
+
+原生37快照／28組完整草稿僅排除saved_at比較，12個mouse／native Enter定位通過。221句合成來源：原句220的2／1／0完整報告；長句221有220關係，只保留200明細，20→21自動切第二頁、previous回20第一頁、手動第二頁cursor仍20，選33後next34跨舊32上限。其他句編修與原生focus改選句使舊定位失效；原值、IDs與選句精確復原後恢復34／200；重查新revision回第一頁與未定位。global無效duration增加為221項，next到作品宣告；画面外工具列不當成覆蓋。busy／hidden／stale停用、selected零提示完整歌詞包與實聽保持。Unicode／首尾空白／其他三台、原生File身份、暫停0.5秒及8秒合成WAV保持，console warn/error零。1280×720、390×844、1280×360都無頁面水平溢出；活動欄位在viewport內且低於可見工具列，低高度CSS static。PNG留忽略QA目錄；幾何與實際mouse／鍵盤不代表完整視覺或screen reader接受。
+
+四組CLI input與draft3原號220／221，exit2／2／0／2、完整files按自己的payload比較；重覆輸出exit1保留bytes、invalid row／missing row／input row override拒絕且不建輸出。Agent／MCP四組good-bad-good、12筆ephemeral HTTP與五個現有固定JS bytes一致，native四份完整回覆count2／1／0／220。JSON鍵序按各自原source輸出，語義data與Markdown相同，不把鍵序當來源證明。所有子程序EOF、HTTP thread正常join與owned QA server正常停止，tab關閉／viewport reset。
+
+見[契約](docs/LYRICS-CUE-NAVIGATION.md)。以下保留歷史迭代。
+
 ## v0.119.0 選定歌詞校時待辦
 
 選定歌詞待辦共用 lyrics_review 的完整來源與時間分析，先依原句／作品時長篩選再套200明細上限；全部原句仍參與重複開始與horizon重疊核對。新增獨立 lyrics_cue_review schema1、application／CLI／HTTP／Agent-MCP，20基本／27明確啟庫，舊26組schemas保持。單句report只帶選定cue與title／duration，不帶整份歌詞；source controller核對整份原值、stable IDs與選列，其他句子也可使舊位置失效。檢查／報告不改原文、時間、音檔或草稿；零待辦仍須完整歌詞包與實聽。產品119／唯一交付policy38–119共82，未知120拒絕；Agent1／draft3及其他schemas保持。

@@ -14,4 +14,4 @@
 
 本輪僅盤點本workspace outputs、封裝及typed owned jobs；最新120／119／118三版保護。嚴格超七天且可從exact tag／Git archive重建才列候選；未知檔、素材、草稿、備份、失敗36／53及失敗QA保持。實際session完成後再做最終稽核，沒有bare PID終止。瀏覽器保存下載、完整視覺／screen reader、實聽／實際音畫同步、Host安裝與FreeTWAI創始接受未驗證。PolyForm Noncommercial 1.0.0／private、創辦ZOE. G／GitHub djguan-jpg保持，FreeTWAI not_submitted。
 
-見[契約](docs/LYRICS-CUE-NAVIGATION.md)。
+見[契約](LYRICS-CUE-NAVIGATION.md)。

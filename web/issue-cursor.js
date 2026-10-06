@@ -8,14 +8,15 @@
   if(!value||!J.sameValue(value,value)||!J.sameValue(Object.keys(value).sort(),['empty','missing','progress','stale'])||!Object.values(value).every(v=>typeof v==='string'&&v.length>0&&v.length<=1024))throw Error('待辦定位訊息無效；原內容保留');
   return {...value};
  }
- function checked(value){
-  if(!value||!J.sameValue(value,value)||!J.sameValue(Object.keys(value).sort(),keys)||!Number.isSafeInteger(value.detailCount)||value.detailCount<0||value.detailCount>32||!Number.isSafeInteger(value.revision)||value.revision<0||!['hasReport','stale','busy','visible'].every(k=>typeof value[k]==='boolean')||!value.hasReport&&value.detailCount!==0)throw Error('單鏡待辦定位狀態無效；原內容保留');
+ function checked(value,maxDetails){
+  if(!value||!J.sameValue(value,value)||!J.sameValue(Object.keys(value).sort(),keys)||!Number.isSafeInteger(value.detailCount)||value.detailCount<0||value.detailCount>maxDetails||!Number.isSafeInteger(value.revision)||value.revision<0||!['hasReport','stale','busy','visible'].every(k=>typeof value[k]==='boolean')||!value.hasReport&&value.detailCount!==0)throw Error('單鏡待辦定位狀態無效；原內容保留');
   return {...value};
  }
- function createController({capture,onLocate,onState=()=>{},messages=defaultMessages}){
+ function createController({capture,onLocate,onState=()=>{},messages=defaultMessages,maxDetails=32}){
+  if(!Number.isSafeInteger(maxDetails)||maxDetails<1||maxDetails>200)throw Error('待辦定位容量需為1–200整數；原內容保留');
   const text=checkedMessages(messages);
   let index=null,revision=null,count=null;
-  function read(){const source=checked(capture());if(source.revision!==revision||source.detailCount!==count){index=null;revision=source.revision;count=source.detailCount;}return source;}
+  function read(){const source=checked(capture(),maxDetails);if(source.revision!==revision||source.detailCount!==count){index=null;revision=source.revision;count=source.detailCount;}return source;}
   const allowed=s=>s.hasReport&&!s.stale&&!s.busy&&s.visible&&s.detailCount>0;
   function publish(s){
    const ready=allowed(s),view={index,revision:s.revision,detailCount:s.detailCount,canPrevious:ready&&index!==null&&index>0,canNext:ready&&(index===null||index<s.detailCount-1),
