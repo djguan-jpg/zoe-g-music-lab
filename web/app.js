@@ -57,6 +57,7 @@ function writeEntries(list,entries){
 editorCopy=MusicEditorCopyDOM.bind(document,{busy:()=>state.busy,capture:entriesFor,newId:()=>`row-${++rowSequence}`,
   apply:(list,entries)=>{writeEntries(list,entries);markDirty(collections[list].scope);},
   onCopied:(list,{index})=>{refreshCollectionControls();focusEntry(list,index,'new');say(`已複製${collections[list].label}，放在原列後方；${list==='arrangement'?'原編曲欄位保留，請依目前順序重新建立歌曲包':'開始與結束留白，請人工校時；原列、總長與音檔保留'}`);},
+  onUndone:(list,{index})=>{refreshCollectionControls();focusEntry(list,index,'new');say(`已撤回最近複製${collections[list].label}；其他原列編修、作品總長與音檔保留，請重新建立成果`);},
   onError:error=>say(error.message,true)});
 editorOrder=MusicEditorOrderDOM.bind(document,{busy:()=>state.busy,capture:entriesFor,
   readCaption:(list,row)=>list==='cues'?readValue(row.querySelector('.lyric-field')):(readValue(row.querySelector('[data-key="section"]')).trim()?readValue(row.querySelector('[data-key="section"]')):readValue(row.querySelector('[data-key="purpose"]'))),
@@ -75,7 +76,7 @@ function refreshDeletionButton(scope){
   const record=deletionHistory.at(scope,Number($(scope+'-delete-select').value)),button=$(scope+'-delete-undo');
   button.disabled=state.busy||!record;button.textContent=record?`還原：${record.label}`:'還原最近刪除';
 }
-function clearDeletionHistory(scope){deletionHistory.clear(scope);refreshDeletionHistory(scope);if(scope==='music'){arrangementController?.clear();musicReadyController?.clear();sectionReviewController?.clear();}if(scope==='storyboard'){storyboardTimingController?.clear();editorOrder?.clear('shots');}if(scope==='lyrics'){editorOrder?.clear('cues');cueReviewController?.clear();}}
+function clearDeletionHistory(scope){deletionHistory.clear(scope);refreshDeletionHistory(scope);editorCopy?.clear(scope);if(scope==='music'){arrangementController?.clear();musicReadyController?.clear();sectionReviewController?.clear();}if(scope==='storyboard'){storyboardTimingController?.clear();editorOrder?.clear('shots');}if(scope==='lyrics'){editorOrder?.clear('cues');cueReviewController?.clear();}}
 function focusEntry(list,index,mode='entry'){return editorFocus.focus(list,index,mode);}
 const editorSelection=MusicEditorSelectionDOM.bind(document,{busy:()=>state.busy,
   onSelection:(list,id)=>{if(list!=='arrangement'){const selected=editorOrder.select(list,id);editorPosition?.refresh();shotReviewController?.refresh();sectionReviewController?.refresh();cueReviewController?.refresh();return selected;}$('section-order').value=id;refreshMusicSelection();editorPosition?.refresh();return $('section-order').value===id;},

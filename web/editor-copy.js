@@ -32,8 +32,23 @@
     s.entries.splice(index+1,0,{id:newId,value});
     return {entries:s.entries,index:index+1,id:newId};
   }
-  function createController({allowed,capture,newId,apply,onCopied=()=>{},onError=()=>{}}){
-    let disposed=false;
+  function checkpoint(list,source,sourceId,copiedId){
+    const s=checkedSource(list,source),index=s.entries.findIndex(e=>e.id===copiedId);
+    if(index<1||s.entries[index-1].id!==sourceId)throw Error('複製紀錄無效；目前編修保留');
+    return {list,ids:s.entries.map(e=>e.id),sourceId,copiedId,value:{...s.entries[index].value}};
+  }
+  function undoProposal(list,source,record){
+    const s=checkedSource(list,source);
+    if(!s.visible||s.busy)return null;
+    if(!exact(record,['list','ids','sourceId','copiedId','value'])||record.list!==list||!Array.isArray(record.ids)||record.ids.length!==s.entries.length||!record.ids.every((id,i)=>id===s.entries[i].id))throw Error('複製後列數或順序已改變；目前編修保留');
+    const copied=checkedSource(list,{entries:[{id:record.copiedId,value:record.value}],visible:true,busy:false}).entries[0];
+    const index=s.entries.findIndex(e=>e.id===copied.id),sourceIndex=s.entries.findIndex(e=>e.id===record.sourceId);
+    if(index<0||sourceIndex<0||index===sourceIndex||!specs[list].fields.filter(k=>k!=='open').every(k=>s.entries[index].value[k]===copied.value[k]))throw Error('複製列已有修改；目前編修保留');
+    s.entries.splice(index,1);
+    return {entries:s.entries,id:record.sourceId,index:sourceIndex-(sourceIndex>index?1:0)};
+  }
+  function createController({allowed,allowedUndo=allowed,capture,newId,apply,onCopied=()=>{},onUndone=()=>{},onError=()=>{}}){
+    let disposed=false;const records=new Map();
     return Object.freeze({copy(list,id){
       if(disposed)return false;
       try{
@@ -49,10 +64,24 @@
         apply(list,result.entries);
         const after=checkedSource(list,capture(list));
         if(!equal(list,expected,after))throw Error('複製後內容已改變；請核對目前編修');
+        records.set(list,checkpoint(list,after,id,result.id));
         onCopied(list,{index:result.index,id:result.id});return true;
       }catch(error){onError(error);return false;}
-    },dispose(){disposed=true;}});
+    },undo(list){
+      if(disposed||!records.has(list))return false;
+      try{
+        if(!allowedUndo(list))return false;
+        const before=checkedSource(list,capture(list)),result=undoProposal(list,before,records.get(list));
+        if(!result||!allowedUndo(list)||!equal(list,before,checkedSource(list,capture(list))))return false;
+        const expected=checkedSource(list,{entries:result.entries,visible:true,busy:false});
+        apply(list,result.entries);
+        if(!equal(list,expected,checkedSource(list,capture(list))))throw Error('撤回後內容已改變；請核對目前編修');
+        records.delete(list);onUndone(list,{index:result.index,id:result.id});return true;
+      }catch(error){onError(error);return false;}
+    },view(list){return {canUndo:!disposed&&records.has(list)&&!!allowedUndo(list)};},
+    clear(list){if(list===undefined)records.clear();else records.delete(list);},
+    dispose(){disposed=true;records.clear();}});
   }
-  const api=Object.freeze({specs,checkedSource,sameSource:equal,proposal,createController});
+  const api=Object.freeze({specs,checkedSource,sameSource:equal,proposal,checkpoint,undoProposal,createController});
   if(typeof module==='object'&&module.exports)module.exports=api;else root.MusicEditorCopy=api;
 })(typeof globalThis==='object'?globalThis:this);
