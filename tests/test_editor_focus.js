@@ -69,3 +69,16 @@ test('workbench loads fixed modules before app and HTTP static assets have no ne
  const fs=require('node:fs'),html=fs.readFileSync('web/index.html','utf8'),server=fs.readFileSync('music_lab_server.py','utf8');
  for(const name of ['editor-focus.js','editor-focus-dom.js']){assert.ok(html.indexOf('/'+name)<html.indexOf('/app.js'));assert.match(server,new RegExp('"/'+name.replace('.','\\.')+'": \\(\"web/'+name.replace('.','\\.')));}
 });
+
+test('ID focus locates the exact identity in any current position and has no empty add fallback',()=>{
+ for(const list of Object.keys(P.limits))for(const ids of [['a','b','c'],['c','a','b']])assert.deepEqual(P.byId(list,source(ids),'b'),{list,id:'b',mode:'entry'});
+ for(const id of ['',null,1,'a'.repeat(65),'gone'])assert.throws(()=>P.byId('arrangement',source(['a']),id));assert.throws(()=>P.byId('arrangement',source([]),'a'));assert.throws(()=>P.byId('arrangement',source(['a']),'a','unknown'));
+ assert.equal(P.byId('arrangement',{...source(['a']),busy:true},'a'),null);assert.equal(P.byId('arrangement',{...source(['a']),visible:false},'a'),null);
+});
+test('ID focus refuses source replacement or reordering before native focus and keeps the original index API',()=>{
+ for(const after of [source(['b','a']),source(['a','new']),source(['a']),{...source(['a','b']),busy:true}]){let reads=0,effects=0;const c=P.createController({capture:()=>++reads===1?source(['a','b']):after,focusTarget:()=>{effects++;return true;}});assert.equal(c.focusId('arrangement','b'),false);assert.equal(effects,0);}
+ let reads=0;const c=P.createController({capture:()=>{reads++;return source(['a']);},focusTarget:()=>true});assert.equal(c.focusId('unknown','a'),false);assert.equal(reads,0);assert.equal(c.focusId('arrangement','gone'),false);assert.equal(reads,1);assert.equal(c.focusId('arrangement','a'),true);assert.equal(reads,3);assert.equal(c.focus('arrangement',0),true);c.dispose();assert.equal(c.focusId('arrangement','a'),false);assert.equal(reads,5);
+});
+test('ID DOM focus follows reordered native identities and refuses a missing or disabled target',()=>{
+ const h=harness('arrangement',['a','b','c']);h.nodes.arrangement.children.reverse();assert.equal(h.c.focusId('arrangement','a'),true);assert.equal(h.document.activeElement,h.nodes.arrangement.children[2].targets.first);h.document.activeElement=null;h.nodes.arrangement.children[0].targets.first.disabled=true;assert.equal(h.c.focusId('arrangement','c'),false);assert.equal(h.c.focusId('arrangement','missing'),false);assert.equal(h.document.activeElement,null);
+});
