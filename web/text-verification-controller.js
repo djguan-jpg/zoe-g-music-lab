@@ -10,24 +10,24 @@
  const allowed=s=>s.visible&&!s.busy&&!s.dirty&&s.source!==null;
  function createController({capture,describe,readFile,onState=()=>{},onReport=()=>{},onError=()=>{},maxBytes=P.maxBytes}){
   if(!Number.isSafeInteger(maxBytes)||maxBytes<1||maxBytes>P.maxBytes)throw Error('原文核對容量無效');
-  let sequence=0,pending=false,before=null,selected=null,report=null,disposed=false,message='選回已保存的檔案，核對完整原文；目前成果與編修保留。';
+  let sequence=0,pending=false,before=null,selected=null,report=null,disposed=false,activeReads=0,message='選回已保存的檔案，核對完整原文；目前成果與編修保留。';
   const read=()=>snapshot(capture());
-  function view(){const now=read();return {available:!disposed&&allowed(now),pending,expectedName:now.source?.name||null,selected:selected?{...selected}:null,report:report?{...report}:null,message};}
+  function view(){const now=read();return {available:!disposed&&allowed(now)&&activeReads<2,pending,waitingForReads:!pending&&activeReads>=2,expectedName:now.source?.name||null,selected:selected?{...selected}:null,report:report?{...report}:null,message};}
   const emit=()=>onState(view());
   function clear(note){sequence++;pending=false;before=null;selected=null;report=null;message=note;}
   function refresh(){if(disposed)return;const now=read();if(before&&(!same(before,now)||!allowed(now)))clear('核對來源或操作狀態已改變，請選回檔案重新核對。');emit();}
   return {view,refresh,cancel(){if(disposed)return;clear('已取消原文核對；目前成果與編修保留。');emit();},dispose(){if(disposed)return;clear('此頁核對已關閉。');disposed=true;},
-   async verify(file){if(disposed)return false;const source=read();if(!allowed(source))return false;const token=++sequence;before=source;pending=true;selected=null;report=null;message='正在讀取選定原文並核對…';emit();
+   async verify(file){if(disposed)return false;const source=read();if(!allowed(source)||activeReads>=2)return false;const token=++sequence;let ownsRead=false;before=source;pending=true;selected=null;report=null;message='正在讀取選定原文並核對…';emit();
     const current=()=>{const now=read();return !disposed&&token===sequence&&allowed(now)&&same(source,now);};
     try{
      const info=P.metadata(describe(file));if(info.size>maxBytes)throw Error(`選定檔案超過本次核對上限 ${maxBytes} bytes；原內容保留。`);selected=info;emit();
-     const bytes=await readFile(file);if(!current())return false;
+     activeReads++;ownsRead=true;const bytes=await readFile(file);if(!current())return false;
      const after=P.metadata(describe(file));if(info.name!==after.name||info.size!==after.size||!ArrayBuffer.isView(bytes)||bytes.byteLength!==info.size)throw Error('選定檔案讀取不完整或已變更；請重新選檔。');
      const checked=P.inspect(source.source,bytes);if(!current())return false;
      report=checked;message=checked.matched?`選定檔案與 ${checked.expected_name} 原文位元組完全一致（${checked.expected_bytes} bytes）。請繼續保留這份檔案。`:`選定檔案與 ${checked.expected_name} 不一致；第一個差異在 byte ${checked.first_difference_byte}（從0起）。目前 ${checked.expected_bytes} bytes，選定 ${checked.selected_bytes} bytes。`;
      onReport({...checked},{...info});return true;
     }catch(error){if(current()){message=error.message;onError(error);}return false;}
-    finally{if(token===sequence&&!disposed){pending=false;if(!current())clear('核對期間核對來源或操作狀態已改變，請重新核對。');emit();}}
+    finally{if(ownsRead)activeReads--;if(token===sequence&&!disposed){pending=false;if(!current())clear('核對期間核對來源或操作狀態已改變，請重新核對。');emit();}else if(ownsRead&&!disposed)refresh();}
    }};
  }
  const api=Object.freeze({snapshot,createController});if(typeof module==='object'&&module.exports)module.exports=api;else root.MusicTextVerificationController=api;

@@ -41,7 +41,7 @@
     verification=root.MusicTextVerificationDOM.bind(document,{
       capture:()=>({scope:'audio',revision:sentRevision,busy:!allowed(),dirty:false,visible:visible(),source:sentSource}),
       maxBytes:model.maxBytes,events,
-      ids:{file:'audio-accept-verify-file',note:'audio-accept-verify-note',source:'audio-accept-verify-source'},
+      ids:{file:'audio-accept-verify-file',note:'audio-accept-verify-note',source:'audio-accept-verify-source',cancel:'audio-accept-verify-cancel'},
       emptyText:'先下載這輪條件草稿，再選回檔案核對。',sourceLabel:'本輪送出的條件草稿：',
       onReport:report=>{if(report.matched)controller.confirm();},onError
     });

@@ -898,7 +898,7 @@ textDownloader.bind($('draft-export'),{select:()=>{
     return {name:'music-lab-draft.json',content};
   },onSent:selected=>{draftDownloadSource={name:selected.name,content:selected.content};draftDownloadRevision++;const sentDraft=JSON.parse(selected.content);$('draft-download-stamp').textContent='送出時間：'+sentDraft.saved_at;draftRetention.requestDownload(sentDraft);state.draftVerification.refresh();say('已送出草稿下載；可選回檔案核對完整原文，音檔與成果另存。');},onError:error=>say(error.message,true)});
 state.draftVerification=MusicTextVerificationDOM.bind(document,{
-  ids:{file:'draft-verify-file',note:'draft-verify-note',source:'draft-verify-source'},maxBytes:1024*1024,
+  ids:{file:'draft-verify-file',note:'draft-verify-note',source:'draft-verify-source',cancel:'draft-verify-cancel'},maxBytes:1024*1024,
   emptyText:'先下載這輪草稿，再選回檔案核對。',sourceLabel:'本輪送出的草稿：',
   capture:()=>({scope:'draft',revision:draftDownloadRevision,busy:state.busy,dirty:false,visible:true,source:draftDownloadSource}),
   onReport:report=>{if(report.matched&&draftRetention.confirmDownload())say(draftRetention.status().dirty?'已核對送出時的草稿原文；下載後的新編修仍需另存。':'已核對送出時的草稿原文並記錄保存；音檔與成果另存。');},
