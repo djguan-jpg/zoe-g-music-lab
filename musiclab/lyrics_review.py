@@ -25,7 +25,7 @@ def descriptor():
             'read_only': True, 'source_rows': 'one_based_original_order', 'media_generated': False}
 
 
-def review(payload):
+def _source(payload):
     if not isinstance(payload, dict) or 'cues' not in payload or set(payload) - {'title', 'duration', 'cues'}:
         raise ValueError('校時檢查需含 cues；只接受 title／duration／cues，不接受路徑或版本覆蓋')
     title = payload.get('title', '歌詞校時檢查')
@@ -48,9 +48,15 @@ def review(payload):
     values = [title, duration, *[c[k] for c in cues for k in ('start','end','text')]]
     budget = sum(len(json.dumps(v, ensure_ascii=False).encode('utf-8')) if isinstance(v, str) else 32 for v in values)
     if budget > 2*1024*1024: raise ValueError('校時檢查欄位容量最多2 MiB')
+    return source
+
+
+def _analyze(source, selected_row=None):
+    duration, cues = source['duration'], source['cues']
     issues, blocked, count = [], set(), 0
     def add(row, field, code, related=None):
         nonlocal count
+        if selected_row is not None and row not in (0, selected_row): return
         count += 1
         if row: blocked.add(row)
         if len(issues) < MAX_ISSUES:
@@ -102,6 +108,10 @@ def review(payload):
             'total_rows': len(cues), 'timed_rows': timed, 'blocking_rows': len(blocked),
             'issue_count': count, 'issues': issues, 'details_truncated': count > len(issues),
             'duration_declared': declared, 'review_notes': list(NOTES)}
+
+
+def review(payload):
+    return _analyze(_source(payload))
 
 
 def markdown(data):

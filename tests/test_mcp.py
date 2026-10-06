@@ -74,6 +74,7 @@ class MCPTests(unittest.TestCase):
                      ("storyboard_seed", "storyboard_seed", {"music": json.loads((ROOT / "examples/first-light-music.json").read_text(encoding="utf-8"))}),
                      ("lyrics_seed", "lyrics_seed", {"title":"未校時", "text":"原創\n原創"}),
                      ("lyrics_review", "lyrics_review", {"cues":[{"start":"","end":"","text":"未完成"}]}),
+                     ("lyrics_cue_review", "lyrics_cue_review", {"lyrics":{"cues":[{"start":"","end":"","text":"未完成"}]},"row":1}),
                      ("lyrics_search", "lyrics_search", {"texts":["原句", "未校時原句"],"query":"原句"}),
                      ("storyboard_search", "storyboard_search", {"shots":[dict.fromkeys(("section","purpose","visual","camera","transition","motif_state","character_state","change_reason"), "原文")],"query":"原文"}),
                      ("music_search", "music_search", {"sections":[{"name":"原文","focus":"任務","texture":"聲音"}],"query":"原文"}),

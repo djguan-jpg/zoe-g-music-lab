@@ -1,5 +1,15 @@
 # 版本紀錄
 
+## v0.119.0 選定歌詞校時待辦
+
+選定歌詞待辦共用 lyrics_review 的完整來源與時間分析，先依原句／作品時長篩選再套200明細上限；全部原句仍參與重複開始與horizon重疊核對。新增獨立 lyrics_cue_review schema1、application／CLI／HTTP／Agent-MCP，20基本／27明確啟庫，舊26組schemas保持。單句report只帶選定cue與title／duration，不帶整份歌詞；source controller核對整份原值、stable IDs與選列，其他句子也可使舊位置失效。檢查／報告不改原文、時間、音檔或草稿；零待辦仍須完整歌詞包與實聽。產品119／唯一交付policy38–119共82，未知120拒絕；Agent1／draft3及其他schemas保持。
+
+619 Python（86.844秒）、1429 JavaScript、136 syntax、4 Skills與diff通過；新增8 Python／16 JS。原v118指定source ZIP還原611／1413；324歷史ZIP／manifest bytes及原26組schemas一致，新增operation只有lyrics_cue_review。八份既有whole lyrics Python data／兩檔bytes、JS data／Markdown及跨語言完整診斷保持。120句留白基線共240待辦，whole前200明細沒有原句120；新單句兩項可直接定位。10000句horizon長重疊，選定句9999關係全部計數，前200明細、256KiB JSON及2MiB wire有界。原生28快照／22組完整草稿僅排除saved_at比較，原句120的2／1／0報告、mouse開始與Tab結束、選列失效／復原、相同文字換序／撤回stable IDs、其他原句重複開始與重疊關聯row1、global時長待辦、busy／hidden／stale停用通過。選定零待辦時，whole仍238項；不能當整表接受。Unicode／首尾空白／其他三台、原生File身份、暫停0.5秒及8秒合成WAV保持，console warn/error零。1280×720及390×844，窄頁面無水平溢出；PNG在忽略QA目錄，未作完整視覺／screen reader接受。CLI input及draft3明確row120的exit2／2／0、重覆輸出exit1保留原bytes、無效input／missing row／input row override拒絕不建輸出；Agent／MCP三組good-bad-good、9筆HTTP及5固定JS bytes一致。draft的JSON鍵序按原source輸出，與native input逐語義data及Markdown相同，自己的完整files按自己的payload核對；不把鍵序當來源證明。
+
+中途錯誤證據保留：初次Python dotted test module路徑、app整合漏右括號、focused DTO fixture、QA草稿options key及snapshot player ID修正後重驗；舊discovery數量／ordered tools／supported length fixtures更新，修正fixture縮排；首次全JS八項由新增controller未加入VM fixture與舊app文字pattern造成，四個fixture同步後剩一個pattern，再修正後1429全過。Python已619通過且其來源未再改，JS重試沿用該成功結果。初次runtime把不同JSON鍵序的draft輸出當native字面bytes比較而失敗；新獨立runtime paths按同一payload核對完整files，再比語義data／Markdown，四adapter通過。失敗紀錄與部分輸出保留，不冒充成功。
+
+見[契約](docs/LYRICS-CUE-REVIEW.md)。以下保留歷史迭代。
+
 ## v0.118.0 歌詞診斷完整核對
 
 歌詞校時診斷先以共用strict JSON值核對來源，再讀取欄位與建立隔離副本；getter、稀疏陣列、隱藏／symbol／undefined／無效Unicode拒絕。完整回覆精確核對root data／files／meta、當前唯一產品版本、protocol1及needs_review=true，再核對完整report與JSON／Markdown，checkedResult交付自有data／files副本。舊inspect API保留。Controller將capture放在try內，失敗不送transport，當前pending才釋放；晚回應／錯誤／finally不覆蓋後續工作。原request可省略title／duration，僅report明示既有defaults；時間規則與診斷格式保持。19基本／26啟庫、原26組schemas及Agent1／draft3／review1保持，沒有新operation或GET。產品118／唯一policy38–118共81，未知119拒絕。

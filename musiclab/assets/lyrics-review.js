@@ -22,10 +22,10 @@
     if(values.reduce((sum,v)=>sum+(typeof v==='string'?encoder.encode(JSON.stringify(v)).length:32),0)>2*1024*1024)throw Error('校時檢查欄位容量最多2 MiB');
     return source;
   }
-  function review(payload){
-    const source=checkedSource(payload),{duration,cues}=source;
+  function analyze(source,selectedRow=null){
+    const {duration,cues}=source;
     const issues=[],blocked=new Set();let count=0,total=null,timed=0;
-    const add=(row,field,code,related=null)=>{count++;if(row)blocked.add(row);if(issues.length<maxIssues)issues.push({row,field,code,related_row:related,message:messages[code]});};
+    const add=(row,field,code,related=null)=>{if(selectedRow!==null&&row!==0&&row!==selectedRow)return;count++;if(row)blocked.add(row);if(issues.length<maxIssues)issues.push({row,field,code,related_row:related,message:messages[code]});};
     const declared=!empty(duration);
     if(declared){try{total=clock(duration,'作品宣告');if(total<=0)throw Error();}catch{total=null;add(0,'duration','invalid_duration');}}
     if(!cues.length)add(0,'cues','no_cues');
@@ -48,6 +48,23 @@
       if(cue.end!==null&&cue.end>start&&(!horizon||cue.end>horizon.end))horizon=cue;
     }
     return {format:'zoe-lyrics-review',schema_version:1,status:count?'needs_correction':'timing_checked',source,total_rows:cues.length,timed_rows:timed,blocking_rows:blocked.size,issue_count:count,issues,details_truncated:count>issues.length,duration_declared:declared,review_notes:[...notes]};
+  }
+  function review(payload){return analyze(checkedSource(payload));}
+  const cueNotes=['只列選定原句與作品時長的待辦；重複開始與重疊仍核對全部原句，其他句子的自身待辦不在本報告列出。','原文字、時間、句號與順序保留；沒有猜測時間或呼叫模型，零待辦仍須完整歌詞包與實聽核對。'];
+  function cueReview(payload){
+    if(!payload||!J.sameValue(payload,payload)||!exact(payload,['lyrics','row']))throw Error('單句檢查只接受 lyrics 與 row 原句號');
+    const source=checkedSource(payload.lyrics),row=payload.row;
+    if(!Number.isSafeInteger(row)||row<1||row>source.cues.length)throw Error('請選擇目前歌詞中有效的原句號');
+    const checked=analyze(source,row),data={format:'zoe-lyrics-cue-review',schema_version:1,status:checked.status,row,total_rows:source.cues.length,source:{title:source.title,duration:source.duration,cue:source.cues[row-1]},issue_count:checked.issue_count,issues:checked.issues,details_truncated:checked.details_truncated,duration_declared:checked.duration_declared,review_notes:[...cueNotes]};
+    if(new TextEncoder().encode(JSON.stringify(data,null,2)+'\n').length>256*1024)throw Error('單句報告 JSON 最多256 KiB；原歌詞保留');
+    return data;
+  }
+  function cueMarkdown(data){
+    const labels={start:'開始',end:'結束',text:'文字',duration:'作品宣告'},lines=['# 選定歌詞校時待辦','',`原句 ${data.row}／共${data.total_rows}句；待辦${data.issue_count}項。`,''];
+    for(const issue of data.issues)lines.push(`- ${issue.row?`第${issue.row}句`:'作品'} · ${labels[issue.field]}：${issue.message}${issue.related_row?`（與第${issue.related_row}句）`:''}`);
+    if(data.details_truncated)lines.push(`- 明細僅列前${maxIssues}項；選定句子的全部關係已檢查，修正後請重查。`);
+    if(!data.issue_count)lines.push('選定原句時間資料沒有待辦；仍須完整歌詞包與實聽核對。');
+    return [...lines,'',...data.review_notes,''].join('\n');
   }
   function markdown(data){
     const lines=['# 歌詞校時檢查','',`共${data.total_rows}句；局部時間已填${data.timed_rows}句；需修正${data.blocking_rows}句；問題${data.issue_count}項。`,''];
@@ -73,5 +90,5 @@
       const accepted=checkedResult(payload,reply);onReport(accepted.data,accepted.files);return true;
     }catch(error){if(current===token&&isCurrent())onError(error);return false;}finally{if(current===token){pending=false;state();}}}};
   }
-  const api={review,markdown,inspect,checkedSource,checkedResult,createController};if(typeof module==='object'&&module.exports)module.exports=api;else root.MusicLyricsReview=api;
+  const api={review,markdown,inspect,checkedSource,checkedResult,createController,cueReview,cueMarkdown};if(typeof module==='object'&&module.exports)module.exports=api;else root.MusicLyricsReview=api;
 })(typeof globalThis==='object'?globalThis:this);

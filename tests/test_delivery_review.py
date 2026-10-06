@@ -55,4 +55,4 @@ class DeliveryReviewTests(unittest.TestCase):
    process=subprocess.run([sys.executable,'-X','utf8',str(ROOT/'music_lab_mcp.py'),'--delivery-zip',str(source)],input='\n'.join(json.dumps(x) for x in messages)+'\n',cwd=folder,capture_output=True,text=True,encoding='utf-8',timeout=10);self.assertEqual(process.returncode,0,process.stderr);reply=json.loads(process.stdout.splitlines()[-1]);self.assertEqual(reply['result']['structuredContent'],expected);self.assertEqual([x.name for x in Path(folder).iterdir()],['selected.zip'])
  def test_discovery_schema_limits_baseline_and_preserves_tool_count(self):
   schema=payload_schema('delivery_inspect')['properties']['baseline'];self.assertFalse(schema['additionalProperties']);self.assertEqual(schema['required'],['scope','files']);self.assertEqual(schema['properties']['files']['maxProperties'],64)
-  d=capabilities();self.assertEqual(d['delivery_comparison'],descriptor());self.assertEqual(len(d['operations']),19)
+  d=capabilities();self.assertEqual(d['delivery_comparison'],descriptor());self.assertEqual(len(d['operations']),20)
