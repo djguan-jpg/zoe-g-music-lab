@@ -10,13 +10,13 @@
  const allowed=s=>s.visible&&!s.busy&&!s.dirty&&s.source!==null;
  function createController({capture,describe,readFile,onState=()=>{},onReport=()=>{},onError=()=>{},maxBytes=P.maxBytes}){
   if(!Number.isSafeInteger(maxBytes)||maxBytes<1||maxBytes>P.maxBytes)throw Error('原文核對容量無效');
-  let sequence=0,pending=false,before=null,selected=null,report=null,disposed=false,activeReads=0,message='選回已保存的檔案，核對完整原文；目前成果與編修保留。';
+  let sequence=0,pending=false,before=null,selected=null,report=null,disposed=false,activeReads=0,contextRevision=0,lastContext=null,message='選回已保存的檔案，核對完整原文；目前成果與編修保留。';
   const read=()=>snapshot(capture());
-  function view(){const now=read();return {available:!disposed&&allowed(now)&&activeReads<2,pending,waitingForReads:!pending&&activeReads>=2,expectedName:now.source?.name||null,selected:selected?{...selected}:null,report:report?{...report}:null,message};}
+  function view(){const now=read();if(!lastContext||!same(lastContext,now)){lastContext=now;contextRevision++;}return {available:!disposed&&allowed(now)&&activeReads<2,pending,waitingForReads:!pending&&activeReads>=2,contextRevision,expectedName:now.source?.name||null,selected:selected?{...selected}:null,report:report?{...report}:null,message};}
   const emit=()=>onState(view());
   function clear(note){sequence++;pending=false;before=null;selected=null;report=null;message=note;}
   function refresh(){if(disposed)return;const now=read();if(before&&(!same(before,now)||!allowed(now)))clear('核對來源或操作狀態已改變，請選回檔案重新核對。');emit();}
-  return {view,refresh,cancel(){if(disposed)return;clear('已取消原文核對；目前成果與編修保留。');emit();},dispose(){if(disposed)return;clear('此頁核對已關閉。');disposed=true;},
+  return {view,refresh,cancel(){if(disposed)return;clear('已取消原文核對；目前成果與編修保留。');emit();},dispose(){if(disposed)return;clear('此頁核對已關閉。');disposed=true;lastContext=null;},
    async verify(file){if(disposed)return false;const source=read();if(!allowed(source)||activeReads>=2)return false;const token=++sequence;let ownsRead=false;before=source;pending=true;selected=null;report=null;message='正在讀取選定原文並核對…';emit();
     const current=()=>{const now=read();return !disposed&&token===sequence&&allowed(now)&&same(source,now);};
     try{

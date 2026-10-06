@@ -1,5 +1,7 @@
 # 完整原文核對契約 v1
 
+現行取消後的鍵盤焦點契約見[焦點分層](TEXT-VERIFICATION-FOCUS.md)。明確意圖只留在 DOM adapter，來源 context epoch 為共用內部 view metadata；原取消及 read 上限保持。以下保留歷史契約。
+
 現行三入口取消與每個核對器最多兩個實際未結束read，見[取消契約](TEXT-VERIFICATION-CANCEL.md)。以下保留原v86契約與版本資料；現行版本支持以唯一policy及DELIVERY-VERSIONS為準。
 
 建立成果並選擇檔案後，以「核對下載的原文」明確選回本機檔。比較目前成果 canonical 字串的完整 UTF-8 bytes 與 native File.arrayBuffer() 返回的完整 bytes；不比較 textarea 預覽／摘錄。相同內容即使檔名不同仍一致，換行、BOM、NUL、Unicode 與結尾不同均會有差異。空成果及空檔可以相同，空檔與非空成果顯示差異。

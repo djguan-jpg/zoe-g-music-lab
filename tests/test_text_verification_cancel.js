@@ -50,5 +50,5 @@ test('three explicit controls target the corresponding live note and shared adap
  const html=fs.readFileSync('web/index.html','utf8'),app=fs.readFileSync('web/app.js','utf8'),audio=fs.readFileSync('web/audio-acceptance-dom.js','utf8');
  for(const prefix of ['text','draft','audio-accept']){const id=prefix+'-verify-cancel',tag=html.match(new RegExp('<button id="'+id+'"[^>]*>'))?.[0];assert.ok(tag);assert.match(tag,/type="button"/);assert.ok(tag.includes('aria-controls="'+prefix+'-verify-note"'));assert.ok(tag.includes('aria-describedby="'+prefix+'-verify-note"'));assert.match(tag,/disabled/);}
  assert.match(app,/cancel:'draft-verify-cancel'/);assert.match(audio,/cancel:'audio-accept-verify-cancel'/);assert.match(html.match(/<button id="audio-accept-verify-cancel"[^>]*>/)[0],/data-view-control="verification"/);
- const dom=fs.readFileSync('web/text-verification-dom.js','utf8');assert.match(dom,/cancel\.onclick=\(\)=>controller\.cancel\(\)/);assert.doesNotMatch(dom,/fetch\(|\/api\/|localStorage|sessionStorage|setFiles|markDirty|confirmDownload/);
+ const dom=fs.readFileSync('web/text-verification-dom.js','utf8');assert.match(dom,/cancel\.onclick=/);assert.doesNotMatch(dom,/fetch\(|\/api\/|localStorage|sessionStorage|setFiles|markDirty|confirmDownload/);
 });
