@@ -7,8 +7,8 @@
   const maxContract=256*1024,maxEncoded=12*1024*1024,maxHtml=16*1024*1024;
   const marker='<script id="initial" type="application/json">',close='</script>';
   const exact=(v,keys)=>v&&typeof v==='object'&&!Array.isArray(v)&&Object.keys(v).length===keys.length&&keys.every(k=>Object.hasOwn(v,k));
-  const canonical=v=>Array.isArray(v)?v.map(canonical):v&&typeof v==='object'?Object.fromEntries(Object.keys(v).sort().map(k=>[k,canonical(v[k])])):v;
-  const equal=(a,b)=>JSON.stringify(canonical(a))===JSON.stringify(canonical(b));
+
+  const equal=J.sameValue;
   const fail=()=>{throw Error('歌詞預覽與本次來源或共用範本不一致；目前成果與編修保留');};
   function bytes(text,limit){
     if(typeof text!=='string'||text.length>limit)fail();

@@ -44,6 +44,32 @@
     catch{throw Error(`${label} 不是有效的 UTF-8；請另存 UTF-8，原檔與目前內容保留`);}
     return parse(content,{maxBytes:limit,label,allowBOM});
   }
-  const api={maxBytes,maxDepth,parse,decode,assertUnicode:unicode};
+  const maxValueNodes=262144;
+  function sameValue(left,right){
+    let nodes=0;
+    const data=(value,key)=>{const d=Object.getOwnPropertyDescriptor(value,key);return d&&d.enumerable&&Object.hasOwn(d,'value')?d:null;};
+    function walk(a,b,depth){
+      if(++nodes>maxValueNodes||typeof a!==typeof b)return false;
+      if(a===null||b===null)return a===null&&b===null;
+      if(typeof a==='number')return Number.isFinite(a)&&Number.isFinite(b)&&a===b;
+      if(typeof a==='string'){if(a!==b)return false;unicode(a,'JSON value');return true;}
+      if(typeof a==='boolean')return a===b;
+      if(typeof a!=='object'||depth>=maxDepth)return false;
+      const array=Array.isArray(a);if(array!==Array.isArray(b))return false;
+      const keys=Reflect.ownKeys(a),other=Reflect.ownKeys(b);
+      if(keys.length!==other.length||keys.some(k=>typeof k!=='string')||other.some(k=>typeof k!=='string'))return false;
+      if(array){
+        const length=Object.getOwnPropertyDescriptor(a,'length')?.value,otherLength=Object.getOwnPropertyDescriptor(b,'length')?.value;
+        if(!Number.isSafeInteger(length)||length<0||length!==otherLength||keys.length!==length+1||length>=maxValueNodes)return false;
+        for(let i=0;i<length;i++){const x=data(a,String(i)),y=data(b,String(i));if(!x||!y||!walk(x.value,y.value,depth+1))return false;}
+        return true;
+      }
+      if(Object.prototype.toString.call(a)!=='[object Object]'||Object.prototype.toString.call(b)!=='[object Object]')return false;
+      for(const key of keys){unicode(key,'JSON key');const x=data(a,key),y=data(b,key);if(!x||!y||!walk(x.value,y.value,depth+1))return false;}
+      return true;
+    }
+    try{return walk(left,right,0);}catch{return false;}
+  }
+  const api={maxBytes,maxDepth,maxValueNodes,parse,decode,assertUnicode:unicode,sameValue};
   if(typeof module==='object'&&module.exports)module.exports=api;else root.MusicJsonDocument=api;
 })(typeof globalThis==='object'?globalThis:this);

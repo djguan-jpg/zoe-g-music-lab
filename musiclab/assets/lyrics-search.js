@@ -30,8 +30,8 @@
   return {format:'zoe-lyrics-search',schema_version:1,query:options.query,query_bytes:options.pattern.length,source_sha256:sha,source_bytes:raw.length,total_rows:texts.length,total_matched_rows:count,start_row:start,max_results:limit,matches,next_row,review_notes:[...notes]};
  }
  function markdown(data){const lines=['# 原句搜尋','',`全部${data.total_rows}句；命中${data.total_matched_rows}句；此批${data.matches.length}句。`,`查詢${data.query_bytes} UTF-8 bytes；來源SHA-256：${data.source_sha256}。`,''];for(const hit of data.matches)lines.push(`- 第${hit.row}句：第一個命中UTF-8 bytes ${hit.start_byte}–${hit.end_byte}。`);if(data.next_row!==null)lines.push(`- 接續從原句${data.next_row}開始，需同一来源SHA。`);return [...lines,'',...data.review_notes,''].join('\n');}
- const canonical=v=>Array.isArray(v)?v.map(canonical):v&&typeof v==='object'?Object.fromEntries(Object.keys(v).sort().map(k=>[k,canonical(v[k])])):v;
- const equal=(a,b)=>JSON.stringify(canonical(a))===JSON.stringify(canonical(b));
+
+ const equal=J.sameValue;
  function checkedReply(reply,expected,version){
   const exact=(v,keys)=>v&&typeof v==='object'&&!Array.isArray(v)&&Object.keys(v).length===keys.length&&keys.every(k=>Object.hasOwn(v,k));
   if(!exact(reply,['files','data','meta'])||!exact(reply.meta,['version','protocol_version','needs_review'])||reply.meta.version!==version||reply.meta.protocol_version!==1||reply.meta.needs_review!==true||!equal(reply.data,expected)||!exact(reply.files,['lyrics-search.json','lyrics-search.md'])||typeof reply.files['lyrics-search.md']!=='string'||!equal(J.parse(reply.files['lyrics-search.json'],{maxBytes:1024*1024,label:'原句搜尋報告'}),expected)||reply.files['lyrics-search.md']!==markdown(expected))throw Error('搜尋回覆與本次原文或版本不符；原句保持');
