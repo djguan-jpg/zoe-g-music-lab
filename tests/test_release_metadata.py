@@ -133,7 +133,7 @@ class CommittedReleaseTests(unittest.TestCase):
         value=dict(metadata(),license='PolyForm-Noncommercial-1.0.0')
         self.commit(value)
         for name in ['LICENSE','NOTICE','README.md','music_lab_agent.py','music_lab_server.py']:
-            (self.root/name).write_text('Synthetic packaging boundary fixture\n',encoding='utf-8')
+            (self.root/name).write_text(('# ' if name.endswith('.py') else '')+'Synthetic packaging boundary fixture\n',encoding='utf-8')
         self.git('add','--',*['LICENSE','NOTICE','README.md','music_lab_agent.py','music_lab_server.py'])
         self.git('commit','--quiet','-m','Synthetic archive boundary fixture');selected=self.git('rev-parse','HEAD')
         self.calls.clear()
@@ -147,6 +147,25 @@ class CommittedReleaseTests(unittest.TestCase):
         self.assertTrue((folder/'FAILED.txt').is_file());self.assertTrue((folder/'zoe-g-music-lab-v0.79.0.zip').is_file())
         self.assertFalse((folder/'manifest.json').exists())
         self.assertFalse(any(call[0]=='node' for call in self.calls))
+
+    def test_invalid_committed_python_refuses_before_runner_and_preserves_failed_archive(self):
+        import zipfile
+        self.commit(dict(metadata(),license='PolyForm-Noncommercial-1.0.0'))
+        names=['LICENSE','NOTICE','README.md','music_lab_agent.py','music_lab_server.py']
+        for name in names:
+            (self.root/name).write_text('# Synthetic source\n',encoding='utf-8')
+        invalid=b'def invalid(\n'
+        (self.root/'music_lab_agent.py').write_bytes(invalid)
+        self.git('add','--',*names);self.git('commit','--quiet','-m','Synthetic invalid Python source')
+        selected=self.git('rev-parse','HEAD');self.calls.clear()
+        with self.assertRaisesRegex(ValueError,'Verified Python source could not be prepared'):
+            packager.package(selected)
+        folder=self.root/'outputs/releases'/('v0.79.0-'+selected[:12])
+        self.assertTrue((folder/'FAILED.txt').is_file());self.assertFalse((folder/'manifest.json').exists())
+        with zipfile.ZipFile(folder/'zoe-g-music-lab-v0.79.0.zip') as archive:
+            self.assertEqual(archive.read('zoe-g-music-lab/music_lab_agent.py'),invalid)
+        self.assertEqual((self.root/'music_lab_agent.py').read_bytes(),invalid)
+        self.assertFalse(any('scripts/check_python_tests.py' in call or call[0]=='node' for call in self.calls))
 
 
 if __name__=='__main__':unittest.main()

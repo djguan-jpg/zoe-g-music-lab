@@ -41,7 +41,7 @@
       return {...result,canUndo,note:notice||(result.status==='unavailable'?result.error:notes[result.status])};
     }
     const view=()=>describe(current());
-    function publish(){offer=current();const value=describe(offer);onState(value);return value;}
+    function publish(selected=current()){offer=selected;const value=describe(offer);onState(value);return value;}
     function refresh(){notice='';return publish();}
     function adopt(){
       const selected=current();
@@ -55,9 +55,17 @@
       notice='只接續作品總長；原始秒數、段落、母題與音檔保留，仍需完整建立驗證。';return publish();
     }
     function undo(){
-      const selected=current();
-      if(!record||!same({fps:selected.fps,shots:selected.shots},record.source)||selected.duration!==record.after)throw Error('總長、鏡頭時間、列來源或 FPS 已有變更；目前內容保留。');
-      const before=record.before;apply(before);record=null;notice='已撤回本次總長接續；後續創作文字與音檔保留。';return publish();
+      const pending=record,selected=current();
+      if(!pending||record!==pending||!same({fps:selected.fps,shots:selected.shots},pending.source)||selected.duration!==pending.after)throw Error('總長、鏡頭時間、列來源或 FPS 已有變更；目前內容保留。');
+      notice='';
+      try{
+        const accepted=apply(pending.before);
+        if(accepted===false)throw Error('撤回寫入被拒絕；請核對目前內容，原撤回紀錄保留。');
+        const after=current();
+        if(record!==pending||!same({fps:after.fps,shots:after.shots},pending.source))throw Error('撤回期間分鏡時間來源或撤回紀錄有變更；請核對目前內容。');
+        if(after.duration!==pending.before)throw Error('總長欄未還原原字串；請核對目前內容，原撤回紀錄保留。');
+        record=null;notice='已撤回本次總長接續；後續創作文字與音檔保留。';return publish(after);
+      }catch(e){notice='';try{publish();}catch(_){}throw e;}
     }
     function clear(){record=null;notice='';return publish();}
     return {refresh,view,adopt,undo,clear};
