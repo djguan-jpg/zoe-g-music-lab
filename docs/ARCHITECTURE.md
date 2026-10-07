@@ -65,6 +65,8 @@ flowchart LR
 
 整批校時的注入controller核對隔離before、寫入器回值及同份實際post；只有原列／文字／宣告與完整目標時間原字串吻合才接受。失敗保留仍存在的紀錄及實際部分內容；reset／cancel意圖與寫入期間重入另行核對。DOM寫入責任保持。見[寫入接受契約](LYRICS-TIMING-ACCEPTANCE.md)。
 
+新增歌詞先由既有純lyrics-timing沿共享LyricTime產生完整毫秒候選，再交給原DOM adapter分配列ID與寫入；候選拒絕不改表格或dirty／焦點。見[新增句契約](CUE-ADD-MILLISECONDS.md)。
+
 波形定位候選與原生寫入分開；寫入後核對當前音檔與實際位置，再交付同一快照的view。見[實際定位契約](WAVE-SEEK-ACCEPTANCE.md)。
 
 分鏡總長的空白分類沿共享planning-values，與Python application及原生時間診斷同來源；候選／controller／DOM沿既有分層，原值不修剪。見[原值分類契約](STORYBOARD-DURATION-VALUES.md)。
