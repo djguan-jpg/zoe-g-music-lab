@@ -60,3 +60,29 @@ test('raw field edits remain possible during a request and stale replies preserv
 test('an already busy run starts no second task, control changes or source reads',async()=>{
  const s=runSetup();s.state.busy=true;const before=structuredClone(s.live),button={disabled:false};await s.context.run(button,()=>assert.fail('duplicate request'));assert.deepEqual(s.live,before);assert.equal(s.events.length,0);assert.equal(s.reads,0);assert.equal(s.writes,0);assert.equal(button.disabled,false);assert.equal(s.state.busy,true);
 });
+
+test('shot append refuses invalid trailing time without altering raw rows, IDs, history, result or media',()=>{
+ for(const raw of ['\ufeff','\ufeff24\ufeff','\u200b','\u001c24\u001c','-1e-999','NaN','Infinity','0x18']){
+  const s=setup();s.live.shots[0].value.end=raw;s.history.push('storyboard',{list:'shots',label:'保留刪除',entry:{id:'deleted-shot',value:fixture('shots')}});
+  const before=structuredClone(s.live),state=structuredClone(s.state),history=s.history.entries('storyboard');s.add('shots');
+  assert.deepEqual(s.live,before,JSON.stringify(raw));assert.deepEqual(s.state,state);assert.deepEqual(s.history.entries('storyboard'),history);assert.equal(s.writes,0);assert.equal(s.context.rowSequence,10);assert.equal(s.events.length,1);assert.equal(s.events[0][0],'say');assert.equal(s.events[0][2],true);
+ }
+});
+
+test('shot append retains Python field whitespace and uses the existing zero origin only for blank trailing time',()=>{
+ for(const raw of ['', ' \t\r\n ', '\u0085','\u001c','\u001d\u001e\u001f','\u00a0','\u2000\u200a','\u2028\u2029','\u3000']){
+  const s=setup();s.live.shots[0].value.end=raw;const before=structuredClone(s.live),state=structuredClone(s.state);s.add('shots');
+  assert.equal(s.live.shots.length,2,JSON.stringify(raw));assert.deepEqual(s.live.shots[0],before.shots[0]);assert.equal(s.live.shots[1].value.start,'0');assert.equal(s.live.shots[1].value.end,'6');assert.equal(s.live.shots[1].value.character_state,before.shots[0].value.character_state);assert.equal(s.live.shots[1].value.open,true);assert.equal(s.live.shots[1].id,'row-11');assert.deepEqual(s.state,state);for(const list of Object.keys(specs).filter(x=>x!=='shots'))assert.deepEqual(s.live[list],before[list]);assert.equal(s.writes,1);
+ }
+});
+
+test('shot append derives finite decimal origin without rewriting the original trailing string or creative fields',()=>{
+ for(const [raw,expected] of [[' 0018.0004 ',18.0004],['\u008524\u0085',24],['０.５',0.5],['1_2.5',12.5],['-0e-999',0],['1e-999',0],['0.0001',0.0001]]){
+  const s=setup();s.live.shots[0].value.end=raw;const before=structuredClone(s.live);s.add('shots');assert.equal(s.live.shots.length,2);assert.deepEqual(s.live.shots[0],before.shots[0]);assert.equal(s.live.shots[1].value.start,String(expected));assert.equal(s.live.shots[1].value.end,String(expected+6));assert.equal(s.live.shots[1].value.visual,'');assert.equal(s.live.shots[1].value.motif_id,'');assert.equal(s.live.shots[1].value.character_state,before.shots[0].value.character_state);
+ }
+});
+
+test('shot append retries after correcting an invalid original time and an empty board still starts once at zero',()=>{
+ const s=setup();s.live.shots[0].value.end='\ufeff';s.add('shots');assert.equal(s.live.shots.length,1);assert.equal(s.context.rowSequence,10);s.live.shots[0].value.end='\u008524.25\u0085';const before=structuredClone(s.live.shots[0]);s.add('shots');assert.equal(s.live.shots.length,2);assert.deepEqual(s.live.shots[0],before);assert.equal(s.live.shots[1].id,'row-11');assert.equal(s.live.shots[1].value.start,'24.25');assert.equal(s.live.shots[1].value.end,'30.25');assert.equal(s.writes,1);assert.equal(s.events.filter(x=>x[0]==='dirty').length,1);assert.equal(s.events.filter(x=>x[0]==='focus').length,1);
+ const empty=setup();empty.live.shots=[];const state=structuredClone(empty.state);empty.add('shots');assert.equal(empty.live.shots.length,1);assert.equal(empty.live.shots[0].value.start,'0');assert.equal(empty.live.shots[0].value.end,'6');assert.equal(empty.live.shots[0].value.character_state,'');assert.deepEqual(empty.state,state);assert.equal(empty.writes,1);
+});
