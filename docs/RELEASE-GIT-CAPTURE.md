@@ -23,8 +23,10 @@
 ## 完整測試分配
 
 
-首份v158來源552e8e3d57791d39273fac323f3b1de90b5e0673的封裝測試再由worker1觸及120秒期限，原parent EOF1；ZIP／FAILED及原輸出保留，沒有成功manifest或發布。原worker1自我登記身份保留，未印出的worker0 identity不補造。
+首份來源552e8e3d57791d39273fac323f3b1de90b5e0673與方法平均版7ae22fa82882c07d3eeb91fcaa46083c22ffdd4c，兩次封裝均由worker1觸及原120秒期限，parent各EOF1；兩份ZIP／FAILED／實際輸出保持，沒有成功manifest或發布。兩次各保留實際worker1自我登記身份，未印出的worker0身份不補造；最初789與平均版795直接完整通過的收據也保持。
 
-純test_schedule用完整獨立discovery的唯一test IDs，將個別方法平均分到兩worker，各組保持原相對順序 → 原launcher每worker獨立發現及執行 → parent再次獨立discovery／完整ID及count／原handle EOF核對。795方法分為398／397；既有120秒整體期限、兩worker與summary1／傳輸容量不變，不略過或重複測試。不假設方法耗時相同或保證速度；class fixture可在兩個隔離程序各自執行。現場共用HTTP fixtures均使用本機動態port0並teardown，個別filesystem fixtures用自身暫存；集中22項（6新增排程、16既有summary／真worker／deadline）通過。
+在第二份指定來源的隔離副本注入逐方法計時，完整795案例的兩組方法實測94.641／114.827秒，整體117.984秒EOF0，副本刪除；計時只屬診斷，不能代替正式封裝接受。純test_schedule保留64項較昂貴方法的固定近似成本與其餘方法107單位fallback，驗證完整唯一ID／有限positive integer成本、依成本分配，再恢復每組原discovery相對順序。unknown／new方法仍完整執行，提示不能建立不存在的case；成本是近似毫秒，不是benchmark或速度保證。
 
-修正後完整Python實測114.062秒、795（1既有skip／0expected failures），兩原worker EOF0，1911JS／153syntax／四Skills通過；最初789批與所有失敗收據保持。分批CLI每次最多32個明確run records，完整清單去重並核對每批terminal後聚合；不增加原維護cap、權限或程序列舉。失敗封裝是第4份partial，保留不清理。
+原launcher的兩worker各自獨立discovery／完整執行 → parent再次獨立discovery／完整IDs與count及原handle EOF核對。兩worker／120秒整體期限、summary1／傳輸與來源容量保持，不略過或重複case。class fixture可以在兩隔離程序各自執行，共用HTTP fixtures用本機動態port0並teardown，filesystem fixtures用自身暫存。集中24項（8新增排程、16既有summary／真worker／deadline）通過。
+
+正式完整797案例分組399／398，實測113.75秒，1既有skip／0expected failures，兩原worker EOF0；1911JS／153syntax／四Skills通過。標準CLI每批最多32個明確run records，完整去重清單按批terminal核對再聚合；沒有增加維護cap或全域程序權限。兩份失敗封裝使partial總數為5，保持不清理。正式指定提交封裝與remote驗證依最終收據，不把診斷計時當發布接受。

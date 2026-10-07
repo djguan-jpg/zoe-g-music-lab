@@ -2,6 +2,7 @@
 import unittest
 from musiclab.test_schedule import partition
 from musiclab.test_run_summary import MAX_TESTS
+from musiclab.test_schedule import DEFAULT_COST
 
 
 class TestScheduleTests(unittest.TestCase):
@@ -45,6 +46,29 @@ class TestScheduleTests(unittest.TestCase):
         with self.assertRaises(ValueError): partition(source+['extra'])
         self.assertEqual(partition(['💡'*128]), [['💡'*128], []])
         with self.assertRaises(ValueError): partition(['💡'*129])
+
+    def test_concentrated_expensive_methods_are_balanced_without_changing_coverage(self):
+        source = ['synthetic.C.test_'+str(i) for i in range(10)]
+        weights = {source[1]:9000, source[3]:8000, source[5]:7000}
+        naive = [source[::2], source[1::2]]
+        scheduled = partition(source, weights)
+        cost = lambda group: sum(weights.get(identifier, DEFAULT_COST) for identifier in group)
+        self.assertLess(max(map(cost, scheduled)), max(map(cost, naive)))
+        self.assertEqual(set(sum(scheduled, [])), set(source))
+        self.assertFalse(set(scheduled[0]) & set(scheduled[1]))
+        for group in scheduled:
+            self.assertEqual(group, sorted(group, key=source.index))
+
+    def test_hints_cannot_add_tests_or_mutate_source_and_invalid_costs_refuse(self):
+        source = ['s.C.test_a', 's.C.test_b', 's.C.test_c']
+        weights = {'absent.C.test_extra':120000, source[0]:1000}
+        expected = partition(source, weights)
+        self.assertEqual(set(sum(expected, [])), set(source))
+        expected[0].clear()
+        self.assertEqual(len(source), 3); self.assertEqual(len(weights), 2)
+        for hints in ([], {'':1}, {'a':True}, {'a':0}, {'a':120001}, {'a':1.5}, {'\ud800':1}):
+            with self.subTest(hints=repr(hints)), self.assertRaises(ValueError):
+                partition(source, hints)
 
 
 if __name__ == '__main__': unittest.main()
