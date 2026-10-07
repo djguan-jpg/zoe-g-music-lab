@@ -25,7 +25,7 @@
       if(P.isLegacy(data)){P.fromLegacy(data);return {operation:'lyrics',payload:{package:data,allow_legacy:true},content,suffix,packageImport:true,legacyTimed:true};}
       if(data&&typeof data==='object'&&!Array.isArray(data)&&Object.hasOwn(data,'format'))throw Error('歌詞 JSON 格式不支援；原檔與目前內容保留');
     }
-    const raw=fields['lyrics-duration'],duration=raw.trim()?T.normalize(raw,'歌曲時長',true):null;
+    const raw=fields['lyrics-duration'],duration=T.trim(raw)?T.normalize(raw,'歌曲時長',true):null;
     return {operation:'lyrics',payload:{title:fields['lyrics-title'],content,suffix,duration},content,suffix};
   }
   function checkedResult(selected,result,previewContract=root.MusicLyricsPreviewContract){
@@ -64,8 +64,8 @@
     if(job.selected.packageImport){
       const data=job.result.data,raw=panel.fields['lyrics-duration'];
       if(!data.duration_estimated){
-        if(raw.trim()&&T.normalize(raw,'目前歌曲時長',true)!==data.duration)throw Error('歌詞包宣告總長與目前時長不同；保留音檔與內容，請先確認時長再重新預覽');
-        if(!raw.trim())panel.fields['lyrics-duration']=String(data.duration);
+        if(T.trim(raw)&&T.normalize(raw,'目前歌曲時長',true)!==data.duration)throw Error('歌詞包宣告總長與目前時長不同；保留音檔與內容，請先確認時長再重新預覽');
+        if(!T.trim(raw))panel.fields['lyrics-duration']=String(data.duration);
       }
       if(job.selected.legacyTimed)panel.fields['lyrics-source']=JSON.stringify(data,null,2)+'\n';
     }

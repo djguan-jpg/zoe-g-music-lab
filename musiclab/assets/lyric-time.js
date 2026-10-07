@@ -2,10 +2,18 @@
 'use strict';
 (function(root){
   const maximum=9007199254740991n;
-  function number(value,label){
+  // Match Python str.strip for empty fields; FEFF is source, not whitespace.
+  const whitespace=/^[\u0009-\u000d\u001c-\u0020\u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]+|[\u0009-\u000d\u001c-\u0020\u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]+$/g;
+  // float's numeric whitespace excludes the four C0 separators above.
+  const numericWhitespace=/^[\u0009-\u000d\u0020\u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]+|[\u0009-\u000d\u0020\u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]+$/g;
+  function trim(value){if(typeof value!=='string')throw Error('時間欄需為文字');return value.replace(whitespace,'');}
+  function number(value,label='時間'){
     if(typeof value==='boolean'||value===null||!['number','string'].includes(typeof value)||
-        typeof value==='string'&&!value.trim())throw Error(label+' 必須是數字');
-    if(typeof value==='string'&&!/^[+-]?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:e[+-]?[0-9]+)?$/i.test(value.trim()))throw Error(label+' 必須是十進位數字');
+        typeof value==='string'&&!trim(value))throw Error(label+' 必須是數字');
+    if(typeof value==='string'){
+      value=value.replace(numericWhitespace,'');
+      if(!/^[+-]?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:e[+-]?[0-9]+)?$/i.test(value))throw Error(label+' 必須是十進位數字');
+    }
     const result=Number(value);if(!Number.isFinite(result))throw Error(label+' 必須是有限數字');return result;
   }
   function milliseconds(value,label='時間'){
@@ -22,7 +30,7 @@
     const result=ms/1000;if(milliseconds(result)!==ms)throw Error('時間無法以秒數保留毫秒精度');return result;
   }
   function negativeSource(value,numeric){
-    const raw=typeof value==='string'?value.trim():'';
+    const raw=typeof value==='string'?trim(value):'';
     return numeric<0||raw.startsWith('-')&&/[1-9]/.test(raw.split(/[eE]/)[0]);
   }
   function normalize(value,label='時間',nonnegative=false){
@@ -60,6 +68,6 @@
     return data.timing?.tail_end_inferred?'總時長尚未確認；尾句結束是推估，請選音檔或手動確認。':
       '總時長尚未確認；保留目前結束時間，請實聽核對。';
   }
-  const api={milliseconds,seconds,normalize,normalizeCues,timecode,notice};
+  const api={trim,number,milliseconds,seconds,normalize,normalizeCues,timecode,notice};
   if(typeof module==='object'&&module.exports)module.exports=api;else root.LyricTime=api;
 })(typeof globalThis==='object'?globalThis:this);

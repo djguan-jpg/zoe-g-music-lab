@@ -8,7 +8,7 @@
     return structuredClone(entries).map(entry=>{
       if(!entry||typeof entry.id!=='string'||ids.has(entry.id)||!entry.value||typeof entry.value.text!=='string')throw Error('歌詞列識別不完整');
       ids.add(entry.id);time.normalize(entry.value.start,'歌詞開始時間',true);time.normalize(entry.value.end,'歌詞結束時間',true);return entry;
-    }).sort((a,b)=>Number(a.value.start)-Number(b.value.start));
+    }).sort((a,b)=>time.number(a.value.start)-time.number(b.value.start));
   }
   function fingerprint(snapshot){
     return JSON.stringify({duration:snapshot.duration,entries:snapshot.entries.map(e=>[e.id,e.value.start,e.value.end])});
@@ -18,7 +18,7 @@
     const byId=new Map(entries.map(e=>[e.id,e.value]));if(byId.size!==entries.length)return false;
     return expected.every(e=>{
       const actual=byId.get(e.id);if(!actual)return false;
-      try{return ['start','end'].every(key=>actual[key]!=null&&typeof actual[key]!=='boolean'&&String(actual[key]).trim()!==''&&Number(actual[key])===Number(e.value[key]));}
+      try{return ['start','end'].every(key=>time.number(actual[key])===time.number(e.value[key]));}
       catch(_){return false;}
     });
   }
@@ -32,8 +32,8 @@
         try{
           shift=time.normalize(shift,'整批調整秒數');if(shift===0)throw Error('調整量需至少 0.001 秒；正數延後，負數提前');
           const before=structuredClone(snapshot()),sorted=orderedEntries(before.entries),duration=before.duration;
-          const payload={cues:sorted.map(e=>({start:Number(e.value.start),end:Number(e.value.end),text:e.value.text})),
-            duration:duration===null||duration===undefined||String(duration).trim()===''?null:Number(duration),shift_seconds:shift};
+          const payload={cues:sorted.map(e=>({start:time.number(e.value.start),end:time.number(e.value.end),text:e.value.text})),
+            duration:duration===null||duration===undefined||typeof duration==='string'&&!time.trim(duration)?null:time.number(duration),shift_seconds:shift};
           const result=await request(payload);
           if(current!==token)return false;
           if(fingerprint(snapshot())!==fingerprint(before))throw Error('校時預覽期間時間或句子有修改，請重新預覽');
