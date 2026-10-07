@@ -1,4 +1,18 @@
-# v0.164.0 驗證紀錄：審閱中
+# v0.164.0 驗證紀錄：完整來源驗收通過
+
+outputs/v164-qa/acceptance-4 保存接續原紀錄。820 Python／1947 JS、153 JS語法與四Skills通過；Python完整95.282秒／原兩worker120秒、JS完整25.922秒／原兩file workers60秒。1既有skip／0expected failures，完整summary1的唯一ID、coverage與兩原EOF保持；1046來源工作bytes前後SHA一致。producer集中10項另通過，原時限沒有變更。
+
+冷載入環境樣本由此前約1.2秒變為約3ms；這是新進度依據，不是全部逾時根因。原失敗完整Python在時限內執行406／414案例，各有一個版本fixture失敗；兩原startup、EOF1及native terminal已核對。明確oracle上界改為165，未知拒絕值改0.165.0；七項集中後完整驗收通過，不減case、不改產品接受或排程。
+
+原v163 ZIP3143966bytes／SHA21e55a4526b07dd360e7359f63b8330be5d9ba7e12d3a99af7deac87470ccb4d完整CRC、1036 Git raw blobs／ledger核對。一次性來源副本compileall quiet2後1036bytes再次逐份核對；原801Python／1947JS全套通過，原Python120／兩worker與caller Node60／兩file workers保持，暫存已移除。四scope504歷史ZIP／manifest bytes保持。
+
+登入後唯讀確認Zoe音樂公會長與四公開投稿；逐份作者欄仍自行聲明未核實／NOASSERTION，公開說明仍禁止商用。只關閉一個本輪自有查看tab，使用者分頁保持。六法律／平台檔、四Skills與七raw history保持；沒有平台修改、重送、產品UI、保存下載、實聽、Host或創始接受。
+
+正式發布是獨立接受：只有確切source commit的packager成功manifest、完整CRC／raw blobs、原820／1947與Agent／MCP檢查通過後才可合併、tag與GitHub prerelease；遠端兩asset需逐bytes／SHA回讀。實際結果見本輪manifest及package-final／release-remote／final-audit收據，不能由本份文檔推定已發布。
+
+## 前批失敗與診斷原紀錄
+
+以下為接續成功之前的紀錄；其中的待回覆、待驗收與當時正式版本敘述只代表當時狀態，完整接受以本頁前段和各原收據為準。
 
 指定run-only盤點與共用digests分層的初次證據保留在 outputs/v164-qa；原39份紀錄兩批3.047秒全部terminal，同份bytes保持。provider拒絕的冷程序仍可列22operations；SHA／參數／copy／串流沿標準函式庫。初批16新Python、32集中Python／6版本JS、25Python語法、29schemas、504歷史ZIP／manifest及1036原v163blobs核對已有收據。
 

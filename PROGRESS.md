@@ -1,20 +1,22 @@
-## v0.164.0 指定程序盤點與驗收證據分層（審閱中）
+## v0.164.0 指定程序盤點與完整驗收
 
-指定 --runs-only 只查 1–32 份明確 run1；純來源／同份有界 bytes 與 SHA／原 native-CIM／CLI 分層，全部來源先驗證再觀察 PID。一般 audit／prune／restore、最新三封裝、嚴格超七天與 128 份恢復上限保持。39 份前輪原紀錄唯讀補查全部 terminal，兩批 3.047 秒；不推定全機速度或 RAM。
+指定 --runs-only 只查 1–32 份明確 run1；純來源／同份有界 bytes 與 SHA／原 native-CIM／CLI 分層，全部來源先驗證再觀察 PID。一般 audit／prune／restore、最新三封裝、嚴格超七天與 128 份恢復上限保持。39 份前輪紀錄兩批 3.047 秒全部 terminal；這是該批觀察，不推定全機速度或 RAM。
 
-共用 digests 延後載入原標準摘要建構子；十八個應用 module 的實際 hashlib 物件、參數、provider 拒絕與串流保持。全新程序阻止 provider 匯入仍可取得原 22 operation／protocol1；沒有替代 provider、全域 patch、依賴或新增 Agent／HTTP 權限。
+共用 digests 延後載入原標準摘要建構子；十八個應用 module 的實際 hashlib 物件、參數、provider 拒絕與串流保持。全新程序阻止 provider 匯入仍可列原 22 operation／protocol1；沒有替代 provider、全域 patch 或新增依賴／Agent／HTTP 權限。
 
-接續修正隔離測試副本漏帶 digests 的 ImportError；失敗診斷現在核對最多 4096 bytes 的完整 startup，再保留兩個原 handle 的 EOF，缺少登記不補造身份。Windows junction 安全測試改由限定自有暫存的原生 fixture 建立；指定提交封裝的 Node 明確兩個 file workers。成功 summary1、完整 coverage、Python 兩 worker／120 秒與 Node 60 秒期限保持。見[失敗證據契約](docs/PYTHON-TEST-FAILURE.md)。
+修正隔離測試副本漏帶 digests 的 ImportError。失敗診斷核對最多 4096 bytes 的完整 startup，再保留兩個原 handle EOF，缺少登記不補造身分。Windows junction 安全測試使用限定自有暫存的原生 fixture；指定提交封裝的 Node 明確兩個 file workers。成功 summary1、完整唯一 coverage、Python 兩 worker／120 秒與 Node 60 秒期限保持。
 
-新增 Python 測試共 19 項，完整 discovery 為 820；接續 51 項集中測試通過。前批 6 版本 JS、25 份 Python 語法、29 schemas、504 歷史 ZIP／manifest 與原 v163 的 1036 raw blobs 核對紀錄保留。產品164／policy38–164共127、unknown165拒絕；22基本／29啟庫、Agent1／draft3／template1保持。六法律／發起／平台紀錄、七 history、四 Skills 及 PolyForm 非商用／ZOE. G／djguan-jpg保持；四投稿仍 submitted_unverified。
+此前完整測試與 v163 還原曾達原期限，失敗與 source checkpoint 全數保留。接續冷 hashlib 樣本載入約 3ms，原先兩個 CLI profile 的 1.35／1.17 秒只屬當時樣本；沒有確認所有逾時根因或速度保證。首次接續完整 Python 在時限內報兩個過時的版本測試 fixture：oracle 仍停在163，拒絕清單誤把164當未知。改為明確38–164與unknown165，七項集中通過，產品拒絕規則不變。
 
-本機 Python3.12 交叉驗證的全套也達原 120 秒；1045 份當時工作來源前後 SHA 相同，兩個原 worker 的登記及 native terminal 已核對。147 個 JS 測試檔以兩 file workers 仍達原 60 秒；producer 集中測試達外層 120 秒，沒有完整計數或成功收據。啟動耗時不穩定，既有 v163 同次亦逾時；尚不能判定完整逾時原因。Python600／JS180秒的延長選擇尚待使用者回覆，沒有自行放寬期限。
+完整820 Python（新增19、1既有Windows symlink skip、0 expected failures；95.282秒）／1947 JS（147檔、兩file workers；25.922秒）、153 JS語法／四Skills與10 producer集中通過。1046份當時工作來源前後SHA一致。原v163 ZIP完整CRC／1036 raw blobs／ledger、原801 Python／1947 JS隔離還原通過，編譯快取只在一次性副本且1036來源bytes保持，暫存已移除。504四scope歷史ZIP／manifest bytes保持；29 schemas及整份／原列comparison原收據保留。原時限已通過，不需要放寬600／180秒。
 
-還原點 restore-v0.163.0-before-v0.164.0→7222fd47ebd0faf7d6891fec8da1d3e4ac1b3910；接續前 restore-v0.164.0-review-before-acceptance-repair-1→bc07d44ed782cdf6f6134bcf96b2e4446b11dc58。codex/iteration-v0.164.0 與 Draft PR #163 保存差異；只有完整 CRC／raw blobs 核對的 source checkpoint，沒有成功 release manifest、v164 release tag 或 main 合併。正式版本仍 v163，rolling goal active。沒有本輪產品 UI、保存下載、實聽、Host 或平台創始接受。
+產品164／唯一policy38–164共127，unknown165拒絕；22基本／29啟庫、Agent1／draft3／template1保持。六法律／發起／平台紀錄、七history與四Skills原bytes保持；PolyForm Noncommercial禁止商用、ZOE. G／djguan-jpg及已授權public保持。依使用者已登入指示唯讀確認Zoe音樂公會長，四既有公開投稿逐份仍自行聲明未核實／NOASSERTION，沒有重送或修改。
 
-見[指定程序](docs/RUN-AUDIT.md)、[摘要載入](docs/DIGEST-LOADING.md)、[QA](docs/QA-v0.164.0.md)與[交接](docs/HANDOFF-v0.164.0.md)。
+restore-v0.163.0-before-v0.164.0→7222fd47ebd0faf7d6891fec8da1d3e4ac1b3910；接續還原點restore-v0.164.0-review-before-acceptance-4→1a2345faa89ddf5c3465cda42ae185993ac44ee9。codex/iteration-v0.164.0與PR #163保留可逆差異。正式發佈必須另對確切source commit完成packager，再核對main／tag／遠端asset bytes；工作區完整測試不代替該接受。實際提交／ZIP SHA與發佈狀態依本輪manifest及outputs/v164-qa/acceptance-4收據，不把舊source checkpoint當release。
 
-接續分層計時以合成8MiB來源完整核對；已預載標準provider的同程序prepare0.140秒、canonical ZIP0.161秒、application搜尋／分段各0.167／0.166秒。兩次cProfile實際CLI（41KiB／8MiB ZIP）原handle EOF0／native terminal與完整成果一致，總wall1.737／2.527秒；冷hashlib載入cumulative1.346／1.174秒。這定位本次兩個CLI樣本的主要耗時，不證明全部逾時根因、未來速度或完整接受。保留標準provider、原discovery／coverage與時限，沒有以fallback或共用程序替換獨立CLI案例。新收據在outputs/v164-qa/acceptance-2；還原點restore-v0.164.0-review-before-profile-2→1b8797927687393f40d6d2c5a6602d39091633bf。600／180秒選擇仍待人類回覆。
+每輪唯讀outputs／指定程序盤點，只有完整CRC／Git重建且嚴格超七天的合格封裝才可清理；最新三版與未知／partial／checkpoint保留。接續preflight超七天檔案0，沒有刪除；正式發佈後另核對最後程序EOF與年齡。沒有本輪產品UI、保存下載、實聽、Host或平台創始接受；rolling goal active。
+
+見[指定程序](docs/RUN-AUDIT.md)、[摘要載入](docs/DIGEST-LOADING.md)、[失敗證據](docs/PYTHON-TEST-FAILURE.md)、[QA](docs/QA-v0.164.0.md)與[交接](docs/HANDOFF-v0.164.0.md)。
 
 ## v0.163.0 分鏡撤回接受與隔離封裝準備
 

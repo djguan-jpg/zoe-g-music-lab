@@ -1,17 +1,15 @@
-# v0.164.0 交接：完整驗收待完成
+# v0.164.0 交接：原時限完整驗收通過
 
-本輪含指定 run-only 盤點、摘要延後載入、隔離測試漏帶模組修正、完整失敗程序證據及原生 junction fixture。入口見[架構](ARCHITECTURE.md)、[指定程序](RUN-AUDIT.md)、[摘要載入](DIGEST-LOADING.md)、[失敗證據](PYTHON-TEST-FAILURE.md)與[QA](QA-v0.164.0.md)；產品操作仍見[開始指南](START-HERE.md)／[Agent](AGENT.md)。
+本輪分層包含指定run-only盤點、標準摘要延後載入、隔離測試漏帶模組修正、完整失敗程序證據與限定暫存原生junction fixture。產品操作見[開始指南](START-HERE.md)／[Agent](AGENT.md)，開發見[架構](ARCHITECTURE.md)、[指定程序](RUN-AUDIT.md)、[摘要載入](DIGEST-LOADING.md)、[失敗證據](PYTHON-TEST-FAILURE.md)及[QA](QA-v0.164.0.md)。
 
-codex/iteration-v0.164.0／Draft PR #163 保存差異。還原點 restore-v0.163.0-before-v0.164.0 指向原 main7222fd47ebd0faf7d6891fec8da1d3e4ac1b3910；接續還原點 restore-v0.164.0-review-before-acceptance-repair-1 指向 bc07d44ed782cdf6f6134bcf96b2e4446b11dc58。可另建審閱分支保留現在內容；不用破壞性 reset。指定提交／tree／source ZIP SHA 在 outputs/v164-qa/acceptance-1 新收據，前份 checkpoint 原檔保留。沒有成功 release manifest 或 v164 release tag；正式 main／Release 仍 v163。
+完整820 Python（新增19、1既有skip、0expected failures）／1947 JS、153 JS語法／四Skills與10 producer集中已通過。原Python120秒／兩worker、Node60秒／兩file workers、完整discovery／coverage與summary1保持。首次接續完整run的兩個版本fixture失敗保留，修正只更新明確38–164 oracle及unknown165。冷載入樣本恢復3ms不證明全部原逾時根因；600／180秒放寬不再是必要決策。
 
-19 項新增 Python，完整 discovery820；接續51集中測試通過，前批6版本JS、25Python語法與29 schemas／504歷史 cases／1036原v163 blobs核對收據保留。六法律／平台紀錄、七history、四Skills與非商用授權保持，四投稿仍 submitted_unverified。
+原v163 exact-source ZIP3143966bytes／SHA21e55a4526b07dd360e7359f63b8330be5d9ba7e12d3a99af7deac87470ccb4d，完整CRC／1036 raw blobs／ledger與原801 Python／1947 JS隔離還原通過。compileall快取只在一次性來源目錄，1036原bytes逐份保持且暫存已移除。504四scope歷史ZIP／manifest bytes相同；29 operation schemas、整份／原列comparison既有收據保留。
 
-完整驗收仍待完成：Python3.12 全套在原兩 worker／120秒停止，當時1045個來源前後SHA不變，兩個worker原登記及native terminal確認；JS147檔／兩file workers也達原60秒；producer集中檢查外層120秒停止，沒有完整方法數。啟動變動與同次原v163逾時只是交叉證據，未確定根因。600／180秒的延長選擇尚待人類回覆；不得由時間經過推定授權。
+分支codex/iteration-v0.164.0／PR #163；正式包需由確切source commit產生成功manifest後才能合併及發佈。package-final-evidence、release-remote-evidence、final-audit及manifest分別記實際source／tree／ZIP SHA／遠端refs／兩asset逐bytes結果；沒有成功收據時不能推定發布。先前三份source checkpoint與失敗ZIP／FAILED保持，不能當正式release。
 
-必要接續：依新證據處理驗收條件；通過完整820Python／1947JS、153JS語法與四Skills，重新核對原v163隔離還原，再對精確 source commit 執行正式 packager／遠端核對，才可合併與發佈。若時限經核准變更，明記實際新條件及原來源還原的方法，不冒充原120秒通過。保留獨立discovery／完整ID／兩workers與每個原handleEOF；沒有登記者不補造native identity。
+原還原點restore-v0.163.0-before-v0.164.0→7222fd47ebd0faf7d6891fec8da1d3e4ac1b3910。接續前restore-v0.164.0-review-before-acceptance-4→1a2345faa89ddf5c3465cda42ae185993ac44ee9；較早bc07／1b879兩個審閱還原點保持。需要還原時另建codex/restore-*分支與PR審閱，不對現有成果做破壞性reset；Git還原不撤銷外部公開或投稿。
 
-每輪 outputs／程序盤點唯讀；--runs-only不提供清除token。latest3／嚴格超七天／exact tag與archive復原保持。partial、未知來源、checkpoint、草稿、素材與未知descendants保留；不得以bare PID全域清理。本輪沒有browser UI、保存下載、實聽、Host或創始接受，rolling goal active。
+六法律／平台檔、七history與四Skills原bytes保持。PolyForm Noncommercial禁止商用、ZOE. G／djguan-jpg、已授權public不變；登入後四既有公開投稿均仍自行聲明未核實／NOASSERTION，不重送或修改。平台身分尚未接受；本輪沒有產品UI、保存下載、實聽或Host驗收。
 
-## 冷載入與完整來源計時
-
-接續分層計時以合成8MiB來源完整核對；已預載標準provider的同程序prepare0.140秒、canonical ZIP0.161秒、application搜尋／分段各0.167／0.166秒。兩次cProfile實際CLI（41KiB／8MiB ZIP）原handle EOF0／native terminal與完整成果一致，總wall1.737／2.527秒；冷hashlib載入cumulative1.346／1.174秒。這定位本次兩個CLI樣本的主要耗時，不證明全部逾時根因、未來速度或完整接受。保留標準provider、原discovery／coverage與時限，沒有以fallback或共用程序替換獨立CLI案例。新收據在outputs/v164-qa/acceptance-2；還原點restore-v0.164.0-review-before-profile-2→1b8797927687393f40d6d2c5a6602d39091633bf。600／180秒選擇仍待人類回覆。
+每輪outputs／已登記程序限定唯讀audit，最新三個正式版本保護、嚴格超七天與完整CRC／Git重建條件保持。接續preflight沒有超七天檔案，未知／partial／checkpoint保留，正式發布後另核對最終年齡和原job EOF。--runs-only不發prune token；不使用bare PID signal或全機清理。rolling goal保持active。
