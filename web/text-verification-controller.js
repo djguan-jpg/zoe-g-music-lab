@@ -2,6 +2,8 @@
 'use strict';
 (function(root){
  const P=typeof module==='object'&&module.exports?require('./text-verification.js'):root.MusicTextVerification;
+ const G=typeof module==='object'&&module.exports?require('./text-verification-page.js'):root.MusicTextVerificationPage;
+ const W=typeof module==='object'&&module.exports?require('./delivery-text.js'):root.MusicDeliveryText;
  function snapshot(value){
   if(!value||Object.keys(value).length!==6||!['scope','revision','busy','dirty','visible','source'].every(k=>Object.hasOwn(value,k))||!['music','storyboard','lyrics','audio','draft'].includes(value.scope)||!Number.isSafeInteger(value.revision)||value.revision<0||['busy','dirty','visible'].some(k=>typeof value[k]!=='boolean')||value.source!==null&&(!value.source||Array.isArray(value.source)||Object.keys(value.source).length!==2||!['name','content'].every(k=>Object.hasOwn(value.source,k))||typeof value.source.name!=='string'||typeof value.source.content!=='string'))throw Error('原文核對來源狀態無效');
   return {...value,source:value.source===null?null:{name:value.source.name,content:value.source.content}};
@@ -12,12 +14,16 @@
   if(!Number.isSafeInteger(maxBytes)||maxBytes<1||maxBytes>P.maxBytes)throw Error('原文核對容量無效');
   let sequence=0,pending=false,before=null,selected=null,report=null,difference=null,disposed=false,activeReads=0,contextRevision=0,lastContext=null,message='選回已保存的檔案，核對完整原文；目前成果與編修保留。';
   const read=()=>snapshot(capture());
-  function view(){const now=read();if(!lastContext||!same(lastContext,now)){lastContext=now;contextRevision++;}return {available:!disposed&&allowed(now)&&activeReads<2,pending,waitingForReads:!pending&&activeReads>=2,contextRevision,expectedName:now.source?.name||null,selected:selected?{...selected}:null,report:report?{...report}:null,difference:difference?{...difference,expected:{...difference.expected},selected:{...difference.selected}}:null,message};}
+  let readingOriginal=false,preparedOriginal=null,originalMessage='';
+  const originalEligible=now=>!disposed&&!pending&&!!difference&&report?.matched===false&&!!before&&allowed(now)&&same(before,now);
+  const originalReader=W.createReader({source:()=>({canRead:readingOriginal&&originalEligible(read()),key:sequence}),read:start=>{if(!preparedOriginal)throw Error('請明確開啟目前原文');return preparedOriginal.window(start);},onState:()=>emit(),onError:error=>{originalMessage=error.message;onError(error);}});
+  function view(){const now=read();if(!lastContext||!same(lastContext,now)){lastContext=now;contextRevision++;}return {available:!disposed&&allowed(now)&&activeReads<2,pending,waitingForReads:!pending&&activeReads>=2,contextRevision,expectedName:now.source?.name||null,selected:selected?{...selected}:null,report:report?{...report}:null,difference:difference?{...difference,expected:{...difference.expected},selected:{...difference.selected}}:null,canReadOriginal:originalEligible(now),original:originalReader.status(),originalMessage,message};}
   const emit=()=>onState(view());
-  function clear(note){sequence++;pending=false;before=null;selected=null;report=null;difference=null;message=note;}
+  function clear(note){sequence++;pending=false;before=null;selected=null;report=null;difference=null;readingOriginal=false;originalMessage='';message=note;}
   function refresh(){if(disposed)return;const now=read();if(before&&(!same(before,now)||!allowed(now)))clear('核對來源或操作狀態已改變，請選回檔案重新核對。');emit();}
-  return {view,refresh,cancel(){if(disposed)return;clear('已取消原文核對；目前成果與編修保留。');emit();},dispose(){if(disposed)return;clear('此頁核對已關閉。');disposed=true;lastContext=null;},
-   async verify(file){if(disposed)return false;const source=read();if(!allowed(source)||activeReads>=2)return false;const token=++sequence;let ownsRead=false;before=source;pending=true;selected=null;report=null;difference=null;message='正在讀取選定原文並核對…';emit();
+  function readOriginal(action){if(disposed)return false;try{if(!originalEligible(read())){refresh();return false;}preparedOriginal=G.prepare(before.source);originalMessage='';readingOriginal=true;return action();}catch(error){readingOriginal=false;originalMessage=error.message;onError(error);emit();return false;}finally{preparedOriginal=null;}}
+  return {view,refresh,openOriginal:()=>readOriginal(()=>originalReader.seek(preparedOriginal.differenceStart(report.first_difference_byte))),firstOriginal:()=>readOriginal(()=>originalReader.first()),nextOriginal:()=>originalReader.status().canNext?readOriginal(()=>originalReader.next()):false,previousOriginal:()=>originalReader.status().canPrevious?readOriginal(()=>originalReader.previous()):false,closeOriginal(){if(disposed)return;readingOriginal=false;originalMessage='';originalReader.refresh();},cancel(){if(disposed)return;clear('已取消原文核對；目前成果與編修保留。');emit();},dispose(){if(disposed)return;clear('此頁核對已關閉。');disposed=true;lastContext=null;preparedOriginal=null;originalReader.status();},
+   async verify(file){if(disposed)return false;const source=read();if(!allowed(source)||activeReads>=2)return false;const token=++sequence;let ownsRead=false;before=source;pending=true;selected=null;report=null;difference=null;readingOriginal=false;originalMessage='';message='正在讀取選定原文並核對…';emit();
     const current=()=>{const now=read();return !disposed&&token===sequence&&allowed(now)&&same(source,now);};
     try{
      const info=P.metadata(describe(file));if(info.size>maxBytes)throw Error(`選定檔案超過本次核對上限 ${maxBytes} bytes；原內容保留。`);selected=info;emit();
