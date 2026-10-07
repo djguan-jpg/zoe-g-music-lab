@@ -8,7 +8,7 @@ import sys
 import tempfile
 import unittest
 
-from musiclab.test_run_summary import summarize,checked_summary,decode_summary,MAX_SUMMARY_BYTES
+from musiclab.test_run_summary import summarize,checked_summary,decode_summary,worker_startup,MAX_SUMMARY_BYTES,MAX_STARTUP_BYTES
 from musiclab.run_identity import observe_process
 from musiclab.maintenance import classify_run
 
@@ -113,6 +113,29 @@ class PureTestRunTests(unittest.TestCase):
         with self.assertRaises(ValueError):checked_summary(bad)
         self.assertEqual(checked_summary(v),v)
 
+    def test_failure_startup_retains_original_identity_without_accepting_incomplete_result(self):
+        raw=(json.dumps(self.starts[0])+'\n'+'unfinished').encode()
+        frame=worker_startup(raw,0,50)
+        self.assertEqual(frame,self.starts[0])
+        frame['run']['identity']['image']='changed'
+        self.assertEqual(self.starts[0]['run']['identity']['image'],'python.exe')
+        with self.assertRaises(ValueError):self.run_report(replies=[raw,wire(self.starts,self.ends)[1]])
+        self.starts[0]['run']=None
+        self.assertIsNone(worker_startup((json.dumps(self.starts[0])+'\n').encode(),0,50)['run'])
+
+    def test_failure_startup_refuses_wrong_handle_or_unknown_source(self):
+        good=(json.dumps(self.starts[0])+'\n').encode()
+        for raw,group,pid in [(good,True,50),(good,0,True),(good,1,50),(good,0,51),
+                              (good.replace(b'"group": 0',b'"group":0,"group":0'),0,50),
+                              (good.replace(b'"phase": "start"',b'"phase":"other"'),0,50)]:
+            with self.subTest(group=group,pid=pid),self.assertRaises(ValueError):worker_startup(raw,group,pid)
+
+    def test_failure_startup_budget_does_not_read_or_trust_later_output(self):
+        good=(json.dumps(self.starts[0])+'\n').encode()
+        self.assertEqual(worker_startup(good+b'x'*(1024*1024+1),0,50),self.starts[0])
+        for raw in (good.rstrip(b'\n'),b'\xff\n',b' '*MAX_STARTUP_BYTES+good,b'x'*(MAX_STARTUP_BYTES+1)+b'\n'):
+            with self.subTest(raw=raw[:10]),self.assertRaises(ValueError):worker_startup(raw,0,50)
+
 
 class NativeTestRunnerTests(unittest.TestCase):
     def setUp(self):
@@ -120,7 +143,7 @@ class NativeTestRunnerTests(unittest.TestCase):
         self.assertEqual(self.root.parent,Path(tempfile.gettempdir()).resolve())
         for name in ('scripts','tests','musiclab'):(self.root/name).mkdir()
         (self.root/'musiclab/__init__.py').write_text('# Synthetic test fixture package\n',encoding='utf-8')
-        for name in ('test_schedule.py','test_run_summary.py','json_document.py','maintenance.py','run_identity.py','process_probe.py','process_probe_windows.py'):
+        for name in ('test_schedule.py','test_run_summary.py','json_document.py','maintenance.py','digests.py','run_identity.py','process_probe.py','process_probe_windows.py'):
             (self.root/'musiclab'/name).write_bytes((ROOT/'musiclab'/name).read_bytes())
         (self.root/'scripts/check_python_tests.py').write_bytes((ROOT/'scripts/check_python_tests.py').read_bytes())
         self.source='''import unittest
@@ -153,6 +176,14 @@ class Synthetic(unittest.TestCase):
     def test_failed_tests_cannot_emit_success_summary(self):
         (self.root/'tests/test_synthetic.py').write_text(self.source.replace('self.assertEqual(1+1,2)','self.assertEqual(1+1,3)'),encoding='utf-8')
         p=self.command('--report-json');self.assertEqual(p.returncode,1);self.assertIn('FAILED',p.stderr);self.assertNotIn('"format":"zoe-python-test-run"',p.stdout)
+        starts=[json.loads(line) for line in p.stderr.splitlines() if line.startswith('{"phase": "start"')]
+        self.assertEqual([start['group'] for start in starts],[0,1])
+        finished=[json.loads(line) for line in p.stderr.splitlines() if line.startswith('{"phase": "worker-eof"')]
+        self.assertEqual([row['group'] for row in finished],[0,1])
+        self.assertTrue(all(row['terminal'] is True for row in finished))
+        self.assertEqual([row['pid'] for row in finished],[start['run']['identity']['pid'] if start['run'] is not None else row['pid'] for start,row in zip(starts,finished)])
+        for start in starts:
+            if start['run'] is not None:self.assertTrue(classify_run(start['run'],observe_process(start['run']['identity']['pid']))['original_run_terminal'])
 
     def test_worker_json_parent_flag_misuse_rejects_before_discovery(self):
         p=self.command('--group','0','--report-json');self.assertEqual(p.returncode,2);self.assertNotIn('"phase"',p.stdout)
@@ -166,7 +197,14 @@ class Synthetic(unittest.TestCase):
             try:value=json.loads(line)
             except ValueError:continue
             if isinstance(value,dict) and value.get('phase')=='start':starts.append(value)
-        self.assertTrue(starts)
+        # A cold worker may reach the actual short deadline before registering.
+        # Only its original parent handle can prove EOF; do not invent identity.
+        finished=[json.loads(line) for line in p.stderr.splitlines() if line.startswith('{"phase": "worker-eof"')]
+        self.assertEqual([row['group'] for row in finished],[0,1])
+        self.assertTrue(all(row['terminal'] is True for row in finished))
+        self.assertTrue(all(type(row['exit_code']) is int for row in finished))
+        self.assertEqual(len({row['pid'] for row in finished}),2)
+        self.assertEqual({start['group'] for start in starts},{row['group'] for row in finished if row['startup_frame_available']})
         for start in starts:
             if start['run'] is not None:self.assertTrue(classify_run(start['run'],observe_process(start['run']['identity']['pid']))['original_run_terminal'])
 

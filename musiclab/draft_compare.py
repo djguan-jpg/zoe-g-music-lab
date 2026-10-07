@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 """Read-only, ordinal comparison of two complete modern drafts; no file access."""
-import hashlib
+from . import digests as hashlib
 import json
 from .draft_contract import CONTRACT, MAX_DRAFT_BYTES, draft_bytes, exact
 from .json_document import decode_json, utf8_bytes

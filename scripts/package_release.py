@@ -15,7 +15,7 @@ PREFIX = "zoe-g-music-lab/"
 sys.path.insert(0, str(ROOT))
 from musiclab.delivery_versions import decode_policy, MAX_CONTRACT_BYTES
 from musiclab.release_metadata import decode_metadata, validate_metadata, MAX_PROJECT_METADATA_BYTES
-from musiclab.test_run_summary import decode_summary
+from musiclab.test_run_summary import decode_summary, WORKERS
 from musiclab.release_archive import RAW_PROFILE, archive_args, source_tree, blob_digest, MAX_SOURCE_BYTES
 from musiclab.release_zip_fs import inspect_archive, write_manifest
 from musiclab.release_git_fs import read_tree
@@ -128,7 +128,7 @@ def package(ref):
                 javascript_tests = sorted(file.relative_to(checkout).as_posix() for file in (checkout / "tests").glob("test_*.js"))
                 if not javascript_tests:
                     raise ValueError("No packaged JavaScript tests found")
-                command(["node", "--test", *javascript_tests], checkout)
+                command(["node", "--test", f"--test-concurrency={WORKERS}", *javascript_tests], checkout)
                 if "web/planning-import.js" in hashes:
                     command(["node", "--check", "web/planning-import.js"], checkout)
                 capabilities = json.loads(command([sys.executable, "music_lab_agent.py", "--describe"], checkout))

@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 """Pure immutable revision contract shared by disk reads and portable backups."""
-import hashlib
+from . import digests as hashlib
 import re
 from .json_document import decode_json
 from .draft_contract import MAX_DRAFT_BYTES, validate_draft

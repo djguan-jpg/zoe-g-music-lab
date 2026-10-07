@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 """Read-only literal search of original song section fields; no time or I/O."""
-import hashlib
+from . import digests as hashlib
 import json
 import re
 from .json_document import utf8_bytes

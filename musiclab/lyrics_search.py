@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 """Bounded read-only literal search over original lyric texts; no clocks or I/O."""
-import hashlib
+from . import digests as hashlib
 import json
 import re
 from .json_document import utf8_bytes

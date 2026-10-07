@@ -1,3 +1,23 @@
+## v0.164.0 指定程序盤點與完整驗收
+
+指定 --runs-only 只查 1–32 份明確 run1；純來源／同份有界 bytes 與 SHA／原 native-CIM／CLI 分層，全部來源先驗證再觀察 PID。一般 audit／prune／restore、最新三封裝、嚴格超七天與 128 份恢復上限保持。39 份前輪紀錄兩批 3.047 秒全部 terminal；這是該批觀察，不推定全機速度或 RAM。
+
+共用 digests 延後載入原標準摘要建構子；十八個應用 module 的實際 hashlib 物件、參數、provider 拒絕與串流保持。全新程序阻止 provider 匯入仍可列原 22 operation／protocol1；沒有替代 provider、全域 patch 或新增依賴／Agent／HTTP 權限。
+
+修正隔離測試副本漏帶 digests 的 ImportError。失敗診斷核對最多 4096 bytes 的完整 startup，再保留兩個原 handle EOF，缺少登記不補造身分。Windows junction 安全測試使用限定自有暫存的原生 fixture；指定提交封裝的 Node 明確兩個 file workers。成功 summary1、完整唯一 coverage、Python 兩 worker／120 秒與 Node 60 秒期限保持。
+
+此前完整測試與 v163 還原曾達原期限，失敗與 source checkpoint 全數保留。接續冷 hashlib 樣本載入約 3ms，原先兩個 CLI profile 的 1.35／1.17 秒只屬當時樣本；沒有確認所有逾時根因或速度保證。首次接續完整 Python 在時限內報兩個過時的版本測試 fixture：oracle 仍停在163，拒絕清單誤把164當未知。改為明確38–164與unknown165，七項集中通過，產品拒絕規則不變。
+
+完整820 Python（新增19、1既有Windows symlink skip、0 expected failures；95.282秒）／1947 JS（147檔、兩file workers；25.922秒）、153 JS語法／四Skills與10 producer集中通過。1046份當時工作來源前後SHA一致。原v163 ZIP完整CRC／1036 raw blobs／ledger、原801 Python／1947 JS隔離還原通過，編譯快取只在一次性副本且1036來源bytes保持，暫存已移除。504四scope歷史ZIP／manifest bytes保持；29 schemas及整份／原列comparison原收據保留。原時限已通過，不需要放寬600／180秒。
+
+產品164／唯一policy38–164共127，unknown165拒絕；22基本／29啟庫、Agent1／draft3／template1保持。六法律／發起／平台紀錄、七history與四Skills原bytes保持；PolyForm Noncommercial禁止商用、ZOE. G／djguan-jpg及已授權public保持。依使用者已登入指示唯讀確認Zoe音樂公會長，四既有公開投稿逐份仍自行聲明未核實／NOASSERTION，沒有重送或修改。
+
+restore-v0.163.0-before-v0.164.0→7222fd47ebd0faf7d6891fec8da1d3e4ac1b3910；接續還原點restore-v0.164.0-review-before-acceptance-4→1a2345faa89ddf5c3465cda42ae185993ac44ee9。codex/iteration-v0.164.0與PR #163保留可逆差異。正式發佈必須另對確切source commit完成packager，再核對main／tag／遠端asset bytes；工作區完整測試不代替該接受。實際提交／ZIP SHA與發佈狀態依本輪manifest及outputs/v164-qa/acceptance-4收據，不把舊source checkpoint當release。
+
+每輪唯讀outputs／指定程序盤點，只有完整CRC／Git重建且嚴格超七天的合格封裝才可清理；最新三版與未知／partial／checkpoint保留。接續preflight超七天檔案0，沒有刪除；正式發佈後另核對最後程序EOF與年齡。沒有本輪產品UI、保存下載、實聽、Host或平台創始接受；rolling goal active。
+
+見[指定程序](docs/RUN-AUDIT.md)、[摘要載入](docs/DIGEST-LOADING.md)、[失敗證據](docs/PYTHON-TEST-FAILURE.md)、[QA](docs/QA-v0.164.0.md)與[交接](docs/HANDOFF-v0.164.0.md)。
+
 ## v0.163.0 分鏡撤回接受與隔離封裝準備
 
 原controller在撤回寫入器回false或沒有改回總長時仍清除紀錄、顯示已撤回。現在純storyboard-duration保留pending紀錄，寫入後核對同份來源、紀錄身份與原宣告字串，確認全部還原後才清除紀錄及發布同一已核對快照。明確false、無動作、錯原值、來源變更、例外或期間clear拒絕成功；失敗不自動回滾或重試。紀錄保持時，只有原時間來源與實際adopt-after仍一致才可再撤回；來源或部分寫入需先人工核對修正。void原生setter相容，後續創作文字與其他工作台／媒體沿原限定apply保持。

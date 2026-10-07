@@ -12,7 +12,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from musiclab.maintenance_fs import workspace, audit, audit_batch, prune, restore, write_new
+from musiclab.maintenance_fs import workspace, audit, audit_batch, audit_runs, prune, restore, write_new
 from musiclab.run_identity import record_current_run
 from musiclab.maintenance_cli import choose_action
 
@@ -32,6 +32,7 @@ def main(argv=None):
     action.add_argument('--restore-journal', type=explicit_path, help='Restore exact source packages without overwrite')
     action.add_argument('--record-self', metavar='JOB', help='Record this Python process identity for managed job wrappers')
     action.add_argument('--space-report', action='store_true', help='Read-only outputs size/age categories; does not evaluate deletion eligibility')
+    action.add_argument('--runs-only', action='store_true', help='Read only 1–32 explicit run records without rescanning release packages; no pruning token')
     parser.add_argument('--expected-token', help='Required SHA-256 of the preview candidate identities for pruning')
     parser.add_argument('--run-record', type=explicit_path, action='append', default=[], help='Explicit same-host run record within selected project outputs')
     parser.add_argument('--package-directory', action='append', help='Preview or prune only these exact eligible release identities; repeat 1–128 times')
@@ -39,7 +40,7 @@ def main(argv=None):
     args = parser.parse_args(argv)
     try:
         command = choose_action(prune=args.prune, restore=args.restore_journal is not None,
-                                record_job=args.record_self, space=args.space_report,
+                                record_job=args.record_self, space=args.space_report, runs_only=args.runs_only,
                                 expected_token=args.expected_token, has_records=bool(args.run_record),
                                 package_directories=args.package_directory)
         root = workspace(args.workspace)
@@ -58,6 +59,8 @@ def main(argv=None):
             result = restore(root, selected(args.restore_journal))
         elif command == 'record':
             result = record_current_run(args.record_self)
+        elif command == 'runs':
+            result = audit_runs(root, records)
         elif command == 'space':
             from musiclab.maintenance_space_fs import space_report
             result = space_report(root)

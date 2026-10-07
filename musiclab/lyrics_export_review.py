@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 """Compact, source-pinned diagnostics for the existing lyric export grammars."""
-import hashlib,json,re
+import json,re
+from . import digests as hashlib
 from .lyrics_package import validate_package
 from .lyrics_lrc import TIMESTAMP
 from .lyric_timing import milliseconds

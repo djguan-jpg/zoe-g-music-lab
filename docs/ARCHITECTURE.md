@@ -45,6 +45,10 @@ flowchart LR
 
 自有object URL、timer、staging和程序有數量／期限限制，取消只處理自身工作；不列舉或終止無關程序。每輪CLI audit保護最新三封裝，只有strict超七天、完整manifest／ZIP与exact tag/archive可重建才可清理；unknown／partial與草稿保留。不以單一PID、catalog或綠燈冒充完成／所有權。
 
+摘要建構子由共用digests在首次實際計算時載入原標準函式庫；能力清單／無摘要的形狀檢查不預載provider，原native物件、串流、參數與拒絕保持。見[摘要載入](DIGEST-LOADING.md)。
+
+維護程序核對由純maintenance_runs／同份有界record bytes與SHA／原native-CIM adapter／CLI分層。`--runs-only` 可補查1–32份明確紀錄，完整封裝盘點與程序報告分開，真正清除仍完整重查；來源與聚合依[指定程序契約](RUN-AUDIT.md)。
+
 原始碼封裝先以純release_capture／release_git_fs取得有限固定Git tree與收束原child／兩reader，再以純release_zip／release_zip_fs容量gate讀ZIP。producer與maintenance共用，完整blob／CRC／ledger維持後續層；manifest2 raw profile與legacy1原bytes保持。見[來源契約](RELEASE-ARCHIVE.md)、[ZIP容量](RELEASE-ZIP-BUDGET.md)與[Git串流](RELEASE-GIT-CAPTURE.md)。
 
 測試排程由純test_schedule驗證完整唯一ID及近似positive integer成本，將昂貴方法分配後恢復每組discovery原順序。launcher與parent獨立discovery、完整coverage與原handle EOF核對保持；仍兩worker／120秒，class fixtures各程序自行建立／收束，成本提示不保證速度或全域RAM。細節見[Git串流與測試交接](RELEASE-GIT-CAPTURE.md)。
@@ -66,3 +70,5 @@ flowchart LR
 分鏡總長撤回由純controller核對pending身份／原时间來源、注入寫入器與實際post快照，再發布同一已核對view；DOM及app保持既有限定寫入。拒絕不清除仍存在的紀錄、不自動回滾／重試。見[撤回接受契約](STORYBOARD-DURATION-UNDO.md)。
 
 指定提交封裝的filesystem adapter在驗ZIP／Git raw blobs後、一次性checkout內準備Python位元碼快取，再呼叫原launcher；準備不改原源檔／ZIP或兩worker／120秒，失敗仍不建成功manifest。快取隨原temp context回收；其準備不冒充正式測試接受。
+
+失敗驗收由純有界 startup 解析／原 handle 收集與 EOF 診斷／native typed record 觀察分層；缺少身份不補造，集中驗證不取代完整接受。Node 封裝測試明確兩 file workers，原期限保持。見[失敗證據契約](PYTHON-TEST-FAILURE.md)。

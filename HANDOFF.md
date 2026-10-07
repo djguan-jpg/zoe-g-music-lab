@@ -1,3 +1,7 @@
+# v0.164.0 完整驗收交接
+
+目前接續讀[本輪交接](docs/HANDOFF-v0.164.0.md)與[QA](docs/QA-v0.164.0.md)。原時限完整820 Python／1947 JS及原v163隔離還原通過；確切提交的packager與遠端發佈各有獨立收據。還原點、原始失敗證據與接受邊界見本輪文件。以下保留先前交接原文。
+
 ## v0.158.0 Git 來源串流與自有程序收束
 
 實際合成Git tree重現1908來源檔／2257835bytes：舊producer以capture_output完整接收，才由2MiB純source_tree拒絕；沒有ZIP、測試子程序或成功manifest。原metadata bytes／SHA83201c237bf47fddbb2004074bd1f9249ea702050724a9aaed3e9efaef132dc5與暫存移除證據留在忽略outputs。
