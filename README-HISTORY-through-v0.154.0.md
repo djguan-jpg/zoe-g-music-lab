@@ -1,16 +1,4 @@
-# 固定交付版本契約 v1
-
-## v0.155.0 目前入口與歷史分層
-
-README、Agent與架構指引、四Skill先提供目前可用流程，不再把歷史QA摘要排在操作之前。新增START-HERE連接四工作台、CLI範例、保存與結果解讀；Agent區分JSON-lines／MCP handshake／payload、22基本與明確啟庫29操作、來源選擇和能力邊界。七份入口由982110bytes減為25953bytes，全部舊文由v154 main的exact Git blob複製到同目錄HISTORY檔，原bytes／相對連結基準與四Skill frontmatter保持。資料沒有刪除，縮小的是入口讀取量，不是磁碟容量或RAM量測。
-
-四CLI範例實際執行產生成果，重複輸出回傳1且原成果bytes不變。Agent discovery22／範例untimed原文、MCP2025-11-25 initialize→initialized→tools/list→tools/call與structured/text一致、四domain Agent成功及合成PCM原bytes保留。第一次QA腳本在拒絕覆寫後誤限錯誤措辭，保留terminal失敗與五child records；後續只接續拒覆寫／Agent／MCP核對，不重跑或替換原四成果。各CLI/stdio工作EOF；不是Host安裝、模型、媒體創作或保存下載接受。
-
-755Python（1既有Windows symlink skip、0expected failures）、1911JS、153syntax與四Skills通過；468四scope歷史ZIP／manifest及29組operation input/output schemas與整份／原列comparison bytes保持。原v154 exact-source ZIP3000508bytes／SHA153a6387005a8f3eee7ea479cee43e2aa8fd7b7bf608e2288bcd994469c9ece8，以原launcher／120秒deadline順序還原755／1911，CRC通過且暫存移除。
-
-產品155／唯一policy38–155共118、unknown156拒絕；22／29、Agent1／draft3／舊schemas保持，backend／browser implementation及asset／operation／依賴／模型／auth／路徑／外網權限沒有擴張。六法律／平台原bytes、PolyForm Noncommercial／public、ZOE. G／djguan-jpg與四submitted_unverified紀錄保持，本輪不讀寫FreeTWAI。restore-v0.154.0-before-v0.155.0→73b25274dcae919f5d363cbb57702e0555e7140c；codex/iteration-v0.155.0，exact-source封裝与rolling goal active。
-
-見[契約](DOC-ENTRYPOINTS.md)。README／START-HERE／Agent／架構與四Skill只維護目前工作流程；後续輪次將QA與迭代摘要寫在CHANGELOG／HANDOFF／QA或專項契約，不再疊加入口。歷史snapshot不修改；AGENTS既有施工與領域規則保持。
+# ZOE. G Music Lab
 
 ## v0.154.0 完整原文差異閱讀
 
@@ -22,7 +10,7 @@ README、Agent與架構指引、四Skill先提供目前可用流程，不再把�
 
 產品154／唯一policy38–154共117、未知155拒絕；22基本／29啟庫、Agent1／draft3與舊schemas保持。一固定GET，無新operation／POST／依賴／auth／路徑／模型／產品外網能力。六法律／平台原bytes、PolyForm Noncommercial、public及ZOE. G／djguan-jpg保持；本輪唯讀確認Zoe與四公開投稿，仍自行聲明、尚未核實創始，不重送。restore-v0.153.0-before-v0.154.0 →9d95687ce4cf2c031441352ffe00d75b5812273f；codex/iteration-v0.154.0、exact-source封裝与rolling goal active保持。
 
-見[契約](TEXT-VERIFICATION-PAGE.md)。以下保留歷史迭代。
+見[契約](docs/TEXT-VERIFICATION-PAGE.md)。以下保留歷史迭代。
 
 ## v0.153.0 原文差異前後文
 
@@ -34,7 +22,7 @@ README、Agent與架構指引、四Skill先提供目前可用流程，不再把�
 
 產品153／唯一policy38–153共116、未知154拒絕；22基本／29啟庫、Agent1／draft3與舊schemas保持。只新增一固定GET，無新operation／POST／依賴／auth／路徑／產品外網能力。六法律／平台文件原bytes、PolyForm Noncommercial、public及ZOE. G／djguan-jpg保持。本輪唯讀確認Zoe／音樂公會長與四公開投稿頁，仍原作者自行聲明、尚未核實創始；不重送。restore tag、codex分支、exact-source封裝與rolling goal active保持。
 
-見[契約](TEXT-VERIFICATION-CONTEXT.md)。以下保留歷史迭代。
+見[契約](docs/TEXT-VERIFICATION-CONTEXT.md)。以下保留歷史迭代。
 
 ## v0.152.0 選檔核對的狀態焦點
 
@@ -46,7 +34,7 @@ README、Agent與架構指引、四Skill先提供目前可用流程，不再把�
 
 產品152／唯一policy38–152共115、未知153拒絕；22基本／29啟庫、Agent1／draft3與原schemas保持。無新增operation／asset／backend／依賴／auth／path／產品外網權限；原32MiB備份及兩工作slot保持。六法律／平台文件原bytes、PolyForm Noncommercial、public、ZOE. G／djguan-jpg保持；本輪未讀寫FreeTWAI，既有四submitted_unverified紀錄不重送。restore tag、codex分支、exact-source封裝與rolling goal active保持。
 
-見[契約](VERIFICATION-SELECTION.md)。以下保留歷史迭代。
+見[契約](docs/VERIFICATION-SELECTION.md)。以下保留歷史迭代。
 
 ## v0.151.0 備份讀取與雜湊名額
 
@@ -60,7 +48,7 @@ README、Agent與架構指引、四Skill先提供目前可用流程，不再把�
 
 產品151／唯一policy38–151共114、未知152拒絕；22基本／29啟庫、Agent1／draft3及原schemas保持。六法律／平台文件原bytes、PolyForm Noncommercial、public與ZOE. G／djguan-jpg保持。本輪唯讀確認Zoe／音樂公會長及四公開申請，仍作者自行聲明／創始未核實，禁止商用文字保持，無重送或平台mutation。還原tag／codex分支／exact-source封裝與rolling goal active保持。
 
-見[契約](BACKUP-VERIFICATION-CAPACITY.md)。以下保留歷史迭代。
+見[契約](docs/BACKUP-VERIFICATION-CAPACITY.md)。以下保留歷史迭代。
 
 ## v0.150.0 取消核對後的鍵盤焦點
 
@@ -72,7 +60,7 @@ README、Agent與架構指引、四Skill先提供目前可用流程，不再把�
 
 產品150／唯一 policy38–150共113，未知151拒絕；22基本／29啟庫、Agent1／draft3及既有 schemas 保持，無新增 operation／asset／依賴／auth／path／產品網路權限。PolyForm Noncommercial、public、ZOE. G／djguan-jpg及六法律／平台文件原 bytes 保留。本轮唯讀確認 Zoe 登入、無待送技能草稿與四公開頁；仍作者自行聲明／創始未核實，禁止商用文字保持，無重複投稿或平台 mutation。三個自有 QA server 原 handle 正常 EOF0、三個 QA 頁及單一投稿查驗臨時頁已關閉，未設 viewport；還原 tag／codex 分支／exact-source 封裝與 rolling goal active 保持。
 
-見[契約](TEXT-VERIFICATION-FOCUS.md)。以下保留歷史迭代。
+見[契約](docs/TEXT-VERIFICATION-FOCUS.md)。以下保留歷史迭代。
 
 ## v0.149.0 原文核對取消與有界讀取
 
@@ -84,7 +72,7 @@ README、Agent與架構指引、四Skill先提供目前可用流程，不再把�
 
 產品149／唯一policy38–149共112，未知150拒絕；22基本／29啟庫、Agent1／draft3與其他schemas維持，沒有新operation／asset／依賴／auth／path／產品網路權限。PolyForm Noncommercial、public、ZOE. G／djguan-jpg與六法律／平台原bytes保持；本輪未讀／寫FreeTWAI，既有四投稿仍submitted_unverified。前後測兩個自有server由原handle正常EOF0、两個測試頁關閉、未設viewport。還原tag／codex分支與exact-source封裝保持，rolling goal active。
 
-見[契約](TEXT-VERIFICATION-CANCEL.md)。以下保留歷史迭代。
+見[契約](docs/TEXT-VERIFICATION-CANCEL.md)。以下保留歷史迭代。
 
 ## v0.148.0 規劃 Markdown 原文字面顯示
 
@@ -96,7 +84,7 @@ README、Agent與架構指引、四Skill先提供目前可用流程，不再把�
 
 PolyForm Noncommercial、public、ZOE. G／djguan-jpg與六法律／平台文件原bytes保持。使用者已登入的Chrome唯讀確認Zoe及音樂公會長，沒有重新投稿／平台mutation，四新專案既有提交紀錄仍原作者自行聲明、創始未核實。本輪自有QA server原handle正常EOF0、一頁關閉；還原tag、codex分支與exact-source封裝保持。rolling goal active。
 
-見[契約](PLANNING-MARKDOWN.md)。以下保留歷史迭代。
+見[契約](docs/PLANNING-MARKDOWN.md)。以下保留歷史迭代。
 
 ## v0.147.0 歌曲交付表格原文顯示
 
@@ -108,7 +96,7 @@ PolyForm Noncommercial、public、ZOE. G／djguan-jpg與六法律／平台文件
 
 PolyForm Noncommercial、public、ZOE. G／djguan-jpg與六法律／平台文件原bytes保持。唯讀確認使用者Chrome Zoe已登入、GitHub連結與四社群技能存在，仍原作者自行聲明／創始未核實，無重送或平台mutation；原頁返回guilds。自有單QA server以原handle正常EOF0、自建一頁關閉、未設viewport。還原tag／codex分支與exact-source封裝保持；rolling goal active，後續依真使用流程繼續改善。
 
-見[契約](MUSIC-MARKDOWN.md)。以下保留歷史迭代。
+見[契約](docs/MUSIC-MARKDOWN.md)。以下保留歷史迭代。
 
 ## v0.146.0 前後變動原列導覽
 
@@ -122,7 +110,7 @@ PolyForm Noncommercial、public、ZOE. G／djguan-jpg與六法律／平台文件
 
 原v145精確ZIP2809765bytes、SHA 1f47b5a17150a9ec67e058a09a0833008cf43053bd140670089d8da9f7174845，以原launcher還原736 Python／1789 JS後移除自有暫存。PolyForm Noncommercial、public、ZOE. G／djguan-jpg與六法律／平台文件原bytes保持。依使用者已登入指示，唯讀確認Chrome Zoe／GitHub連結及四公開投稿；仍原作者自行聲明、尚未核實，無额外創始認證按鈕，沒有重送或平台mutation。還原tag、codex分支、CHANGELOG／HANDOFF及exact-source封裝可逆；rolling goal active。
 
-見[契約](DRAFT-COMPARISON-NAVIGATION.md)。以下保留歷史迭代。
+見[契約](docs/DRAFT-COMPARISON-NAVIGATION.md)。以下保留歷史迭代。
 
 ## v0.145.0 指定原列完整原文
 
@@ -136,7 +124,7 @@ v144指定原ZIP2790931bytes／SHA b4d0dabbf0e8e09472b5238cab86810dbc25c51b5266a
 
 PolyForm Noncommercial1.0.0、public、創辦ZOE. G／GitHub djguan-jpg及四份submitted_unverified保持，六個法律／平台文件原bytes不變，本輪沒有平台提交或mutation。還原tag、codex分支、CHANGELOG／HANDOFF及指定source ZIP／SHA提供可逆交付；rolling goal active。
 
-見[契約](DRAFT-COMPARISON-FULL.md)。以下保留歷史迭代。
+見[契約](docs/DRAFT-COMPARISON-FULL.md)。以下保留歷史迭代。
 
 ## v0.144.0 查看指定原列
 
@@ -150,7 +138,7 @@ v143精確ZIP2754220bytes／SHA cb67e613ae60cbf4bfbf96bf656deafa9b15acecd0d4c733
 
 創辦ZOE. G／GitHub djguan-jpg、public及PolyForm Noncommercial1.0.0保持。六個法律／平台文件原bytes保持；已唯讀確認登入音樂公會長及四份公開投稿，仍作者自行聲明／尚未核實，未重送。restore tag、codex分支、CHANGELOG／HANDOFF及指定source封裝可逆；rolling goal active。
 
-見[契約](DRAFT-COMPARISON-ROW.md)。以下保留歷史迭代。
+見[契約](docs/DRAFT-COMPARISON-ROW.md)。以下保留歷史迭代。
 
 ## v0.143.0 草稿比較變動類型
 
@@ -162,7 +150,7 @@ v143精確ZIP2754220bytes／SHA cb67e613ae60cbf4bfbf96bf656deafa9b15acecd0d4c733
 
 ZOE. G／djguan-jpg、public與PolyForm Noncommercial1.0.0保持。此次登入唯讀確認音樂公會長及四個公開投稿，仍是作者自行聲明／尚未核實；沒有重送或平台mutation。restore tag、codex分支、CHANGELOG／HANDOFF、精確source ZIP／SHA可逆；最新三版與嚴格七天／Git重建規則保持，rolling goal active。
 
-見[契約](DRAFT-COMPARISON-KIND.md)。以下保留歷史迭代。
+見[契約](docs/DRAFT-COMPARISON-KIND.md)。以下保留歷史迭代。
 
 ## v0.142.0 完整測試與 worker 完成證據
 
@@ -172,7 +160,7 @@ ZOE. G／djguan-jpg、public與PolyForm Noncommercial1.0.0保持。此次登入�
 
 PolyForm Noncommercial1.0.0、public、ZOE. G／djguan-jpg與四份submitted_unverified保持。還原tag、codex分支、CHANGELOG／HANDOFF、指定source ZIP／SHA可逆；最新三版與嚴格七天／Git重建規則保持，rolling goal active。
 
-見[契約](PYTHON-TEST-RUN.md)。以下保留歷史迭代。
+見[契約](docs/PYTHON-TEST-RUN.md)。以下保留歷史迭代。
 
 ## v0.141.0 草稿比較閱讀進度
 
@@ -184,7 +172,7 @@ PolyForm Noncommercial1.0.0、public、ZOE. G／djguan-jpg與四份submitted_unv
 
 封裝補充：首份指定source的外層與Python runner同為120秒，外層timeout後Windows暫存目錄仍被使用，未發成功manifest。保留失敗ZIP與receipt；只移除核對的自有空暫存目錄，未signal外部程序。外層封裝改150秒，runner仍120秒／兩worker，留出正常收集與清理時間；重新從新提交封裝並核對，原失敗不宣稱成功。
 
-見[契約](DRAFT-COMPARISON-VIEW.md)。以下保留歷史迭代。
+見[契約](docs/DRAFT-COMPARISON-VIEW.md)。以下保留歷史迭代。
 
 ## v0.140.0 明確維護動作與空值
 
@@ -194,7 +182,7 @@ PolyForm Noncommercial1.0.0、public、ZOE. G／djguan-jpg與四份submitted_unv
 
 408歷史ZIP／manifest bytes、28 input-output schemas、五adapter比較／備份與10版原record／draft匯出保持，82合成JSONhash相同。v139指定ZIP實際還原688／1708且暫存移除。產品140／來源38–140共103版，未知141拒絕；21基本／啟庫28工具、Agent1／draft3／audit1／run1／recovery1／space1保持。本輪web不變，沒有新browser或持久workbench；PolyForm Noncommercial1.0.0、public、ZOE. G／djguan-jpg與四份submitted_unverified保持。還原tag、codex分支、CHANGELOG／HANDOFF與exact-source ZIP／SHA可逆，rolling goal active。
 
-見[契約](MAINTENANCE-CLI.md)。以下保留歷史迭代。
+見[契約](docs/MAINTENANCE-CLI.md)。以下保留歷史迭代。
 
 ## v0.139.0 唯讀輸出空間報告
 
@@ -204,7 +192,7 @@ PolyForm Noncommercial1.0.0、public、ZOE. G／djguan-jpg與四份submitted_unv
 
 產品139／唯一交付來源38–139共102版，未知140拒絕；21基本／啟庫28工具、Agent1／draft3不變。沒有新增Agent／HTTP維護操作、依賴、模型或持久服務；本輪web未變，不宣稱新增原生視覺驗收。還原tag、codex分支、CHANGELOG／HANDOFF及指定source ZIP／SHA保留可逆交付。PolyForm Noncommercial1.0.0、ZOE. G／djguan-jpg、public與四份submitted_unverified保持；rolling goal active。
 
-見[契約](OUTPUTS-SPACE.md)。以下保留歷史迭代。
+見[契約](docs/OUTPUTS-SPACE.md)。以下保留歷史迭代。
 
 ## v0.138.0 比較取消與重試隔離
 
@@ -218,7 +206,7 @@ PolyForm Noncommercial1.0.0、public、ZOE. G／djguan-jpg與四份submitted_unv
 
 還原tag、codex分支、指定source封裝／SHA、CHANGELOG／HANDOFF、PR merge及實際remote assets提供可逆交付。PolyForm Noncommercial1.0.0、ZOE. G／djguan-jpg、public與四份submitted_unverified保持，本輪不修改或重送平台投稿。只盤點本outputs及typed同host jobs，最新三版保護；strict>7days且exact tag／現場Git archive可重建才可列清除候選。草稿／媒體、未知／failed QA、v77 alternate及partial36／53保留。瀏覽器保存檔、完整視覺／screen reader、實聽／同步、Host安裝與平台正式founder仍未驗證，rolling goal active。
 
-見[契約](DRAFT-COMPARISON-LIFECYCLE.md)。以下保留歷史迭代。
+見[契約](docs/DRAFT-COMPARISON-LIFECYCLE.md)。以下保留歷史迭代。
 
 ## v0.137.0 下載目前草稿比較報告
 
@@ -234,7 +222,7 @@ draft-compare-download 純固定格式選取 → injected controller.read 完整
 
 restore tag、codex分支、CHANGELOG／HANDOFF、指定source ZIP／SHA、PR與實際remote assets提供可逆交付。PolyForm Noncommercial1.0.0、ZOE. G／djguan-jpg、public與四份submitted_unverified保持。本輪恢復既有自由工坊會員登入並唯讀核對四個公開投稿仍含禁止商用與作者未核實，沒有重送申請。只盤點本outputs及typed same-host jobs，最新三版保護，strict>7days且exact tag／Git archive可重建才列候選；草稿／媒體／failed QA／v77 alternate及partial36／53保持。rolling goal保持active。
 
-見[契約](DRAFT-COMPARISON-DOWNLOAD.md)。以下保留歷史迭代。
+見[契約](docs/DRAFT-COMPARISON-DOWNLOAD.md)。以下保留歷史迭代。
 
 ## v0.136.0 載入前比較完整草稿
 
@@ -250,7 +238,7 @@ draft-compare 純完整來源／canonical SHA／comparison1 → 注入 controlle
 
 restore tag、codex分支、CHANGELOG／HANDOFF、指定source ZIP／SHA、PR與實際remote assets提供可逆交付。PolyForm Noncommercial1.0.0、ZOE. G／djguan-jpg、public與四份submitted_unverified保持。只盤點本outputs及typed same-host jobs；最新三版保護，strict>7days且exact tag／Git archive可重建才可列清除候選，草稿／媒體／failed QA／v77 alternate及partial36／53保持。完整視覺／screen reader、瀏覽器下載落盤、真媒體身份／實聽同步、Host安裝與正式founder仍未驗證；rolling goal保持active。
 
-見[契約](DRAFT-COMPARISON-UI.md)。以下保留歷史迭代。
+見[契約](docs/DRAFT-COMPARISON-UI.md)。以下保留歷史迭代。
 
 ## v0.135.0 完整草稿原值比較
 
@@ -268,7 +256,7 @@ CLI draft-compare明確--baseline／--current與--out，strict UTF8／重複鍵�
 
 restore tag、codex分支、指定source ZIP／SHA、PR及實際remote assets提供可逆交付。只盤點本workspace outputs、完整direct封裝及明確typed same-host程序；最新三版與strict>7days且exact tag／Git archive可重建政策保持，無合格候選不刪，保留草稿／媒體、failed QA、v77 alternate及partial36／53。完整視覺／screen reader、瀏覽器保存落盤、media實聽／同步、Host安裝與平台正式founder仍未驗證，rolling goal保持active。
 
-見[契約](DRAFT-COMPARISON.md)。以下保留歷史迭代。
+見[契約](docs/DRAFT-COMPARISON.md)。以下保留歷史迭代。
 
 ## v0.134.0 撤回最近複製
 
@@ -284,7 +272,7 @@ editor-copy 純 checkpoint／undoProposal及注入controller → editor-copy-dom
 
 還原tag、codex分支、指定source封裝／SHA、PR與實際remote asset收據提供可逆交付。每輪只盤點本workspace outputs及typed same-host程序；無strict>7days且可重建候選不刪，保留草稿／媒體、failed QA、v77 alternate與partial36／53。rolling goal保持active。
 
-見[契約](EDITOR-COPY-UNDO.md)。以下保留歷史迭代。
+見[契約](docs/EDITOR-COPY-UNDO.md)。以下保留歷史迭代。
 
 ## v0.133.0 明確分批維護
 
@@ -298,7 +286,7 @@ maintenance 純選取／身份及確定性 token → maintenance_fs 完整來源
 
 PolyForm Noncommercial1.0.0、ZOE. G／djguan-jpg及四份submitted_unverified投稿保持。以還原tag、codex分支、指定source ZIP／SHA、PR／Release實際遠端asset及final same-host程序收據交付。只盤點本workspace outputs；無實際老舊合格候選不刪，保留草稿、媒體、failed QA、v77 alternate及partial36／53。rolling goal仍active。
 
-見[契約](MAINTENANCE-BATCH.md)。以下保留歷史迭代。
+見[契約](docs/MAINTENANCE-BATCH.md)。以下保留歷史迭代。
 
 ## v0.132.0 備份選取撤回
 
@@ -314,7 +302,7 @@ backup-selection 純原值與完整 before／after metadata Map、順序及目�
 
 一個受控QA server按原PID／creation identity正常shutdown、context close及deadline thread join，實際exec EOF；一個IAB頁已關閉、viewport reset，console warn/error0。六張PNG留忽略outputs/v132-qa，不嵌入對話。完整視覺／screen reader、瀏覽器保存檔、媒體身份／實聽／同步、Host安裝與平台正式創始核實仍未驗證。
 
-見[契約](BACKUP-SELECTION-UNDO.md)。以下保留歷史迭代。
+見[契約](docs/BACKUP-SELECTION-UNDO.md)。以下保留歷史迭代。
 
 ## v0.131.0 移出目前顯示版本
 
@@ -332,7 +320,7 @@ application／CLI／Agent／MCP／短命HTTP inspection完整回覆相同，good
 
 瀏覽器download event未提供保存path；本輪選回的是QA server同份合成來源ZIP，實際瀏覽器落盤仍未驗證。完整視覺／screen reader、媒體File身份、實聽／音畫同步、Host安裝與平台創始核實仍未驗證。六PNG只留忽略QA。兩個刻意按版本分開的有界server正常shutdown／context close／thread join且實際exec EOF；一個本輪IAB頁關閉並reset viewport。
 
-見[契約](BACKUP-DISPLAYED-REMOVE.md)。以下保留歷史迭代。
+見[契約](docs/BACKUP-DISPLAYED-REMOVE.md)。以下保留歷史迭代。
 
 ## v0.130.0 加入目前顯示版本
 
@@ -348,7 +336,7 @@ backup-selection純原值metadata／dense array／全批提案 → 注入capture
 
 瀏覽器下載事件未取得本機path；選回檔案為QA server額外保留的同份合成來源，明確不是瀏覽器落盤下載。完整視覺／screen reader、含非空分鏡／歌詞的本輪原生操作、媒體身份、實聽／同步、Host安裝與平台正式創始核實仍未驗證。六份響應截圖只留忽略QA目錄，未嵌入對話。兩個刻意分開的版本server phase按原handle正常shutdown、thread join與context close並觀察exec EOF；本輪IAB頁關閉、viewport reset。
 
-見[契約](BACKUP-DISPLAYED.md)。以下保留歷史迭代。
+見[契約](docs/BACKUP-DISPLAYED.md)。以下保留歷史迭代。
 
 ## v0.129.0 封裝盤點與復原容量
 
@@ -360,7 +348,7 @@ maintenance純保留／身份政策 → maintenance_fs明確本機root、ZIP／G
 
 產品129／唯一交付來源38–129共92版，未知130拒絕。20基本／啟庫27工具、27組schemas、Agent1／draft3／audit1／recovery1保持。工作台與創作application、HTTP／Agent／MCP執行能力沿原介面；本輪沒有新增瀏覽器操作驗收。PolyForm Noncommercial1.0.0、ZOE. G與public保持；平台仍submitted_unverified。已公開v128及其補查收據保留，新的restore／codex分支提供可逆差異。
 
-見[契約](MAINTENANCE-CATALOG.md)。以下保留歷史迭代。
+見[契約](docs/MAINTENANCE-CATALOG.md)。以下保留歷史迭代。
 
 ## v0.128.0 多版本分批備份
 
@@ -370,7 +358,7 @@ backup-selection純metadata／注入capture controller → backup-selection-dom�
 
 加入／移出／清空與可下載狀態變更通知既有下載adapter，app.run開始／結束刷新選取狀態；避免最後一版移出後按鈕仍可按。移出後焦點到下一個可用按鈕；搜尋無結果且清空時回可聚焦清單。1000版有界局部捲動，窄視窗名稱／ID換行。新增兩個固定GET JS；backup1／draft3／Agent1、20基本／啟庫27工具及27組schemas保持，既有POST／Python備份domain／CLI／Agent／MCP無diff。產品128／唯一policy來源38–128共91，未知129拒絕。
 
-見[契約](BACKUP-BATCH.md)。下方保留歷史迭代。
+見[契約](docs/BACKUP-BATCH.md)。下方保留歷史迭代。
 
 
 ## v0.127.0 單版本備份
@@ -381,7 +369,7 @@ backup-download純request嚴格核對ids、隔離／排序1–1000唯一ID；con
 
 既有POST /api/drafts/backup/prepare由{}整庫相容接續可選ids，沿共享Python selected_ids／export_library_backup；拒絕路徑、額外欄位、query、重複／空ID及跨Origin。ID不能選檔案路徑；沒有恢復或新增寫入權限。選定健康版本不讀未選定版本，整庫仍完整檢查。有效格式但不存在的ID維持既有HTTP500本機讀寫失敗，不自動重送。descriptor六欄、backup1／draft3／Agent1與27組operation schemas保持，20基本／啟庫27工具不變，沒有新asset、依賴、模型或外網。產品127／唯一policy明確來源38–127共90版，未知128拒絕。
 
-見[契約](BACKUP-SELECTION.md)。下方保留歷史迭代。
+見[契約](docs/BACKUP-SELECTION.md)。下方保留歷史迭代。
 
 
 ## v0.126.0 備份下載檔案核對
@@ -392,7 +380,7 @@ backup-download純request嚴格核對ids、隔離／排序1–1000唯一ID；con
 
 只新增三個固定GET JS資產；原備份domain／CLI／Agent／MCP／HTTP POST權限及schemas不变。20基本／啟庫27工具、27組schema、Agent1／draft3與backup1保持。產品126與唯一policy明確來源38–126共89版，未知127拒絕。PolyForm Noncommercial 1.0.0、ZOE. G及公開授權保持；四份自由工坊投稿已送出，創始身分仍submitted_unverified。
 
-見[契約](BACKUP-DOWNLOAD-VERIFICATION.md)。下方保留歷史迭代。
+見[契約](docs/BACKUP-DOWNLOAD-VERIFICATION.md)。下方保留歷史迭代。
 
 
 ## v0.125.0 條件草稿下載核對
@@ -403,7 +391,7 @@ backup-download純request嚴格核對ids、隔離／排序1–1000唯一ID；con
 
 原生測試重現核對選檔的 input 被通用 editor listener 視為編修，導致未改條件的報告過期。新 File 控制明確標示 data-view-control="verification"，重用既有唯讀排除；實際條件 input 仍照常標過期。沒有新增固定 asset、operation、POST、依賴、模型、外網或路徑權限。產品125／唯一policy來源38–125共88，未知126拒絕；20／27 tools、27組schemas、Agent1／draft3與獨立domain schemas保持。
 
-見[契約](AUDIO-ACCEPTANCE-DOWNLOAD.md)。以下保留歷史迭代。
+見[契約](docs/AUDIO-ACCEPTANCE-DOWNLOAD.md)。以下保留歷史迭代。
 
 
 ## v0.124.0 草稿變更工作台
@@ -412,7 +400,7 @@ backup-download純request嚴格核對ids、隔離／排序1–1000唯一ID；con
 
 draft-retention 既有 checkpoint／注入 guard只新增隔離的 difference DTO（reference＋panels）；獨立 draft-difference 純模型嚴格核對列舉、最多四台、唯一／完整資料屬性後產生固定文字，app只更新提示 textContent／hidden。待確認下載不能替換參考；確認舊送出快照後，後續編修仍dirty。拼接不同保存版本的工作台片段仍需整份另存。原稿、列ID、媒體、成果、下載／本機保存流程與 beforeunload 原判定保持；摘要不帶原文／fingerprint／File／路徑，不進 draft3／Agent wire。新增一個固定GET JS，不新增 operation、依賴、模型、外網、登入或寫檔權限。產品124／唯一policy來源38–124共87，未知125拒絕；20／27 tools、27組schemas與獨立domain schemas保持。另修正根目錄 HANDOFF.md 的過期首頁版號。
 
-見[契約](DRAFT-DIFFERENCE.md)。以下保留歷史迭代。
+見[契約](docs/DRAFT-DIFFERENCE.md)。以下保留歷史迭代。
 
 
 ## v0.123.0 草稿下載完整核對
@@ -421,272 +409,575 @@ draft-retention 既有 checkpoint／注入 guard只新增隔離的 difference DT
 
 純 text-verification 模型 → 支援 draft scope／可選容量的注入 controller → 可選 IDs 的原生 File DOM adapter → app 的成功 onSent 與原 draft-retention guard。草稿容量1 MiB，在 arrayBuffer 前核對；既有成果預設8 MiB保持。最新 token、送出 revision、完整 source、busy、離頁及 dispose 防護保持；允許核對舊送出快照與後續 dirty 編修共存。送出時間只提供可見辨識，不是保存成功證據；File／檔案路徑、核對報告及暫態完整 source 不進持久草稿或 Agent wire。產品123／唯一 policy38–123共86，未知124拒絕；20／27 tools、27組 schemas、Agent1／draft3及領域契約保持，沒有新 operation、固定 asset、依賴、模型或外網能力。
 
-見[契約](DRAFT-DOWNLOAD-VERIFICATION.md)。以下保留歷史迭代。
+見[契約](docs/DRAFT-DOWNLOAD-VERIFICATION.md)。以下保留歷史迭代。
 
+
+2026-10-06：Repo 已依使用者授權公開，四個新專案均已送出自由工坊並建立公開介紹頁；原作者為自行聲明、尚未核實，PolyForm 非商用授權保持。最新實際狀態與網址見 [PLATFORM-STATUS.md](PLATFORM-STATUS.md)；下方版本中的 private／not_submitted 為各次提交當時的歷史快照。
 
 ## v0.122.0 回到目前待辦
 
 歌曲單段、分鏡單鏡與歌詞單句的工具列新增「回到目前待辦」。檢查並成功定位後，手動查看其他欄位可直接返回最後成功位置；只有一項待辦時，上一項／下一項停用，返回仍可用。共享純 issue-cursor 提供 canReturn／returnCurrent，重用原來源與 revision 核對、onLocate、頁面 reveal 及原欄位 focus；不前進 cursor、不改原文／時間／媒體。未定位、零待辦、來源失效、busy、隱藏或無選列停用；新 report revision 清除位置，精確回復來源可接續舊位置。歌詞手動換頁後返回原 global 明細所在頁，沿全部計數／前200保留明細。三個 DOM adapter 只綁定原生按鈕與狀態；沒有新 asset、operation、POST、模型或路徑權限。產品122／唯一交付 policy38–122共85，未知123拒絕；20／27 tools、原27組 schemas、Agent1／draft3及其他領域契約保持。
 
-見[契約](ISSUE-RETURN.md)。以下保留歷史迭代。
+見[契約](docs/ISSUE-RETURN.md)。以下保留歷史迭代。
 
 ## v0.121.0 目前待辦原因與位置
 
 單鏡、單段與單句工具列現在顯示最後成功定位待辦的原位置、欄位、原因及關聯列，讓長表格編修時也能知道正在處理什麼。純 issue-summary 只格式化有界嚴格 JSON metadata；三個 DOM adapter 共用清單與工具列文字，在來源失效、busy、隱藏、無選列、未定位或新 revision 時清除說明。回復精確來源可恢復上一個成功位置；不因手動焦點改動重寫 cursor。說明換行後由 app 重新量測活動欄位，僅對已活動的原欄位調整捲動，不重新聚焦其他控制。實際窄畫面發現單鏡長待辦按鈕造成31px溢出，改為有界換行；空鏡頭選列也停用清單與 cursor。新增一個固定 GET asset，沒有新 operation。產品121／唯一交付policy38–121共84，未知122拒絕；20／27 tools、旧27組schemas、Agent1／draft3與其他domain保持。
 
-見[契約](ISSUE-SUMMARY.md)。以下保留歷史迭代。
+見[契約](docs/ISSUE-SUMMARY.md)。以下保留歷史迭代。
 
 ## v0.120.0 單句逐項導覽
 
 選定歌詞新增「重查這一句／上一項單句待辦／下一項單句待辦」工具列，成功定位後同步目前明細頁；修正長表格需返回上方清單逐項處理的操作缺口。純 issue-cursor 明確 maxDetails 1–200，舊鏡頭／段落預設32保持；純 issue-page.reveal 核對 revision／可定位狀態及兩次metadata後，顯示選定保留項所在頁。單句沿原200明細／20頁內項與全部issue_count，頁面／cursor／焦點不改時間或進draft。可見黏附工具列與既有field-position共用幾何，global作品宣告忽略畫面外工具列；高度≤400px回普通流。產品120／唯一交付policy38–120共83，未知121拒絕；20／27 tools、舊27組schemas與Agent1／draft3保持。
 
-見[契約](LYRICS-CUE-NAVIGATION.md)。以下保留歷史迭代。
+見[契約](docs/LYRICS-CUE-NAVIGATION.md)。以下保留歷史迭代。
 
 ## v0.119.0 選定歌詞校時待辦
 
 選定歌詞待辦共用 lyrics_review 的完整來源與時間分析，先依原句／作品時長篩選再套200明細上限；全部原句仍參與重複開始與horizon重疊核對。新增獨立 lyrics_cue_review schema1、application／CLI／HTTP／Agent-MCP，20基本／27明確啟庫，舊26組schemas保持。單句report只帶選定cue與title／duration，不帶整份歌詞；source controller核對整份原值、stable IDs與選列，其他句子也可使舊位置失效。檢查／報告不改原文、時間、音檔或草稿；零待辦仍須完整歌詞包與實聽。產品119／唯一交付policy38–119共82，未知120拒絕；Agent1／draft3及其他schemas保持。
 
-見[契約](LYRICS-CUE-REVIEW.md)。以下保留歷史迭代。
+見[契約](docs/LYRICS-CUE-REVIEW.md)。以下保留歷史迭代。
 
 ## v0.118.0 歌詞診斷完整核對
 
 歌詞校時診斷先以共用strict JSON值核對來源，再讀取欄位與建立隔離副本；getter、稀疏陣列、隱藏／symbol／undefined／無效Unicode拒絕。完整回覆精確核對root data／files／meta、當前唯一產品版本、protocol1及needs_review=true，再核對完整report與JSON／Markdown，checkedResult交付自有data／files副本。舊inspect API保留。Controller將capture放在try內，失敗不送transport，當前pending才釋放；晚回應／錯誤／finally不覆蓋後續工作。原request可省略title／duration，僅report明示既有defaults；時間規則與診斷格式保持。19基本／26啟庫、原26組schemas及Agent1／draft3／review1保持，沒有新operation或GET。產品118／唯一policy38–118共81，未知119拒絕。
 
-見[契約](LYRICS-REVIEW-GUARD.md)。以下保留歷史迭代。
+見[契約](docs/LYRICS-REVIEW-GUARD.md)。以下保留歷史迭代。
 
 ## v0.117.0 單段逐項定位
 
 歌曲單段待辦新增工具列「上一項／下一項／重查這一段」。共享 issue-cursor 只保留report revision／有界index，明確定位成功才前進；重查重設而不自動搶焦點，來源／stable IDs／選擇／busy／換台拒絕舊定位。共用純 editor-field-position 幾何與既有shot wrapper，明確focus原欄位後核對工具列遮擋；窄視窗維持表格內水平捲動，height≤400px改static流。單段DOM使用注入的literal段落訊息，既有單鏡預設文字與API保持。新增一個固定GET，沒有POST、Agent權限或schema變更；19基本／26啟庫、原26組工具schemas、Agent1／draft3／section-review1／shot-review1保持。產品117／唯一policy38–117共80，未知118拒絕。
 
-見[契約](SECTION-ISSUE-NAVIGATION.md)。以下保留歷史迭代。
+見[契約](docs/SECTION-ISSUE-NAVIGATION.md)。以下保留歷史迭代。
 
 ## v0.116.0 單段報告跨工具
 
 新增「建立單段報告」與唯讀 music_section_review：共用 Python music_review 的 required／numeric 規則，獨立 section-review1 保留原段落1起、總段數與選定五欄原字串；JSON／Markdown 經完整 data／files／meta 核對才提交成果。共享注入 readiness-request 管理來源／晚回覆／取消／重試，既有單鏡 wrapper 沿相同 controller。CLI／Agent／MCP／HTTP 共用 application，19基本／明確啟庫26工具，需重新 discovery；原25組 input/output schemas 不變。產品116／唯一 policy38–116共79，未知117拒絕；Agent1／draft3保持。新增一個固定GET與一個唯讀POST，沒有新路徑、模型、外網或寫入權限。零待辦仍須整首歌曲、總長與實聽驗證。
 
-見[契約](MUSIC-SECTION-REPORT.md)。以下保留歷史迭代。
+見[契約](docs/MUSIC-SECTION-REPORT.md)。以下保留歷史迭代。
 
 ## v0.115.0 選定歌曲段落待辦
 
 歌曲工作台新增「檢查選定段落」：即使整份待辦200明細已滿，也能檢查原第40段的五個編曲欄位並定位。既有music-readiness共用規則 → 選定原列／stable IDs的純checkpoint controller → 字面DOM → app原欄位focus分層；不補寫、改原值或提交成果。選擇／順序／選定欄位改變停舊定位，精確復原可接續；其他段落與全域欄位的合法編修不影響這五欄的診斷。零待辦仍需整首歌曲、總長與實聽驗證。產品115／唯一policy38–115共78，未知116拒絕；18基本／25啟庫及原25組schemas、Agent1／draft3保持，新增兩個固定GET。
 
-見[契約](MUSIC-SECTION-REVIEW.md)。以下保留歷史迭代。
+見[契約](docs/MUSIC-SECTION-REVIEW.md)。以下保留歷史迭代。
 
 ## v0.114.0 單鏡待辦逐項定位
 
 單鏡待辦新增固定工具列的上一項／下一項與重查入口；純issue-cursor管理report revision／index與邊界，DOM沿原來源核對定位原欄位。新報告不自動定位，來源／選擇／順序／busy與換台停舊位置。共享focusShot以純shot-field-position計算目前欄位與工具列遮擋後的捲動；短視窗工具列改static。既有25組工具schemas、18基本／25啟庫、Agent1／draft3／shot-review1及POST保持；新增兩個固定GET。產品114／唯一policy38–114共77，未知115拒絕。
 
-見[契約](SHOT-ISSUE-NAVIGATION.md)。以下保留歷史迭代。
+見[契約](docs/SHOT-ISSUE-NAVIGATION.md)。以下保留歷史迭代。
 
 ## v0.113.0 選定鏡頭回覆與請求分層
 
 選定鏡頭報告先核對完整回覆的 JSON 值與來源，再交給獨立注入式 request controller 管理成功、錯誤、來源改變、取消及重試；DOM 僅提交已核對成果。舊請求不能結束新請求的 pending 狀態或覆蓋新成果。原 25 組工具 schemas、18 基本／25 啟庫工具、Agent1／draft3／shot-review1 保持；僅新增一個固定 GET 資產，既有 POST 與授權邊界保持。產品113／唯一 policy38–113共76，未知114拒絕。
 
-見[契約](STORYBOARD-SHOT-REQUEST.md)。以下保留歷史迭代。
+見[契約](docs/STORYBOARD-SHOT-REQUEST.md)。以下保留歷史迭代。
 
 ## v0.112.0 選定鏡頭待辦
 
 新增選定原鏡號的必填欄位、方向與母題引用檢查，整份分鏡200明細上限保持。可定位後面的鏡頭，舊選擇／順序／來源與晚回覆不能替換新編修。Python／JS共用既有整份診斷規則，controller暫態與字面DOM分層；CLI／Agent／MCP／HTTP共用同一報告，18基本／25啟庫工具，原24組schemas保持。獨立shot-review1，Agent1／draft3保持；無新依賴／模型／媒體／外網或路徑權限。產品112／唯一policy38–112共75，未知113拒絕。
 
-見[契約](STORYBOARD-SHOT-REVIEW.md)。以下保留歷史迭代。
+見[契約](docs/STORYBOARD-SHOT-REVIEW.md)。以下保留歷史迭代。
 
-## v0.111
+## v0.111 待辦原列ID來源
 
-單一policy current=0.111.0、supported38–111共74；unknown112拒絕。292份歷史ZIP／manifest bytes相同；17／24工具及24schemas保持。純工作台來源核對沒有新資產／producer／固定preview變更。見[契約](READINESS-IDS.md)。
+歌曲、分鏡創作與分鏡時間待辦的列ID來源統一使用既有有界讀取層。舊三個控制器用來源some／iterator讀ID，缺項可被prototype補出，自訂iterator能掩蓋ID換序，超64字元ID也被接受；本輪改成原始自有index與固定長度副本，再沿原checkpoint／revision判定定位。
 
-## v0.110
+缺少自有index、空白ID、非字串、重複、超64units或與原panel列數不符時拒絕；讀取期間長度改變也拒絕。failed check保留上一份report及revision；refresh標stale，舊定位停用，精確恢復原欄值與ID順序後沿guard重新核對。成功重新檢查回第一頁，舊revision callback拒絕。未提供ID的歌曲／創作舊caller介面保持；時間原本要求ID仍保持。
 
-單一policy current=0.110.0，supported38–110共73；unknown111拒絕。288份歷史ZIP／manifest bytes相同，17／24操作與24組schemas保持。單一新固定GET資產只用於工作台歌曲／分鏡待辦分頁；固定preview及schema保持。見[契約](READINESS-PAGE.md)。
+產品0.111.0／唯一runtime policy38–111共74，未知112拒絕；17基本／24啟庫工具與24組既有input/output schemas、Agent1／draft3及領域schema保持。只改三個純JS控制器的ID來源，不改editor-focus本體、DOM／app／HTML／CSS、固定資產、Python domain／producer／application、server／CLI／Agent／MCP或程序政策。沒有新依賴、模型、路徑或網路能力。 見[契約](docs/READINESS-IDS.md)。
 
-## v0.109
+## v0.110 歌曲與分鏡待辦分頁
 
-單一runtime policy current=0.109.0，supported38–109共72；unknown110拒絕。284份歷史ZIP／manifest bytes相同，17／24操作與24組既有schemas不變。兩個新資產只用於工作台歌詞診斷分頁；固定preview嵌入模組與schema不變。見[契約](ISSUE-PAGE.md)。
+歌曲欄位、分鏡創作與分鏡時間待辦可用上一頁／下一頁閱讀全部已保留明細，每頁20項、最多200項，超過上限明示全部計數與已保留範圍。先前只顯示前20項；現在可定位後續明細的原欄位。另修正兩個內容相同的鏡頭換序後，舊創作待辦仍被當成原位置的問題：來源核對現在包含本頁列ID順序。
 
-## v0.108
+busy或離開所屬工作台時停用操作；stale可唯讀翻頁但停定位。來源原值與ID順序精確恢復時沿既有guard重新判為current，不要求永久stale；成功重新檢查即使內容相同仍增加revision並回第一頁。零明細隱藏導航。首末頁Enter使原按鈕停用時，焦點回到另一個可用翻頁按鈕；不搶走其他焦點。
 
-單一runtime policy current=0.108.0，supported38–108共71；unknown109拒絕。280份歷史ZIP／manifest bytes相同，17／24操作、24組既有schemas不變。固定HTML仍核對本安裝範本／模組；新比較器改變嵌入模組bytes，舊HTML保留，完整JSON重新建立現版預覽。見[契約](JSON-VALUE.md)。
+產品0.110.0／唯一runtime policy38–110共73，未知111拒絕；17基本／24啟庫工具與24組既有input/output schemas保持，Agent1／draft3及領域schema保持。只新增一個固定GET資產；HTTP POST、application、Python producer、CLI／Agent／MCP、程序政策與授權邊界不變。沒有新依賴、模型、媒體生成或外網能力。 見[契約](docs/READINESS-PAGE.md)。
 
-## v0.107
+## 目前版本 v0.109.0：歌詞待辦分頁
 
-單一runtime policy current=0.107.0，supported38–107共70；unknown108拒絕。276份歷史封裝位元組相同。新music_search_schema_version=1獨立於Agent1／draft3及原交付schemas。
+歌詞校時與匯出格式的待辦可用上一頁／下一頁閱讀全部已保留明細，每頁20項。原本報告已有最多200項，但畫面只顯示前20项；現版可查看後續明細，點選後定位原欄位，重新檢查回到第一頁。總數超200時明示只保留前200項。
 
-v0.106 完整焦點來源：editor-focus.checkedSource 純有界 length／own-index／ID 字串及唯一性檢查 → 隔離 dense ID 副本 → 原 index／ID proposal 與兩capture controller → 未改 editor-focus-dom。editor-selection 共用同一來源再沿原三capture／actual-after與DOM；不呼叫 caller map／iterator。固定原 length 控制讀取次數，讀完長度改變拒絕，不因 getter 增長超出上限。產品0.106.0／唯一 policy38–106共69／unknown107拒絕；16基本／23啟庫工具、23既有 input/output schemas、Agent1／draft3保持。只改既有純焦點模型，app／HTML／DOM／domain/application/server/adapters與固定資產清單無diff，沒有新依賴、路徑、模型或網路權限。legal4保持 PolyForm Noncommercial 1.0.0／private；創辦 ZOE. G、GitHub djguan-jpg；FreeTWAI not_submitted。見[契約](EDITOR-FOCUS-IDS.md)。下方保留歷史迭代。
+編修後可閱讀舊報告，重新檢查後才能定位；忙碌期間停用。見[契約](docs/ISSUE-PAGE.md)、[驗證](docs/QA-v0.109.0.md)。
 
+產品0.109.0／唯一 policy38–109共72，未知110拒絕；17基本／24啟庫工具與24組既有 input/output schemas保持，Agent1／draft3及所有領域 schema保持。只新增兩個固定GET資產；HTTP POST、application、Python producer、CLI／Agent／MCP及程序政策沒有變更。沒有新依賴、模型、媒體生成或外網能力。 LICENSE／NOTICE／LICENSING.md／FOUNDER-RECORD.md保持 PolyForm Noncommercial 1.0.0／private；創辦 ZOE. G、GitHub djguan-jpg；FreeTWAI not_submitted，不認領既有手冊原作者。
 
-v0.105 歌曲段落定位：editor-focus 純 byId 完整來源驗證與目前 ID 提案 → injected request controller 兩次 metadata capture 核對列序／visible／busy → 原 editor-focus-dom 依 ID 查實際名稱欄並核對可聚焦狀態 → app 原生 type=button／aria-controls／點擊。新 focusId 與原 index focus 共用 controller，保留原空列 add 行為；ID 查找不回退到新增。沒有新 keyboard listener，Tab／Enter 使用原生按鈕。產品0.105.0／唯一 policy38–105共68／unknown106拒絕；16基本／23啟庫工具、23既有 input/output schemas、Agent1／draft3保持。只改既有純焦點模組及 app／HTML，沒有新增静態 asset、依賴、domain/application/server/adapter operation、路徑、模型或網路權限。legal4保持 PolyForm Noncommercial 1.0.0／private；創辦 ZOE. G、GitHub djguan-jpg；FreeTWAI not_submitted。見[契約](MUSIC-ROW-LOCATE.md)。下方保留歷史迭代。
+## v0.108.0：完整回應值核對
 
+回應核對改用保留型別的共用值比較器。三個原文搜尋及歌詞診斷會拒絕以 `1e400` 等非有限數值替換 `null` 的回覆；歌曲／分鏡與歌詞匯出診斷也不再忽略額外的 `undefined` 欄位。異常回覆保留原創作、上一份成果與音檔，修正來源後可重新操作。
 
-v0.104 回呼隔離：editor-position 純五欄來源／排列提案 → injected controller 保留自有 expected → writer 專屬六欄 DTO（before 五欄及 ids、afterIds 另複製）→ 原 raw-source order controller → 原始 expected actual-after → 固定原始位置通知。button／Enter 共用 finish；允許回呼修改自己的副本，不以 freeze 改變回呼介面，保留讀取次數與原 current-before／after-consume／false writer 語義。拒絕不符時不覆蓋或回滾外部編修。產品0.104.0／唯一 policy38–104共67／unknown105拒絕；16基本／23啟庫工具、23既有 input/output schemas、Agent1／draft3保持。只改一個純控制器，沒有 DOM／app／server／adapter、固定資產清單、依賴、路徑或網路權限變動。legal4保持 PolyForm Noncommercial 1.0.0／private；創辦 ZOE. G、GitHub djguan-jpg；FreeTWAI not_submitted。見[契約](EDITOR-POSITION-CALLBACK.md)。下方保留歷史迭代。
+固定歌詞預覽沿 template1全外框與本安裝模組核對。更新共用模組後，舊v107 HTML所嵌模組不同，現版明確拒絕回讀；同完整package的現版HTML通過，舊檔SHA保持，臨時還原移除。保留舊HTML與完整lyrics.json，需要接續時載入完整JSON並重新建立現版預覽；schema沒有遷移。舊版離線HTML仍保留其原程式，本輪沒有重写或宣稱新修正適用於舊檔。 見[契約](docs/JSON-VALUE.md)、[驗證](docs/QA-v0.108.0.md)。
 
+產品0.108.0／唯一 policy38–108共71，未知109拒絕；17基本／24啟庫工具與24組既有 input/output schemas保持，Agent1／draft3／所有領域 schema保持。 LICENSE／NOTICE／LICENSING.md／FOUNDER-RECORD.md保持 PolyForm Noncommercial 1.0.0／private；創辦 ZOE. G、GitHub djguan-jpg；FreeTWAI not_submitted，不認領既有手冊原作者。
 
-v0.103 位置欄Enter：editor-position 純 strict gesture／none-hold-move intent → 原五欄metadata proposal／injected current-before-consume + current-after-consume + actual-after → editor-position-dom 自有可編輯INPUT keydown／preventDefault／focus → app 原完整raw-source order controllers。request button與enter共用finish，不新增history。只有自有當前位置input普通Enter消費default；IME／229、修飾鍵、其他鍵與已消費事件保持原生，repeat只消費不移動。純來源visible／busy也核對；失敗不回滾或宣稱成功。九原listeners加三keydown共十二，dispose只移除自身。產品0.103.0／唯一policy38–103共66／unknown104拒絕。16基本／23啟庫工具、23既有input/output schemas、Agent1／draft3保持；沒有新增assets、server／app diff、POST operation、依賴、路徑、模型或網路權限。legal4無diff：PolyForm Noncommercial 1.0.0／private；創辦ZOE. G、GitHub djguan-jpg；FreeTWAI not_submitted。見[契約](EDITOR-POSITION-ENTER.md)。下方保留歷史迭代。
+## v0.107.0：歌曲段落搜尋
 
+歌曲段落表新增原文搜尋，查找名稱、敘事任務、聲音配置；每批20段，可前後分頁，點命中直接回到目前原欄位。保留重複段落、原文、小節、能量與音檔。文字、列ID或順序改變清除舊定位；數值編修保留命中，但原成果仍依既有規則停用下載。取消等待保留上一批，晚回覆不覆蓋後來編修或成果。 見[契約](docs/MUSIC-SEARCH.md)、[驗證](docs/QA-v0.107.0.md)。
 
-v0.102 指定列移動：entry-order 純 arbitrary insertion／dense inverse → editor-position 純 metadata view／proposal／injected current + actual-after controller → editor-position-dom 自有九 listeners／literal ARIA／selected selector focus → app 原完整 raw-source order controllers。editor-order／music-arrangement 的 moveTo 共用原 history；歌曲移動及撤回增加完整來源的寫入前、實際 after 核對，拒絕 sparse sources／forged inverse。position 原字串是暫態 data-view-control，不修改 draft／revision；原操作仍完整驗證創作與時間。產品0.102.0／唯一 policy38–102共65／unknown103拒絕。16基本／23啟庫工具、23既有 input/output schemas、Agent1／draft3保持；只新增兩固定 GET assets，沒有新 POST operation、路徑、模型、依賴或網路權限。legal4無diff：PolyForm Noncommercial 1.0.0／private；創辦 ZOE. G、GitHub djguan-jpg；FreeTWAI not_submitted。見[契約](EDITOR-POSITION.md)。下方保留歷史迭代。
+17基本／24啟庫工具，Agent1／draft3保持；LICENSE／NOTICE／LICENSING.md／FOUNDER-RECORD.md保持 PolyForm Noncommercial 1.0.0／private；創辦 ZOE. G、GitHub djguan-jpg；FreeTWAI not_submitted，不認領既有手冊原作者。
 
+## v0.106.0：完整列身份核對
 
-v0.101 摘要快捷移動：沿 editor-keys 純 gesture／ID 提案與 injected current／consume／writer／actual-after 核對 → editor-keys-dom 自有 native SUMMARY 暫態 target／open bookmark → app 原完整 raw-source order controller。文字欄仍走原 caret 分支；摘要只讀 details.open，不讀或寫 input value／selection、不強制展開。只有同 ID、同 open 狀態、当前自有焦點才恢復 summary focus；沒有新 history、依賴、固定 assets、server diff、schema 或 Agent operation。產品0.101.0／唯一 policy38–101共64／unknown102拒絕；16基本／23啟庫工具、23既有 input/output schemas、Agent1／draft3及 legal4保持。PolyForm Noncommercial 1.0.0／private；創辦 ZOE. G、GitHub djguan-jpg；FreeTWAI not_submitted。見[契約](EDITOR-SUMMARY-KEYS.md)。下方保留歷史迭代。
+修正共用編修焦點來源驗證跳過空洞 ID、接受繼承的數字位置，或被來源自訂 mapper 替換列 ID 的問題。完整自己的 ID 位置才可進入定位與選列；錯誤來源拒絕，正常請求可繼續。原生 UI 本來產生完整 ID 陣列，本輪沒有宣稱瀏覽器內存在惡意回呼或外部漏洞。見[契約](docs/EDITOR-FOCUS-IDS.md)、[驗證](docs/QA-v0.106.0.md)。
 
 
-v0.100 欄位快捷移動：editor-keys 純 gesture／相鄰 ID 提案 → injected controller current metadata／consume／writer／actual-after 核對 → editor-keys-dom 三容器 delegated keydown 與暫態欄位／caret bookmark → app 共用原 music-arrangement／editor-order 完整 raw-source 移動與撤回。keyboard 才回同一欄位，原工具列保持按鈕焦點；沒有新 history、創作 schema 或 Agent operation。兩個固定 JS assets；无新依賴、模型、外網、timer、路徑、auth 或寫檔權限。產品0.100.0／唯一 policy38–100共63／unknown101拒絕；16基本／23啟庫工具、23既有 input/output schemas、Agent1／draft3及 legal4 保持。PolyForm Noncommercial 1.0.0／private，創辦 ZOE. G／GitHub djguan-jpg；FreeTWAI not_submitted。見[契約](EDITOR-KEYS.md)。下方保留歷史迭代。
+## v0.105.0：查看歌曲段落
 
+歌曲段落選單新增「查看選定段落」，按一下或以原生 Enter 將焦點移到目前選定段落的名稱欄。首、中、末段與排序、複製、刪除還原後均按目前列 ID 定位；空清單或等待中停用。查看保留創作原文、順序、撤回紀錄、成果下載與音檔。見[契約](docs/MUSIC-ROW-LOCATE.md)、[驗證](docs/QA-v0.105.0.md)。
 
-v0.99 編修選列：editor-selection 純 metadata／ID 提案重用 editor-focus 與 entry-order → injected controller 三次 current IDs／visible／busy 核對 → 三容器 delegated focusin／refresh DOM → app 原 music selection 或 editor-order.select。只同步原生 selector／行標示／邊界按鈕，不呼叫 focus、讀創作來源、markDirty、改 revision 或建立 history；原動作保持移動按鈕焦點。busy 結束沿既有 collection refresh 核對當前原生焦點；隱藏、外部、已移除及 disabled target 拒絕。鏡頭 caption 使用 raw readValue 的目前 section／purpose，不依賴稍後才更新的 summary；穩定 IDs 時 select 不重建 options 或讀全文。兩個固定 JS assets，無新 operation／schema／依賴／timer／模型／網路／路徑／auth 權限。產品99／唯一 policy38–99共62／unknown100拒絕；16基本／23啟庫、Agent1／draft3、23 operation input/output schemas、legal4、PolyForm Noncommercial 1.0.0／private、ZOE. G／djguan-jpg及 FreeTWAI not_submitted保持。見[契約](EDITOR-SELECTION.md)。下方保留歷史迭代。
 
+## v0.104.0：移動成功核對
 
-v0.98 列順序：entry-order 純 ID 相鄰排列與逆序核對，供原 music-arrangement 與新 editor-order 共用；editor-copy 原值 source guard → injected controller → editor-order-dom 原生選列／四按鈕 → app 原 readValue／writeEntries／markDirty／editor-focus。只保留最近 ID 順序與來源核對，metadata view 只有可撤回／stale／位置，不帶全文；busy／hidden 先拒絕讀取，提交前完整 source 與提交後隔離 expected 再查。DOM 只更新單列輸入標籤，未變順序不重建 options，原列 stable ID、raw 字串與 shot open 保持。三個固定 JS assets，沒有新依賴、operation、schema、Agent 路徑／寫檔／模型／網路／timer 或 auth。產品98／唯一 policy38–98共61／unknown99；16基本／23啟庫、Agent1／draft3、23 operation schemas、legal4、PolyForm Noncommercial 1.0.0／private、ZOE. G／djguan-jpg及 FreeTWAI not_submitted 保持。見[契約](EDITOR-ORDER.md)。下方保留歷史迭代。
+指定位置移動的成功通知只在實際列順序、選列與原始請求一致時發出。修正注入回呼能修改共用提案、使錯誤排列或選列被判為成功的問題；普通瀏覽器 adapter 並未修改此提案。本輪隔離回呼資料，歌曲、分鏡及歌詞的原按鈕／Enter、原文與時間、逐鏡展開、同列焦點及後續編修撤回保持。見[契約](docs/EDITOR-POSITION-CALLBACK.md)、[驗證](docs/QA-v0.104.0.md)。
 
 
-v0.97 複製創作列：editor-copy 純原值／隔離提案／完整來源與 actual-after 核對 → injected controller → delegated editor-copy-dom → app 原 readValue／writeEntries／markDirty／editor-focus。draft3 契約提供三個列上限與欄位；40段／1000鏡／10000句，不猜時間、不合併同名、不改創作字串。鏡頭 open 僅頁面 metadata；新 row ID 使用同單調序列，完整替換舊列時保留原 IDs／open 狀態。busy／hidden／capacity 在 DOM gate 先拒絕，不讀原值、不分配 ID；full source 於 ID 前及寫入前重查，寫入後依隔離 expected 核對才通知焦點。render／busy／換台刷新按鈕只讀 count／visibility，不讀全部原文。複製只更新自己的 panel、dirty/checkpoint 与既有診斷，不增持久 copy 紀錄或 Agent operation。固定兩 JS assets；沒有新依賴、模型、網路、timer、路徑／寫檔能力或 auth。產品97／唯一 policy38–97共60／unknown98；16基本／23啟庫、Agent1／draft3／領域 schemas／legal4／private／FreeTWAI not_submitted保持。見[契約](EDITOR-COPY.md)。下方保留歷史迭代。
+## v0.103.0：Enter 明確移動列
 
+修正歌曲「移至第幾列」按 Enter 誤建立歌曲包、沒有移動的問題。歌曲段落、分鏡與歌詞的位置欄現在可輸入最終列號後按 Enter，一次移動同一列。空白、無效或相同位置的普通 Enter 保留原文字、游標與撤回紀錄；原按鈕仍可用。成功後焦點回到同一選列，原文、時間、逐鏡展開及音檔保持；後續編修撤回與舊成果停下載保持。見[契約](docs/EDITOR-POSITION-ENTER.md)、[驗證](docs/QA-v0.103.0.md)。
 
-v0.96 原值非負時間：Python common 與原生 planning-values 的 pure 原符號判定／非負讀取 → complete storyboard 與 partial timing → application 原四 adapters；browser 原 timing／overview／source guard／add-shot adapter。只在既有 finite decimal 驗證後核對負號及非零 mantissa，exponent 不作非零來源。signed number 與歌詞位移保持；frame ties-to-even／seconds tolerance不变。duration controller沿同Timing診斷拒絕提案，原 revision／late／scope／undo保持。無新asset／operation／schema／依賴／timer／模型／權限。產品96／唯一policy38–96共59／unknown97，16基本／23啟庫、Agent1／draft3／legal4／private／FreeTWAI not_submitted保持。見[契約](NONNEGATIVE-PLANNING.md)。下方保留歷史迭代。
 
-search-input 純三欄鍵盤 metadata → 三個原 DOM adapter → 既有搜尋 controller。isComposing 或 legacy keyCode229 不 preventDefault、不讀來源／清單或呼叫搜尋；只有有效普通 Enter 才執行原動作。純層無 DOM／事件副作用、timer、網路或持久狀態；固定一 JS asset。控制器、app、application／CLI／Agent／MCP、領域 schemas 與 23 operation input/output schemas不變。產品95／唯一policy38–95共58／unknown96拒絕，16基本／23啟庫、Agent1／draft3／legal4／private／FreeTWAI not_submitted保持。見[契約](SEARCH-INPUT.md)。
+## v0.102.0：一次移至指定列
 
-v0.94 命中前後文：共享 search-excerpt 純來源／UTF-8 span與query核對，重用既有 delivery-context 的每側64byte邊界模型；2000codepoints原欄位、query≤1024bytes，顯示每側48／命中96codepoints，控制符visible token不能被截斷。shared literal search-excerpt-dom建立span／mark，再由兩個原DOM adapter接到現有current controller；先准备全批view再改DOM。無innerHTML／source寫入／網路／timer，新server僅兩固定JS assets。原prefix caption helper相容保持，live結果使用新view；完整files/data/meta與兩種search1／23舊operation schemas不變。產品94／policy38–94共57／unknown95拒絕，16基本／23啟庫、Agent1／draft3／legal4／private／FreeTWAI not_submitted保持。見[契約](SEARCH-EXCERPT.md)。
+歌曲段落、鏡頭及歌詞句新增「移至第幾列」與「移至指定位置」。輸入最終列號，一次移至首列、中間或尾列；其他列保持相對順序，原文、原時間、逐鏡展開狀態與音檔保持。撤回只還原最近順序，保留後續欄位編修；移動後舊成果停下載，重新建立才恢復。見[契約](docs/EDITOR-POSITION.md)、[驗證](docs/QA-v0.102.0.md)。
 
-v0.93 歌詞／分鏡搜尋取消：共用 search-request 純請求 ownership／注入 AbortController factory → 各搜尋 controller generation/source/ID/results current → app 明確傳遞 signal → native fetch；固定 DOM 顯示取消並在仍持有焦點時返回查詢欄。失效先於 abort，旧 finally 不能釋放新 job；顯式取消保留上一批、分頁歷史、原文與成果，換查詢／來源／換台沿原 reset 清除舊定位。idle cancel 不 capture／render／建立 job；pagehide listener 屬於 document。讀取本機 SHA 可晚 settle、後端可完成；搜尋 ownership 立即失效，可明確重試，與共用 operation-gate 等待 local settle 的契約分開。只新增一固定 JS asset，無新 operation／schema／取消 endpoint／路徑／模型／依賴。16基本／23啟庫、Agent1／draft3／23既有 input/output schemas／legal4／private／FreeTWAI not_submitted保持。產品93／交付38–93共56／unknown94拒絕。見[契約](SEARCH-CANCEL.md)。
 
-v0.92 分鏡原文搜尋：pure storyboard_search／原生storyboard-search→application四adapter→注入source/ID/query/generation/results current controller→literal DOM／原欄focus。新獨立search1，只讀八敘事欄位；16基本／23啟庫需重新discovery，Agent1／draft3／既有22 schemas保持。產品92／交付38–92／unknown93，見[契約](STORYBOARD-SEARCH.md)。
+## v0.101.0：從摘要移動鏡頭
 
-v0.91 處理列：operation-presentation純有界known scope/action metadata與gate view一致性→operation-control-dom begin隔離原動作、refresh只取gate與literal DOM→app.run開始前擷取發起button.textContent。main上方單一sticky取消入口；idle清title/note/context，無timer/scroll/source讀寫。既有operation-gate/native signal/source-current/finally與focus保持，server只serve一固定JS；15/22、Agent1/draft3/domain/wire/legal4/private/not_submitted保持。產品91/supported38–91共54/unknown92拒絕。見[契約](OPERATION-PRESENTATION.md)。
+在鏡頭摘要按 Alt＋↑／↓ 可直接移動鏡頭，收合或展開皆可。焦點跟著同一鏡頭，逐鏡展開狀態、原文與原時間保持；Enter／Space 繼續展開或收合。移動後原成果停下載，撤回保持後續編修，重新建立才恢復下载。見[契約](docs/EDITOR-SUMMARY-KEYS.md)、[驗證](docs/QA-v0.101.0.md)。
 
-v0.90 取消等待：pure operation-gate 注入 AbortController factory，以 job identity/current/cancelled/finish 管理同一共用任務；失效先於 abort，非中斷階段未settle前不釋放。app.run/current.signal → 明確各request callback → api native signal；不讀全域隱含signal。固定 operation-control DOM adapter 只顯示可取消/cancelling並在仍持有cancel焦點時返回可用發起按鈕，後續focus保留。原source/revision/dirty保持，取消不新增synthetic revision或覆蓋編修/歷史/媒體/上一份成果。server只serve兩固定JS；後端可完成，不新增取消endpoint、Agent權限或依賴；15/22、Agent1/draft3保持。獨立控制生命週期保持。見[契約](OPERATION-CANCEL.md)。 產品90/supported38–90共53，unknown91拒絕，legal4/private/not_submitted保持。
 
-v0.89 範例載入保護：app refreshExampleControls DOM adapter只讀state.busy/examples與兩固定button；exampleAllowed在load/clear/dirty/render之前拒絕busy或null。初始HTML disabled、startup首/finally與共用run的timingControls沿既有成功/失敗/過期釋放；不新增獨立timer。晚到startup只有idle且retention.atInitial才套用，busy不重寫進度；後續編修保持。明確idle範例仍只替換對應panel及清除其history，不冒充保存/撤回。15/22、Agent1/draft3及domain保持，無新asset/route/operation/schema/依賴/權限。產品89/来源38–89共52/unknown90，legal4/private/not_submitted保持，見[契約](EXAMPLE-AVAILABILITY.md)。
+## v0.100.0：在欄位中移動創作列
 
-v0.88 共用清單busy：collections固定add/remove metadata→app refreshCollectionControls DOM adapter；四新增入口在capture/ID/write/dirty/focus前以既有state.busy拒絕。六add/指定remove/三台還原select與button沿run timingControls/finally切換；不讀來源或重建選單，較早選擇與歷史保持。原欄位編修沿revision/current及dirty保護；纯domain/History/controller保持，無新asset/HTTP/CLI/Agent/MCP operation/schema/權限。15/22、Agent1/draft3保持；產品88/來源38–88共51/unknown89，legal4/private/not_submitted保持。見[契約](COLLECTION-BUSY.md)。
+段落、鏡頭與歌詞的文字或時間欄可按 Alt＋↑／↓ 移動目前列；保留同一欄位、游標選取、原文與時間。沿原順序撤回保留後續文字編修，移動後須重新建立成果。原生選單、一般方向鍵、組字／重複鍵、其他修飾鍵、等待中與首尾邊界保持原行為。見[契約](docs/EDITOR-KEYS.md)、[驗證](docs/QA-v0.100.0.md)。
 
-v0.87 刪除鏡頭保留原時間：共用純History.remove/restore保留stable ID與原值→app原生entriesFor/writeEntries→限定markDirty與editor-focus。刪除只取remaining/record，不呼叫compactShotTimes或生成effects；保留既有純工具與歷史格式相容。原缺口/負值/極短秒數交由現有純時間診斷與完整domain驗證；CLI/Agent/MCP/HTTP皆共用application，無新operation/schema/asset/權限。15/22、Agent1/draft3保持；產品87/明確来源38–87共50/unknown88，legal4/private/not_submitted保持。見[契約](STORYBOARD-DELETION.md)。
 
-v0.86 完整原文核對：text-verification.js純原文UTF-8與選定bytes模型（8MiB、本機view1）→text-verification-controller.js注入capture/describe/readFile與latest/current/大小保護→text-verification-dom.js原生File/arrayBuffer/literal status→app state.textVerification與canonical state.files。refresh只取字串/metadata，不編碼全文；明確選檔才有界讀取。三固定靜態JS，沒有POST或CLI/Agent/MCP操作，沒有新增領域schema/路徑/網路/寫檔權限。15/22、Agent1/draft3與既有schema保持；核對不解草稿另存提示，不進保存/備份。產品86/明確來源38–86共49/unknown87，legal4/private/not_submitted保持。見[契約](TEXT-VERIFICATION.md)。
+## v0.99.0：選列跟隨編修位置
 
-v0.85 原句搜尋：獨立search1，texts原順序/Unicode/重複句、10000列/每句2000codepoints/compact UTF8 array2MiB/query1024bytes/1–50結果。prefix+array SHA只pin文字，start_row>1必須前次SHA。Python/JS純層→application四adapter；browser injected generation/current完整texts+IDs/query/results revision→complete reply data/JSON/MD/meta核對→literal DOM→原生穩定ID文字欄focus。query/results/pager不進draft3，不因播放tick掃整表；時間編修與音檔保持。新增CLI lyrics-search、Agent/MCP lyrics_search、POST /api/lyrics-search及三固定JS資產；基本15/啟庫22需重新discovery。Agent1/draft3與既有schemas、legal4/private/not_submitted保持，產品85/來源38–85共48/unknown86。見[契約](LYRICS-SEARCH.md)。
+段落、鏡頭與歌詞的選列會跟隨正在編修的列。新增、複製、刪除後鄰列、還原及待辦定位也會同步選列；等待中保留焦點，完成後同步目前列。鏡頭段落名稱修改後立即更新選單；單純換焦點保留創作內容與順序撤回。見[契約](docs/EDITOR-SELECTION.md)、[驗證](docs/QA-v0.99.0.md)。
 
-一份 `musiclab/assets/delivery-versions.json` 明確記錄 format、schema_version、current、supported。v0.59 支援所列 0.38.0 到 0.59.0 共22項；不是執行期生成範圍。稀疏清單允許，但缺項不可接受。版本為三段ASCII無前置零整數，每段最多2147483647；清單1–128項、嚴格數值遞增且不重複，current必须是最後一項。固定文件最多8192 bytes，嚴格UTF8／重複欄位／非有限JSON與未知schema拒絕。沒有外部網址、任意路徑、環境變數選擇或失敗回退。
 
-| 層 | 責任 |
-| --- | --- |
-| 固定JSON | 明確產品版本與交付支援列表 |
-| Python純policy | 固定有界讀取、驗證、immutable tuple、隔離descriptor |
-| JS純policy | Node固定有界讀取／browser固定契約、凍結隔離列表與exact membership |
-| domain | package prepare、inspection；manifest／import／comparison report拒絕非支援版本 |
-| application／adapters | Python init／Agent／MCP product metadata、browser草稿與版本標示；schema／protocol分開 |
-| HTTP | 固定唯讀script／module，Host／Origin／CSP／no-store沿原門檻 |
-| release | exact source ZIP內registry／product metadata／discovery交叉核對 |
+## v0.98.0：調整鏡頭與歌詞順序
 
-未知Producer不改寫或遷移；現有來源原檔保持。這只管理版本與封裝接受，沒有創作、媒體或商用授權判定。產品59不變更Agent1／draft3／package1／inspection1／comparison1，13基本／18啟庫工具保持。
+鏡頭與歌詞可選列向前／向後移動、查看選定列，並撤回最近一次移動。順序撤回保留後續文字與時間編修；新增、複製、刪除、還原或載入新內容會取消舊順序撤回。原時間、總長與音檔保持；鏡頭移動後須重新檢查時間覆蓋，已校時歌詞匯出仍依開始時間排序。見[契約](docs/EDITOR-ORDER.md)、[驗證](docs/QA-v0.98.0.md)。
 
-下一次發版：明確加入一項supported並更新current、projects.json發布版本；先建立restore tag及iteration branch，再更新獨立歷史oracle與跨語言cases、實際舊ZIPbytes、UI及封裝核對。不能把歷史oracle改成只讀同一policy，否則掉版也會被測試掩蓋。字面registry與驗證器不得引用其他本機或私人專案。
 
+## v0.97.0：複製創作列
 
-## v0.60
+段落、鏡頭與歌詞可複製到原列後方。段落保留五個編曲欄位；鏡頭保留創作、母題與畫面方向，歌詞保留原句，兩者的開始／結束留白後人工校時。原列、總長與媒體保持；新列可用既有刪除／還原操作管理，處理中或達上限時停用複製。見[契約](docs/EDITOR-COPY.md)、[驗證](docs/QA-v0.97.0.md)。
 
-產品current更新0.60.0，明確加入supported 0.60.0共23項；未知仍拒絕。producer與版本驗證器未修改；四工作台歷史bytes及獨立oracle保持。
+## v0.96.0：先核對原負時間
 
+分鏡開始／結束的極小負數字串（例如 -1e-999）會先依原值拒絕，不再因浮點下溢變成零而誤判有效。時間待辦可定位原欄位，建立分鏡包、鏡尾總長提案與新增下一鏡共用此界線；原時間與創作保持。真正負零、Unicode十進位、底線與既有數字空白規則保持。見[契約](docs/NONNEGATIVE-PLANNING.md)、[驗證](docs/QA-v0.96.0.md)。
 
-## v0.61
+## v0.95.0：選字後再搜尋
 
-產品current更新0.61.0，明確加入supported 0.61.0共24項；未知仍拒絕。producer及固定policy validator保持。實際v60來源封裝四scope×23producer共92歷史ZIP逐bytes相同。
+歌詞、分鏡與 ZIP 原文搜尋在中文輸入法選字時，Enter 不再提前尋找或重設原結果；一般 Enter 與「尋找」按鈕仍可使用。命中摘錄、原欄位定位、取消／重試、前後分頁及私人編修保留。見[契約](docs/SEARCH-INPUT.md)、[驗證](docs/QA-v0.95.0.md)。
 
+## v0.94.0：看見命中附近原文
 
-## v0.62
+歌詞與分鏡搜尋清單改顯示命中附近前後文，使用literal mark標示命中詞及原句／鏡號與欄位。長段落後半的關鍵字也能辨認，重複開場的結果可由鄰句分辨；長查詢明示「命中已摘錄」。點選與Enter仍回原欄位，完整原文／時間／報告保持；取消與分頁沿原控制。見[契約](docs/SEARCH-EXCERPT.md)、[驗證](docs/QA-v0.94.0.md)。
 
-產品current更新0.62.0，明確supported加入0.62.0共25項；未知仍拒絕。audio-result live回覆須與固定頁面current相同，並非用ZIP历史producer清單代替protocol契約。policy validator與文字producer保持；实际v61封裝4scope×24歷史producer共96ZIP逐bytes相同。
+## v0.93.0：取消搜尋等待
 
+歌詞與分鏡搜尋等待中可按「取消搜尋」，保留上一批結果與分頁歷史，再次搜尋可立即重試。換查詢、編修原文或換工作台會中止自己的舊瀏覽器請求；晚成功／錯誤不能提交。滑鼠與鍵盤取消後仍持有取消焦點才返回查詢欄，後續焦點保留。共用純 request lifecycle／注入 controller／明確 signal／固定 DOM 分層；原文、時間、媒體、草稿與上一份成果保持，後端可能完成請求。見[契約](docs/SEARCH-CANCEL.md)、[驗證](docs/QA-v0.93.0.md)。
 
-## v0.63
+## v0.92.0：分鏡原文搜尋
 
-current與metadata0.63.0，supported明確38–63共26項；validator不變。actual v62 ZIP派生4scope×25歷史producer共100份ZIP在本版逐bytes／manifest保持。歷史ZIP原文不按新MD格式重写；當前live report使用頁面current及本安裝canonical文字契約。
+在母題分鏡輸入畫面或敘事關鍵字，按尋找或 Enter；每批20鏡，可返回上一批。選擇結果會展開並定位原欄位。原文與時間保留；敘事修改後重新搜尋。Agent／MCP也可使用新唯讀工具storyboard_search。見[契約](docs/STORYBOARD-SEARCH.md)、[驗證](docs/QA-v0.92.0.md)。
 
-## v0.64
+## 看得到目前處理（v0.91）
 
-固定唯一current=0.64.0，supported明確38–64共27項，未知65拒絕；四scope×26舊producer的104份ZIP位元組与manifest保持。
+建立報告或工作包時，上方處理列會標示目前的工作台與動作，並隨長表單捲動保持可見，可直接按「取消等待」。完成或取消後隱藏；編修與上一份成果保留。取消仍只結束瀏覽器等待，後端可能完成請求。見[契約](docs/OPERATION-PRESENTATION.md)、[驗證](docs/QA-v0.91.0.md)。
 
-## v0.65
+## 取消等待（v0.90）
 
-固定唯一current=0.65.0；supported明確38–65共28項，未知66拒絕。四scope×27舊producer的108份ZIP位元組與manifest保持。
+處理中可按「取消等待」，保留目前編修、刪除紀錄與上一份成果。操作結束後可重新建立；人工修改過的舊成果仍須重新驗證。取消本次瀏覽器請求不表示後端停止，本機讀檔／雜湊若無法中斷，會顯示正在取消直到該階段完成。見[契約](docs/OPERATION-CANCEL.md)、[本輪驗證](docs/QA-v0.90.0.md)。
 
-## v0.66
+## 範例載入保護（v0.89）
 
-唯一current=0.66.0，明確supported38–66共29項，未知67拒絕。四scope×28舊producer的112份ZIP位元組與manifest保持。
+「載入原創範例」在範例讀取完成、報告或工作包處理結束後才開放。處理期間不會因載入範例而替換來源或清除刪除紀錄；完成後可明確載入所選工作台。讀取期間自寫內容保持。見[契約](docs/EXAMPLE-AVAILABILITY.md)、[本輪驗證](docs/QA-v0.89.0.md)。
 
-## v0.67
+## 處理中清單控制（v0.88）
 
-唯一current=0.67.0，明確supported38–67共30項，未知68拒絕。四scope×29舊producer的116份ZIP位元組與manifest保持。
+建立報告或工作包時，清單新增、刪除與還原暫時停用，完成後可繼續；已選的較早還原紀錄保持。原欄位仍能編修，改動後舊回覆不會取代目前內容，請依目前來源重建。見[控制契約](docs/COLLECTION-BUSY.md)、[本輪驗證](docs/QA-v0.88.0.md)。
 
-## v0.68
+## 刪除鏡頭保留原時間（v0.87）
 
-唯一current=0.68.0，明確supported38–68共31項，未知69拒絕。四scope×30舊producer的120份ZIP位元組與manifest保持。
+刪除只移除選定鏡頭，其他鏡頭的時間、畫面描述與總長保留。按「檢查時間待辦」查看刪除留下的缺口，再依作品需求修改；完整分鏡包仍要求時間覆蓋通過。「還原」放回原鏡頭，保留刪除後的其他編修。見[刪除契約](docs/STORYBOARD-DELETION.md)、[本輪驗證](docs/QA-v0.87.0.md)。
 
-## v0.69
+## 核對下載原文（v0.86）
 
-唯一current=0.69.0，明確supported38–69共32項，未知70拒絕。四scope×31舊producer的124份ZIP位元組與manifest保持。保存回讀不新增交付schema／Agent operation。
+建立成果後，在「核對下載的原文」選回已保存的檔案；工作台比較目前選定成果的完整內容與換行，顯示一致或第一個差異。改名不影響核對，切檔、編修或換台後重新核對。內容核對保留作品與草稿狀態；作品仍需審查。見[核對契約](docs/TEXT-VERIFICATION.md)、[本輪驗證](docs/QA-v0.86.0.md)。
 
-## v0.70
+## 搜尋逐句原文（v0.85）
 
-唯一current=0.70.0，明確supported38–70共33項，未知71拒絕。四scope×32舊producer的128份ZIP位元組與manifest保持。保存預覽來源核對不新增交付schema或Agent operation。
+在「搜尋原句」輸入文字，按尋找或 Enter；每批列20句，可返回上一批，點結果直接編修原文字欄。尚未填時間也能搜尋。原句、列順序或查詢修改後重新查找，播放位置與時間保持。CLI、Agent、MCP 共用唯讀 `lyrics_search`，產生有來源雜湊的 JSON／Markdown 報告。見[搜尋契約](docs/LYRICS-SEARCH.md)、[本輪驗證](docs/QA-v0.85.0.md)。
 
-## v0.71
+## 新增與刪除後接續編修（v0.84）
 
-唯一current=0.71.0，明確supported38–71共34項，未知72拒絕。四scope×33舊producer的132份ZIP位元組與manifest保持。備份來源／回覆核對未新增交付或backup schema、Agent operation。
+新增歌詞句會直接聚焦新文字欄，刪除到空清單會回到「新增」按鈕，還原後接回原列。歌曲段落、避免事項、交付項目、母題、鏡頭與歌詞共用定位分層；鏡頭定位展開內容，原欄位、草稿與音檔保持。見[分層契約](docs/EDITOR-FOCUS.md)、[本輪驗證](docs/QA-v0.84.0.md)。
 
-## v0.72
+## 長歌詞播放更新（v0.83）
 
-唯一current=0.72.0，明確supported38–72共35項，未知73拒絕。四scope×34舊producer的136份ZIP及manifest bytes相同；新備份下載及取消不新增交付／backup schema或Agent operation。
+播放位置更新使用已檢查的逐句資料，歌詞編修、標記／撤回及載入後重新建立；高亮只切換前後兩列，減少長表格的重複讀取。按「前往目前這句」仍重新核對目前完整來源。整批校時後也會立即更新句首定位按鈕，超出選定音檔時停用。原歌詞、播放狀態與保存流程保持。見[分層契約](docs/CURRENT-CUE-PLAYBACK.md)、[本輪驗證](docs/QA-v0.83.0.md)。
 
-## v0.73
+## 回到原句首（v0.82）
 
-唯一current=0.73.0，明確supported38–73共36項，未知74拒絕。四scope×35舊producer的140份ZIP/manifest bytes相同。新備份export1獨立，交付schemas/backup1/Agent1保持；14基本/20明確啟庫工具。
+按逐句表格的「定位句首」或Enter，回到該句開始時間，再用波形方向鍵細調；結束留白也可定位。播放／暫停保持，原歌詞與標記撤回保留。沒有可用音檔、開始留白或超出音檔時停用。共用时间層也修正極小負時間字串被轉成負零的缺口，仍在捨入前拒絕負時間。見[分層契約](docs/CUE-POSITION.md)、[本輪驗證](docs/QA-v0.82.0.md)。
 
-## v0.74
+## 前往目前歌詞（v0.81）
 
-唯一 current=0.74.0，明確 supported38–74 共37項；未知75拒絕。四scope×36舊producer共144份 ZIP/manifest bytes相同。library-result僅新增browser核對層；交付schemas、Agent1／draft3／library1／backup1與14／20工具保持。
+校時時按「前往目前這句」或Enter，移到原列歌詞文字欄位；自然播放與顯示更新保留編修焦點。無音檔或換檔期間清除舊句與高亮；前面留白句刪除／還原後仍依原列ID定位。部分可播放句子不代表整份歌詞已通過匯出。見[分層契約](docs/CURRENT-CUE.md)、[本輪驗證](docs/QA-v0.81.0.md)。
 
-## v0.75
+## 發佈版本資料核對（v0.80）
 
-current=0.75.0、明確supported38–75共38項，unknown76拒絕。四scope×37共148份v74實際producer ZIP/manifest bytes保持。search1獨立，既有交付schemas／Agent1／draft3／library1／backup1保持；14／21工具。
+產品版本及projects.json的預期發佈標籤同步；指定來源封裝前會核對該Git提交的版本資料與固定policy，不接受過期標籤或借用目前工作檔。預期tag不代表GitHub發佈成功，實際狀態另有remote receipts。見[發佈分層](docs/RELEASE-METADATA.md)、[本輪驗證](docs/QA-v0.80.0.md)。
 
-## v0.76
+## 逐句標記撤回（v0.79）
 
-current=0.76.0、明確supported38–76共39項，unknown77拒絕。四scope×38共152份v75實際producer ZIP/manifest bytes保持。搜尋名稱呈現只在browser暫態與共用純model；search1、既有交付schemas/Agent1/draft3/library1/backup1及14/21工具保持。
+按「記下開始」「記下結束」或「整句移動」後，可用「撤回最近逐句標記」還原該句原時間。後續文字、其他句子與選定音檔保留；目標時間改動或刪句會停用舊撤回，載入新歌詞後清除。紀錄只留在目前頁面，仍需保存草稿及實聽驗證。見[操作與分層](docs/CUE-STAMP-EDIT.md)、[本輪驗證](docs/QA-v0.79.0.md)。
 
-## v0.77
+## 波形定位與細調（v0.78）
 
-current0.77.0、明確supported38–77共40項，unknown78拒絕；156個歷史文字ZIP/manifest與v76實際producer bytes一致。新共用UTC validator不增加wire/schema/操作或工具，Agent1/draft3/library1/backup1/search1與14/21保持。
+在波形下方直接查看播放位置與音檔總長。方向鍵移動0.5秒，Shift＋方向鍵細調0.05秒，Home／End到起點／終點；清除、換檔或播放錯誤時不再顯示上一份音檔的時間。定位不改寫歌詞時間或作品宣告，仍以逐句標記人工校時。見[操作與分層](docs/WAVE-POSITION.md)、[本輪驗證](docs/QA-v0.78.0.md)。
 
+歷史版本 **v0.77.0**：保存紀錄與備份共用純 UTC 日期驗證，拒絕不存在曆日與時間溢位；移除瀏覽器自動轉日期，接受合法 Z／小時及單字元分隔的原時間，排序與保存 bytes 保持。545 Python／901 JavaScript／82語法／四份Skill、156歷史ZIP及v76原封裝541／892還原通過；14／21工具與原schema保持。 見[UTC時間契約](docs/UTC-TIMESTAMP.md)、[QA](docs/QA-v0.77.0.md)、[交接](docs/HANDOFF-v0.77.0.md)。
 
-## v0.78
+歷史版本 v0.74.0：完整保存回覆與分頁來源核對，未確認保存以同一 ID 及原稿重試。見[QA](docs/QA-v0.74.0.md)。
 
-current0.78.0、明確supported38–78共41項，unknown79拒絕；160歷史文字ZIP/manifest與v77實際producer bytes一致。波形暫態定位不增加wire/schema/操作或工具，14/21及Agent1/draft3保持。
+## ZIP原文與差異（v0.40）
 
+v0.40.0：ZIP載入前可審閱新增／變更／移除／相同與兩份原文，原始換行計數與有界摘錄，載入與下載保留全文。CLI／Agent／MCP明確baseline取得同一差異摘要；12／17工具保持，comparison1／inspection1／package1／Agent1／draft3分開。349Python／546JS及原生四工作台對照、五包真下載逐bytes相同通過。見[契約與分層](docs/DELIVERY-COMPARISON.md)、[QA](docs/QA-v0.40.0.md)、[交接](docs/HANDOFF-v0.40.0.md)。
 
-## v0.79
+## 接續文字ZIP（v0.39）
 
-current0.79.0、明確supported38–79共42項，unknown80拒絕；164歷史文字ZIP/manifest與v78實際producer bytes一致。逐句標記暫態撤回不增加wire/schema/操作或工具，14/21及Agent1/draft3保持。
+v0.39.0：四個工作台可載入本工具的文字交付ZIP，先核對原清單與文字，再明確套用成果；表單及已選音檔保留，可限定撤回。CLI／Agent／MCP共用檢查，基本12／啟庫17工具；inspection1／交付schema1／Agent1／draft3分別管理。340Python／531JS及四工作台實際下載核對通過。見[使用與分層](docs/DELIVERY-INSPECTION.md)、[QA](docs/QA-v0.39.0.md)、[交接](docs/HANDOFF-v0.39.0.md)。
 
+## 全部文字交付（v0.38）
 
-## v0.80
+四個工作台可一次下載本輪全部文字成果ZIP，附逐檔大小與SHA-256清單；修改後需重新建立，晚回應取消並保留編修。CLI／Agent／MCP共用封裝，Agent預設摘要、小型ZIP明確選擇內嵌。見[封裝契約](docs/DELIVERY-PACKAGE.md)。
 
-current0.80.0、supported38–80共43項、unknown81拒絕；168歷史ZIP/manifest與v79實際producer bytes一致。每輪projects.version=current、release_version=v+current為預期tag；封裝前從selected commit兩個固定blob核對，不從working metadata推測；實際發佈另記remote evidence。manifest1新增checks.release_metadata，Agent1/draft3/14/21保持。見[發佈契約](RELEASE-METADATA.md)。
+## 接受條件草稿（v0.37）
 
+v0.37.0：交付檢查可自訂接受取樣率／位元深度／聲道數，原值另存獨立條件草稿，未完成也能下載、預覽載入後繼續。CLI／Agent／MCP共用同一契約，工作台核對回覆實際條件及來源後才接收；晚回應保留後續編修。原音檔保持，專案draft3與條件草稿1分開，10／15工具保持。見[使用與分層](docs/AUDIO-ACCEPTANCE.md)、[QA](docs/QA-v0.37.0.md)、[交接](docs/HANDOFF-v0.37.0.md)。
 
-## v0.81
+## 成果查看與返回（v0.36）
 
-current0.81.0、supported38–81共44項、unknown82拒絕；172歷史ZIP/manifest與v80實際producer bytes一致。projects.version=current、release_version=v+current為預期tag，封裝與實際publication仍各核對。新增目前句導航不改領域wire／Agent1/draft3／14/21，見[分層契約](CURRENT-CUE.md)。
+v0.36.0：四工作台建立按鈕旁新增狀態與「查看本輪成果」，明確前往成果標題並返回原工作台；清空成果返回建立按鈕。處理中暫停導覽，修改後明示上一份且保持下載停用，晚回應保留新內容與焦點。純presentation／controller／DOM分層，導覽不進draft3／Agent。見[使用與分層](docs/DELIVERY-NAVIGATION.md)、[QA](docs/QA-v0.36.0.md)、[交接](docs/HANDOFF-v0.36.0.md)。
 
+## 迭代維護（v0.35）
 
-## v0.82
+v0.35.0：新增獨立的迭代封裝／程序稽核工具，預設唯讀，保留最新三版及未超過七天封裝；exact preview token、Git 重建 SHA 與 recovery journal 支援清除／還原。受管理工作以 PID、啟動時間與 image 核對，避免誤認 PID 重用；四工作台、基本10／啟庫15工具及 Agent1／draft3 保持。見[操作與分層](docs/ITERATION-MAINTENANCE.md)、[驗證](docs/QA-v0.35.0.md)、[交接與還原](docs/HANDOFF-v0.35.0.md)。
 
-current0.82.0、supported38–82共45項、unknown83拒絕；176歷史ZIP／manifest與v81實際producer bytes一致。projects.version=current及release_version=v+current為預期tag，封裝與actual publication各核對。句首定位及共用負時間邊界修正不改領域wire／Agent1/draft3／14/21，見[分層契約](CUE-POSITION.md)。
+## 分鏡時間待辦（v0.34）
 
+v0.34.0：分鏡新增原時間待辦，留白、無效 FPS／秒數、秒數與影格缺口／重疊、短於一幀及尾端不符都可定位原鏡號。獨立時間 JSON／Markdown 可交給 CLI、Agent、MCP；原創作與媒體保留，零待辦仍須完整建立及音畫驗證。純診斷／版本報告／共用 application／adapter／DOM 分層，總長接續重用同一時間檢查。基本10／明確啟庫15工具，Agent1／draft3及舊report保持，新時間comparison1獨立。見[使用與分層](docs/STORYBOARD-TIMING-REVIEW.md)、[驗證](docs/QA-v0.34.0.md)、[交接與還原](docs/HANDOFF-v0.34.0.md)。
 
-## v0.83
+## 歌曲跨工具報告（v0.31）
 
-current0.83.0、supported38–83共46項、unknown84拒絕；180歷史ZIP／manifest與v82實際producer bytes一致。projects.version=current及release_version=v+current仍為預期tag，各自核對selected-source封裝與actual publication。播放快取及高亮不進draft3／Agent1／領域wire；14/21保持。見[契約](CURRENT-CUE-PLAYBACK.md)。
+v0.31.0：歌曲待辦可由共用唯讀服務產生 JSON／Markdown 報告，CLI 可讀原始欄位或 schema3 草稿，Agent／MCP 提供同一診斷。原創作與音檔保持；零待辦仍須完整建立與實唱／實聽。新增一個唯讀工具，預設8／啟庫13；協定與舊 schema 保持。見[跨工具使用與分層](docs/MUSIC-REVIEW.md)、[本輪驗證](docs/QA-v0.31.0.md)。
 
+## 歌曲欄位待辦（v0.30）
 
-## v0.84
+v0.30.0：歌曲欄位待辦可定位原缺漏；建立歌曲包及從目前歌曲起稿分鏡先檢查。原字串、其他工作台及音檔保持；編修或排序後停用舊定位。BPM 120.0004 保持精度可建立，待辦為零仍須完整建立與實唱／實聽。見[使用與分層](docs/MUSIC-READINESS.md)、[本輪驗證](docs/QA-v0.30.0.md)。
 
-current0.84.0、supported38–84共47項、unknown85拒絕；184歷史ZIP／manifest与v83 actual producer bytes相同。expectedtag v0.84.0保持selected-source核對，實際發布另看remote receipt。編修定位只在本頁，Agent1/draft3/14/21及領域schema保持。見[契約](EDITOR-FOCUS.md)。
+## 歌曲段落順序（v0.29）
+
+v0.29.0：歌曲段落可整列前移／後移，限定撤回保留後續欄位編修；同名與留白內容保持。重建歌曲及分鏡時間起稿使用新順序，既有分鏡保持。見[分層與使用](docs/MUSIC-ARRANGEMENT.md)及[本輪驗證](docs/QA-v0.29.0.md)。
+
+## 分鏡創作待辦（v0.28）
+
+v0.28.0：新增分鏡創作待辦，可定位留白欄位及母題引用；建立前也會定位第一項。原創作、時長及音檔保留，待辦補齊後仍須完整時間／影格／連戲驗證。見[分層與使用](docs/STORYBOARD-READINESS.md)及[本輪驗證](docs/QA-v0.28.0.md)。
+
+## 分鏡總長與鏡尾（v0.27）
+
+v0.27.0：新增／刪除鏡頭保留作品宣告總長。核對完整時間及影格覆蓋後，可明確採用原始鏡尾，並只撤回總長；後續創作、其他工作台與音檔保留。見[總長接續](docs/STORYBOARD-DURATION.md)與[本輪驗證](docs/QA-v0.27.0.md)。
+
+## 完整需求與主要JSON核對（v0.26）
+
+歌曲與分鏡：歌曲與分鏡核對本次需求、摘要及主要 JSON 後才更新成果；Agent／CLI 需求檔回讀共用同層，預覽後明確載入。修正歌名前後空白造成建立失敗；原表單／原檔保持。未知、同名不同來源或 JSON 矛盾拒絕，上一份成果與後續編修保留。詳見 [需求核對](docs/PLANNING-SOURCE.md)、[本輪驗證](docs/QA-v0.26.0.md)。
+
+## 可定位的校時進度與待辦（v0.25）
+
+「檢查校時進度」接受時間留白的表格，列出缺少開始／結束、無效或顛倒時間、毫秒精度的重複開始、跨句重疊及超過作品宣告的位置。按待辦可直接到原句欄位；建立歌詞包遇到問題也定位第一項，保留文字、原文與音檔。編修後上一份檢查標成過期，停用舊定位與下載，重查後才恢復。
+
+可下載獨立校時報告 JSON／Markdown；最多10000句，全部計數，報告明細前200項、頁面前20項，截斷有明示。資料檢查不能證明實聽同步，未填時間不推估或裁切。新唯讀 `lyrics_review` operation／MCP tool、CLI `lyrics-review` 與 HTTP 使用共用 application。預設七工具，啟用草稿庫十二工具；Agent protocol／MCP 與 draft3 不變。見[契約](docs/LYRICS-REVIEW.md)及[本輪 QA](docs/QA-v0.25.0.md)。
+
+## 音檔與作品宣告分開（v0.24）
+
+選擇音檔只讀取並顯示它的時長；已有作品宣告保持。例如歌詞包宣告十秒，選六秒音檔仍輸出十秒。核對後可明確「採用選定音檔時長」，再驗證並建立歌詞包；「撤回時長接續」只還原時長，保留後續歌詞、原文與音檔。後來改過時長或換音檔時，拒絕不安全的撤回。
+
+原本空白、讀取期間未再編修的宣告才自動接續第一次讀得的時長，也可撤回。非有限時長、損壞音檔與舊來源事件不能改寫宣告。採用較短音檔不裁切歌詞，超出宣告的句尾仍須人工處理。
+
+工作台與獨立 preview.html 共用相同暫態 controller；獨立預覽須「套用編修」才更新資料，未填且未接續時沿用來源包。沒有新持久草稿欄位、ASR 或模型呼叫。見[時長契約](docs/LYRICS-MEDIA-DURATION.md)與[本輪 QA](docs/QA-v0.24.0.md)。
+
+## 分鏡影格連續性（v0.23）
+
+建立分鏡時，現在同時檢查秒數與影格覆蓋。原本 1 ms 內的秒數容差可能跨過半影格邊界，導致重疊、空缺或尾鏡少／多一幀；這些資料會拒絕並提示需要核對的位置。沒有自動修正秒數、FPS 或創作內容。
+
+摘要顯示總影格及每鏡 `[開始, 結束)` 範圍，結束影格不包含在本鏡。JSON 新增獨立 `frame_timeline` schema 1，CSV 與提示稿使用相同範圍。沿用最近整數影格、正好半幀取偶數的規則；舊有效報告可讀，未知宣告版本拒絕。影格連續不表示實際音畫同步或成片已驗收。見[影格契約](docs/FRAME-TIMELINE.md)與[本輪 QA](docs/QA-v0.23.0.md)。
+
+## 音檔整合響度（v0.22）
+
+交付檢查新增獨立 LUFS 整合響度，與每聲道 RMS、sample peak 分開。支援整數 PCM 單聲道／立體聲、8000–192000 Hz；至少需要一個完整 400 ms 區塊。太短、低於絕對門檻或聲道位置未知時顯示不可測，JSON 保留 null，不用零或 −70 冒充讀值，也不改變原本格式接受結果。
+
+CLI、HTTP、JSON-lines、MCP 共用同一次分析副本。Python 標準函式庫即可執行，沒有調整音量、平台通用目標或 true peak。20 組原創合成音檔與既有 FFmpeg 校對最大差異 0.009464 LU；尚非完整規範認證或正式作品實聽。見[量測契約](docs/LOUDNESS.md)與[本輪 QA](docs/QA-v0.22.0.md)。
+
+## 草稿另存狀態與離頁提醒（v0.21）
+
+編修後，頁面上方會標示「目前編修尚未另存」。重新整理或離開時，瀏覽器可顯示原生提醒；取消後保留內容。提醒核對四個工作台的實際草稿值，不因切換頁面、收合、保存名稱、音檔選擇或產生成果就認定草稿已另存。
+
+「保存目前草稿」成功只確認按下時的版本；慢速保存期間新增的編修仍需另存。下載草稿後，先核對本機 JSON 檔案，再按「已確認草稿檔案」；送出下載不代表保存完成，確認較早的下載也不會把後來的編修標成已另存。已驗證的現代草稿或保存版本須明確載入後，才以其內容作比較；舊版轉換後須另存新版。回到相同內容可解除提示，混合兩份已保存版本的局部內容仍需另存。
+
+這是暫態提醒，不是自動保存或磁碟監控。每種來源只記住本頁最近一次確認，原始範例可重建；音檔、成果與刪除歷史另存。瀏覽器可能在沒有原生使用者互動、關閉程序、當機或特定裝置時省略離頁提示，不能取代主動保存。沒有新登入、模型、依賴或草稿 schema。範例回應晚到時保留已編修內容；明確按範例按鈕才取代。
+
+成果與草稿下載使用同源隱藏框架，保留目前工作台與離頁提醒；下載錯誤不把編修標成已保存。見[本輪 QA](docs/QA-v0.21.0.md)。
+
+## JSON 接續保留原始資料（v0.20）
+
+歌曲／分鏡需求、分鏡時間起稿及專案草稿的選檔，現在共用嚴格 UTF-8／JSON 讀取。無效編碼、重複欄位（含跳脫後同名）、非有限數字及過深結構會拒絕；例如同時寫版本999與3，不能默默取3。原檔與目前編修保持，有效單一UTF-8 BOM仍可預覽；預覽、取消、明確套用與限定撤回沿用。
+
+同一規則提供CLI外部JSON檔、HTTP／JSON-lines／MCP request、草稿保存／備份讀取及完整歌詞包。CLI JSON最多2 MiB；工作台需求／起稿／草稿仍最多1 MiB，歌詞JSON仍2 MiB。JSON最大64層、UTF-8 bytes計算包含BOM；CLI／選檔支援單一開頭BOM，其他入口沿用既有BOM規則。字串內的BOM與重複歌詞保留，不把損壞編碼換成「�」。
+
+這是傳輸與解碼檢查，領域schema、音樂／時間／連戲檢查仍各自負責；沒有自動遷移、模型或網路呼叫。見[本輪QA](docs/QA-v0.20.0.md)。
+
+由 **ZOE. G** 發起的四個原創專案。GitHub 帳號為 **djguan-jpg**；品牌署名與帳號可以不同。
+
+目前版本 v0.84 提供四個工作台、原創 Skill、本機草稿庫及可預覽的 ZIP 備份／恢復、整批歌詞校時及來源一致的音檔檢查報告，以及保留原文的未校時歌詞起稿。Python 3.10 以上即可使用，沒有第三方依賴。只讀本次新建工作區，不參考使用者的其他本機或 GitHub 專案。公開第三方 README 僅用於需求比較，來源及自行設計的差異記在 [構思紀錄](CONCEPT.md)。
+
+授權為 **PolyForm Noncommercial 1.0.0**，商業使用沒有由本版授權。可查看、修改及分發的範圍以 [LICENSE](LICENSE) 為準，保留 [NOTICE](NOTICE)。這是非商用原始碼授權；不標成 AGPL。使用者匯入的素材授權各自保留，詳見 [授權說明](LICENSING.md)。
+
+| 專案 | 已提供的第一版 | 入口 |
+|---|---|---|
+| ZOE Music Production | 記憶點設計、BPM／小節時間計算、段落能量、AI 任務包 | [技能](projects/zoe-music-production/SKILL.md) |
+| ZOE MV Storyboard | 多母題與逐鏡選擇、人物／方向變化理由、分鏡時間與影格連續覆蓋、CSV 與鏡頭提示 | [技能](projects/zoe-mv-storyboard/SKILL.md) |
+| ZOE Lyrics Sync | 可定位的校時待辦、LRC／SRT／JSON、選檔預覽、波形與人工校時、編修與匯出 | [工具](projects/zoe-lyrics-sync/README.md) |
+| ZOE Audio Delivery | PCM WAV 標頭檢查、接受條件、LUFS／峰值／RMS／DC、頭尾安靜段及同一分析副本 SHA-256 | [工具](projects/zoe-audio-delivery/README.md) |
+
+## 歌詞包回讀保留名稱、總長與待確認來源（v0.19）
+
+帶時間的完整 JSON 現在使用獨立 `zoe-lyrics-package` schema 1。由 CLI、Agent、MCP、工作台或離線預覽產生的歌詞包，回讀會保留作品名稱、宣告總長、逐句結束、推得時間及待確認說明；例如歌詞兩秒結束、音樂十秒結束，總長仍是十秒。未知版本、重複 JSON 欄位或矛盾來源拒絕。
+
+波形校時先預覽再套用：已有時長與來源宣告不同時拒絕，保留音檔與編修；時長留空才接續已宣告值。估計值不自動填入時長欄，下載後仍保留推估提示。未修改表格時保留原時間來源；編修後加上待實聽核對說明。v0.24 起，離線預覽接上音檔保留已有宣告；明確採用時長並套用才更新總長，也不抹去曾補齊的句尾。
+
+v0.18 以前的完整 JSON 須明確按「轉換舊歌詞包並套用」，或 CLI 加 `--legacy-json`；原檔不改寫。單純 cue 陣列與 `{"cues":[...]}` 仍按目前作品名稱／時長建立新包，與完整包分開。見[本輪驗證](docs/QA-v0.19.0.md)。
+
+```powershell
+python music_lab.py lyrics --input outputs/lyrics/lyrics.json --out outputs/checked-lyrics
+python music_lab.py lyrics --input old-lyrics.json --legacy-json --out outputs/converted-lyrics
+```
+
+完整包檢查不可同時用 title／duration／shift／set／text 覆蓋。要編修完整包，先在工作台或離線預覽明確修改並另存；CLI 的一般字幕編修入口保持。歌詞包 schema 與產品、草稿、Agent protocol 分別管理；沒有 ASR 或模型呼叫。
+
+## 選檔先預覽，再套用（v0.18，完整 JSON 以 v0.19 規則為準）
+
+在波形校時選 UTF-8 TXT／LRC／SRT／JSON，先看完整原文、句數與前六句的時間。確認後按「套用這份歌詞」，取消不改目前表格。直接編修原文後按「讀取歌詞」也採同一流程；預覽沒有下載成果，套用後才建立成果。慢讀取、晚回應及預覽後編修皆檢查目標，拒絕覆蓋新內容；重新選檔後可再預覽。
+
+TXT轉成保留原文的未校時起稿JSON，開始／結束留白，之後依音檔人工標記。LRC補齊的結束時間會說明，SRT多行以「 / 」合為單行，原始字幕原文仍保留。普通cue JSON以目前校時欄位驗證；完整版本化歌詞包接續名稱與來源，舊完整包須明確轉換。起稿JSON則保留起稿名稱。套用保留音檔與其他工作台，已填時長保留，未編修的最近一次套用可「撤回載入」。預覽／撤回不進持久草稿；沒有ASR或模型呼叫。見[本輪驗證](docs/QA-v0.18.0.md)。
+
+## 從已有歌詞開始校時（v0.17）
+
+歌曲設計填好「已有歌詞草稿」，按「預覽已有歌詞的校時起稿」。每個非空白行成為一句，重複句、前後空白、原始行號及原文中的空白行保留；段落標籤也成為句子，須人工調整。先看原文與替換影響，再按「套用到校時工作台」，開始／結束留白。套用只替換校時名稱、原文與格式、全部句子；目前時長、音檔與其他工作台保留。預覽後改來源或目標拒絕套用，取消保留內容；未編修的最近一次套用可撤回。
+
+選音檔、定位播放位置，再分別按每句「記下開始」與「記下結束」。空白時間不能匯出；已校時句子可播放顯示，其他句子保持未完成。「整句移動」保留原有句長，超過音檔結尾拒絕。全部標記後「驗證並建立歌詞包」，下載 LRC／SRT／JSON。這是人工校時，沒有辨識、猜時間或模型呼叫。
+
+```powershell
+python music_lab.py lyrics-seed --text '原始歌詞.txt' --title '作品名稱' --out outputs/my-lyrics-seed
+python music_lab.py lyrics-seed --seed outputs/my-lyrics-seed/lyrics-seed.json --out outputs/checked-lyrics-seed
+```
+
+CLI 純文字支援 UTF-8／BOM，最多64 KiB、1000個非空白行，輸出 lyrics-seed.json／lyrics-seed.md，重複輸出拒絕；--text／--seed互斥，--seed不可--title覆蓋。Agent／CLI 的起稿可在校時工作台「匯入歌詞」選 JSON，選檔即檢查／預覽，再明確套用。JSON格式與status、獨立schema1、來源行號／文字、未知欄位嚴格核對；不當成已完成字幕。持久草稿仍schema3，保存起稿原文JSON與留白句子，音檔另行選擇。預設六工具、明確啟庫十一工具。見 [本輪驗證](docs/QA-v0.17.0.md)。
+
+## 草稿與需求先預覽（v0.16）
+
+「載入專案草稿」選擇本機 JSON 後，先顯示檔名、歌名／片名、段落／鏡頭／句數與完整內容，確認後按「載入這份草稿」。取消不改工作台或音檔；載入會替換四個工作台並清除音檔選擇，可撤回最近一次載入。舊版 v1／v2 顯示轉換說明，仍需明確按「轉換並載入舊版草稿」。最多1 MiB、支援UTF-8 BOM；原檔保留。
+
+需求檔、草稿檔及保存版本共用替換預覽保護。讀取期間或預覽後修改目標，就拒絕晚回應與套用，保留目前編修；請重新選檔／預覽。歌曲或分鏡需求只核對該工作台，其他工作台／音檔可繼續編修；完整草稿與保存版本核對四個工作台及音檔選擇，重新選同名音檔也算更換來源。切換頁面與時間戳不使預覽失效。
+
+這些檢查不替你合併兩份構思；可先下載草稿保留編修再重新預覽。預覽暫態與音檔參照不進草稿、Git或Agent資料。實際Agent保存→瀏覽器預覽／載入／撤回、延遲及錯誤驗收見[QA v0.16](docs/QA-v0.16.0.md)。
+
+## 讀回 Agent／CLI 起稿（v0.15）
+
+歌曲工作台的「接續 Agent／CLI 起稿」讀取 `storyboard-seed.json`，上限1 MiB。先檢查 schema1、欄位、BPM／小節／時長及影格，再預覽；取消不更動表單，明確套用才替換分鏡。創作欄位留空，既有視覺基調、人物設定與母題清單需要你確認適用。這是資料一致性檢查，沒有核實實際歌曲、作者或成片。
+
+檔案起稿與目前歌曲分開：改歌曲或起稿生成設定不會重算匯入檔；套用保留目前歌曲、其他工作台與音檔。預覽後改過目標分鏡會拒絕覆蓋，重新選檔再預覽。匯入結果下載跟隨檔案內容，切換工作台及改歌曲仍可下載；自己依歌曲生成的結果維持原本修改後需重驗的規則。原輸入檔保留，下載的 JSON 數字與換行格式可能重新排版，資料值不改。
+
+```powershell
+python music_lab.py storyboard-seed --seed outputs/my-seed/storyboard-seed.json --out outputs/checked-seed
+```
+
+`--brief`／`--seed`互斥，`--seed`不能再帶`--fps`／`--bars-per-shot`覆蓋來源設定。JSON-lines、HTTP、MCP沿用`storyboard_seed`，payload可選`{ "seed": 起稿資料 }`，不能混用music／fps／bars_per_shot。未知版本、未知欄位、已有畫面等延伸欄位、來源時間或影格不一致拒絕，沒有丟欄／修正／自動遷移；需要補寫畫面時改交完整mv-brief。五／十工具及各舊版本契約保持。
+
+## 從歌曲起稿分鏡（v0.14）
+
+歌曲設計下方按「預覽分鏡時間起稿」。預設 24 FPS、每鏡最多四小節，各歌曲段落獨立分鏡；先列時間與既有敘事任務，按「套用到分鏡工作台」才替換片名、時長、FPS 與全部鏡頭。原有視覺基調、人物設定、母題清單、其他工作台與音檔保留；新鏡頭收合並定位第一鏡。
+
+畫面、運鏡、轉場、母題選擇及人物／母題狀態留空，方向預設中性；這是時間起稿，不是完成分鏡或影片。依固定 BPM、小節與拍數估算，沒有弱起／自由速度；完成音樂後須重新校準。編寫空白欄位、確認保留的設定適合此作品，再建立分鏡包。起稿 JSON 為獨立 schema 1，不能當 `mv-brief.json` 載入需求。
+
+預覽後改過歌曲、分鏡或起稿設定，套用會拒絕；取消不更動表單。「撤回載入」只保留最近一次載入／起稿，套用後目標工作台已有編修時拒絕整份撤回；完整草稿載入的撤回則檢查四工作台。可先下載草稿保留新編修，再重新載入原檔。切換頁面或在其他工作台編修不阻擋限定工作台的撤回；整份草稿載入／撤回仍需重選音檔。
+
+```powershell
+python music_lab.py storyboard-seed --brief examples/first-light-music.json --fps 24 --bars-per-shot 4 --out outputs/my-seed
+```
+
+輸出 `storyboard-seed.json`／`storyboard-seed.md`；原檔保留，重複輸出預設拒絕。CLI、HTTP、JSON-lines、MCP 共用相同起稿層。原四專案保留，預設五個工具，明確啟用草稿庫時十個工具；這輪沒有模型呼叫。詳細驗證見 [QA v0.14](docs/QA-v0.14.0.md)。
+
+## 開始使用
+
+在此目錄開啟 PowerShell：
+
+```powershell
+python music_lab_server.py
+```
+
+用瀏覽器開啟 `http://127.0.0.1:8875/`。四個工作台皆可編修輸入、建立工作包、預覽成果並下載。按 Ctrl+C 停止。僅綁定本機；不自動開機啟動、不對外部署。
+
+初始「樓梯間的回聲」是本次原創合成案例，可以直接改寫。歌曲與分鏡成果為設計資料；選擇 AI 後再創作／生成媒體。歌詞音檔由瀏覽器本機播放；交付檢查只把選定 WAV 傳入同一台電腦的分析器（最多 64 MiB），臨時分析檔於完成後清除，原音檔保留。
+
+成果不會自動存到磁碟或跨重載保留。請下載需要的檔案；切換工作台只保留本輪已建立的成果。上方「下載專案草稿」保存三個創作工作台的表單／列資料及交付條件，可回讀與撤回最近一次載入；草稿不含音檔或成果。整份草稿回讀後需重新選擇音檔並建立成果。草稿 v3 保存多母題、穩定對應、創作語言及歌曲需求清單，上限 1 MiB。載入舊版 v1／v2 時先顯示轉換摘要，按「轉換並載入舊版草稿」後才取代表單；新增需求沿用舊工作台預設，可撤回，原檔保留。未知 schema 不替換目前內容。
+
+歌曲可編修創作語言、避免事項及交付項目，每份清單最多 100 項；單項可有多行。未完成項目可保存草稿，但建立歌曲設計包時會要求補齊，至少一項交付不可空白。
+
+Agent／CLI 回傳的 `brief.json`（含 BPM／arrangement／記憶點）與 `mv-brief.json`（含 motifs）可由「接續一份歌曲或分鏡需求」回讀。選定類型後上傳本機 JSON，先看經共用應用層檢查的需求與待審查提醒，再按「載入這份需求」；只替換該工作台，其他工作台、後續編修與已選音檔保留。「撤回載入」也只還原這次替換的工作台。需求檔上限 1 MiB；未知欄位、超出工作台可表達的清單或畫幅會拒絕，避免靜默丟資料。分鏡工作台支援 16:9／9:16／1:1／4:3；其他有效需求仍可保留原檔由 CLI 使用。結果 JSON、整包 Agent envelope 與舊版單純需求不會被猜測成可編修的設計需求。
+
+分鏡可新增最多 30 個母題，每鏡自行選擇；改名保留對應，刪除仍使用中的母題會列出鏡頭並拒絕。時間尚未填完的鏡頭可以刪除；只有其他鏡頭時間有效時才重新接續時間。
+
+鏡頭預設展開第一鏡，其餘用時間／段落／母題摘要呈現。可全部收合或展開，並從「鏡頭定位」選擇後前往編修；時間空白或未選母題時會展開對應欄位。收合不刪除欄位，草稿與分鏡成果仍包含所有鏡頭；收合狀態只用於本頁顯示，回讀草稿恢復預設展開方式。
+
+歌詞檔接受 UTF-8 TXT／LRC／SRT／JSON，選檔立即檢查並預覽，確認後才替換。TXT最多64 KiB／1000個非空白行；其他檔最多2 MiB。檔案以嚴格UTF-8解碼，支援單一BOM，無效編碼拒絕。連續選檔以最後一次為準，錯誤檔保留既有內容與成果。手動修改原文／格式或載入草稿取消尚未完成的匯入；其他目標編修在晚回應與套用前檢查，保留新內容。
+
+修改輸入後會停用舊成果下載，重新建立／驗證後才恢復。歌詞播放預覽即時使用目前表格內容；數值計算及資料檢查不能代替實唱、實聽與實際畫面審查。
+
+歌詞 JSON 的 `duration_estimated` 仍表示總時長未明確提供，與尾句結束是否推得分開。新增 `timing` 記錄 duration_source／inferred_end_count／tail_end_inferred；SRT 明確結束時間會保留，提示總時長尚未由音檔確認，避免把它誤說成尾句估計。
+
+「波形校時 → 整批校時」可輸入正數延後、負數提前，先預覽全部句子的檢查結果（表格列出前 20 句），再明確套用。已有結束時間的句長保留；負時間、重疊、重複開始或超出指定總長會整份拒絕，沒有截斷。套用／撤回只改時間，音檔、歌詞文字與刪除歷史保留。若之後改過任何句子的時間或增刪句子，撤回會拒絕整份覆蓋；恢復為套用後的時間後可再撤回。撤回只保留最近一次套用，載入新的逐句內容／草稿會清除；調整量、預覽及撤回紀錄不進草稿。
+
+CLI 的 `--shift`／`--set`／`--text` 與 HTTP、JSON-lines、MCP 共用同一操作。句號以原始開始時間排序後由 1 起算；先整批 shift，再按順序 set 開始（有明確結束時保留句長）、text，最後檢查／排序。原輸入檔與已提供總長保留；缺失結束時間在編修後推得。LRC offset 只讀取一次。
+
+時間以 0.001 秒保存，半毫秒往遠離零的方向捨入，例如 1.2345 → 1.235、-0.0005 → -0.001。開始／結束的原始負值先拒絕，不因捨入成零而接受；非有限值、布林值、空值、非十進位字串或不能保留毫秒精度的數值拒絕。獨立 `preview.html` 使用同一瀏覽器時間模組，套用後重新計算 timing 來源與提示，下載內容和目前表格一致。
+
+命令列同樣可用：
+
+```powershell
+python music_lab.py music --brief examples/first-light-music.json --out outputs/v02/music
+python music_lab.py storyboard --brief examples/first-light-mv.json --out outputs/v02/mv
+python music_lab.py lyrics --input examples/lyrics.lrc --duration 60 --out outputs/v02/lyrics
+python music_lab.py audio --input '自己的歌曲.wav' --profile distribution --out outputs/v02/audio
+```
+
+歌曲需求含 `arrangement` 時啟用設計台，分鏡需求含 `motifs` 時啟用母題檢查。v0.1 需求格式仍支援。
+
+歌詞命令會產生 `preview.html`，用瀏覽器開啟即可選擇本機音檔播放、修改逐句時間和文字、匯出 LRC／SRT。音檔僅在瀏覽器本機讀取。
+
+音樂及 MV 任務包是交給你選擇的 AI 的指令與已知需求；工具本身沒有呼叫模型、生成音樂或渲染影片。使用 Skill 時，AI 可根據需求創作文字與分鏡，實際媒體另外製作。
+
+輸出路徑已有同名檔案時會拒絕覆蓋。確認要替換該輪輸出才加 `--overwrite`。技能沒有安裝到全域；可讓你的 AI 讀取本目錄的 `SKILL.md`。
+
+## 本機保存版本
+
+原有啟動指令不會開啟磁碟保存。停止服務後，明確指定本次草稿庫：
+
+```powershell
+python music_lab_server.py --draft-library outputs/drafts
+```
+
+打開「本機保存版本」，為這次構思命名，再按「保存目前草稿」。每次保存建立新 ID 與新版本，不覆寫以前的版本。未完成的小節／校時空白、多行文字與母題對應可以保存；保存成功不代表創作或時間已驗證。
+
+選擇版本並按「預覽選定版本」會核對 SHA-256 與草稿 v3，保留目前表單和音檔。按「載入這個保存版本」才替換四個工作台草稿、清除刪除紀錄及音檔選擇；「撤回載入」恢復套用前的草稿欄位，音檔仍需重選。也可單獨下載預覽版本的 JSON。
+
+若保存回應未完成，先按「重試同一筆保存」；同一 ID、名稱與內容只保存一次。重試使用原本按下保存時的內容，之後的編修保留並提示尚未保存。「放棄待重試紀錄」只停止重試，不刪除可能已保存的版本；可重新整理清單確認。關閉頁面後沒有待重試記憶，應先檢查保存清單。
+
+草稿庫每頁預設 20 版，可讀取更早版本；最多 1000 版、每版草稿 1 MiB。達到上限會拒絕新版本並保留現有資料，可另選新庫。草稿庫不含音檔、成果、刪除歷史或臨時預覽；沒有自動保存／刪除接口。它不進 Git 或原始碼 ZIP，也不隨封裝維護清除。重要草稿請使用下方 ZIP 備份並另存可靠的位置；Git 還原點只保護程式。
+
+CLI 可使用同一草稿庫，`save` 輸入為下載的草稿 v3，`read` 回傳的 `data.draft` 才是可匯入的草稿：
+
+```powershell
+python music_lab.py draft save --library outputs/drafts --input '專案草稿.json' --label '副歌第二案'
+python music_lab.py draft list --library outputs/drafts --limit 20
+python music_lab.py draft read --library outputs/drafts --id 'draft-00000000000000000000000000000001'
+```
+
+最後一行的 ID 僅示範格式，請改用保存回應的 `data.entry.id`。需要安全重試時，在第一次 `save` 就用 `--id` 指定新 ID，重試保持整份草稿、名稱和 ID 相同；省略 ID 的每次命令都會建立新版本。
+
+## 備份與恢復
+
+啟用草稿庫後，在「本機保存版本 → 備份與恢復」按「下載整個草稿庫」。它只備份已保存版本，保留原 ID、名稱、時間、metadata 與草稿的原始位元組。先保存目前編修；音檔與成果需另存。下載後核對檔案並保留在可靠的位置，同一磁碟上的副本不足以防止磁碟故障。
+
+選擇 ZIP 會檢查整份備份、顯示新版本／重用版本／衝突與 SHA-256；此時不寫入草稿庫。確認後按「將備份加入這個草稿庫」，只新增版本，不載入或更改目前表單、音檔及刪除還原紀錄。相同 ID 的兩個檔案完全一致才重用；不同內容、毀損、未知 schema 或容量不足會拒絕，不覆寫現有版本。
+
+下載 ZIP 上限 32 MiB、展開資料總量 64 MiB；超限會明確失敗，沒有略過部分版本。可由 CLI 用 `--ids` 明確分批，每批另用新檔名。任何來源版本毀損時，完整備份會失敗；保留原資料，可明確選擇其他健康版本另備份。
+
+```powershell
+python music_lab.py draft backup --library outputs/drafts --out '構思備份.zip'
+python music_lab.py draft inspect --library outputs/restored-drafts --input '構思備份.zip'
+python music_lab.py draft restore --library outputs/restored-drafts --input '構思備份.zip' --sha256 '<inspect 回傳的 data.backup_sha256>'
+```
+
+恢復前再次核對選定檔案的摘要及整個庫的衝突／容量。已知錯誤在寫入前拒絕；實際磁碟故障可能留下已完成的部分新版本。回應未確認或中途中斷時，保留同一份備份重試：完全一致的版本重用，其餘繼續新增。這不是多目錄交易或斷電保證。CLI 備份輸出永不覆寫，需支援 hard link 的檔案系統；本版已在 Windows 本機驗證。
+
+## Agent 使用
+
+目前預設十六種操作（歌曲、分鏡、歌詞、音檔、分鏡起稿、未校時歌詞起稿、校時待辦、歌曲欄位待辦、分鏡創作待辦、分鏡時間待辦、文字封裝、交付ZIP核對、歌詞匯出檢查、音檔接受條件待辦、歌詞原文搜尋、分鏡原文搜尋）可用JSON-lines v1或MCP stdio adapter。明確選定 `--draft-library` 後共二十三種工具；備份檢查／恢復另需啟動時 `--draft-backup`，交付核對另以 `--delivery-zip` 選定ZIP，JSON不能更換路徑。大ZIP使用CLI或工作台。MCP明確支援 `2025-11-25`；拒絕未知初始化版本。`python scripts/agent_launch.py` 產生本版Python／入口完整路徑設定，`--format codex` 產生TOML片段；只顯示設定，不安裝或啟動Agent。移動解壓目錄後重新產生。已驗證不同目錄啟動MCP與實際工具輸出；特定host連線／實際Agent呼叫尚未驗證。見[Agent文件](docs/AGENT.md)。
+
+## 專案紀錄
+
+- [創辦與協作紀錄](FOUNDER-RECORD.md)：ZOE. G 發起方向；Codex 協助規格、文字、程式與驗證。
+- [專案清單](projects.json)：四個獨立 ID、版本與功能範圍。
+- [本輪進度](PROGRESS.md)：實跑驗證與後續工作。
+- [本版說明](docs/RELEASE-v0.36.0.md)：功能、版本契約、驗證與限制。
+- [四個專案的投稿資料](SUBMISSION-PACKET.md)：來源連結、用途、使用方式與作者關係。
+- [分層與分支架構](docs/ARCHITECTURE.md)、[Agent 與 MCP 接口](docs/AGENT.md)、[迭代說明](CHANGELOG.md)、[本輪交接](HANDOFF.md)。
+
+GitHub 儲存庫為 [djguan-jpg/zoe-g-music-lab](https://github.com/djguan-jpg/zoe-g-music-lab)，目前 private。四個專案共用此儲存庫，各有獨立 ID 與 Skill 入口；創辦／發起署名皆為 ZOE. G，AI 協作如實揭露。這是專案的發起紀錄，平台尚未核實作者或創始人身分。
+
+自由工坊「手動登錄作品」要求公開 GitHub 網址。目前未公開、未送出投稿，也未授權平台 App 存取此 Repo。自 v0.3.0 採用 PolyForm Noncommercial 1.0.0 非商用授權。程式未部署為公開網站。
+
+## 驗證
+
+```powershell
+python -m unittest discover -s tests -v
+node --check web/app.js
+node --test tests/test_*.js
+git diff --check
+```
+
+開發／封裝驗證需要 Node.js；一般使用工作台與 CLI 只需要 Python。從指定 Git 版本建立可驗證的原始碼 ZIP：
+
+```powershell
+python scripts/package_release.py --ref v0.36.0
+```
+
+封裝保存 commit、SHA-256、每檔摘要及檢查結果；解壓後重跑 Python／JavaScript 測試、Agent 能力查詢與 MCP 握手。輸出留在忽略的 outputs/releases，重複封裝同一提交會拒絕覆寫。
+
+## v0.7 的輸入與錯誤提示
+
+歌曲清單的空白項目會顯示欄位旁提示並取得焦點，修正或重新載入後清除舊標示；交付清單全空時定位到新增按鈕。標示不是驗證成果，修改後仍需重建。
+
+MCP tools/list 與本機 capabilities 提供完整輸入欄位及 files/data/meta 成果 schema。現代與舊版歌曲／分鏡都有明確條件。schema 描述資料形狀，領域層檢查時間、數字文字、連戲與 PCM；沒有新增 schema engine 或模型呼叫。歌詞請求的 cues、content／suffix 與 package 三種模式互斥，package 不可混入覆蓋欄位，以免原文被忽略。音檔接受條件需為正整數清單，拒絕布林值與小數；1.0 這類整數值會正規化為 1。詳見 [Agent 契約](docs/AGENT.md)。
+
+
+## v0.8 的刪除還原
+
+歌曲段落、避免事項、交付項目、未使用的母題、鏡頭及歌詞句可由工作台上方選擇刪除紀錄再還原。每個創作工作台保留最近 20 筆，摘要協助辨識；可選擇較早的一筆。其他欄位、後續新增／編修及已選音檔保留。還原後需重建成果才可下載。
+
+v0.27起，新增／刪除鏡頭保留宣告總長。分鏡刪除的自動時間收合只有目前值仍與刪除後相同才撤回；手動改過的時間／總長保留，鏡尾不同須明確接續，並重新檢查。可能需要人工修正空白或重疊，既有分鏡檢查仍必須通過。刪除紀錄中的母題 ID 暫時保留，新母題不會重用它。
+
+紀錄只在本頁，不存進草稿或跨重載保留；請另存草稿。載入新範例／需求／草稿會清除被取代工作台的紀錄，明確套用新歌詞也清除歌詞紀錄，驗證逐句表格則保留。容量已滿時不還原也不丟掉紀錄；先保存草稿、刪除另一列，再選原紀錄還原。歌曲／鏡頭／歌詞列上限分別為 40／1000／10000，需求清單 100、母題 30。
+
+歌詞匯入或驗證期間仍可修改本工作台；有修改時會捨棄舊回應，保留表格與原文，提示重新建立成果。
+
+## v0.12 的音檔檢查
+
+「交付檢查」將實際取樣率／位元深度／聲道數與本次接受值並排，逐項列出符合或不符。摘要包含來源檔名與大小、頭尾安靜段、相關性及每聲道 peak／RMS／DC offset／滿刻度樣本。「來源與量測範圍」可展開查看 SHA-256 與限制；數位靜音顯示 −∞，不可測的相關性不當成通過。
+
+換檔或改接受條件後，已顯示的摘要標為「上一份報告」，成果停用下載；必須重新分析。處理中改選檔案或條件會捨棄晚到的成功或錯誤，不用舊報告代表新選擇。原始 WAV 保留；報告的雜湊與量測使用同一次複製的位元組，但不保證複製期間外部編修的原子快照，也不是著作權證明。只支援 RIFF/WAVE 整數 PCM format tag 1；不一致的 fmt 標頭拒絕，不把它猜成有效格式。多聲道沒有解讀聲道位置，需另核對收件要求。
+
+## v0.13 的設計摘要與成果保留
+
+歌曲與分鏡的成果都明確標為「設計資料已建立」，仍需實唱／實聽或畫面審查。歌曲摘要列出估計總長、總小節、BPM／每小節拍數及記憶點；展開「段落能量與任務」可看各段時間、小節、設計能量、敘事任務及聲音配置。分鏡摘要列出總長、鏡數、FPS／畫幅，逐鏡收合區包含母題狀態、用途及對應提醒，另有母題使用位置。
+
+修改輸入後保留「上一份設計」供對照並停用下載；重新建立才代表目前內容。請求等待時可繼續編修，晚到的成功或錯誤不會替換成果或蓋掉後續選擇；目前輸入的錯誤仍會顯示。所有工作台的共用操作也使用相同的過期錯誤保護。
+
+桌面固定成果面板在短視窗內限制高度，可局部捲動到下載按鈕；可用 Tab 聚焦面板後以 PageDown 捲動。窄螢幕維持一般頁面流。實際 DOM／滑鼠下載／鍵盤及 390px 幾何已驗證，尚未做完整視覺或其他瀏覽器驗收。
