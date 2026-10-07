@@ -27,6 +27,8 @@ flowchart LR
 | DOM | literal文字、事件、原生File／Blob、有限render與manual焦點 | 各`*-dom.js`及`web/app.js` |
 | 明確filesystem | 來源副本、排他輸出、不可覆寫版本、備份及release audit | `musiclab/` I/O adapters、`scripts/` |
 
+完整Python測試的纯分配模型依实測更新成本提示，再由原兩worker／120秒launcher核對獨立discovery與完整ID／EOF；成本不授予跳過案例、增加期限或程序權限。驗證與診斷分開，見[來源與測試分配契約](RELEASE-GIT-CAPTURE.md)。
+
 產品版本與交付支援表唯一執行期來源是 [delivery-versions.json](../musiclab/assets/delivery-versions.json)。Agent1、draft3、MCP2025-11-25與各獨立domain schemas不是產品minor版本；未知版本拒絕，不默認遷移。完整input/output schemas由discovery取得。目前22基本／明確選庫29操作，沒有跨schema隱藏寫入。
 
 ## 來源、非同步與保存
@@ -48,6 +50,8 @@ flowchart LR
 測試排程由純test_schedule驗證完整唯一ID及近似positive integer成本，將昂貴方法分配後恢復每組discovery原順序。launcher與parent獨立discovery、完整coverage與原handle EOF核對保持；仍兩worker／120秒，class fixtures各程序自行建立／收束，成本提示不保證速度或全域RAM。細節見[Git串流與測試交接](RELEASE-GIT-CAPTURE.md)。
 
 ## 目前指南與歷史
+
+歌詞時間的純 `lyric-time` 將原值空白與數值空白分開；工作台、注入時長／校時 controller、匯入與固定獨立預覽共用，Python／application／四 adapter 接受規則保持。BOM 不當成空白或有效數字，無效來源與後續編修保留。見[時間空白契約](LYRICS-WHITESPACE.md)。
 
 [README](../README.md)、[START-HERE](START-HERE.md)、[AGENT](AGENT.md)與四Skill維持當前可用工作流程。每輪更新置於CHANGELOG、HANDOFF與各QA／契約文件，入口不再疊加歷史QA摘要；七份v154原入口原文在相同目錄的HISTORY檔中保留，來源／byte SHA與回復方式見[文件分層契約](DOC-ENTRYPOINTS.md)。
 

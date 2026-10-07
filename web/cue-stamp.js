@@ -9,7 +9,7 @@
     const output={...cue};
     if(action==='start'){
       if(at>=total)throw Error('開始需早於音檔結束');
-      if(String(cue.end).trim()&&time.normalize(cue.end,'歌詞結束',true)<=at)throw Error('開始不早於目前結束；請先調整結束，未替換時間');
+      if(time.trim(String(cue.end))&&time.normalize(cue.end,'歌詞結束',true)<=at)throw Error('開始不早於目前結束；請先調整結束，未替換時間');
       output.start=String(at);
     }else if(action==='end'){
       const start=time.normalize(cue.start,'請先記下開始',true);if(at<=start)throw Error('結束需晚於開始，未替換時間');output.end=String(at);

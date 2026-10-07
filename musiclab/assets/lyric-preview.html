@@ -48,8 +48,8 @@ function render(cues){rows.replaceChildren();cues.forEach((c,i)=>{const tr=docum
  const actions=document.createElement('td'), wrap=document.createElement('div');wrap.className='row-actions';
  const stamp=document.createElement('button');stamp.textContent='使用播放位置';stamp.onclick=()=>{const fields=tr.querySelectorAll('input');const old=Number(fields[0].value), end=Number(fields[1].value);fields[0].value=player.currentTime.toFixed(3);fields[1].value=(player.currentTime+Math.max(.001,end-old)).toFixed(3);media.refresh();exportController.invalidate();message('已填入播放位置，請套用編修。');};
  const remove=document.createElement('button');remove.textContent='刪除';remove.onclick=()=>{tr.remove();media.refresh();exportController.invalidate();message('已移除此句，請套用編修。');};wrap.append(stamp,remove);actions.append(wrap);tr.append(actions);rows.append(tr);});}
-function collect(){return [...rows.children].map(tr=>{const x=tr.querySelectorAll('input');if(!x[0].value.trim()||!x[1].value.trim())throw Error('開始與結束時間不可空白');return {start:x[0].value,end:x[1].value,text:x[2].value};});}
-function apply(){const duration=durationField.value.trim()?LyricTime.normalize(durationField.value,'作品時長',true):undefined;
+function collect(){return [...rows.children].map(tr=>{const x=tr.querySelectorAll('input');if(!LyricTime.trim(x[0].value)||!LyricTime.trim(x[1].value))throw Error('開始與結束時間不可空白');return {start:x[0].value,end:x[1].value,text:x[2].value};});}
+function apply(){const duration=LyricTime.trim(durationField.value)?LyricTime.normalize(durationField.value,'作品時長',true):undefined;
  data=MusicLyricsPackage.revise(data,collect(),duration);render(data.cues);media.refresh();tick();
  document.getElementById('timing-note').textContent=MusicLyricsPackage.notice(data);exportController.accept(data);message(`已套用 ${data.cues.length} 句，可下載匯出。`);}
 function tick(){let current=-1;data.cues.forEach((c,i)=>{if(player.currentTime>=c.start&&player.currentTime<c.end)current=i;});document.getElementById('current-line').textContent=current>=0?data.cues[current].text:'…';[...rows.children].forEach((tr,i)=>tr.classList.toggle('active',i===current));}

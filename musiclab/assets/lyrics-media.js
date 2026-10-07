@@ -8,7 +8,7 @@
   }
   function compare(declared,media){
     if(typeof declared!=='string')throw Error('作品時長欄需為文字；目前內容保留');
-    const measured=mediaTime(media),empty=!declared.trim();let duration=null;
+    const measured=mediaTime(media),empty=!Time.trim(declared);let duration=null;
     if(!empty)try{const value=Time.normalize(declared,'作品時長',true);if(value>0)duration=value;}catch(_){}
     const status=measured===null?'unavailable':empty?'empty':duration===null?'invalid':
       Time.milliseconds(duration)===Time.milliseconds(measured)?'matches':'differs';
@@ -40,7 +40,7 @@
     function loaded(source,seconds){
       if(!selected||selected.source!==source)return false;
       const value=mediaTime(seconds);selected.phase=value===null?'unavailable':'ready';selected.seconds=value;
-      if(value!==null&&!selected.before.trim()&&current()===selected.before&&revision===selected.revision){
+      if(value!==null&&!Time.trim(selected.before)&&current()===selected.before&&revision===selected.revision){
         change(value.toFixed(3),'已接續原本空白的作品時長；歌詞與實際聲音仍需核對。');
       }else publish();
       return true;
