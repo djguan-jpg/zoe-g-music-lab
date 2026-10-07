@@ -16,6 +16,9 @@ Chrome工作台及獨立預覽：兩次真File chooser選本輪合成四秒PCM�
 
 restore-v0.158.0-before-v0.159.0→a9cab7d0dbd6028da89425075e3e13414ca6d117、codex/iteration-v0.159.0、CHANGELOG／HANDOFF、指定提交封裝／SHA、PR與遠端原bytes／blob及最終程序audit保持。入口只維護目前workflow，七history與四Skills不改；詳細規則見[歌詞時間契約](docs/LYRICS-WHITESPACE.md)。rolling goal維持active，封裝／remote與最終盤點以本輪精確收據為準。
 
+首份指定來源158175b17b64cef70328166fee69460c4bc50285封裝觸及原120秒期限，ZIP與FAILED保留，沒有成功manifest或發布。隔離副本的800案例逐方法診斷EOF0／117.75秒，兩組方法104.606／114.407秒；診斷不替代正式接受。純test_schedule依同一份實測更新141項至少0.5秒的方法成本，其餘方法使用56單位平均fallback；算法、完整唯一IDs、相對discovery順序、兩worker／120秒與summary1保持，不增限／不刪除或重複case。按該次資料推算109.591／109.422秒只是分配依據，不是速度保證。24項既有排程／summary集中驗證與調整後完整800Python（分組396／404、109.36秒、1既有skip、0expected failures）通過，原worker身份／EOF核對；指定提交封裝仍另做原完整測試。
+
+
 ## v0.158.0 Git 來源串流與自有程序收束
 
 實際合成Git tree重現1908來源檔／2257835bytes：舊producer以capture_output完整接收，才由2MiB純source_tree拒絕；沒有ZIP、測試子程序或成功manifest。原metadata bytes／SHA83201c237bf47fddbb2004074bd1f9249ea702050724a9aaed3e9efaef132dc5與暫存移除證據留在忽略outputs。

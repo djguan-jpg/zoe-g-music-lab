@@ -30,3 +30,7 @@
 原launcher的兩worker各自獨立discovery／完整執行 → parent再次獨立discovery／完整IDs與count及原handle EOF核對。兩worker／120秒整體期限、summary1／傳輸與來源容量保持，不略過或重複case。class fixture可以在兩隔離程序各自執行，共用HTTP fixtures用本機動態port0並teardown，filesystem fixtures用自身暫存。集中24項（8新增排程、16既有summary／真worker／deadline）通過。
 
 正式完整797案例分組399／398，實測113.75秒，1既有skip／0expected failures，兩原worker EOF0；1911JS／153syntax／四Skills通過。標準CLI每批最多32個明確run records，完整去重清單按批terminal核對再聚合；沒有增加維護cap或全域程序權限。兩份失敗封裝使partial總數為5，保持不清理。正式指定提交封裝與remote驗證依最終收據，不把診斷計時當發布接受。
+
+## v0.159.0 成本提示更新
+
+首份指定來源158175b17b64cef70328166fee69460c4bc50285封裝觸及原120秒期限，ZIP與FAILED保留，沒有成功manifest或發布。隔離副本的800案例逐方法診斷EOF0／117.75秒，兩組方法104.606／114.407秒；診斷不替代正式接受。純test_schedule依同一份實測更新141項至少0.5秒的方法成本，其餘方法使用56單位平均fallback；算法、完整唯一IDs、相對discovery順序、兩worker／120秒與summary1保持，不增限／不刪除或重複case。按該次資料推算109.591／109.422秒只是分配依據，不是速度保證。24項既有排程／summary集中驗證與調整後完整800Python（分組396／404、109.36秒、1既有skip、0expected failures）通過，原worker身份／EOF核對；指定提交封裝仍另做原完整測試。

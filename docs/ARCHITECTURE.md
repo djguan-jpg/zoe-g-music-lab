@@ -27,6 +27,8 @@ flowchart LR
 | DOM | literal文字、事件、原生File／Blob、有限render與manual焦點 | 各`*-dom.js`及`web/app.js` |
 | 明確filesystem | 來源副本、排他輸出、不可覆寫版本、備份及release audit | `musiclab/` I/O adapters、`scripts/` |
 
+完整Python測試的纯分配模型依实測更新成本提示，再由原兩worker／120秒launcher核對獨立discovery與完整ID／EOF；成本不授予跳過案例、增加期限或程序權限。驗證與診斷分開，見[來源與測試分配契約](RELEASE-GIT-CAPTURE.md)。
+
 產品版本與交付支援表唯一執行期來源是 [delivery-versions.json](../musiclab/assets/delivery-versions.json)。Agent1、draft3、MCP2025-11-25與各獨立domain schemas不是產品minor版本；未知版本拒絕，不默認遷移。完整input/output schemas由discovery取得。目前22基本／明確選庫29操作，沒有跨schema隱藏寫入。
 
 ## 來源、非同步與保存
