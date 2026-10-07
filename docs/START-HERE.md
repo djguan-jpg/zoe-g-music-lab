@@ -23,6 +23,8 @@
 
 整批校時與撤回只有回讀完整實際時間後才顯示成功。拒絕或部分寫入時保留目前表格；撤回紀錄仍存在時，先核對並修正回套用後時間再重試，工具不自動回滾。見[寫入接受規則](LYRICS-TIMING-ACCEPTANCE.md)。
 
+新增一句先按有效末句結束接續三秒，時間沿毫秒模型起稿；無效或超出精度時保留表格，先修正末句再重試。末句留白仍從0秒起草，時間需人工完成並核對作品宣告。見[新增句規則](CUE-ADD-MILLISECONDS.md)。
+
 ## 用合成範例執行 CLI
 
 下列命令都在 Repo 根目錄執行，範例是本專案合成文字。首次執行使用不同輸出資料夾；已有同名成果時預設拒絕覆寫，請先保留舊檔。
@@ -54,4 +56,4 @@ python -X utf8 music_lab_server.py --draft-library outputs/my-draft-library
 
 ## 找到下一步
 
-[歌曲 Skill](../projects/zoe-music-production/SKILL.md)、[分鏡 Skill](../projects/zoe-mv-storyboard/SKILL.md)、[歌詞 Skill](../projects/zoe-lyrics-sync/SKILL.md)、[音檔 Skill](../projects/zoe-audio-delivery/SKILL.md)各有一份目前工作流程。Agent／MCP 讀[接口指南](AGENT.md)；開發與回復讀[架構](ARCHITECTURE.md)、[交接](HANDOFF-v0.167.0.md)。授權依 [LICENSE](../LICENSE)／[NOTICE](../NOTICE)，禁止商用；平台收錄不代表創始人核實。
+[歌曲 Skill](../projects/zoe-music-production/SKILL.md)、[分鏡 Skill](../projects/zoe-mv-storyboard/SKILL.md)、[歌詞 Skill](../projects/zoe-lyrics-sync/SKILL.md)、[音檔 Skill](../projects/zoe-audio-delivery/SKILL.md)各有一份目前工作流程。Agent／MCP 讀[接口指南](AGENT.md)；開發與回復讀[架構](ARCHITECTURE.md)、[交接](HANDOFF-v0.168.0.md)。授權依 [LICENSE](../LICENSE)／[NOTICE](../NOTICE)，禁止商用；平台收錄不代表創始人核實。

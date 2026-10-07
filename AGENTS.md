@@ -1,3 +1,17 @@
+## v0.168.0 新增歌詞的完整毫秒候選
+
+Chrome原版0.119秒接續三秒會顯示3.1189999999999998；合法末句9007199254740.99秒仍新增超出領域精度的9007199254743.99。純lyrics-timing新增nextCue，沿共享LyricTime驗原末句、以毫秒加3000並核對可表示秒數，再交給既有DOM新增adapter。完整候選通過後才分配ID、寫入、markDirty及聚焦。空白末句／空表仍0至3起稿，原句字串、文字與ID保持；不裁切至作品宣告，不推定實聽完成。
+
+新增12項JS回歸，原版31項26pass／5fail，修正31pass；補齊兩既有VMfixture的MusicTiming依賴後64集中全pass。完整823Python（1既有Windows symlink skip、0expected failures）／1977JS、149JS檔、153syntax與四Skills通過。首批Python通過／JS1975pass及兩fixture失敗保留，沒有放寬assert或產品規則；修正fixture後重新核對1057份來源前後SHA及完整兩套。只在已核對的一次性副本compileall quiet2，快取與暫存移除；原Python兩worker／120秒、Node兩fileworkers／60秒保持。
+
+Chrome實際產品handler驗0.119→3.119；超限與BOM拒絕時142原欄位／兩列ID完全保持。修正原值後接成3.119→6.119，ID仍row-19，舊欄位只原選列cues-order變更；兩舊句原值保持。完整HTTP歌詞包六檔建立、格式提醒0、emoji／連續空白原文與ID保持；完整建立沿原規則把00.000正規化0，沒有冒充該流程保留時間排版。兩自有tab已關閉，兩server原STOP／EOF0／thread joined與native terminal已驗。未選音檔／庫、未下載保存／實聽／完整視覺／Host接受。
+
+原v167 ZIP3198695bytes／SHA5c96cf1e65d15bab85550bedc592499f335c4f69a695528b2dfbade9a24d2d45完整CRC／1056 rawGitblobs／ledger、823Python／1965JS及前後bytes還原通過；520四scope歷史ZIP與manifest原bytes一致。產品168／明確38–168共131、unknown169拒絕；清單256／固定8192bytes及全部舊版保持，Agent22基本／明確啟庫29、Agent1／draft3／template1與29schemas保持。沒有新module／asset／operation／依賴／auth／路徑／模型／產品網路。
+
+六法律／平台、七history、四Skills原bytes保持，PolyForm Noncommercial禁止商用、ZOE. G／djguan-jpg與已授權public保持，四投稿仍submitted_unverified，本輪不查寫或重送。還原restore-v0.167.0-before-v0.168.0→cac196a40ba92abe3c098ec12c0ea429e5129a03、codex/iteration-v0.168.0保存差異。正式source封裝、PR、遠端assets及最終audit以獨立成功manifest／收據為準；最新三正式版與嚴格超七天必要門檻、未知／partial／FAILED保留，rolling goal active。
+
+見[新增句契約](docs/CUE-ADD-MILLISECONDS.md)、[QA](docs/QA-v0.168.0.md)與[交接](docs/HANDOFF-v0.168.0.md)。
+
 ## v0.167.0 整批校時與撤回的實際寫入接受
 
 原校時controller只呼叫寫入器便宣布套用或撤回成功，拒絕／無動作時仍建立或清除撤回紀錄。現在純lyrics-timing捕捉同份before與實際post，核對原列數／順序／ID、目前歌詞與宣告、完整目標時間原字串，再建立或清除紀錄並宣布成功。明確false、部分寫入、例外、期間reset／cancel或來源變更均拒絕；不自動回滾或重送。失敗撤回保留仍存在的紀錄；部分寫入需人工核對並修正回原applied-after才能重試。原void寫入器與正常markDirty／invalidate相容，寫入期間阻擋重入。

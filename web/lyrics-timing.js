@@ -10,6 +10,12 @@
       ids.add(entry.id);time.normalize(entry.value.start,'歌詞開始時間',true);time.normalize(entry.value.end,'歌詞結束時間',true);return entry;
     }).sort((a,b)=>time.number(a.value.start)-time.number(b.value.start));
   }
+  function nextCue(lastEnd){
+    const blank=lastEnd===undefined||typeof lastEnd==='string'&&!time.trim(lastEnd);
+    const start=blank?0:time.normalize(lastEnd,'最後一句結束',true);
+    const end=time.seconds(time.milliseconds(start,'新句開始')+3000);
+    return {start:String(start),end:String(end),text:''};
+  }
   function fingerprint(snapshot){
     return JSON.stringify({duration:snapshot.duration,entries:snapshot.entries.map(e=>[e.id,e.value.start,e.value.end])});
   }
@@ -91,6 +97,6 @@
       cancel(){intent++;invalidate();return true;}
     };
   }
-  const api={orderedEntries,createTimingController};
+  const api={orderedEntries,nextCue,createTimingController};
   if(typeof module==='object'&&module.exports)module.exports=api;else root.MusicTiming=api;
 })(typeof globalThis==='object'?globalThis:this);
