@@ -1,25 +1,25 @@
 # v0.164.0 驗證紀錄：審閱中
 
-## v0.164.0 指定程序盤點與摘要載入分層（審閱中）
+指定run-only盤點與共用digests分層的初次證據保留在 outputs/v164-qa；原39份紀錄兩批3.047秒全部terminal，同份bytes保持。provider拒絕的冷程序仍可列22operations；SHA／參數／copy／串流沿標準函式庫。初批16新Python、32集中Python／6版本JS、25Python語法、29schemas、504歷史ZIP／manifest及1036原v163blobs核對已有收據。
 
-新增明確 --runs-only，只查1–32份指定run1，避免每批重新核對全部歷史封裝。純maintenance_runs／同份有界原JSON與SHA／原native-CIM adapter／CLI分層；全部來源先驗證才查PID，順序與摘要一一對應。原一般audit／prune／restore、最新三封裝／嚴格超七天及128份恢復上限保持。新run-audit1沒有清除token或Agent／HTTP維護權限。合成37筆由兩次完整catalog改為一次，兩entry讀取由四次減為兩次；39份前輪原紀錄的真實唯讀補查全部terminal，兩批3.047秒，原bytes保持。這是本次讀取與觀察證據，不保證全機速度或RAM。
+## 接續修正與驗證
 
-新增共用digests延後載入入口，十八個應用module只更換import；實際SHA-256／Git SHA-1仍回傳原hashlib物件，參數、provider拒絕、update／copy與大型音檔串流保持。全新程序明確阻止hashlib／_hashlib匯入仍可取得22 operation／protocol1；能力清單原bytes相同，本次正常查詢0.25秒，沒有未來延遲保證。沒有替代provider、私有擴充、全域patch、依賴或新operation。
+outputs/v164-qa/acceptance-1 保存原始紀錄。fixture-reproduction-evidence.json 重現隔離副本漏帶 digests.py 的 ImportError；修正原副本清單。startup純解析另新增3測試，總新增19、完整discovery820。失敗launcher收集兩個原handle後保留每組EOF，完整startup最多4096bytes且核對原PID／group；缺少或損壞登記不補造run1。成功summary與完整接受不變。
 
-新增16Python測試；最終集中32Python／6版本契約JS及25份本輪Python語法通過。29組operation schemas與整份／原列comparison artifacts保持，504四scope歷史ZIP／manifest bytes及原v163的1036 raw blobs保持。產品164／唯一policy38–164共127、unknown165拒絕；22基本／29明確啟庫、Agent1／draft3／template1保持。六法律／發起／平台紀錄、七history與四Skills保留，PolyForm禁止商用、ZOE. G／djguan-jpg與已授權public不變，四既有投稿仍submitted_unverified。
+first-diagnostics-failure.json 保存1.2秒deadline測試冷啟動未印startup的失敗；測試改為核對兩個真實原handleEOF、可用startup一致及已登記者native terminal，不要求或虛构不存在的registration。diagnostics-checks-evidence.json 保存51集中中的舊PowerShell junction10秒逾時；原生限定暫存junction fixture取代shell啟動，原安全拒絕與外側bytes／mtime保持。fixed-fixtures-check-evidence.json：51項通過，unittest17.755秒／parent20.032秒。
 
-完整Python測試三次達原兩worker／120秒期限（最初兩次812、摘要分層後817）；兩份180秒診斷與一份120秒逐项trace均不作正式接受。最新trace完成98／77方法，耗時集中既有CLI／瀏覽器整合，沒有證明故障原因。原v163 ZIP完整CRC／ledger／1036 bytes核對及一次性快取準備後，也達原120秒；暫存已移除。JavaScript原全套達60秒期限。這些結果不能區分環境負載與產品回歸；未放寬期限、worker或覆蓋要求，未合併／發佈v164。
+startup-measure-evidence.json 记录15次原工具啟動；16MiB SHA本次約12ms，完整程序耗時0.07–2.20秒變動。bundled-measure-evidence.json 使用既有本機Python3.12／Node24做12次交叉觀察與兩項實際adapter测试，能力原bytes／SHA一致；未改預設runtime或安裝依賴。自有current job唯讀探測不能排除父層／其他限制，逾時根因未定。
 
-restore-v0.163.0-before-v0.164.0指向7222fd47ebd0faf7d6891fec8da1d3e4ac1b3910；codex/iteration-v0.164.0保存審閱差異。只有原始碼checkpoint可供審閱；它不是已通過正式封裝的Release，不發成功release manifest或v164 tag。正式版仍v163。完整驗收及正式封裝為待辦，rolling goal維持active。沒有本輪產品UI、下載保存、實聽、Host或平台創始接受驗證。
+full-python-bundled-evidence.json：完整820待執行案例在原兩worker／120秒停止，parent123.688秒／EOF1，外層150秒未到；1045份當時來源前後SHA相同。兩個original workers的自我登記、EOF與native terminal全部確認，各原run檔保存；不是完整測試通過。原v163同次原120秒亦失敗的restore-163-warm-evidence.json保留，未改原archive。
 
-契約見[指定程序盤點](RUN-AUDIT.md)、[摘要載入](DIGEST-LOADING.md)；實際證據及接續見[QA](QA-v0.164.0.md)／[交接](HANDOFF-v0.164.0.md)。
+node-bounded-checks-evidence.json：147個JS測試檔、兩file workers、原60秒期限，parent60.656秒／EOF1，部分TAP至574。完整1947仍待驗收；原Node parent native terminal已核對，未知descendants未聲稱停止。Node來源未做前後逐檔SHA，不把helper的working-source標記當正式source proof。
 
-## 收據與限制
+producer集中test_release_metadata的原exec76508 EOF1，subprocess.run達120秒；helper在保存log／正常收據前拋TimeoutExpired。producer-checks-run.json是原helper登記；producer-checks-failure-observation.json只記已觀察的失敗，不捏造方法數、原child身份或成功syntax接受。其他原始失敗與逐項trace保持。
 
-本機收據保留於忽略的 outputs/v164-qa：before-reproduction.json、native-runs-evidence.json、checkpoint-retry-evidence.json、startup-after-evidence.json、boundary-digests-evidence.json、compatibility-digests-evidence.json。最後一份集中測試是在十八個module延後載入及CLI錯誤文字整理後重驗；最初QA工作目錄造成三份test import錯誤，記錄在checkpoint-checks-first-failure.json，未冒充產品測試失敗或成功。
+## 接受與可逆邊界
 
-checks-release-final-failed.json、checks-warm-final-failed.json、digest-full-failure-evidence.json、diagnostic-timeout-evidence.json、diagnostic-trace-timeout-evidence.json、diagnostic-current-trace-timeout-evidence.json、restore-163-warm-evidence.json與nonpython-first-failure.json保留原期限失敗。trace只保存已完成方法的計時，不是完整測試coverage；未印出的worker或native child身份不回填。原helper handles均按實際EOF记录，再沿明確typed run核對；不能宣稱全機沒有程序或未知descendant已停止。
+目前Python120／兩workers、Node60／兩file workers與完整覆蓋保持。延長Python600／JS180秒的選擇尚待使用者回覆。集中通過、source CRC／raw blobs核對和草稿PR不能取代完整測試與正式packager。沒有成功manifest、v164 release tag或main合併，正式發佈仍v163。
 
-初始QA錯收據key在Git變更前拒絕，合成fixture最初把兩entry誤期待一entry，既有Windows junction一次達原10秒後在原條件17項通過；原失敗證據保持。來源、測試排程、獨立discovery、兩worker／120秒與正式packager保持。
+restore-v0.163.0-before-v0.164.0→7222fd47ebd0faf7d6891fec8da1d3e4ac1b3910；接續前restore-v0.164.0-review-before-acceptance-repair-1→bc07d44ed782cdf6f6134bcf96b2e4446b11dc58。source／package／PR與最後唯讀audit使用接續目錄新收據，不覆寫前份證據。來源原文、法律／平台六檔、七history與四Skills保持；四投稿仍submitted_unverified。本輪無平台寫入、產品UI／保存下載／實聽／Host／創始接受。
 
-沒有v164正式封裝或遠端Release接受。原始碼checkpoint只證明指定Git提交、ZIP原bytes／SHA與完整raw blob核對，不證明完整功能或正式測試通過。未做browser產品UI、實際下載保存、實聽或Host驗證，本輪沒有平台寫入。最後outputs／程序唯讀盤點以同目錄final收據為準，不因過往紀錄推定當前清除資格。
+見[失敗證據契約](PYTHON-TEST-FAILURE.md)與[交接](HANDOFF-v0.164.0.md)。

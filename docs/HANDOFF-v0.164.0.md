@@ -1,13 +1,13 @@
 # v0.164.0 交接：完整驗收待完成
 
-本輪已完成指定程序唯讀盤點與標準摘要建構子的延後載入。入口見[架構](ARCHITECTURE.md)、[指定程序契約](RUN-AUDIT.md)、[摘要載入契約](DIGEST-LOADING.md)；驗證見[QA](QA-v0.164.0.md)。產品／Agent工作流程仍見[開始指南](START-HERE.md)／[Agent](AGENT.md)。
+本輪含指定 run-only 盤點、摘要延後載入、隔離測試漏帶模組修正、完整失敗程序證據及原生 junction fixture。入口見[架構](ARCHITECTURE.md)、[指定程序](RUN-AUDIT.md)、[摘要載入](DIGEST-LOADING.md)、[失敗證據](PYTHON-TEST-FAILURE.md)與[QA](QA-v0.164.0.md)；產品操作仍見[開始指南](START-HERE.md)／[Agent](AGENT.md)。
 
-還原點 restore-v0.163.0-before-v0.164.0 是原main7222fd47ebd0faf7d6891fec8da1d3e4ac1b3910；codex/iteration-v0.164.0保存差異。可從還原tag另外建立審閱分支，保留當前分支與輸入；不使用破壞性reset。審閱PR與精確source checkpoint的提交／tree／SHA記於outputs/v164-qa收據。它不是正式Release，沒有成功release manifest或v164 release tag，main／正式發佈仍v163。
+codex/iteration-v0.164.0／Draft PR #163 保存差異。還原點 restore-v0.163.0-before-v0.164.0 指向原 main7222fd47ebd0faf7d6891fec8da1d3e4ac1b3910；接續還原點 restore-v0.164.0-review-before-acceptance-repair-1 指向 bc07d44ed782cdf6f6134bcf96b2e4446b11dc58。可另建審閱分支保留現在內容；不用破壞性 reset。指定提交／tree／source ZIP SHA 在 outputs/v164-qa/acceptance-1 新收據，前份 checkpoint 原檔保留。沒有成功 release manifest 或 v164 release tag；正式 main／Release 仍 v163。
 
-集中32Python／6版本契約JS與25本輪Python語法通過，新增16Python；29 schemas、504歷史ZIP／manifest与1036原v163 raw blobs保持。六固定紀錄／七history／四Skills、PolyForm非商用與四既有投稿保持，平台仍submitted_unverified。
+19 項新增 Python，完整 discovery820；接續51集中測試通過，前批6版本JS、25Python語法與29 schemas／504歷史 cases／1036原v163 blobs核對收據保留。六法律／平台紀錄、七history、四Skills與非商用授權保持，四投稿仍 submitted_unverified。
 
-必要接續：根據已保留的逐項trace查明完整測試期限失敗，先驗證環境負載與產品回歸；同次原v163也在原120秒失敗，只能作为交叉證據。未經新證據不重複提交相同工作，不擴大worker／期限或跳過測試。通過完整817Python／1947JS、153語法與四Skills後，重新核對原v163隔離還原，才由明確source commit執行正式packager與遠端Release核對。每一步保存原handle／typed run／EOF，不回填未取得的identity。
+完整驗收仍待完成：Python3.12 全套在原兩 worker／120秒停止，當時1045個來源前後SHA不變，兩個worker原登記及native terminal確認；JS147檔／兩file workers也達原60秒；producer集中檢查外層120秒停止，沒有完整方法數。啟動變動與同次原v163逾時只是交叉證據，未確定根因。600／180秒的延長選擇尚待人類回覆；不得由時間經過推定授權。
 
-一般audit完整核對封裝；--runs-only只補查1–32份明確程序，沒有清除token。保存同份原bytes SHA／原PID／creation ticks，真正清除仍重查完整候選與程序。最新三個正式封裝／嚴格超七天／128份恢復保持，來源不明、partial、草稿、素材與未知程序保留。
+必要接續：依新證據處理驗收條件；通過完整820Python／1947JS、153JS語法與四Skills，重新核對原v163隔離還原，再對精確 source commit 執行正式 packager／遠端核對，才可合併與發佈。若時限經核准變更，明記實際新條件及原來源還原的方法，不冒充原120秒通過。保留獨立discovery／完整ID／兩workers與每個原handleEOF；沒有登記者不補造native identity。
 
-本輪沒有browser UI、保存下載、實聽、Host或創始接受；rolling goal維持active。最後程序／outputs盤點見本機final收據；完整驗收的未完成狀態不能由checkpoint ZIP取代。
+每輪 outputs／程序盤點唯讀；--runs-only不提供清除token。latest3／嚴格超七天／exact tag與archive復原保持。partial、未知來源、checkpoint、草稿、素材與未知descendants保留；不得以bare PID全域清理。本輪沒有browser UI、保存下載、實聽、Host或創始接受，rolling goal active。

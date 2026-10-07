@@ -12,6 +12,7 @@ MAX_EVENTS = 20000
 MAX_WORKER_BYTES = 1024 * 1024
 MAX_SUMMARY_BYTES = 16384
 MAX_SKIPPED_DETAILS = 20
+MAX_STARTUP_BYTES = 4096
 
 
 def integer(value, maximum, label, minimum=0):
@@ -36,6 +37,28 @@ def registration(value, group, pid):
     if result['job'] != 'python-tests-'+str(group) or result['identity']['pid'] != pid:
         raise ValueError('Worker registration does not match its original handle')
     return {**result, 'identity': dict(result['identity'])}
+
+
+def worker_startup(raw, group, pid):
+    """Read only a complete bounded startup frame from the original worker.
+
+    This is identity evidence for failure diagnostics, never test acceptance.
+    A later incomplete/large result cannot erase a valid startup registration.
+    """
+    integer(group, WORKERS-1, 'group')
+    integer(pid, 2147483647, 'PID', 1)
+    if not isinstance(raw, bytes):
+        raise ValueError('Invalid test worker startup bytes')
+    prefix = raw[:MAX_STARTUP_BYTES+1]
+    line, newline, _ = prefix.partition(b'\n')
+    if not newline or len(line) > MAX_STARTUP_BYTES:
+        raise ValueError('Incomplete or overbudget test worker startup')
+    start = decode_json(line, max_bytes=MAX_STARTUP_BYTES, label='test worker startup')
+    if (not isinstance(start, dict) or set(start) != {'phase', 'group', 'run'}
+            or start['phase'] != 'start' or type(start['group']) is not int
+            or start['group'] != group):
+        raise ValueError('Unknown test worker startup reply')
+    return {'phase':'start', 'group':group, 'run':registration(start['run'], group, pid)}
 
 
 def summarize(replies, expected, pids, exit_codes, eofs):

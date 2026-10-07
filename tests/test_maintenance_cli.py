@@ -164,12 +164,8 @@ class MaintenanceWindowsJunctionTests(unittest.TestCase):
         self.assertEqual(self.base.parent, Path(tempfile.gettempdir()).resolve()); self.temp.cleanup()
 
     def junction(self, link):
-        def literal(path): return "'"+str(path).replace("'", "''")+"'"
-        command = 'New-Item -ItemType Junction -Path '+literal(link)+' -Target '+literal(self.target)+' -ErrorAction Stop | Out-Null'
-        completed = subprocess.run(['powershell', '-NoProfile', '-NonInteractive', '-Command', command],
-                                   capture_output=True, timeout=10)
-        if completed.returncode:
-            self.fail('Real synthetic junction creation failed; no privilege escalation requested')
+        from windows_fixture import create_junction
+        create_junction(link, self.target, self.base)
         self.links.append(link)
         self.assertTrue(link.lstat().st_file_attributes & stat.FILE_ATTRIBUTE_REPARSE_POINT)
 

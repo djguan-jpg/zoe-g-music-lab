@@ -22,3 +22,5 @@ runner仍兩worker、120秒總執行deadline；分組按原module規則，不加
 scripts/package_release.py沿原immutable source extraction執行同一runner的--report-json，再以decode_summary核對。合法摘要保存在原release manifest1的checks.python_run，原六個passed欄位與root shape保持，ZIP／manifest仍只有兩個release files。錯誤／不完整／未知summary即使子程序exit0也會停止後續檢查並只留FAILED.txt，不能發成功manifest。舊manifest無python_run只能明示未提供，不推論worker身份或skip數、不靜默遷移。
 
 外層150秒給原120秒runner結束與清理時間，兩個上限都保持。JSON摘要證明本次自有direct worker與測試coverage，不證明作者／版權、平台founder、Host安裝、全機殭屍程序不存在、真媒體實聽或完整browser視覺接受。跨輪維護仍沿same-host typed record、原handle及既有strict>7days／latest3／exact tag／Git archive政策。
+
+失敗時保留兩個原 handle 的 EOF 與實際可用的 startup；最多4096bytes的純解析與未取得身份的限制見[失敗診斷契約](PYTHON-TEST-FAILURE.md)。成功摘要與上述完整接受條件保持。

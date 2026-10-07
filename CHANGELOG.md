@@ -1,16 +1,18 @@
-## v0.164.0 指定程序盤點與摘要載入分層（審閱中）
+## v0.164.0 指定程序盤點與驗收證據分層（審閱中）
 
-新增明確 --runs-only，只查1–32份指定run1，避免每批重新核對全部歷史封裝。純maintenance_runs／同份有界原JSON與SHA／原native-CIM adapter／CLI分層；全部來源先驗證才查PID，順序與摘要一一對應。原一般audit／prune／restore、最新三封裝／嚴格超七天及128份恢復上限保持。新run-audit1沒有清除token或Agent／HTTP維護權限。合成37筆由兩次完整catalog改為一次，兩entry讀取由四次減為兩次；39份前輪原紀錄的真實唯讀補查全部terminal，兩批3.047秒，原bytes保持。這是本次讀取與觀察證據，不保證全機速度或RAM。
+指定 --runs-only 只查 1–32 份明確 run1；純來源／同份有界 bytes 與 SHA／原 native-CIM／CLI 分層，全部來源先驗證再觀察 PID。一般 audit／prune／restore、最新三封裝、嚴格超七天與 128 份恢復上限保持。39 份前輪原紀錄唯讀補查全部 terminal，兩批 3.047 秒；不推定全機速度或 RAM。
 
-新增共用digests延後載入入口，十八個應用module只更換import；實際SHA-256／Git SHA-1仍回傳原hashlib物件，參數、provider拒絕、update／copy與大型音檔串流保持。全新程序明確阻止hashlib／_hashlib匯入仍可取得22 operation／protocol1；能力清單原bytes相同，本次正常查詢0.25秒，沒有未來延遲保證。沒有替代provider、私有擴充、全域patch、依賴或新operation。
+共用 digests 延後載入原標準摘要建構子；十八個應用 module 的實際 hashlib 物件、參數、provider 拒絕與串流保持。全新程序阻止 provider 匯入仍可取得原 22 operation／protocol1；沒有替代 provider、全域 patch、依賴或新增 Agent／HTTP 權限。
 
-新增16Python測試；最終集中32Python／6版本契約JS及25份本輪Python語法通過。29組operation schemas與整份／原列comparison artifacts保持，504四scope歷史ZIP／manifest bytes及原v163的1036 raw blobs保持。產品164／唯一policy38–164共127、unknown165拒絕；22基本／29明確啟庫、Agent1／draft3／template1保持。六法律／發起／平台紀錄、七history與四Skills保留，PolyForm禁止商用、ZOE. G／djguan-jpg與已授權public不變，四既有投稿仍submitted_unverified。
+接續修正隔離測試副本漏帶 digests 的 ImportError；失敗診斷現在核對最多 4096 bytes 的完整 startup，再保留兩個原 handle 的 EOF，缺少登記不補造身份。Windows junction 安全測試改由限定自有暫存的原生 fixture 建立；指定提交封裝的 Node 明確兩個 file workers。成功 summary1、完整 coverage、Python 兩 worker／120 秒與 Node 60 秒期限保持。見[失敗證據契約](docs/PYTHON-TEST-FAILURE.md)。
 
-完整Python測試三次達原兩worker／120秒期限（最初兩次812、摘要分層後817）；兩份180秒診斷與一份120秒逐项trace均不作正式接受。最新trace完成98／77方法，耗時集中既有CLI／瀏覽器整合，沒有證明故障原因。原v163 ZIP完整CRC／ledger／1036 bytes核對及一次性快取準備後，也達原120秒；暫存已移除。JavaScript原全套達60秒期限。這些結果不能區分環境負載與產品回歸；未放寬期限、worker或覆蓋要求，未合併／發佈v164。
+新增 Python 測試共 19 項，完整 discovery 為 820；接續 51 項集中測試通過。前批 6 版本 JS、25 份 Python 語法、29 schemas、504 歷史 ZIP／manifest 與原 v163 的 1036 raw blobs 核對紀錄保留。產品164／policy38–164共127、unknown165拒絕；22基本／29啟庫、Agent1／draft3／template1保持。六法律／發起／平台紀錄、七 history、四 Skills 及 PolyForm 非商用／ZOE. G／djguan-jpg保持；四投稿仍 submitted_unverified。
 
-restore-v0.163.0-before-v0.164.0指向7222fd47ebd0faf7d6891fec8da1d3e4ac1b3910；codex/iteration-v0.164.0保存審閱差異。只有原始碼checkpoint可供審閱；它不是已通過正式封裝的Release，不發成功release manifest或v164 tag。正式版仍v163。完整驗收及正式封裝為待辦，rolling goal維持active。沒有本輪產品UI、下載保存、實聽、Host或平台創始接受驗證。
+本機 Python3.12 交叉驗證的全套也達原 120 秒；1045 份當時工作來源前後 SHA 相同，兩個原 worker 的登記及 native terminal 已核對。147 個 JS 測試檔以兩 file workers 仍達原 60 秒；producer 集中測試達外層 120 秒，沒有完整計數或成功收據。啟動耗時不穩定，既有 v163 同次亦逾時；尚不能判定完整逾時原因。Python600／JS180秒的延長選擇尚待使用者回覆，沒有自行放寬期限。
 
-契約見[指定程序盤點](docs/RUN-AUDIT.md)、[摘要載入](docs/DIGEST-LOADING.md)；實際證據及接續見[QA](docs/QA-v0.164.0.md)／[交接](docs/HANDOFF-v0.164.0.md)。
+還原點 restore-v0.163.0-before-v0.164.0→7222fd47ebd0faf7d6891fec8da1d3e4ac1b3910；接續前 restore-v0.164.0-review-before-acceptance-repair-1→bc07d44ed782cdf6f6134bcf96b2e4446b11dc58。codex/iteration-v0.164.0 與 Draft PR #163 保存差異；只有完整 CRC／raw blobs 核對的 source checkpoint，沒有成功 release manifest、v164 release tag 或 main 合併。正式版本仍 v163，rolling goal active。沒有本輪產品 UI、保存下載、實聽、Host 或平台創始接受。
+
+見[指定程序](docs/RUN-AUDIT.md)、[摘要載入](docs/DIGEST-LOADING.md)、[QA](docs/QA-v0.164.0.md)與[交接](docs/HANDOFF-v0.164.0.md)。
 
 ## v0.163.0 分鏡撤回接受與隔離封裝準備
 
