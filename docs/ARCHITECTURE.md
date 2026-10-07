@@ -15,6 +15,8 @@ flowchart LR
   App --> Selected[Explicit selected media or draft library]
 ```
 
+播放速度沿純來源／候選模型、注入capture與setRate controller、原生DOM adapter及app分層；只寫本頁播放器playbackRate，回讀後才回報。來源／busy／visible／dispose保護與自有event cleanup保持。資料與Agent不承載播放偏好。見[播放速度契約](PLAYBACK-RATE.md)。
+
 ## 責任與版本
 
 | 層 | 責任 | 主要入口 |
