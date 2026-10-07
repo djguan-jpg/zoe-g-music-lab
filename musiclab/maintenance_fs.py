@@ -19,6 +19,7 @@ from pathlib import Path, PurePosixPath
 from .json_document import decode_json
 from .maintenance import retention_plan, prune_token, version_key, validate_run, classify_run, validate_candidate, prune_batch_directories, prune_batch_plan
 from .run_identity import observe_process
+from .release_archive import RAW_PROFILE, manifest_profile, archive_args, source_tree, blob_digest
 
 PREFIX = 'zoe-g-music-lab/'
 MAX_MANIFEST_BYTES = 2 * 1024 * 1024
@@ -97,10 +98,9 @@ def _git(root, args):
 def _manifest(path):
     data = read_document(path)
     required = {'schema_version', 'commit', 'version', 'license', 'archive', 'sha256', 'bytes', 'files'}
-    if not isinstance(data, dict) or not required <= set(data) or set(data) - required - {'checks', 'restore'}:
+    if not isinstance(data, dict) or not required <= set(data) or set(data) - required - {'checks', 'restore', 'archive_profile'}:
         raise ValueError('Unknown package manifest shape')
-    if type(data['schema_version']) is not int or data['schema_version'] != 1:
-        raise ValueError('Unsupported package manifest version')
+    manifest_profile(data)
     version_key(data['version'])
     if not isinstance(data['commit'], str) or not re.fullmatch('[0-9a-f]{40}', data['commit']):
         raise ValueError('Invalid immutable source commit')
@@ -155,7 +155,7 @@ def _zip_budget(archive):
         raise ValueError('ZIP central entry count mismatch')
 
 
-def _zip_ledger(archive, data):
+def _zip_ledger(archive, data, objects=None):
     _zip_budget(archive)
     with zipfile.ZipFile(archive) as zipped:
         entries = [entry for entry in zipped.infolist() if not entry.is_dir()]
@@ -164,17 +164,26 @@ def _zip_ledger(archive, data):
         names = [entry.filename for entry in entries]
         if len(set(names)) != len(names) or set(names) != {PREFIX+name for name in data['files']}:
             raise ValueError('Archive paths contradict source ledger')
+        if objects is not None and set(data['files']) != set(objects):
+            raise ValueError('Archive files contradict immutable source tree')
         for entry in entries:
             digest = hashlib.sha256()
+            expected = objects.get(entry.filename[len(PREFIX):]) if objects is not None else None
+            if expected is not None and expected['size'] != entry.file_size:
+                raise ValueError('Archive size contradicts immutable Git blob')
+            blob = blob_digest(entry.file_size) if expected is not None else None
             with zipped.open(entry) as source:
                 while block := source.read(1024 * 1024):
                     digest.update(block)
+                    if blob is not None:blob.update(block)
             if digest.hexdigest() != data['files'][entry.filename[len(PREFIX):]]:
                 raise ValueError('Archive source bytes contradict ledger')
+            if expected is not None and blob.hexdigest() != expected['oid']:
+                raise ValueError('Archive bytes contradict immutable Git blob')
 
 
-def _rebuild(root, commit, sha256, size, destination):
-    _git(root, ['archive', '--format=zip', '--prefix='+PREFIX, '--output='+str(destination), commit])
+def _rebuild(root, commit, sha256, size, destination, profile=None):
+    _git(root, archive_args(commit, destination, profile))
     if destination.stat().st_size != size or _digest(destination) != sha256:
         raise ValueError('Git archive bytes are not identical; package retained')
 
@@ -220,6 +229,9 @@ def package_facts(root, directory, now):
         _source_metadata(root, data['commit'], data['version'])
         if resolved != data['commit']:
             raise ValueError('Tag source metadata mismatch')
+        if manifest_profile(data) == RAW_PROFILE:
+            objects = source_tree(_git(root, ['ls-tree', '-r', '-z', '--long', data['commit']]))
+            _zip_ledger(archive, data, objects)
     except (ValueError, OSError, subprocess.TimeoutExpired):
         reasons.append('tag_or_source_unverified')
     newest = max(info.st_mtime, manifest_info.st_mtime)
@@ -227,7 +239,7 @@ def package_facts(root, directory, now):
         try:
             with tempfile.TemporaryDirectory(prefix='zoe-rebuild-') as temp:
                 selected = Path(temp).resolve();assert selected.parent == Path(tempfile.gettempdir()).resolve()
-                _rebuild(root, data['commit'], data['sha256'], data['bytes'], selected/'rebuilt.zip')
+                _rebuild(root, data['commit'], data['sha256'], data['bytes'], selected/'rebuilt.zip', manifest_profile(data))
         except (ValueError, OSError, subprocess.TimeoutExpired):
             reasons.append('git_bytes_not_reproducible')
     identity = validate_candidate({'directory': directory.relative_to(root).as_posix(), 'version': data['version'],
@@ -354,7 +366,10 @@ def restore(root, journal_path):
             if destination.exists():
                 raise ValueError('Recovery refuses an existing package directory')
             _source_metadata(root, data['commit'], data['version'])
-            archive = candidate/data['archive'];_rebuild(root, data['commit'], data['sha256'], data['bytes'], archive);_zip_ledger(archive, data)
+            profile = manifest_profile(data)
+            archive = candidate/data['archive'];_rebuild(root, data['commit'], data['sha256'], data['bytes'], archive, profile)
+            objects = source_tree(_git(root, ['ls-tree', '-r', '-z', '--long', data['commit']])) if profile == RAW_PROFILE else None
+            _zip_ledger(archive, data, objects)
             prepared.append((destination, archive, manifest, identity))
         restored = []
         for destination, archive, manifest, identity in prepared:
