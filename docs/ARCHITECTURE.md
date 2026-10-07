@@ -58,3 +58,5 @@ flowchart LR
 開發依[AGENTS](../AGENTS.md)的安全邊界，每輪restore tag、codex分支、相稱驗證、exact-source封裝、SHA、PR及遠端位元組核對。法律／發起／平台原紀錄保持，以实际外部結果記錄，不能由檔案或雜湊推定創始身份。先前架構原文見[截至v154歷史](ARCHITECTURE-HISTORY-through-v0.154.0.md)。
 
 校時撤回先核對目前非負時間的來源，再按原數值比較，拒絕整份覆蓋並保留重試；驗證不改寫來源。見[校時撤回契約](LYRICS-TIMING-UNDO.md)。
+
+波形定位候選與原生寫入分開；寫入後核對當前音檔與實際位置，再交付同一快照的view。見[實際定位契約](WAVE-SEEK-ACCEPTANCE.md)。
