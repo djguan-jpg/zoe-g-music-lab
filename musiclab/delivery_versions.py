@@ -7,7 +7,7 @@ from pathlib import Path
 from .json_document import decode_json
 
 MAX_CONTRACT_BYTES = 8192
-MAX_SUPPORTED_VERSIONS = 128
+MAX_SUPPORTED_VERSIONS = 256
 MAX_COMPONENT = 2147483647
 _VERSION = re.compile(r'(0|[1-9][0-9]{0,9})\.(0|[1-9][0-9]{0,9})\.(0|[1-9][0-9]{0,9})', re.ASCII)
 
@@ -43,7 +43,7 @@ def create_policy(contract):
     _parts(contract['current'])
     supported = contract['supported']
     if not isinstance(supported, list) or not 1 <= len(supported) <= MAX_SUPPORTED_VERSIONS:
-        raise ValueError('交付版本清單需有 1–128 個明確版本')
+        raise ValueError('交付版本清單需有 1–256 個明確版本')
     previous = None
     for value in supported:
         parts = _parts(value)

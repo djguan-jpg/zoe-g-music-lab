@@ -1,3 +1,17 @@
+## v0.166.0 備份核對的實際模組載入
+
+Chrome與HTTP頁面解析重現：verification-focus的script缺少結束標籤，backup-verification標記成為前一段文字，模組未載入；原版保存草稿後顯示snapshot未定義與來源無效，選檔核對停用。補回唯一結束標籤；新增HTTP實際HTMLParser組裝驗證，逐份核對獨立defer script節點、空內文、唯一來源、依賴順序及實際GET。原版20項失敗1項，修正後20項通過。
+
+依使用者明確選擇，純Python與JS版本清單容量由128改為256，固定契約仍8192bytes；目前明確38–166共129項，舊版本全保留，未知167拒絕。新增兩Python／兩JS案例覆蓋129、256、唯一257拒絕、稀疏不推測、原輸入不改、凍結隔離及8192／8193bytes獨立容量；有效256項若本身超8KiB仍拒絕。未新增operation、asset、依賴、auth、路徑或產品外網能力。
+
+完整823 Python（1既有Windows symlink skip、0expected failures）／1953 JS、153語法與四Skills通過，原兩Python worker／120秒、Node兩file workers／60秒保持。第一批只含HTML修正821／1951亦通過；新容量變更後完整重驗。每批只在SHA逐份核對的1049檔一次性副本compileall quiet2，前後來源保持，快取與暫存移除。原v165 ZIP3178147bytes／SHAb4628a6aae053db8766ce07d789b9cb4facf852d82eaf561aeb1b23013f79a3e完整CRC／1049 raw blobs／ledger及原820／1951還原通過，512四scope歷史ZIP／manifest bytes保持。
+
+Chrome合成保存庫的下載送出與原生File chooser：同份伺服器回應3144bytes／SHA7b4ad748a1d510ca1fba6493ad53ec071fb748caabc2b7a48bbbc5e5f9659102匹配true；同大小修改檔匹配false，另一時間匯出的CLI ZIP亦拒絕。136原表單欄位、合成庫原bytes保持，console0。QA handler只複製同份回應，不改產品或來源；不冒充Chrome下載落盤。下載事件逾時與chrome://downloads被瀏覽器政策拒絕保留，未迂迴存取。初次QA誤把不同時間匯出當同SHA，以及容量fixture實際只有7163bytes的失敗均保留；只修正QA假設與有效合成資料，沒有放寬產品規則。
+
+六法律／平台、七history、四Skills原bytes保持，PolyForm Noncommercial禁止商用、ZOE. G／djguan-jpg與已授權public保持。唯讀確認Zoe音樂公會長及四公開投稿，逐份作者欄仍自行聲明未核實；未重送或修改。還原restore-v0.165.0-before-v0.166.0→4bc9ba68baf5ebf63549c48f71901cc219bdff88，分支codex/iteration-v0.166.0；指定source封裝／PR／遠端assets與最終audit各依精確收據。沒有成功manifest不當發布；最新三正式版與嚴格超七天清理門檻保持，未知／partial／FAILED保留，rolling goal active。
+
+見[頁面組裝契約](docs/WORKBENCH-SCRIPTS.md)、[版本容量](docs/DELIVERY-VERSIONS.md)、[QA](docs/QA-v0.166.0.md)與[交接](docs/HANDOFF-v0.166.0.md)。
+
 ## v0.165.0 新增鏡頭的原值分類
 
 實際Chrome重現最後一鏡結束欄只有BOM時錯誤新增0–6秒，只有NEL時卻拒絕；Node實際app handler亦重現C0空白誤拒絕。入口現在沿既有planning-values.trim分類，再沿同一nonnegativeNumber取有限非負十進位時間。原時間字串不修剪；最後一鏡留白與空清單保持既有0秒起草，仍需人工完成與檢查整份時間。沒有新module、operation、asset、依賴、權限或產品網路。

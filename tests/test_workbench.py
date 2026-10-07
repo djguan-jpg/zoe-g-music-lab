@@ -9,6 +9,7 @@ import threading
 import unittest
 import urllib.parse
 import wave
+from html.parser import HTMLParser
 from pathlib import Path
 from http.server import ThreadingHTTPServer
 from musiclab.design import music_plan_bundle, motif_bundle
@@ -167,6 +168,53 @@ class WorkbenchHTTPTests(unittest.TestCase):
         self.assertEqual(raw, (ROOT / "web/deletion-history.js").read_bytes())
         for path in ("/README.md", "/../README.md", "/does-not-exist"):
             self.assertEqual(self.request("GET", path)[0], 404)
+
+    def test_live_page_scripts_are_closed_separate_deferred_nodes_and_serve_once_in_dependency_order(self):
+        class Scripts(HTMLParser):
+            def __init__(self):
+                super().__init__()
+                self.nodes = []
+                self.current = None
+            def handle_starttag(self, tag, attrs):
+                if tag == 'script':
+                    self.current = {'attrs': dict(attrs), 'text': ''}
+                    self.nodes.append(self.current)
+            def handle_data(self, value):
+                if self.current is not None:
+                    self.current['text'] += value
+            def handle_endtag(self, tag):
+                if tag == 'script':
+                    self.current = None
+
+        status, _, raw = self.request('GET', '/')
+        self.assertEqual(status, 200)
+        parser = Scripts()
+        parser.feed(raw.decode('utf-8'))
+        parser.close()
+        self.assertIsNone(parser.current)
+        sources = []
+        for node in parser.nodes:
+            attrs = node['attrs']
+            self.assertIn('src', attrs)
+            self.assertIn('defer', attrs)
+            self.assertNotIn('async', attrs)
+            self.assertEqual(node['text'].strip(), '', attrs['src'])
+            self.assertTrue(attrs['src'].startswith('/') and not attrs['src'].startswith('//'))
+            sources.append(attrs['src'])
+        self.assertGreater(len(sources), 1)
+        self.assertEqual(len(sources), len(set(sources)))
+        dependencies = ['/verification-focus.js', '/backup-verification.js',
+                        '/backup-verification-controller.js', '/backup-verification-dom.js',
+                        '/backup-download-dom.js', '/app.js']
+        positions = [sources.index(name) for name in dependencies]
+        self.assertEqual(positions, sorted(positions))
+        for name in sources:
+            with self.subTest(source=name):
+                status, headers, script = self.request('GET', name)
+                self.assertEqual(status, 200)
+                self.assertIn('text/javascript', headers['Content-Type'])
+                self.assertEqual(headers['X-Content-Type-Options'], 'nosniff')
+                self.assertTrue(script)
 
     def test_license_notice_and_agent_discovery_are_served(self):
         status, headers, raw = self.request("GET", "/license")

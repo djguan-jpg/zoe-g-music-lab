@@ -13,7 +13,7 @@ ROOT=Path(__file__).resolve().parents[1]
 
 class DeliveryVersionTests(unittest.TestCase):
     def test_explicit_historical_oracle_product_and_discovery_agree(self):
-        expected=tuple('0.'+str(v)+'.0' for v in range(38,166))
+        expected=tuple('0.'+str(v)+'.0' for v in range(38,167))
         self.assertEqual(SUPPORTED_TOOL_VERSIONS,expected)
         self.assertEqual(__version__,CURRENT_VERSION)
         self.assertEqual(CURRENT_VERSION,expected[-1])
@@ -36,6 +36,32 @@ class DeliveryVersionTests(unittest.TestCase):
         self.assertEqual(policy.current,'0.59.0')
         self.assertTrue(policy.supports_version('0.59.0'))
         with self.assertRaises(FrozenInstanceError):policy.current='1.0.0'
+
+    def test_extended_list_accepts_129_and_256_exact_versions_and_refuses_257(self):
+        for count in (129,256):
+            versions=['0.'+str(i*2)+'.0' for i in range(count)]
+            data={'format':'zoe-delivery-versions','schema_version':1,'current':versions[-1],'supported':versions}
+            original=copy.deepcopy(data);policy=decode_policy(json.dumps(data).encode())
+            self.assertEqual(policy.supported,tuple(versions));self.assertEqual(data,original)
+            self.assertTrue(policy.supports_version(versions[-1]));self.assertFalse(policy.supports_version('0.1.0'))
+            data['supported'].clear();self.assertEqual(len(policy.supported),count)
+        versions=['0.'+str(i*2)+'.0' for i in range(257)]
+        data={'format':'zoe-delivery-versions','schema_version':1,'current':versions[-1],'supported':versions}
+        original=copy.deepcopy(data)
+        with self.assertRaisesRegex(ValueError,'1–256'):create_policy(data)
+        self.assertEqual(data,original)
+
+    def test_contract_8192_byte_budget_remains_independent_of_256_entry_capacity(self):
+        versions=['0.'+str(i)+'.0' for i in range(256)]
+        data={'format':'zoe-delivery-versions','schema_version':1,'current':versions[-1],'supported':versions}
+        raw=json.dumps(data,separators=(',',':')).encode();self.assertLess(len(raw),8192)
+        boundary=b' '*(8192-len(raw))+raw
+        self.assertEqual(decode_policy(boundary).supported,tuple(versions))
+        with self.assertRaises(ValueError):decode_policy(b' '+boundary)
+        wide=['2147483647.2147483647.'+str(2147483000+i) for i in range(256)]
+        data=dict(data,current=wide[-1],supported=wide);self.assertEqual(len(create_policy(data).supported),256)
+        raw=json.dumps(data,separators=(',',':')).encode();self.assertGreater(len(raw),8192)
+        with self.assertRaises(ValueError):decode_policy(raw)
 
     def test_unknown_shapes_versions_order_and_budgets_fail_without_input_mutation(self):
         good=POLICY.descriptor();cases=[None,[],{},dict(good,extra=True),dict(good,schema_version=True),dict(good,schema_version=2),dict(good,format='other'),dict(good,current='0.58.0'),dict(good,supported=[]),dict(good,supported=tuple(good['supported'])),dict(good,supported=['0.59.0','0.59.0']),dict(good,supported=['0.59.0','0.38.0']),dict(good,supported=['0.1.0']*129)]
@@ -63,7 +89,7 @@ class DeliveryVersionTests(unittest.TestCase):
         self.assertEqual(data['protocol_version'],1);self.assertEqual(len(data['operations']),22)
         source={'scope':'music','files':{'source.txt':'原文🎵'}}
         self.assertEqual(prepare(source).manifest['tool_version'],CURRENT_VERSION)
-        for version in [True,[],{},'0.166.0','0.37.0','0.59.0\n']:
+        for version in [True,[],{},'0.167.0','0.37.0','0.59.0\n']:
             with self.subTest(version=version),self.assertRaises(ValueError):prepare(source,tool_version=version)
 
 
