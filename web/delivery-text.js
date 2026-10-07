@@ -14,6 +14,7 @@
  }
  function prepare(content){const raw=text.prepare({name:'window.txt',content}).bytes;return Object.freeze({source_bytes:raw.length,window:(start=0,limit=maxBytes)=>range(raw,start,limit),search:request=>search.searchBytes(raw,request)});}
  function window(content,start_byte=0,max_bytes=maxBytes){return prepare(content).window(start_byte,max_bytes);}
+ function sliceBytes(raw,start_byte=0,max_bytes=maxBytes){if(!ArrayBuffer.isView(raw)||Object.prototype.toString.call(raw)!=='[object Uint8Array]'||raw.byteLength>text.maxBytes)throw Error('原文需為最多8 MiB的UTF-8 bytes');return range(raw,start_byte,max_bytes);}
  function checked(value){
   const keys=['text','start_byte','end_byte','source_bytes','max_bytes','next_byte'];
   if(!value||typeof value!=='object'||Object.keys(value).length!==keys.length||!keys.every(k=>Object.hasOwn(value,k)))throw Error('原文分段回覆無效');
@@ -34,5 +35,5 @@
   }
   return {status,refresh:publish,first:()=>load(0,[]),seek:start=>load(start,[]),next(){const s=status();return s.canNext?load(page.next_byte,[...back,page.start_byte]):false;},previous(){const s=status();return s.canPrevious?load(back[back.length-1],back.slice(0,-1)):false;}};
  }
- const api={maxBytes,prepare,window,checked,createReader};if(typeof module==='object'&&module.exports)module.exports=api;else root.MusicDeliveryText=api;
+ const api={maxBytes,prepare,window,sliceBytes,checked,createReader};if(typeof module==='object'&&module.exports)module.exports=api;else root.MusicDeliveryText=api;
 })(typeof globalThis==='object'?globalThis:this);

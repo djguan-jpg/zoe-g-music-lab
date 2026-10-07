@@ -168,3 +168,10 @@ td input[data-raw-number]{width:63px}.raw-value-note{display:block;font-size:.78
 .verification-context dl,.verification-context dd { margin:0; min-width:0; }
 .verification-context dt { font-weight:600; margin-block:0.5rem 0.25rem; }
 .verification-context pre { margin:0; max-width:100%; white-space:pre-wrap; overflow-wrap:anywhere; font-size:0.8rem; line-height:1.5; }
+
+/* Opt-in source reading remains local and bounded. */
+.verification-original .actions { display:flex; flex-wrap:wrap; gap:0.5rem; margin-block:0.75rem; }
+.verification-original .actions button { white-space:normal; max-width:100%; }
+.verification-original pre { max-height:min(40vh,300px); overflow:auto; padding:0.5rem; background:#fffefa; border:1px solid var(--line); }
+.verification-original mark { background:#e5bc77; color:var(--ink); }
+.verification-original pre:focus,.verification-original mark:focus { outline:2px solid var(--green); outline-offset:2px; }

@@ -1,5 +1,7 @@
 # 原文差異的有限前後文
 
+現行原文核對提供明確操作的16 KiB差異閱讀與局部導航，仍沿完整proof及source guard。見[契約](TEXT-VERIFICATION-PAGE.md)。以下保留歷史描述。
+
 ## 分層與來源
 
 原有核對失敗只列第一個byte位置；實際native前測在第18byte的emoji差異無法直接辨認來源。新的text-byte-context只讀兩份有界Uint8Array，找第一個不同byte或共用前綴的結尾；明確includeContext布林才派生片段。原text-verification以同一次text-download.prepare及原候選自有副本服務inspect與inspectWithContext，完整來源掃描一次，七欄report1的键、值與輸出保持。片段來自這兩份原始bytes，不從DOM preview、隱藏form、檔名或hash推測。
