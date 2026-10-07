@@ -1,3 +1,8 @@
+## v0.158.0
+
+唯一policy明確38–158共121，unknown159拒絕。Git tree bounded capture與原自有handle cleanup是來源封裝層，不改Agent1／draft3／22及29／domain schemas。見[Git讀取契約](RELEASE-GIT-CAPTURE.md)。
+
+
 ## v0.157.0
 
 唯一policy明確38–157共120，unknown158拒絕。原始碼ZIP容量共用producer／maintenance gate，產品Agent1／draft3／22與29／文字交付及29schemas保持。見[容量契約](RELEASE-ZIP-BUDGET.md)。
