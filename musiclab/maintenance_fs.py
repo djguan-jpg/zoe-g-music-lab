@@ -9,7 +9,6 @@ import json
 import os
 import re
 import stat
-import struct
 import subprocess
 import tempfile
 import time
@@ -20,10 +19,10 @@ from .json_document import decode_json
 from .maintenance import retention_plan, prune_token, version_key, validate_run, classify_run, validate_candidate, prune_batch_directories, prune_batch_plan
 from .run_identity import observe_process
 from .release_archive import RAW_PROFILE, manifest_profile, archive_args, source_tree, blob_digest
+from .release_zip import MAX_MANIFEST_BYTES, MAX_ARCHIVE_BYTES
+from .release_zip_fs import inspect_archive
 
 PREFIX = 'zoe-g-music-lab/'
-MAX_MANIFEST_BYTES = 2 * 1024 * 1024
-MAX_ARCHIVE_BYTES = 64 * 1024 * 1024
 # Read-only catalog size is independent of the unchanged recovery write budget.
 MAX_RELEASE_ENTRIES = 1024
 MAX_RECOVERY_PACKAGES = 128
@@ -132,27 +131,7 @@ def _source_metadata(root, commit, version):
 
 def _zip_budget(archive):
     """Bound actual central entries before ZipFile allocates its entry objects."""
-    size = archive.stat().st_size
-    with archive.open('rb') as source:
-        start = max(0, size-65557);source.seek(start);tail = source.read(65557)
-        index = tail.rfind(b'PK\x05\x06')
-        if index < 0 or len(tail)-index < 22:
-            raise ValueError('No bounded standard ZIP footer')
-        footer = struct.unpack_from('<4s4H2LH', tail, index)
-        count, central_size, central_offset, comment_size = footer[4:]
-        if footer[1] or footer[2] or footer[3] != count or not 1 <= count <= 4096 or central_size > MAX_MANIFEST_BYTES or central_offset+central_size != start+index or start+index+22+comment_size != size:
-            raise ValueError('ZIP central directory budget or layout unsupported')
-        source.seek(central_offset);central = source.read(central_size)
-    position = entries = 0
-    while position < len(central):
-        if len(central)-position < 46 or central[position:position+4] != b'PK\x01\x02':
-            raise ValueError('Invalid ZIP central entry')
-        header = struct.unpack_from('<4s6H3L5H2L', central, position)
-        position += 46+sum(header[10:13]);entries += 1
-        if entries > 4096 or position > len(central):
-            raise ValueError('ZIP central entry budget exceeded')
-    if entries != count:
-        raise ValueError('ZIP central entry count mismatch')
+    inspect_archive(archive)
 
 
 def _zip_ledger(archive, data, objects=None):
