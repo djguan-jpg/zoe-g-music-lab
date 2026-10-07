@@ -4,10 +4,31 @@ const {test}=require('node:test'),assert=require('node:assert/strict'),fs=requir
 const policy=require('../musiclab/assets/delivery-versions.js'),pack=require('../web/delivery-package.js');
 const json=require('../musiclab/assets/json-document.js'),source=fs.readFileSync('musiclab/assets/delivery-versions.js','utf8');
 const contract=()=>JSON.parse(fs.readFileSync('musiclab/assets/delivery-versions.json','utf8'));
+
+test('129 and 256 explicit versions are immutable exact lists and a unique 257th entry is refused',()=>{
+ for(const count of [129,256]){
+  const versions=Array.from({length:count},(_,i)=>'0.'+(i*2)+'.0'),c={format:'zoe-delivery-versions',schema_version:1,current:versions.at(-1),supported:versions};
+  const before=structuredClone(c),p=policy.decodePolicy(JSON.stringify(c));assert.deepEqual(p.supported,versions);assert.deepEqual(c,before);
+  assert.equal(p.supportsVersion(versions.at(-1)),true);assert.equal(p.supportsVersion('0.1.0'),false);c.supported.length=0;assert.equal(p.supported.length,count);assert.ok(Object.isFrozen(p.supported));
+ }
+ const supported=Array.from({length:257},(_,i)=>'0.'+(i*2)+'.0'),c={format:'zoe-delivery-versions',schema_version:1,current:supported.at(-1),supported};
+ const before=structuredClone(c);assert.throws(()=>policy.createPolicy(c),/1–256/);assert.deepEqual(c,before);
+});
+
+test('8 KiB decoded contract budget remains independent of expanded entry capacity',()=>{
+ const supported=Array.from({length:256},(_,i)=>'0.'+i+'.0'),c={format:'zoe-delivery-versions',schema_version:1,current:supported.at(-1),supported};
+ const raw=JSON.stringify(c),size=Buffer.byteLength(raw);assert.ok(size<8192);const boundary=' '.repeat(8192-size)+raw;
+ assert.deepEqual(policy.decodePolicy(boundary).supported,supported);assert.throws(()=>policy.decodePolicy(' '+boundary));
+ const wide=Array.from({length:256},(_,i)=>'2147483647.2147483647.'+(2147483000+i)),large={...c,current:wide.at(-1),supported:wide};
+ assert.equal(policy.createPolicy(large).supported.length,256);assert.ok(Buffer.byteLength(JSON.stringify(large))>8192);assert.throws(()=>policy.decodePolicy(JSON.stringify(large)));
+ const cases=[c,large,{...c,current:'0.256.0',supported:Array.from({length:257},(_,i)=>'0.'+i+'.0')}];
+ const code='import json,sys\nfrom musiclab.delivery_versions import decode_policy\na=[]\nfor c in json.load(sys.stdin):\n try:decode_policy(json.dumps(c,separators=(",",":")));a.append(True)\n except ValueError:a.append(False)\nprint(json.dumps(a))';
+ assert.deepEqual(JSON.parse(execFileSync('python',['-X','utf8','-c',code],{input:JSON.stringify(cases),encoding:'utf8',timeout:10000})),[true,false,false]);
+});
 test('fixed explicit historical oracle and immutable isolated policy agree with producer version',()=>{
- const expected=Array.from({length:128},(_,i)=>'0.'+(38+i)+'.0');assert.deepEqual(policy.supported,expected);assert.equal(policy.current,'0.165.0');assert.equal(pack.version,policy.current);
+ const expected=Array.from({length:129},(_,i)=>'0.'+(38+i)+'.0');assert.deepEqual(policy.supported,expected);assert.equal(policy.current,'0.166.0');assert.equal(pack.version,policy.current);
  assert.equal(pack.supportsVersion,policy.supportsVersion);assert.equal(policy.schemaVersion,1);assert.ok(Object.isFrozen(policy)&&Object.isFrozen(policy.supported));assert.throws(()=>policy.supported.pop());
- const c=contract(),before=structuredClone(c),p=policy.createPolicy(c);assert.deepEqual(c,before);c.supported.length=0;c.current='9.0.0';assert.equal(p.current,'0.165.0');assert.ok(p.supportsVersion('0.126.0'));
+ const c=contract(),before=structuredClone(c),p=policy.createPolicy(c);assert.deepEqual(c,before);c.supported.length=0;c.current='9.0.0';assert.equal(p.current,'0.166.0');assert.ok(p.supportsVersion('0.126.0'));
 });
 test('sparse policies are exact lists without gap inference and browser producers use that rule',async()=>{
  const c=contract();c.current='0.59.0';c.supported=['0.38.0','0.59.0'];const sparse=policy.createPolicy(c);assert.equal(sparse.supportsVersion('0.54.0'),false);
@@ -45,9 +66,9 @@ test('real Python contract drives browser module and missing or unknown contract
 });
 test('runtime package import and comparison all reject unlisted future producers',async()=>{
  const s={scope:'lyrics',label:'',files:{'source.txt':'原文'}},hash=async()=> 'a'.repeat(64);
- await assert.rejects(pack.manifest(s,hash,'0.166.0'),/不支援/);assert.equal(pack.supportsVersion('0.54.0'),true);
+ await assert.rejects(pack.manifest(s,hash,'0.167.0'),/不支援/);assert.equal(pack.supportsVersion('0.54.0'),true);
  const importer=require('../web/delivery-import.js'),reports=require('../web/delivery-report.js');
- const manifest={format:'zoe-delivery-manifest',schema_version:1,tool_version:'0.166.0',scope:'lyrics',label:'',source_type:'provided_text_files',content_validation:'not_performed',file_count:1,source_bytes:6,files:[{name:'source.txt',bytes:6,sha256:'a'.repeat(64)}]};
+ const manifest={format:'zoe-delivery-manifest',schema_version:1,tool_version:'0.167.0',scope:'lyrics',label:'',source_type:'provided_text_files',content_validation:'not_performed',file_count:1,source_bytes:6,files:[{name:'source.txt',bytes:6,sha256:'a'.repeat(64)}]};
  const data={format:'zoe-delivery-inspection',schema_version:1,archive_bytes:100,archive_sha256:'a'.repeat(64),manifest},wire={files:s.files,data,meta:{version:pack.version,protocol_version:1,needs_review:true}};
  await assert.rejects(importer.checked(wire,{bytes:100,sha256:'a'.repeat(64),manifest},hash),/不支援/);assert.throws(()=>reports.report(data,{}),/不支援/);
 });

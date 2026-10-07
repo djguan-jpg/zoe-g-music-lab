@@ -1,3 +1,7 @@
+# 目前交付版本容量
+
+使用者明確選擇保留全部舊版本，從v0.166.0起純Python／JS清單最多256項，固定契約仍8192bytes。目前明確所列0.38.0至0.166.0共129項；未知0.167.0拒絕。兩種容量分別核對，有效256項若文字超8KiB仍拒絕，不自動移除舊版或推測缺項。schema1、嚴格ASCII三段整數、遞增唯一與隔離不可變列表保持。歷史交付封裝原bytes不重建或遷移；詳細驗證見[本輪QA](QA-v0.166.0.md)。以下保留原歷史契約。
+
 ## v0.158.0
 
 唯一policy明確38–158共121，unknown159拒絕。Git tree bounded capture與原自有handle cleanup是來源封裝層，不改Agent1／draft3／22及29／domain schemas。見[Git讀取契約](RELEASE-GIT-CAPTURE.md)。

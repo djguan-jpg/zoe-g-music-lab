@@ -1,0 +1,15 @@
+# v0.166.0 QA
+
+原版HTML缺少script結束標籤，Chrome沒有backup-verification節點，保存後核對來源無效且picker停用。新增HTTP組裝回歸原20項中失敗1項；修正後20項通過。完整解析每個實際外部script及GET回應，避免只看字串存在。
+
+依使用者選擇保留全部舊版本，兩純policy清單最多256項，契約仍8192bytes；產品166／明確38–166共129，unknown167拒絕。新增2Python／2JS跨語言容量案例，集中9Python／8JS通過。初次wide fixture實際7163bytes，未達預期8KiB；改為合法三段10位整數後超限拒絕，保留原失敗logs，產品byte cap沒有改動。
+
+第一批HTML修正完整821Python／1951JS；容量及新測試加入後完整823Python／1953JS通過，Python 96.484秒、JS 23.688秒。兩批1049份工作來源前後SHA相同，只在一次性副本compileall quiet2；原Python2worker／120秒、Node2fileworkers／60秒保持。153語法及四Skills通過。
+
+原v165 exact ZIP3178147bytes／b4628a6aae053db8766ce07d789b9cb4facf852d82eaf561aeb1b23013f79a3e完整CRC／1049原Git blobs／ledger及820Python／1951JS還原通過，原source與deadline保持且暫存移除。512歷史四scope ZIP與manifest逐bytes相同。
+
+Chrome真File chooser：3144bytes同份伺服器ZIP匹配true、同大小變更ZIP false、另一時間CLI匯出false；136原表單欄位與合成庫所有原檔SHA保持，console0。QA handler只將原回應複製到自有QA目錄，未改產品。初次不同時間匯出誤當同SHA的helper失敗保留。前兩次download事件逾時及chrome://downloads政策拒絕不迂迴處理；Chrome落盤未驗證。三個自有QA頁與blank政策拒絕頁已關閉，三個自有server原STOP／EOF0／thread joined及native terminal核對。沒有媒體、保存下載、完整視覺／screen reader、實聽或Host接受。
+
+另唯讀查驗FreeTWAI：Zoe登入與音樂公會長、四公開投稿逐份作者欄仍自行聲明未核實，不重送或修改；該自有查驗tab已關閉。六法律／平台、七原history與四Skillsbytes保持，PolyForm Noncommercial禁止商用與ZOE. G／djguan-jpg保持。
+
+正式指定source完整封裝、Agent／MCP、遠端兩assets逐bytes與digest、main／branch／tag／restore及最終自有job盤點，各依outputs/v166-qa及正式manifest的獨立成功收據，不推定尚未取得的接受。舊失敗紀錄不覆寫；最新三正式版、超七天必要門檻及未知／partial保留。
