@@ -17,6 +17,8 @@ flowchart LR
 
 播放速度沿純來源／候選模型、注入capture與setRate controller、原生DOM adapter及app分層；只寫本頁播放器playbackRate，回讀後才回報。來源／busy／visible／dispose保護與自有event cleanup保持。資料與Agent不承載播放偏好。見[播放速度契約](PLAYBACK-RATE.md)。
 
+單句試聽候選沿範圍純模型、注入seek／play／pause controller、原生DOM adapter與app分層；pending job／late promise與來源所有權核對，僅停止同份自有片段。時間與Agent wire保持，DOM listener隨pagehide移除。完整接受待驗，見[試聽契約](CUE-AUDITION.md)。
+
 ## 責任與版本
 
 | 層 | 責任 | 主要入口 |
