@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 """Read a bounded canonical text delivery ZIP without extracting any paths."""
-import hashlib
+from . import digests as hashlib
 import io
 import struct
 import zipfile

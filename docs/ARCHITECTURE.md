@@ -45,6 +45,10 @@ flowchart LR
 
 自有object URL、timer、staging和程序有數量／期限限制，取消只處理自身工作；不列舉或終止無關程序。每輪CLI audit保護最新三封裝，只有strict超七天、完整manifest／ZIP与exact tag/archive可重建才可清理；unknown／partial與草稿保留。不以單一PID、catalog或綠燈冒充完成／所有權。
 
+摘要建構子由共用digests在首次實際計算時載入原標準函式庫；能力清單／無摘要的形狀檢查不預載provider，原native物件、串流、參數與拒絕保持。見[摘要載入](DIGEST-LOADING.md)。
+
+維護程序核對由純maintenance_runs／同份有界record bytes與SHA／原native-CIM adapter／CLI分層。`--runs-only` 可補查1–32份明確紀錄，完整封裝盘點與程序報告分開，真正清除仍完整重查；來源與聚合依[指定程序契約](RUN-AUDIT.md)。
+
 原始碼封裝先以純release_capture／release_git_fs取得有限固定Git tree與收束原child／兩reader，再以純release_zip／release_zip_fs容量gate讀ZIP。producer與maintenance共用，完整blob／CRC／ledger維持後續層；manifest2 raw profile與legacy1原bytes保持。見[來源契約](RELEASE-ARCHIVE.md)、[ZIP容量](RELEASE-ZIP-BUDGET.md)與[Git串流](RELEASE-GIT-CAPTURE.md)。
 
 測試排程由純test_schedule驗證完整唯一ID及近似positive integer成本，將昂貴方法分配後恢復每組discovery原順序。launcher與parent獨立discovery、完整coverage與原handle EOF核對保持；仍兩worker／120秒，class fixtures各程序自行建立／收束，成本提示不保證速度或全域RAM。細節見[Git串流與測試交接](RELEASE-GIT-CAPTURE.md)。

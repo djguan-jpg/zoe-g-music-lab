@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 """Read one original ordinal from two complete drafts; never read paths or write."""
-import hashlib
+from . import digests as hashlib
 import json
 from .draft_contract import CONTRACT, MAX_DRAFT_BYTES, exact
 from .draft_compare import source, value_view

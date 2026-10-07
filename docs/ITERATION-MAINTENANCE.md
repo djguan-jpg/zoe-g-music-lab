@@ -30,7 +30,7 @@ python scripts/iteration_audit.py --restore-journal outputs/maintenance/prune-<i
 
 保留最新三個已核對的不同版本；兩檔中較新的修改時間必須嚴格超過七天。候選還需核對 `v<version>` tag 指定 commit、projects metadata、所有 ZIP 內容與 ledger，並現場由該 Git commit 重建完全相同的大小及 SHA-256。tag／來源／bytes 無法核對就保留。版本排序依三個整數，不使用字串排序。
 
-最多128個 direct release entries、2000個 manifest source files；manifest／recovery journal 各2 MiB，ZIP64 MiB／展開256 MiB。標準 ZIP 中央目錄最多2 MiB／4096 entries，在 ZipFile 建立 entry objects 前檢查實際數量；ZIP64、多磁碟或非標準 layout 拒絕。超限 journal 在任何搬移前拒絕。Git 單次呼叫有60秒 deadline，離線操作不改 tag、分支或遠端。
+唯讀盤點最多1024個 direct release entries，恢復／清除單批最多128份；2000個 manifest source files，manifest／recovery journal 各2 MiB，ZIP64 MiB／展開256 MiB。標準 ZIP 中央目錄最多2 MiB／4096 entries，在 ZipFile 建立 entry objects 前檢查實際數量；ZIP64、多磁碟或非標準 layout 拒絕。超限 journal 在任何搬移前拒絕。Git 單次呼叫有60秒 deadline，離線操作不改 tag、分支或遠端。
 
 ## 同主機的程序記錄
 
@@ -55,10 +55,12 @@ python scripts/iteration_audit.py --run-record outputs/maintenance/build-run.jso
 
 `--run-record` 可重複，最多32筆。`running` 表示原 creation／basename 都匹配；`stopped` 表示已退出／不存在；`pid_reused` 表示目前 PID 已屬另一個 creation 或 image；`unverified` 表示無權／無法查詢。後兩者分開：重用的外部程序保留，而未知不冒充原工作已終止。清除遇 running／unverified 拒絕。
 
+同一輪補查其他指定程序時，可用 `--runs-only --run-record ...` 沿原32份上限，只讀指定run1／查同PID，不重掃封裝。獨立run-audit1保存同份原bytes的SHA與逐筆觀察，沒有清除token；清除仍需完整重新盤點。來源與聚合規則見[指定程序契約](RUN-AUDIT.md)。
+
 Windows reader 先開單一指定 PID 的 QUERY_LIMITED_INFORMATION handle，讀 creation／image／exit state，finally 關閉 handle。v0.45 只有原生 unavailable 才補查同一 PID 的本機 CIM 三個 identity 欄位；空／錯／逾時回覆不能當 absent，有限時間精度不能當精確 ownership。補查與判定見[限定 PID 契約](PROCESS-PROBE.md)。不列舉所有程序、不讀 command line／環境、不終止原工作或其他程序。非 Windows 無法自我登記；觀察明示 unavailable。此工具提供結束證據與清除阻擋，managed server 仍由原 handle 正常停止。
 
 ## 分層與版本
 
 `maintenance.py` 是純版本／身份／保留／token 政策；`process_probe.py` 是嚴格有界 probe1 解碼；`process_probe_windows.py` 是單 PID 本機 CIM adapter；`run_identity.py` 保留 native reader 與補查路由；`maintenance_fs.py` 是明確路徑、ZIP／Git facts、journal／prune／restore adapter；`iteration_audit.py` 只解析 CLI 與輸出 JSON。測試以新建合成 Git repository 驗證實際 archive、清除、還原及原 bytes，不使用使用者其他 Repo。
 
-run／audit／recovery／process-probe 各 schema1；現產品0.45.0、Agent1、MCP2025-11-25、draft3 與創作 report 各自管理。未知版本拒絕，不靜默遷移；現基本12／啟庫17工具，維護能力沒有新增到 Agent／HTTP。v0.35 的10／15是當輪歷史。
+run／audit／recovery／process-probe／run-audit 各schema1；產品版本依唯一[交付版本表](../musiclab/assets/delivery-versions.json)，Agent1、MCP2025-11-25、draft3與創作report各自管理。未知版本拒絕，不靜默遷移。維護CLI獨立於目前22基本／29啟庫Agent工具，沒有Agent／HTTP維護權限。

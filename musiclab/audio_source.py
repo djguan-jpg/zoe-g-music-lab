@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 """Owned byte copy and PCM fmt preflight; never alter the selected source."""
 from contextlib import contextmanager
-import hashlib
+from . import digests as hashlib
 import struct
 import tempfile
 from pathlib import Path

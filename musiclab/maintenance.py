@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 """Pure iteration retention and run-identity policy; no filesystem or process I/O."""
-import hashlib
+from . import digests as hashlib
 import json
 import math
 import re

@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 """Deterministic text delivery archive; no paths, media or creative validation."""
 import base64
-import hashlib
+from . import digests as hashlib
 import io
 import re
 import zipfile

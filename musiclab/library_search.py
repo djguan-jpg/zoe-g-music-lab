@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 """Pure literal metadata search with a complete observed-index continuation pin."""
 import copy
-import hashlib
+from . import digests as hashlib
 import json
 import re
 from .json_document import utf8_bytes

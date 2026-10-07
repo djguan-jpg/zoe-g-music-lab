@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 """Explicitly selected local library; immutable revisions, no deletion API."""
-import hashlib
+from . import digests as hashlib
 import json
 import os
 import re

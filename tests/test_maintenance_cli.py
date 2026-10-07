@@ -73,7 +73,7 @@ class MaintenanceCliRoutingTests(unittest.TestCase):
     @contextmanager
     def readers(self):
         with ExitStack() as stack:
-            names = ['workspace', 'audit', 'audit_batch', 'prune', 'restore', 'record_current_run', 'write_new']
+            names = ['workspace', 'audit', 'audit_batch', 'audit_runs', 'prune', 'restore', 'record_current_run', 'write_new']
             readers = {name: stack.enter_context(patch('scripts.iteration_audit.'+name)) for name in names}
             readers['space_report'] = stack.enter_context(patch('musiclab.maintenance_space_fs.space_report'))
             yield readers
@@ -115,6 +115,15 @@ class MaintenanceCliRoutingTests(unittest.TestCase):
         self.rejected(['--restore-journal', 'outputs/a.json', '--package-directory', DIRECTORY])
         self.rejected(['--space-report', '--record-self', ''], 2)
 
+    def test_process_only_action_rejects_incompatible_or_missing_inputs_before_io(self):
+        self.rejected(['--runs-only'])
+        self.rejected(['--runs-only','--expected-token','a'*64,'--run-record','outputs/a.json'])
+        self.rejected(['--runs-only','--package-directory',DIRECTORY,'--run-record','outputs/a.json'])
+        for action in ['--prune','--space-report']:
+            self.rejected(['--runs-only',action,'--run-record','outputs/a.json'],2)
+        self.assertEqual(choose_action(runs_only=True,has_records=True),'runs')
+        with self.assertRaises(ValueError): choose_action(runs_only=1,has_records=True)
+
     def test_valid_actions_dispatch_exactly_once_with_existing_arguments(self):
         root = Path(__file__).resolve().parents[1]
         cases = [([], 'audit', (root, []), {}),
@@ -122,7 +131,8 @@ class MaintenanceCliRoutingTests(unittest.TestCase):
                  (['--prune', '--expected-token', 'a'*64], 'prune', (root, 'a'*64, []), {'package_directories': None}),
                  (['--restore-journal', 'outputs/a.json'], 'restore', (root, root/'outputs/a.json'), {}),
                  (['--record-self', 'ok'], 'record_current_run', ('ok',), {}),
-                 (['--space-report'], 'space_report', (root,), {})]
+                 (['--space-report'], 'space_report', (root,), {}),
+                 (['--runs-only','--run-record','outputs/a.json'], 'audit_runs', (root,[root/'outputs/a.json']), {})]
         for args, name, positional, keywords in cases:
             with self.subTest(action=name), self.readers() as readers, redirect_stdout(io.StringIO()) as stdout:
                 readers['workspace'].return_value = root; readers[name].return_value = {'selected': name}

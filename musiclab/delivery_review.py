@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 """Bounded, exact-name text comparison; never edits or merges source files."""
-import hashlib
+from . import digests as hashlib
 from .delivery_package import validate, SCOPES, MAX_FILES, MAX_SOURCE_BYTES
 
 def descriptor():

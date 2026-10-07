@@ -5,7 +5,7 @@ No subprocesses, file access or configurable commands in this layer. Legacy
 manifest1 keeps its original Git behavior; manifest2 explicitly pins raw blobs.
 """
 import re
-import hashlib
+from . import digests as hashlib
 from pathlib import PurePosixPath
 
 RAW_PROFILE = 'git-raw-blobs-v1'

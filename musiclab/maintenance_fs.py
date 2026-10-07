@@ -4,7 +4,7 @@
 Only the two manifest-named release files are candidates. No recursive removal,
 media scanning, global process signalling, network calls or Git mutation.
 """
-import hashlib
+from . import digests as hashlib
 import json
 import os
 import re
@@ -22,6 +22,7 @@ from .release_archive import RAW_PROFILE, manifest_profile, archive_args, source
 from .release_zip import MAX_MANIFEST_BYTES, MAX_ARCHIVE_BYTES
 from .release_zip_fs import inspect_archive
 from .release_git_fs import read_tree
+from .maintenance_runs import check_run_count, checked_records, build_run_report
 
 PREFIX = 'zoe-g-music-lab/'
 # Read-only catalog size is independent of the unchanged recovery write budget.
@@ -230,6 +231,36 @@ def package_facts(root, directory, now):
             'verified': not reasons, 'reasons': reasons, 'identity': identity, 'manifest': data}
 
 
+def _run_audit(root, run_records, *, require_records=False):
+    if type(run_records) not in (list, tuple):
+        raise ValueError('Run record paths must be an explicit bounded sequence')
+    check_run_count(len(run_records), require_records=require_records)
+    paths = [safe_path(root, path) for path in run_records]
+    if len(set(paths)) != len(paths):
+        raise ValueError('Run record paths must be distinct')
+    documents, digests = [], []
+    for path in paths:
+        if not path.is_relative_to(root/'outputs'):
+            raise ValueError('Run record must belong to this project outputs')
+        with path.open('rb') as source:
+            raw = source.read(4097)
+        documents.append(decode_json(raw, max_bytes=4096, label='maintenance run record'))
+        digests.append(hashlib.sha256(raw).hexdigest())
+    # Validate all selected documents before the first process query. Each
+    # digest describes the same bounded bytes used by this report's identity.
+    records = checked_records(documents, require_records=require_records)
+    observations = [observe_process(record['identity']['pid']) for record in records]
+    return build_run_report(records, observations, digests)
+
+
+def audit_runs(root, run_records=()):
+    """Read explicit process records only; this report grants no pruning token."""
+    if type(run_records) not in (list, tuple):
+        raise ValueError('Run record paths must be an explicit bounded sequence')
+    check_run_count(len(run_records), require_records=True)
+    return _run_audit(workspace(root), run_records, require_records=True)
+
+
 def audit(root, run_records=(), now=None):
     root = workspace(root);now = time.time() if now is None else now
     release_root = root/'outputs/releases';packages, excluded, runs = [], [], []
@@ -247,14 +278,7 @@ def audit(root, run_records=(), now=None):
                 del fact
             except (ValueError, OSError, subprocess.TimeoutExpired) as error:
                 excluded.append({'name': path.name, 'reason': str(error), 'action': 'preserved'})
-    if len(run_records) > 32:
-        raise ValueError('At most32 explicit run records per audit')
-    for path in run_records:
-        path = safe_path(root, path)
-        if not path.is_relative_to(root/'outputs'):
-            raise ValueError('Run record must belong to this project outputs')
-        record = validate_run(read_document(path, 4096))
-        runs.append(classify_run(record, observe_process(record['identity']['pid'])))
+    runs = _run_audit(root, run_records)['runs']
     plan = retention_plan(packages, now)
     decisions = {d['directory']: d for d in plan['decisions']}
     candidates = [p['identity'] for p in packages if decisions[p['directory']]['eligible']]

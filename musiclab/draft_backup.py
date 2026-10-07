@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 """Portable, bounded backups. Validate all entries before immutable restoration."""
-import hashlib
+from . import digests as hashlib
 import io
 import re
 import struct

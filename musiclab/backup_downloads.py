@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 """Bounded HTTP download staging. Own files only, no background worker."""
-import hashlib
+from . import digests as hashlib
 import re
 import tempfile
 import threading
