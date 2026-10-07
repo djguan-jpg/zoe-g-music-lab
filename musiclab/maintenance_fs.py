@@ -2,7 +2,7 @@
 """Explicit project filesystem/Git adapter for pure retention policy.
 
 Only the two manifest-named release files are candidates. No recursive removal,
-media scanning, process signalling, network calls or Git mutation.
+media scanning, global process signalling, network calls or Git mutation.
 """
 import hashlib
 import json
@@ -21,6 +21,7 @@ from .run_identity import observe_process
 from .release_archive import RAW_PROFILE, manifest_profile, archive_args, source_tree, blob_digest
 from .release_zip import MAX_MANIFEST_BYTES, MAX_ARCHIVE_BYTES
 from .release_zip_fs import inspect_archive
+from .release_git_fs import read_tree
 
 PREFIX = 'zoe-g-music-lab/'
 # Read-only catalog size is independent of the unchanged recovery write budget.
@@ -124,7 +125,7 @@ def _source_metadata(root, commit, version):
     marker = decode_json(_git(root, ['show', commit+':projects.json']))
     if not isinstance(marker, dict) or marker.get('suite') != 'ZOE. G Music Lab' or marker.get('version') != version or marker.get('license') != 'PolyForm-Noncommercial-1.0.0':
         raise ValueError('Immutable source metadata mismatch')
-    names = _git(root, ['ls-tree', '-r', '-z', '--name-only', commit])
+    names = read_tree(root, commit, names_only=True)
     if len(names) > MAX_MANIFEST_BYTES or any(not _source_path(name) for name in names.decode('utf-8').split('\0') if name):
         raise ValueError('Source contains out-of-scope paths')
 
@@ -209,7 +210,7 @@ def package_facts(root, directory, now):
         if resolved != data['commit']:
             raise ValueError('Tag source metadata mismatch')
         if manifest_profile(data) == RAW_PROFILE:
-            objects = source_tree(_git(root, ['ls-tree', '-r', '-z', '--long', data['commit']]))
+            objects = source_tree(read_tree(root, data['commit']))
             _zip_ledger(archive, data, objects)
     except (ValueError, OSError, subprocess.TimeoutExpired):
         reasons.append('tag_or_source_unverified')
@@ -347,7 +348,7 @@ def restore(root, journal_path):
             _source_metadata(root, data['commit'], data['version'])
             profile = manifest_profile(data)
             archive = candidate/data['archive'];_rebuild(root, data['commit'], data['sha256'], data['bytes'], archive, profile)
-            objects = source_tree(_git(root, ['ls-tree', '-r', '-z', '--long', data['commit']])) if profile == RAW_PROFILE else None
+            objects = source_tree(read_tree(root, data['commit'])) if profile == RAW_PROFILE else None
             _zip_ledger(archive, data, objects)
             prepared.append((destination, archive, manifest, identity))
         restored = []

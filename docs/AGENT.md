@@ -18,7 +18,7 @@ python -X utf8 music_lab_agent.py --describe
 {"protocol_version":1,"id":"guide-seed","operation":"lyrics_seed","payload":{"title":"Synthetic lyric seed","text":"First line\nSecond line"}}
 ```
 
-成功回應有相同 `id`、`ok:true` 及 `result.files`／`data`／`meta`；此例 `data.status` 為 `untimed`，不猜時間。失敗有 `ok:false` 和 `error.code`／`message`。輸入與回應依 protocol1，不把產品 v0.157.0 當協定版本。終止時關閉 stdin，正常 EOF 離開；只有呼叫命令不代表 Host 已安装。
+成功回應有相同 `id`、`ok:true` 及 `result.files`／`data`／`meta`；此例 `data.status` 為 `untimed`，不猜時間。失敗有 `ok:false` 和 `error.code`／`message`。輸入與回應依 protocol1，不把產品 v0.158.0 當協定版本。終止時關閉 stdin，正常 EOF 離開；只有呼叫命令不代表 Host 已安装。
 
 ## MCP stdio
 

@@ -43,7 +43,9 @@ flowchart LR
 
 自有object URL、timer、staging和程序有數量／期限限制，取消只處理自身工作；不列舉或終止無關程序。每輪CLI audit保護最新三封裝，只有strict超七天、完整manifest／ZIP与exact tag/archive可重建才可清理；unknown／partial與草稿保留。不以單一PID、catalog或綠燈冒充完成／所有權。
 
-原始碼封裝以純release_zip容量規則與release_zip_fs有限讀取／排他manifest寫入分層，producer及maintenance在配置ZIP項目前共用gate。完整Git blob／CRC／ledger核對在後續層，manifest2固定raw profile、legacy1保留原bytes；見[來源契約](RELEASE-ARCHIVE.md)與[容量契約](RELEASE-ZIP-BUDGET.md)。
+原始碼封裝先以純release_capture／release_git_fs取得有限固定Git tree與收束原child／兩reader，再以純release_zip／release_zip_fs容量gate讀ZIP。producer與maintenance共用，完整blob／CRC／ledger維持後續層；manifest2 raw profile與legacy1原bytes保持。見[來源契約](RELEASE-ARCHIVE.md)、[ZIP容量](RELEASE-ZIP-BUDGET.md)與[Git串流](RELEASE-GIT-CAPTURE.md)。
+
+測試排程由純test_schedule驗證完整唯一ID及近似positive integer成本，將昂貴方法分配後恢復每組discovery原順序。launcher與parent獨立discovery、完整coverage與原handle EOF核對保持；仍兩worker／120秒，class fixtures各程序自行建立／收束，成本提示不保證速度或全域RAM。細節見[Git串流與測試交接](RELEASE-GIT-CAPTURE.md)。
 
 ## 目前指南與歷史
 

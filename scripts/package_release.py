@@ -17,6 +17,7 @@ from musiclab.release_metadata import decode_metadata, validate_metadata, MAX_PR
 from musiclab.test_run_summary import decode_summary
 from musiclab.release_archive import RAW_PROFILE, archive_args, source_tree, blob_digest, MAX_SOURCE_BYTES
 from musiclab.release_zip_fs import inspect_archive, write_manifest
+from musiclab.release_git_fs import read_tree
 
 
 def command(args, cwd=ROOT, input=None, timeout=60):
@@ -88,7 +89,7 @@ def package(ref):
     destination.mkdir(parents=True)
     source = destination / f"zoe-g-music-lab-v{version}.zip"
     try:
-        objects = source_tree(command(["git", "ls-tree", "-r", "-z", "--long", commit]))
+        objects = source_tree(read_tree(ROOT, commit))
         command(["git", *archive_args(commit, source, RAW_PROFILE)])
         inspect_archive(source)
         with zipfile.ZipFile(source) as archive:
