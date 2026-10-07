@@ -23,3 +23,7 @@ producer集中test_release_metadata的原exec76508 EOF1，subprocess.run達120�
 restore-v0.163.0-before-v0.164.0→7222fd47ebd0faf7d6891fec8da1d3e4ac1b3910；接續前restore-v0.164.0-review-before-acceptance-repair-1→bc07d44ed782cdf6f6134bcf96b2e4446b11dc58。source／package／PR與最後唯讀audit使用接續目錄新收據，不覆寫前份證據。來源原文、法律／平台六檔、七history與四Skills保持；四投稿仍submitted_unverified。本輪無平台寫入、產品UI／保存下載／實聽／Host／創始接受。
 
 見[失敗證據契約](PYTHON-TEST-FAILURE.md)與[交接](HANDOFF-v0.164.0.md)。
+
+## 冷載入與完整來源計時
+
+接續分層計時以合成8MiB來源完整核對；已預載標準provider的同程序prepare0.140秒、canonical ZIP0.161秒、application搜尋／分段各0.167／0.166秒。兩次cProfile實際CLI（41KiB／8MiB ZIP）原handle EOF0／native terminal與完整成果一致，總wall1.737／2.527秒；冷hashlib載入cumulative1.346／1.174秒。這定位本次兩個CLI樣本的主要耗時，不證明全部逾時根因、未來速度或完整接受。保留標準provider、原discovery／coverage與時限，沒有以fallback或共用程序替換獨立CLI案例。新收據在outputs/v164-qa/acceptance-2；還原點restore-v0.164.0-review-before-profile-2→1b8797927687393f40d6d2c5a6602d39091633bf。600／180秒選擇仍待人類回覆。

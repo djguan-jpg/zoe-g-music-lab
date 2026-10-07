@@ -14,6 +14,8 @@
 
 見[指定程序](docs/RUN-AUDIT.md)、[摘要載入](docs/DIGEST-LOADING.md)、[QA](docs/QA-v0.164.0.md)與[交接](docs/HANDOFF-v0.164.0.md)。
 
+接續分層計時以合成8MiB來源完整核對；已預載標準provider的同程序prepare0.140秒、canonical ZIP0.161秒、application搜尋／分段各0.167／0.166秒。兩次cProfile實際CLI（41KiB／8MiB ZIP）原handle EOF0／native terminal與完整成果一致，總wall1.737／2.527秒；冷hashlib載入cumulative1.346／1.174秒。這定位本次兩個CLI樣本的主要耗時，不證明全部逾時根因、未來速度或完整接受。保留標準provider、原discovery／coverage與時限，沒有以fallback或共用程序替換獨立CLI案例。新收據在outputs/v164-qa/acceptance-2；還原點restore-v0.164.0-review-before-profile-2→1b8797927687393f40d6d2c5a6602d39091633bf。600／180秒選擇仍待人類回覆。
+
 ## v0.163.0 分鏡撤回接受與隔離封裝準備
 
 原controller在撤回寫入器回false或沒有改回總長時仍清除紀錄、顯示已撤回。現在純storyboard-duration保留pending紀錄，寫入後核對同份來源、紀錄身份與原宣告字串，確認全部還原後才清除紀錄及發布同一已核對快照。明確false、無動作、錯原值、來源變更、例外或期間clear拒絕成功；失敗不自動回滾或重試。紀錄保持時，只有原時間來源與實際adopt-after仍一致才可再撤回；來源或部分寫入需先人工核對修正。void原生setter相容，後續創作文字與其他工作台／媒體沿原限定apply保持。

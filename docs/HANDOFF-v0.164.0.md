@@ -11,3 +11,7 @@ codex/iteration-v0.164.0／Draft PR #163 保存差異。還原點 restore-v0.163
 必要接續：依新證據處理驗收條件；通過完整820Python／1947JS、153JS語法與四Skills，重新核對原v163隔離還原，再對精確 source commit 執行正式 packager／遠端核對，才可合併與發佈。若時限經核准變更，明記實際新條件及原來源還原的方法，不冒充原120秒通過。保留獨立discovery／完整ID／兩workers與每個原handleEOF；沒有登記者不補造native identity。
 
 每輪 outputs／程序盤點唯讀；--runs-only不提供清除token。latest3／嚴格超七天／exact tag與archive復原保持。partial、未知來源、checkpoint、草稿、素材與未知descendants保留；不得以bare PID全域清理。本輪沒有browser UI、保存下載、實聽、Host或創始接受，rolling goal active。
+
+## 冷載入與完整來源計時
+
+接續分層計時以合成8MiB來源完整核對；已預載標準provider的同程序prepare0.140秒、canonical ZIP0.161秒、application搜尋／分段各0.167／0.166秒。兩次cProfile實際CLI（41KiB／8MiB ZIP）原handle EOF0／native terminal與完整成果一致，總wall1.737／2.527秒；冷hashlib載入cumulative1.346／1.174秒。這定位本次兩個CLI樣本的主要耗時，不證明全部逾時根因、未來速度或完整接受。保留標準provider、原discovery／coverage與時限，沒有以fallback或共用程序替換獨立CLI案例。新收據在outputs/v164-qa/acceptance-2；還原點restore-v0.164.0-review-before-profile-2→1b8797927687393f40d6d2c5a6602d39091633bf。600／180秒選擇仍待人類回覆。
