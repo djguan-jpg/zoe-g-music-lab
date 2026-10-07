@@ -1,3 +1,19 @@
+## v0.167.0 整批校時與撤回的實際寫入接受
+
+原校時controller只呼叫寫入器便宣布套用或撤回成功，拒絕／無動作時仍建立或清除撤回紀錄。現在純lyrics-timing捕捉同份before與實際post，核對原列數／順序／ID、目前歌詞與宣告、完整目標時間原字串，再建立或清除紀錄並宣布成功。明確false、部分寫入、例外、期間reset／cancel或來源變更均拒絕；不自動回滾或重送。失敗撤回保留仍存在的紀錄；部分寫入需人工核對並修正回原applied-after才能重試。原void寫入器與正常markDirty／invalidate相容，寫入期間阻擋重入。
+
+新增12項JS回歸涵蓋拒絕／無動作、部分與false-after-full、原值／列／文字／宣告來源變更、前次紀錄、reset／cancel、重試與重入。原版31項20通過／11失敗，修正版31全通過。完整823Python（1既有Windows symlink skip、0expected failures）／1965JS、153語法與四Skills通過；原Python兩worker／120秒、Node兩fileworkers／60秒保持。1053份工作來源前後SHA相同，只在核對過的一次性副本compileall quiet2，暫存移除。
+
+Chrome QA注入false寫入器重現原版假成功，並非原生瀏覽器自行拒絕。修正版拒絕套用不建虛假紀錄、拒絕撤回保留重試；恢復原void寫入器後成功逐字還原01.000／02.000／04.000／05.000。兩次拒絕全部142表單欄位保持，成功重試只有四時間欄改變，後續原文emoji／連續空白、宣告0020.000與兩原ID保持，console0。兩自有tab關閉、兩server原STOP／EOF0／thread joined及native terminal已驗。沒有選音檔或草稿庫，沒有保存下載、實聽、完整視覺／Host接受。
+
+原v166 ZIP3187941bytes／SHAe15e83a745df6d12442f31d01fde5776a0a90b3a640950618bdfdb890ccb3b67完整CRC／1052 raw blobs／ledger、823Python／1953JS與前後來源bytes還原通過；516四scope歷史ZIP／manifest原bytes保持。初次重入fixture遞迴以原exec handle停止，限定native查詢0，缺少child身份不補造；加入fixture guard後才做有界red回歸。初次還原helper誤期待1951而實際1953全通過，wrapper失敗保留；修正QA oracle後以原來源／期限重驗並取得前後bytes收據。沒有放寬產品或期限。
+
+產品167／明確38–167共130，未知168拒絕；依使用者選擇清單容量256、契約仍8192bytes，全部舊版本保留。22基本／明確啟庫29、Agent1／draft3／template1與29既有schemas保持，沒有新operation／asset／依賴／auth／路徑／模型／產品網路。六法律／平台、七history與四Skills原bytes保持；PolyForm Noncommercial禁止商用、ZOE. G／djguan-jpg與已授權public保持，四投稿仍submitted_unverified，本輪不查寫平台或重送。
+
+還原restore-v0.166.0-before-v0.167.0→2d774e31048129a266839a11dea2f06624df73ed、codex/iteration-v0.167.0保存差異；指定source封裝、PR與遠端assets各依成功manifest及精確收據。最新三正式版本、嚴格超七天必要門檻、未知／partial／FAILED保留，rolling goal active。
+
+見[寫入接受契約](docs/LYRICS-TIMING-ACCEPTANCE.md)、[QA](docs/QA-v0.167.0.md)與[交接](docs/HANDOFF-v0.167.0.md)。
+
 ## v0.166.0 備份核對的實際模組載入
 
 Chrome與HTTP頁面解析重現：verification-focus的script缺少結束標籤，backup-verification標記成為前一段文字，模組未載入；原版保存草稿後顯示snapshot未定義與來源無效，選檔核對停用。補回唯一結束標籤；新增HTTP實際HTMLParser組裝驗證，逐份核對獨立defer script節點、空內文、唯一來源、依賴順序及實際GET。原版20項失敗1項，修正後20項通過。
