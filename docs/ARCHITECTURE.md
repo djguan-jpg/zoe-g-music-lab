@@ -45,6 +45,8 @@ flowchart LR
 
 原始碼封裝先以純release_capture／release_git_fs取得有限固定Git tree與收束原child／兩reader，再以純release_zip／release_zip_fs容量gate讀ZIP。producer與maintenance共用，完整blob／CRC／ledger維持後續層；manifest2 raw profile與legacy1原bytes保持。見[來源契約](RELEASE-ARCHIVE.md)、[ZIP容量](RELEASE-ZIP-BUDGET.md)與[Git串流](RELEASE-GIT-CAPTURE.md)。
 
+測試排程由純test_schedule驗證完整唯一ID並平均分個別方法，launcher與parent獨立discovery、完整coverage及原handle EOF核對保持；仍兩worker／120秒，class fixtures各程序自行建立／收束，不承諾速度或全域RAM。細節见[Git串流與測試交接](RELEASE-GIT-CAPTURE.md)。
+
 ## 目前指南與歷史
 
 [README](../README.md)、[START-HERE](START-HERE.md)、[AGENT](AGENT.md)與四Skill維持當前可用工作流程。每輪更新置於CHANGELOG、HANDOFF與各QA／契約文件，入口不再疊加歷史QA摘要；七份v154原入口原文在相同目錄的HISTORY檔中保留，來源／byte SHA與回復方式見[文件分層契約](DOC-ENTRYPOINTS.md)。

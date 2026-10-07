@@ -120,7 +120,7 @@ class NativeTestRunnerTests(unittest.TestCase):
         self.assertEqual(self.root.parent,Path(tempfile.gettempdir()).resolve())
         for name in ('scripts','tests','musiclab'):(self.root/name).mkdir()
         (self.root/'musiclab/__init__.py').write_text('# Synthetic test fixture package\n',encoding='utf-8')
-        for name in ('test_run_summary.py','json_document.py','maintenance.py','run_identity.py','process_probe.py','process_probe_windows.py'):
+        for name in ('test_schedule.py','test_run_summary.py','json_document.py','maintenance.py','run_identity.py','process_probe.py','process_probe_windows.py'):
             (self.root/'musiclab'/name).write_bytes((ROOT/'musiclab'/name).read_bytes())
         (self.root/'scripts/check_python_tests.py').write_bytes((ROOT/'scripts/check_python_tests.py').read_bytes())
         self.source='''import unittest
@@ -140,6 +140,7 @@ class Synthetic(unittest.TestCase):
     def test_real_workers_report_skip_expected_failure_and_original_eof(self):
         p=self.command('--report-json');self.assertEqual(p.returncode,0,p.stderr[-1500:]);v=decode_summary(p.stdout.encode())
         self.assertEqual((v['tests'],v['skipped'],v['expected_failures']),(4,2,1));self.assertEqual(len(v['skipped_tests']),2)
+        self.assertEqual([row['tests'] for row in v['workers']],[2,2])
         for row in v['workers']:
             self.assertEqual((row['terminal'],row['exit_code']),('eof',0))
             if sys.platform=='win32':

@@ -13,6 +13,7 @@ import unittest
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from musiclab.test_run_summary import summarize
+from musiclab.test_schedule import partition
 from musiclab.run_identity import record_current_run
 DEADLINE_SECONDS = 120
 WORKERS = 2
@@ -30,12 +31,12 @@ def worker(group):
     record = record_current_run('python-tests-'+str(group)) if sys.platform == 'win32' else None
     print(json.dumps({'phase':'start','group':group,'run':record}),flush=True)
     all_tests = list(tests(unittest.defaultTestLoader.discover(str(ROOT/'tests'))))
-    modules = sorted({test.__class__.__module__ for test in all_tests})
-    selected = unittest.TestSuite(test for test in all_tests if modules.index(test.__class__.__module__) % WORKERS == group)
+    selected_ids = partition([test.id() for test in all_tests])[group]
+    selected_set = set(selected_ids)
+    selected = unittest.TestSuite(test for test in all_tests if test.id() in selected_set)
     stream = io.StringIO()
     result = unittest.TextTestRunner(stream=stream).run(selected)
-    print(json.dumps({'phase':'result','group': group, 'count': result.testsRun, 'ids': [test.id() for test in all_tests
-          if modules.index(test.__class__.__module__) % WORKERS == group], 'passed': result.wasSuccessful(),
+    print(json.dumps({'phase':'result','group': group, 'count': result.testsRun, 'ids': selected_ids, 'passed': result.wasSuccessful(),
           'skipped':[test.id() for test,reason in result.skipped],
           'expected_failures':[test.id() for test,error in result.expectedFailures],
           'failures':len(result.failures),'errors':len(result.errors),'unexpected_successes':len(result.unexpectedSuccesses)}),flush=True)
@@ -76,8 +77,7 @@ def main():
         outputs.append(output)
     # Parent discovery independently proves complete coverage, not just summed counts.
     discovered=list(tests(unittest.defaultTestLoader.discover(str(ROOT/'tests'))))
-    modules=sorted({test.__class__.__module__ for test in discovered})
-    expected=[[test.id() for test in discovered if modules.index(test.__class__.__module__) % WORKERS == group] for group in range(WORKERS)]
+    expected=partition([test.id() for test in discovered])
     try:
         if time.monotonic()-started >= DEADLINE_SECONDS:raise ValueError('Python test run reached its overall deadline')
         report=summarize(outputs,expected,[p.pid for p in processes],[p.returncode for p in processes],[p.poll() is not None for p in processes])

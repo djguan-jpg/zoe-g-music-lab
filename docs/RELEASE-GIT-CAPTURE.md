@@ -19,3 +19,12 @@
 這只限制此兩pipe的保留量，讀取chunk、成功bytes副本、Git本身及其他來源／測試程序仍各有自身資源需求。不是所有Git呼叫、整個process tree／OS／產品工作台的RAM保證，也不是來源同時改寫的原子快照或完整ZIP規格認證。真實slow disk、無法終止的OS I/O與全域RAM尚未接受。
 
 詳見[QA](QA-v0.158.0.md)、[交接](HANDOFF-v0.158.0.md)及[來源封裝](RELEASE-ARCHIVE.md)。
+
+## 完整測試分配
+
+
+首份v158來源552e8e3d57791d39273fac323f3b1de90b5e0673的封裝測試再由worker1觸及120秒期限，原parent EOF1；ZIP／FAILED及原輸出保留，沒有成功manifest或發布。原worker1自我登記身份保留，未印出的worker0 identity不補造。
+
+純test_schedule用完整獨立discovery的唯一test IDs，將個別方法平均分到兩worker，各組保持原相對順序 → 原launcher每worker獨立發現及執行 → parent再次獨立discovery／完整ID及count／原handle EOF核對。795方法分為398／397；既有120秒整體期限、兩worker與summary1／傳輸容量不變，不略過或重複測試。不假設方法耗時相同或保證速度；class fixture可在兩個隔離程序各自執行。現場共用HTTP fixtures均使用本機動態port0並teardown，個別filesystem fixtures用自身暫存；集中22項（6新增排程、16既有summary／真worker／deadline）通過。
+
+修正後完整Python實測114.062秒、795（1既有skip／0expected failures），兩原worker EOF0，1911JS／153syntax／四Skills通過；最初789批與所有失敗收據保持。分批CLI每次最多32個明確run records，完整清單去重並核對每批terminal後聚合；不增加原維護cap、權限或程序列舉。失敗封裝是第4份partial，保留不清理。
