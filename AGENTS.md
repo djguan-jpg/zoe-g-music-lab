@@ -1,5 +1,17 @@
 # ZOE. G Music Lab
 
+## v0.155.0 目前入口與歷史分層
+
+README、Agent與架構指引、四Skill先提供目前可用流程，不再把歷史QA摘要排在操作之前。新增START-HERE連接四工作台、CLI範例、保存與結果解讀；Agent區分JSON-lines／MCP handshake／payload、22基本與明確啟庫29操作、來源選擇和能力邊界。七份入口由982110bytes減為25953bytes，全部舊文由v154 main的exact Git blob複製到同目錄HISTORY檔，原bytes／相對連結基準與四Skill frontmatter保持。資料沒有刪除，縮小的是入口讀取量，不是磁碟容量或RAM量測。
+
+四CLI範例實際執行產生成果，重複輸出回傳1且原成果bytes不變。Agent discovery22／範例untimed原文、MCP2025-11-25 initialize→initialized→tools/list→tools/call與structured/text一致、四domain Agent成功及合成PCM原bytes保留。第一次QA腳本在拒絕覆寫後誤限錯誤措辭，保留terminal失敗與五child records；後續只接續拒覆寫／Agent／MCP核對，不重跑或替換原四成果。各CLI/stdio工作EOF；不是Host安裝、模型、媒體創作或保存下載接受。
+
+755Python（1既有Windows symlink skip、0expected failures）、1911JS、153syntax與四Skills通過；468四scope歷史ZIP／manifest及29組operation input/output schemas與整份／原列comparison bytes保持。原v154 exact-source ZIP3000508bytes／SHA153a6387005a8f3eee7ea479cee43e2aa8fd7b7bf608e2288bcd994469c9ece8，以原launcher／120秒deadline順序還原755／1911，CRC通過且暫存移除。
+
+產品155／唯一policy38–155共118、unknown156拒絕；22／29、Agent1／draft3／舊schemas保持，backend／browser implementation及asset／operation／依賴／模型／auth／路徑／外網權限沒有擴張。六法律／平台原bytes、PolyForm Noncommercial／public、ZOE. G／djguan-jpg與四submitted_unverified紀錄保持，本輪不讀寫FreeTWAI。restore-v0.154.0-before-v0.155.0→73b25274dcae919f5d363cbb57702e0555e7140c；codex/iteration-v0.155.0，exact-source封裝与rolling goal active。
+
+見[契約](docs/DOC-ENTRYPOINTS.md)。README／START-HERE／Agent／架構與四Skill只維護目前工作流程；後续輪次將QA與迭代摘要寫在CHANGELOG／HANDOFF／QA或專項契約，不再疊加入口。歷史snapshot不修改；AGENTS既有施工與領域規則保持。
+
 ## v0.154.0 完整原文差異閱讀
 
 成果、專案草稿與接受條件核對不一致時，可明確按「閱讀差異位置」，從目前完整原文取最多16 KiB的UTF-8片段，整字標示第一個差異對應字元；提供開頭、下一段、返回已讀上一段、返回差異及關閉。差異在原文結尾明示EOF；控制字元呈現跳脫文字，來源不改寫。純text-verification-page重用text-download驗證與delivery-text有界byte range → 原注入controller及512位置history → literal DOM、manual focus與有界局部捲動。原七欄report／callback、選定File單次讀取及39byte雙側前後文保持。完整原文只在明確操作期間暫時編碼，finally釋放，不新增選定檔案全文cache或自動保存。
