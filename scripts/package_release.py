@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 """Package one immutable Git commit and validate that exact extracted source."""
 import argparse
+import compileall
 import hashlib
 import json
 import subprocess
@@ -114,6 +115,10 @@ def package(ref):
                     raise ValueError("Unverified release validation temporary directory")
                 archive.extractall(folder)
                 checkout = Path(folder) / "zoe-g-music-lab"
+                # Prepare only this verified, disposable checkout. Cache files
+                # stay outside the source archive and the runner's fixed budget.
+                if not compileall.compile_dir(checkout, quiet=2):
+                    raise ValueError("Verified Python source could not be prepared")
                 # The full suite includes real Git/Windows process fixtures; use a
                 # bounded execution deadline separately from each caller's wait.
                 # The runner owns a 120-second budget; allow it to collect and
