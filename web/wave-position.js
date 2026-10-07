@@ -39,11 +39,19 @@
     function apply(propose){
       if(disposed)return false;
       try{
-        const before=checked(capture()),target=propose(before);if(target===null){refresh();return false;}
+        const before=checked(capture());if(disposed)return false;
+        const target=propose(before);if(target===null){refresh();return false;}
         const current=checked(capture());
-        if(!present(current).available||['source','current_source','duration'].some(k=>current[k]!==before[k])){refresh();return false;}
-        setPosition(target);refresh();return true;
-      }catch(error){onError(error);return false;}
+        if(disposed||!present(current).available||['source','current_source','duration'].some(k=>current[k]!==before[k])){refresh();return false;}
+        const accepted=setPosition(target);
+        if(disposed)return false;
+        if(accepted===false)throw Error('播放位置未接受本次定位；請依目前音檔再試');
+        const actual=checked(capture());if(disposed)return false;
+        const actualView=present(actual);
+        if(!actualView.available||['source','current_source','duration'].some(k=>actual[k]!==current[k])||
+           Math.abs(actual.position-target)>.001)throw Error('播放位置未核對到本次定位；請依目前音檔再試');
+        onView({...actualView});return !disposed;
+      }catch(error){if(disposed)return false;try{refresh();}catch{}if(!disposed)onError(error);return false;}
     }
     return {refresh,key:(key,modifiers)=>apply(s=>keyboard(s,key,modifiers)),pointer:(x,left,width)=>apply(s=>pointer(s,x,left,width)),dispose(){disposed=true;}};
   }
