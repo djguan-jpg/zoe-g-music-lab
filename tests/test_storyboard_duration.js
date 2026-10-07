@@ -2,6 +2,7 @@
 'use strict';
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const D=require('../web/storyboard-duration.js'),Frames=require('../web/storyboard-frames.js');
+const Timing=require('../web/storyboard-timing.js'),{execFileSync}=require('node:child_process');
 const root=path.join(__dirname,'..');
 const source=()=>({duration:'60',fps:'24',shots:[{id:'a',start:'0',end:'6'},{id:'b',start:'6',end:'12'}]});
 function controller({write}={}){
@@ -76,4 +77,41 @@ test('actual shot deletion keeps all surviving raw times, declared duration and 
   const context={readValue:control=>control.value,MusicPlanningValues:require('../web/planning-values.js'),$:id=>controls[id],state:{busy:false},collections:{shots:{scope:'storyboard',label:'鏡頭'}},entriesFor:()=>structuredClone(rows),MusicHistory:require('../web/deletion-history.js'),MusicEditor:require('../web/editor-state.js'),deletionHistory:{push:(_scope,r)=>record=r},writeEntries:(_list,r)=>written=r,refreshDeletionHistory:()=>{},markDirty:()=>{},focusEntry:()=>{},say:()=>{}};
   vm.createContext(context);vm.runInContext(code.slice(start,end),context);context.deleteEntry('shots',1);assert.equal(controls['mv-duration'].value,'60');assert.deepEqual(written,[rows[0],rows[2]]);assert.deepEqual(record.patches,[]);assert.deepEqual(record.fields,{});
   const restored=context.MusicHistory.restore(written,record,{fields:{'mv-duration':'60'}});assert.deepEqual(restored.entries,rows);assert.equal(restored.fields['mv-duration'],'60');
+});
+
+test('raw declaration categories agree with the Python application and shared timing diagnostics',()=>{
+  const whitespace=['','\t','\n','\r','\u001c','\u001d','\u001e','\u001f','\u0085','\u00a0','\u1680','\u2000','\u2001','\u2002','\u2003','\u2004','\u2005','\u2006','\u2007','\u2008','\u2009','\u200a','\u2028','\u2029','\u202f','\u205f','\u3000'];
+  const invalid=['\ufeff',' \ufeff ','\u200b','\u0085\ufeff\u001c','\ufeff12\ufeff','\u001c12\u001c','NaN','-1e-999','0'];
+  const durations=[...whitespace,...invalid,'\u008512.0\u0085','１２','1_2','60'];
+  const panels=durations.map(duration=>({fields:{'mv-duration':duration,'mv-fps':'24'},shots:[{start:'0',end:'6'},{start:'6',end:'12'}]}));
+  const native=JSON.parse(execFileSync('python',['-X','utf8','-c','import json,sys;from musiclab.application import build;print(json.dumps([build("storyboard_timing_review",{"panel":p}).data for p in json.load(sys.stdin)]))'],{cwd:root,input:JSON.stringify(panels),encoding:'utf8',timeout:10000}));
+  for(const [i,duration] of durations.entries()){
+    const v=source();v.duration=duration;const before=structuredClone(v),result=D.compare(v),diagnostic=Timing.report(panels[i]);
+    assert.deepEqual(diagnostic,native[i]);assert.deepEqual(v,before);
+    if(i<whitespace.length){assert.equal(result.status,'empty');assert.equal(result.declaredText,'尚未宣告');assert.equal(diagnostic.issues.find(issue=>issue.field==='mv-duration').code,'missing_clock');}
+    else if(i<whitespace.length+invalid.length){assert.equal(result.status,'invalid');assert.equal(result.declaredText,'請核對宣告');assert.ok(diagnostic.issues.some(issue=>issue.field==='mv-duration'));}
+    else{assert.equal(result.status,duration==='60'?'differs':'matches');assert.equal(result.declaredText,duration==='60'?'60 秒':'12 秒');}
+  }
+});
+
+test('unavailable tail still reports the raw declaration category without offering a write',()=>{
+  for(const [duration,label] of [['\ufeff','請核對宣告'],['\u0085','尚未宣告'],['\u001c','尚未宣告']]){
+    const value=source();value.duration=duration;value.shots[1].end='';let writes=0;
+    const c=D.createController({capture:()=>value,apply:()=>writes++,onState:()=>{}}),before=structuredClone(value),v=c.refresh();
+    assert.equal(v.status,'unavailable');assert.equal(v.declaredText,label);assert.equal(v.canAdopt,false);assert.throws(()=>c.adopt());assert.equal(writes,0);assert.deepEqual(value,before);
+  }
+});
+
+test('explicit adoption and undo restore BOM and Python whitespace byte for byte and retain later creative text',()=>{
+  for(const raw of ['\ufeff',' \ufeff ','\u0085','\u001c\u0085\u3000']){
+    const {value,other,c}=controller();value.duration=raw;value.shots[1].end='\u008512.000\u0085';c.refresh();
+    const times=structuredClone(value.shots),media=other.media;c.adopt();assert.equal(value.duration,'\u008512.000\u0085');assert.equal(c.view().canUndo,true);
+    other.visual='後續原畫面 🎵  ';c.refresh();c.undo();assert.equal(value.duration,raw);assert.deepEqual(value.shots,times);assert.equal(other.visual,'後續原畫面 🎵  ');assert.equal(other.media,media);assert.equal(c.view().canUndo,false);
+  }
+});
+
+test('raw declaration changes invalidate an offered adoption even when both values are whitespace',()=>{
+  const {value,c}=controller();value.duration='\u0085';c.refresh();value.duration='\u001c';const before=structuredClone(value);
+  assert.throws(()=>c.adopt(),/重新核對/);assert.deepEqual(value,before);assert.equal(c.view().status,'empty');
+  c.adopt();assert.equal(value.duration,'12');c.undo();assert.equal(value.duration,'\u001c');
 });
