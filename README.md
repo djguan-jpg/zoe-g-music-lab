@@ -23,10 +23,12 @@ python -X utf8 music_lab_server.py
 
 下一步讀[開始指南](docs/START-HERE.md)：第一次使用、CLI 可執行範例、檔案接續、草稿與常見結果狀態。Agent 使用者直接讀[目前接口指南](docs/AGENT.md)；先 discovery，再依當前 schema 呼叫工具。
 
+整批校時與撤回只有回讀完整實際時間後才顯示成功。拒絕或部分寫入時保留目前表格；撤回紀錄仍存在時，先核對並修正回套用後時間再重試，工具不自動回滾。見[寫入接受規則](docs/LYRICS-TIMING-ACCEPTANCE.md)。
+
 ## 保存、版本與授權
 
 草稿下載、成果下載與音檔保存分開。工作台沒有自動保存；離頁警示不能替代保存。要使用本機不可覆寫版本庫，請依開始指南明確指定 `--draft-library`。原檔保留，CLI 預設拒絕覆寫，只有明確 `--overwrite` 才替換指定輸出。
 
 四個專案採 **PolyForm Noncommercial 1.0.0，禁止商用**；保留 [LICENSE](LICENSE)／[NOTICE](NOTICE)。没有另授予 AGPL 或商用許可。AI 協作與發起署名見 [FOUNDER-RECORD.md](FOUNDER-RECORD.md)；既有四份自由工坊投稿仍為作者自行聲明、尚未核實，狀態見 [PLATFORM-STATUS.json](PLATFORM-STATUS.json)。
 
-目前版本 **v0.166.0**；來源完整驗收通過，正式封裝與遠端發佈另依本輪 manifest／收據確認；產品與協定分開管理，以 [projects.json](projects.json) 和 [delivery-versions.json](musiclab/assets/delivery-versions.json) 為準。更新與驗收讀 [CHANGELOG](CHANGELOG.md)／[本輪交接](docs/HANDOFF-v0.166.0.md)，開發讀[分層架構](docs/ARCHITECTURE.md)。舊 README 原文保留在[截至 v0.154 的歷史](README-HISTORY-through-v0.154.0.md)；歷史中的舊版本、舊工具數與舊平台狀態不代表現況。
+目前版本 **v0.167.0**；來源完整驗收通過，正式封裝與遠端發佈另依本輪 manifest／收據確認；產品與協定分開管理，以 [projects.json](projects.json) 和 [delivery-versions.json](musiclab/assets/delivery-versions.json) 為準。更新與驗收讀 [CHANGELOG](CHANGELOG.md)／[本輪交接](docs/HANDOFF-v0.167.0.md)，開發讀[分層架構](docs/ARCHITECTURE.md)。舊 README 原文保留在[截至 v0.154 的歷史](README-HISTORY-through-v0.154.0.md)；歷史中的舊版本、舊工具數與舊平台狀態不代表現況。

@@ -25,12 +25,25 @@
       catch(_){return false;}
     });
   }
+  function sameWrittenSnapshot(actual,before,values){
+    try{
+      if(actual.duration!==before.duration||actual.entries.length!==before.entries.length)return false;
+      const targets=new Map(values.map(e=>[e.id,e.value]));
+      if(targets.size!==before.entries.length)return false;
+      return actual.entries.every((row,index)=>{
+        const original=before.entries[index],target=targets.get(original.id);
+        return !!target&&row.id===original.id&&row.value.text===original.value.text&&
+          row.value.start===target.start&&row.value.end===target.end;
+      });
+    }catch{return false;}
+  }
   function createTimingController({request,snapshot,applyTimes,onPreview,onApplied,onUndone,onError,onState}){
-    let token=0,reading=false,pending=null,undo=null;
-    const state=()=>onState({reading,ready:!!pending,canUndo:!!undo});
+    let token=0,reading=false,pending=null,undo=null,writing=false,intent=0;
+    const state=()=>onState({reading,ready:!!pending&&!writing,canUndo:!!undo&&!writing});
     const invalidate=()=>{token++;reading=false;pending=null;state();};
     return {
       async preview(shift){
+        if(writing)return false;
         const current=++token;pending=null;reading=true;state();
         try{
           shift=time.normalize(shift,'整批調整秒數');if(shift===0)throw Error('調整量需至少 0.001 秒；正數延後，負數提前');
@@ -54,22 +67,28 @@
         finally{if(current===token){reading=false;state();}}
       },
       apply(){
-        if(reading||!pending)return false;
+        if(writing||reading||!pending)return false;
         try{
-          const job=pending;if(fingerprint(snapshot())!==fingerprint(job.before))throw Error('時間或句子在預覽後已修改，請重新預覽');
-          applyTimes(structuredClone(job.after));undo={before:job.before.entries,after:job.after};pending=null;onApplied(job.shift);state();return true;
-        }catch(error){invalidate();onError(error);return false;}
+          const job=pending,before=structuredClone(snapshot()),expectedIntent=intent;
+          if(fingerprint(before)!==fingerprint(job.before))throw Error('時間或句子在預覽後已修改，請重新預覽');
+          writing=true;const result=applyTimes(structuredClone(job.after)),after=structuredClone(snapshot());
+          if(result===false||intent!==expectedIntent||!sameWrittenSnapshot(after,before,job.after))throw Error('整批校時未完整寫入；請核對目前表格並重新預覽');
+          undo={before:job.before.entries,after:job.after};pending=null;writing=false;onApplied(job.shift);state();return true;
+        }catch(error){writing=false;invalidate();onError(error);return false;}
       },
       undo(){
-        if(!undo)return false;
+        if(writing||!undo)return false;
         try{
-          if(!sameTimes(snapshot().entries,undo.after))throw Error('句子或時間在套用後已修改；撤回會覆蓋編修，因此未撤回');
-          const old=undo;applyTimes(structuredClone(old.before));undo=null;invalidate();onUndone();return true;
-        }catch(error){onError(error);return false;}
+          const old=undo,before=structuredClone(snapshot()),expectedIntent=intent;
+          if(!sameTimes(before.entries,old.after))throw Error('句子或時間在套用後已修改；撤回會覆蓋編修，因此未撤回');
+          writing=true;const result=applyTimes(structuredClone(old.before)),after=structuredClone(snapshot());
+          if(result===false||undo!==old||intent!==expectedIntent||!sameWrittenSnapshot(after,before,old.before))throw Error('整批校時未完整撤回；目前表格與仍存在的撤回紀錄保留');
+          undo=null;writing=false;invalidate();onUndone();return true;
+        }catch(error){writing=false;state();onError(error);return false;}
       },
       invalidate,
-      reset(){undo=null;invalidate();},
-      cancel(){invalidate();return true;}
+      reset(){intent++;undo=null;invalidate();},
+      cancel(){intent++;invalidate();return true;}
     };
   }
   const api={orderedEntries,createTimingController};
