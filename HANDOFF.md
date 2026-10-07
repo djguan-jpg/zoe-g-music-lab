@@ -1,3 +1,7 @@
+# v0.170.0 接續接受診斷 1
+
+先讀[接續診斷](docs/QA-v0.170.0-ACCEPTANCE-1.md)。原1072來源的完整接受與逐項診斷保留，正式版仍v169，PR #169保持Draft。接續先定位child啟動／等待與案例成本，並完成標準typed run收束；不增加期限或發布。還原restore-v0.170.0-review-before-acceptance-1保留原候選。以下原交接保持。
+
 # v0.170.0 選句試聽候選
 
 讀[本輪交接](docs/HANDOFF-v0.170.0.md)與[QA](docs/QA-v0.170.0.md)。集中69JS／語法與瀏覽器試聽通過；完整Python／JS接受達原期限，v170未發布，正式版仍v169。以下保留先前交接原文。
