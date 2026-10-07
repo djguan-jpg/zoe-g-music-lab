@@ -115,3 +115,67 @@ test('raw declaration changes invalidate an offered adoption even when both valu
   assert.throws(()=>c.adopt(),/重新核對/);assert.deepEqual(value,before);assert.equal(c.view().status,'empty');
   c.adopt();assert.equal(value.duration,'12');c.undo();assert.equal(value.duration,'\u001c');
 });
+
+test('refused and no-op undo writers never report success or discard a safe retry',()=>{
+  for(const refusal of ['false','void']){
+    const value=source(),states=[];let mode='write',writes=0;
+    const c=D.createController({capture:()=>value,apply:v=>{writes++;if(mode==='refuse')return refusal==='false'?false:undefined;value.duration=v;},onState:v=>states.push(v)});
+    c.refresh();c.adopt();mode='refuse';assert.throws(()=>c.undo(),/拒絕|未還原/);assert.equal(value.duration,'12');assert.equal(c.view().canUndo,true);
+    assert.ok(states.every(v=>!v.note.includes('已撤回')));assert.equal(writes,2);mode='write';c.undo();assert.equal(value.duration,'60');assert.equal(writes,3);assert.equal(c.view().canUndo,false);
+  }
+});
+
+test('undo requires the exact prior raw string rather than numerical equivalence',()=>{
+  const value=source();value.duration='\u0085 60.00 \u0085';let normalize=false;
+  const c=D.createController({capture:()=>value,apply:v=>{value.duration=normalize?v.trim().replaceAll('\u0085','').trim():v;},onState:()=>{}});
+  c.refresh();c.adopt();normalize=true;assert.throws(()=>c.undo(),/原字串/);assert.equal(value.duration,'60.00');assert.equal(c.view().canUndo,false);
+  value.duration='12';normalize=false;c.undo();assert.equal(value.duration,'\u0085 60.00 \u0085');assert.equal(c.view().canUndo,false);
+});
+
+test('source changes during undo refuse success and preserve the original scoped retry',()=>{
+  for(const edit of [v=>v.fps='25',v=>v.shots[0].id='new',v=>v.shots[0].end='7',v=>v.shots.reverse(),v=>v.shots.pop()]){
+    const value=source(),original=structuredClone(value);let change=false;
+    const c=D.createController({capture:()=>value,apply:v=>{value.duration=v;if(change)edit(value);},onState:()=>{}});
+    c.refresh();c.adopt();change=true;const expected=structuredClone(original);edit(expected);assert.throws(()=>c.undo(),/來源/);assert.equal(c.view().canUndo,false);assert.deepEqual(value,expected);
+    value.duration='12';value.fps=original.fps;value.shots=structuredClone(original.shots);change=false;assert.equal(c.view().canUndo,true);c.undo();assert.deepEqual(value,original);
+  }
+});
+
+test('writer exceptions and unreadable post-write snapshots retain an unchanged undo record',()=>{
+  for(const failure of ['throw','malformed']){
+    const value=source();let undoPhase=false,fail=true,reads=0;
+    const c=D.createController({capture:()=>{if(undoPhase&&++reads===2&&fail&&failure==='malformed')return {...value,duration:null};return value;},apply:v=>{if(undoPhase&&fail){if(failure==='throw')throw Error('writer failed');return;}value.duration=v;},onState:()=>{}});
+    c.refresh();c.adopt();undoPhase=true;assert.throws(()=>c.undo(),/writer failed|來源不完整/);assert.equal(value.duration,'12');assert.equal(c.view().canUndo,true);
+    fail=false;c.undo();assert.equal(value.duration,'60');assert.equal(c.view().canUndo,false);
+  }
+});
+
+test('successful undo publishes the checked post-write snapshot without another capture',()=>{
+  const value=source();let undoPhase=false,reads=0;
+  const c=D.createController({capture:()=>{if(undoPhase&&++reads===3)return {...value,duration:'foreign',fps:'25'};return value;},apply:v=>{value.duration=v;},onState:()=>{}});
+  c.refresh();c.adopt();undoPhase=true;const result=c.undo();assert.equal(reads,2);assert.equal(result.declaredText,'60 秒');assert.equal(result.canUndo,false);assert.equal(value.duration,'60');
+});
+
+test('a cleared record during capture or write cannot be resurrected by undo',()=>{
+  for(const at of ['capture','write']){
+    const value=source();let undoPhase=false,cleared=false,writes=0,c;
+    c=D.createController({capture:()=>{if(undoPhase&&at==='capture'&&!cleared){cleared=true;c.clear();}return value;},apply:v=>{writes++;value.duration=v;if(undoPhase&&at==='write'){cleared=true;c.clear();}},onState:()=>{}});
+    c.refresh();c.adopt();undoPhase=true;assert.throws(()=>c.undo(),/已有變更|紀錄有變更/);assert.equal(writes,at==='capture'?1:2);assert.equal(c.view().canUndo,false);assert.equal(value.duration,at==='capture'?'12':'60');
+  }
+});
+
+test('the actual app undo handler shows refused writes as errors and permits an explicit retry',()=>{
+  const code=fs.readFileSync(path.join(root,'web/app.js'),'utf8'),start=code.indexOf("for(const action of ['adopt','undo'])$('mv-duration-"),end=code.indexOf('function loadMv(',start);assert.ok(start>=0&&end>start);
+  const value=source(),messages=[];let refuse=false;
+  const c=D.createController({capture:()=>value,apply:v=>{if(refuse)return false;value.duration=v;},onState:()=>{}});c.refresh();c.adopt();refuse=true;
+  const controls={'mv-duration-adopt':{},'mv-duration-undo':{}},context={$:id=>controls[id],state:{busy:false},storyboardDurationController:c,say:(text,error)=>messages.push({text,error})};
+  vm.createContext(context);vm.runInContext(code.slice(start,end),context);controls['mv-duration-undo'].onclick();assert.equal(messages[0].error,true);assert.ok(!messages[0].text.includes('已撤回'));assert.equal(value.duration,'12');assert.equal(c.view().canUndo,true);
+  refuse=false;controls['mv-duration-undo'].onclick();assert.equal(value.duration,'60');assert.equal(messages[1].error,undefined);assert.ok(messages[1].text.includes('已撤回'));
+});
+
+test('an explicit false after a partial write cannot become an accepted undo or trigger rollback',()=>{
+  const value=source(),states=[];let refuse=false,writes=0;
+  const c=D.createController({capture:()=>value,apply:v=>{writes++;value.duration=v;if(refuse)return false;},onState:v=>states.push(v)});
+  c.refresh();c.adopt();refuse=true;assert.throws(()=>c.undo(),/被拒絕/);assert.equal(value.duration,'60');assert.equal(writes,2);assert.equal(c.view().canUndo,false);assert.ok(states.every(v=>!v.note.includes('已撤回')));
+  value.duration='12';refuse=false;c.undo();assert.equal(value.duration,'60');assert.equal(writes,3);assert.equal(c.view().canUndo,false);
+});

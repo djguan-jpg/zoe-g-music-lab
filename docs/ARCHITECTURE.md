@@ -62,3 +62,5 @@ flowchart LR
 波形定位候選與原生寫入分開；寫入後核對當前音檔與實際位置，再交付同一快照的view。見[實際定位契約](WAVE-SEEK-ACCEPTANCE.md)。
 
 分鏡總長的空白分類沿共享planning-values，與Python application及原生時間診斷同來源；候選／controller／DOM沿既有分層，原值不修剪。見[原值分類契約](STORYBOARD-DURATION-VALUES.md)。
+
+分鏡總長撤回由純controller核對pending身份／原时间來源、注入寫入器與實際post快照，再發布同一已核對view；DOM及app保持既有限定寫入。拒絕不清除仍存在的紀錄、不自動回滾／重試。見[撤回接受契約](STORYBOARD-DURATION-UNDO.md)。
