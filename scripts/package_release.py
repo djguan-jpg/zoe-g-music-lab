@@ -15,6 +15,7 @@ sys.path.insert(0, str(ROOT))
 from musiclab.delivery_versions import decode_policy, MAX_CONTRACT_BYTES
 from musiclab.release_metadata import decode_metadata, validate_metadata, MAX_PROJECT_METADATA_BYTES
 from musiclab.test_run_summary import decode_summary
+from musiclab.release_archive import RAW_PROFILE, archive_args, source_tree, blob_digest, MAX_SOURCE_BYTES
 
 
 def command(args, cwd=ROOT, input=None, timeout=60):
@@ -25,8 +26,9 @@ def command(args, cwd=ROOT, input=None, timeout=60):
     return process.stdout
 
 
-def entries(archive):
+def entries(archive, objects=None):
     hashes = {}
+    expanded = 0
     for entry in archive.infolist():
         if entry.is_dir():
             continue
@@ -37,7 +39,23 @@ def entries(archive):
         parts = PurePosixPath(relative).parts
         if any(part.startswith((".env", ".dev.vars")) or part in (".git", "outputs", "__pycache__") for part in parts):
             raise ValueError("Unexpected private or generated file in archive")
-        hashes[relative] = hashlib.sha256(archive.read(entry)).hexdigest()
+        expanded += entry.file_size
+        if relative in hashes or expanded > MAX_SOURCE_BYTES:
+            raise ValueError("Archive duplicates or expanded budget exceeded")
+        expected = objects.get(relative) if objects is not None else None
+        if objects is not None and (expected is None or expected['size'] != entry.file_size):
+            raise ValueError("Archived source does not match immutable Git tree")
+        digest = hashlib.sha256()
+        blob = blob_digest(entry.file_size) if expected is not None else None
+        with archive.open(entry) as source:
+            while block := source.read(1024 * 1024):
+                digest.update(block)
+                if blob is not None:blob.update(block)
+        if expected is not None and blob.hexdigest() != expected['oid']:
+            raise ValueError("Archived source bytes differ from immutable Git blob")
+        hashes[relative] = digest.hexdigest()
+    if objects is not None and set(hashes) != set(objects):
+        raise ValueError("Archive omits immutable source files")
     return hashes
 
 
@@ -69,9 +87,10 @@ def package(ref):
     destination.mkdir(parents=True)
     source = destination / f"zoe-g-music-lab-v{version}.zip"
     try:
-        command(["git", "archive", "--format=zip", f"--prefix={PREFIX}", f"--output={source}", commit])
+        objects = source_tree(command(["git", "ls-tree", "-r", "-z", "--long", commit]))
+        command(["git", *archive_args(commit, source, RAW_PROFILE)])
         with zipfile.ZipFile(source) as archive:
-            hashes = entries(archive)
+            hashes = entries(archive, objects)
             if archive.testzip() is not None:
                 raise ValueError("Damaged package")
             archived_metadata = decode_metadata(archive.read(PREFIX + "projects.json"))
@@ -124,14 +143,14 @@ def package(ref):
                                                input=(json.dumps(request)+"\n").encode()))
                     if reply.get("result", {}).get("serverInfo", {}).get("version") != version or reply["result"]["protocolVersion"] != manifest_source["mcp_protocol_version"]:
                         raise ValueError("Packaged MCP metadata differs from release metadata")
-        manifest = {"schema_version": 1, "commit": commit, "version": version,
+        manifest = {"schema_version": 2, "archive_profile": RAW_PROFILE, "commit": commit, "version": version,
                     "license": manifest_source["license"], "archive": source.name,
                     "sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
                     "bytes": source.stat().st_size, "files": hashes,
                     "checks": {"zip_integrity": "passed", "release_metadata": "passed", "packaged_python_tests": "passed",
                                "packaged_javascript_tests": "passed", "agent_metadata": "passed", "mcp_metadata": "passed" if has_mcp else "not_in_this_version",
                                "python_run": python_summary},
-                    "restore": f"git archive --format=zip --prefix={PREFIX} --output=restored.zip {commit}"}
+                    "restore": f"git -c core.autocrlf=false -c core.eol=lf -c core.attributesFile= archive --format=zip --prefix={PREFIX} --output=restored.zip {commit}"}
         (destination / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2)+"\n", encoding="utf-8")
         return destination, manifest
     except Exception:

@@ -43,6 +43,8 @@ flowchart LR
 
 自有object URL、timer、staging和程序有數量／期限限制，取消只處理自身工作；不列舉或終止無關程序。每輪CLI audit保護最新三封裝，只有strict超七天、完整manifest／ZIP与exact tag/archive可重建才可清理；unknown／partial與草稿保留。不以單一PID、catalog或綠燈冒充完成／所有權。
 
+原始碼release manifest2以固定Git profile與完整原Git blob核對保留來源bytes；manifest1保留舊重建流程，不推測或遷移。來源有轉換或省略則拒絕成功封裝；清除及還原共用profile與manifest嚴格檢查，實際規則見[封裝契約](RELEASE-ARCHIVE.md)。
+
 ## 目前指南與歷史
 
 [README](../README.md)、[START-HERE](START-HERE.md)、[AGENT](AGENT.md)與四Skill維持當前可用工作流程。每輪更新置於CHANGELOG、HANDOFF與各QA／契約文件，入口不再疊加歷史QA摘要；七份v154原入口原文在相同目錄的HISTORY檔中保留，來源／byte SHA與回復方式見[文件分層契約](DOC-ENTRYPOINTS.md)。

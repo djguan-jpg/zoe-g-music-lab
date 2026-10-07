@@ -1,3 +1,8 @@
+## v0.156.0
+
+唯一policy明確支援38–156共119版本，未知157拒絕。release manifest2／固定Git原始blob profile獨立於delivery schema1與Agent1；交付wire與29 schemas保持，見[封裝契約](RELEASE-ARCHIVE.md)。
+
+
 # 固定交付版本契約 v1
 
 ## v0.155.0 目前入口與歷史分層
