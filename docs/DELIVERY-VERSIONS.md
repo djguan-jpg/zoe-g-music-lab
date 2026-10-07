@@ -1,3 +1,8 @@
+## v0.157.0
+
+唯一policy明確38–157共120，unknown158拒絕。原始碼ZIP容量共用producer／maintenance gate，產品Agent1／draft3／22與29／文字交付及29schemas保持。見[容量契約](RELEASE-ZIP-BUDGET.md)。
+
+
 ## v0.156.0
 
 唯一policy明確支援38–156共119版本，未知157拒絕。release manifest2／固定Git原始blob profile獨立於delivery schema1與Agent1；交付wire與29 schemas保持，見[封裝契約](RELEASE-ARCHIVE.md)。

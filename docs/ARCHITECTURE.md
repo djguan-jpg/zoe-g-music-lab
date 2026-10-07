@@ -43,7 +43,7 @@ flowchart LR
 
 自有object URL、timer、staging和程序有數量／期限限制，取消只處理自身工作；不列舉或終止無關程序。每輪CLI audit保護最新三封裝，只有strict超七天、完整manifest／ZIP与exact tag/archive可重建才可清理；unknown／partial與草稿保留。不以單一PID、catalog或綠燈冒充完成／所有權。
 
-原始碼release manifest2以固定Git profile與完整原Git blob核對保留來源bytes；manifest1保留舊重建流程，不推測或遷移。來源有轉換或省略則拒絕成功封裝；清除及還原共用profile與manifest嚴格檢查，實際規則見[封裝契約](RELEASE-ARCHIVE.md)。
+原始碼封裝以純release_zip容量規則與release_zip_fs有限讀取／排他manifest寫入分層，producer及maintenance在配置ZIP項目前共用gate。完整Git blob／CRC／ledger核對在後續層，manifest2固定raw profile、legacy1保留原bytes；見[來源契約](RELEASE-ARCHIVE.md)與[容量契約](RELEASE-ZIP-BUDGET.md)。
 
 ## 目前指南與歷史
 

@@ -10,6 +10,8 @@ manifest2必須宣告 `archive_profile: "git-raw-blobs-v1"`。固定git archive�
 
 每檔核對Git tree的100644／100755普通blob、大小及Git object identity，完整name set不得缺檔；既有SHA256 ledger、整ZIP SHA與CRC保持。Git blob使用SHA1 object identity與原blob header，不是新簽章或作者／版權證明。一般LF、原CRLF、Unicode與二進位保留。global attributes停用；repository／info attributes若仍有export-subst、export-ignore或換行轉換，producer拒絕，不靜默修補，保留FAILED與ZIP供核對。
 
+producer與maintenance共用[封裝容量檢查](RELEASE-ZIP-BUDGET.md)：先stat與有界footer／central，再ZipFile／CRC／來源／解壓與測試；成功manifest完整UTF8加LF限2MiB，排他寫入。詳細限制與拒絕證據依該契約。
+
 ## 版本與相容
 
 manifest1不允許archive_profile，按原git archive設定核對／重建；不猜最可能設定，也不把舊manifest自動改成2。manifest2只接受以上固定profile；未知schema／profile、profile在1出現、額外欄位或矛盾source拒絕。run1／audit1／recovery1與2000檔／2MiB manifest、64MiB ZIP／256MiB expanded budget保持；新增tree輸入最多2MiB／2000檔／256MiB blobs，symlink／submodule和不安全path拒絕。
@@ -18,4 +20,4 @@ manifest1不允許archive_profile，按原git archive設定核對／重建；不
 
 固定profile解決換行／global attributes導致的來源改寫；整ZIP仍依Git與其壓縮器版本，若未能重建相同ZIP一律保留，不宣稱跨版本位元組穩定或原子I/O。使用者草稿、備份、媒體和私人素材不屬於Git原始碼封裝或清除範圍。
 
-驗證見[QA](QA-v0.156.0.md)與[交接](HANDOFF-v0.156.0.md)。
+驗證見[QA](QA-v0.157.0.md)與[交接](HANDOFF-v0.157.0.md)。

@@ -16,6 +16,7 @@ from musiclab.delivery_versions import decode_policy, MAX_CONTRACT_BYTES
 from musiclab.release_metadata import decode_metadata, validate_metadata, MAX_PROJECT_METADATA_BYTES
 from musiclab.test_run_summary import decode_summary
 from musiclab.release_archive import RAW_PROFILE, archive_args, source_tree, blob_digest, MAX_SOURCE_BYTES
+from musiclab.release_zip_fs import inspect_archive, write_manifest
 
 
 def command(args, cwd=ROOT, input=None, timeout=60):
@@ -89,6 +90,7 @@ def package(ref):
     try:
         objects = source_tree(command(["git", "ls-tree", "-r", "-z", "--long", commit]))
         command(["git", *archive_args(commit, source, RAW_PROFILE)])
+        inspect_archive(source)
         with zipfile.ZipFile(source) as archive:
             hashes = entries(archive, objects)
             if archive.testzip() is not None:
@@ -151,11 +153,16 @@ def package(ref):
                                "packaged_javascript_tests": "passed", "agent_metadata": "passed", "mcp_metadata": "passed" if has_mcp else "not_in_this_version",
                                "python_run": python_summary},
                     "restore": f"git -c core.autocrlf=false -c core.eol=lf -c core.attributesFile= archive --format=zip --prefix={PREFIX} --output=restored.zip {commit}"}
-        (destination / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2)+"\n", encoding="utf-8")
+        write_manifest(destination / "manifest.json", manifest)
         return destination, manifest
     except Exception:
         # Keep failed evidence and refuse silent replacement on a repeated run.
-        (destination / "FAILED.txt").write_text("Packaging did not pass. No successful manifest was issued.\n", encoding="utf-8")
+        try:
+            with (destination / "FAILED.txt").open('xb') as target:
+                target.write(b"Packaging did not pass. No successful manifest was issued.\n")
+        except OSError:
+            # Preserve unknown diagnostic files and the original refusal.
+            pass
         raise
 
 

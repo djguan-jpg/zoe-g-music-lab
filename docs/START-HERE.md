@@ -44,4 +44,4 @@ python -X utf8 music_lab_server.py --draft-library outputs/my-draft-library
 
 ## 找到下一步
 
-[歌曲 Skill](../projects/zoe-music-production/SKILL.md)、[分鏡 Skill](../projects/zoe-mv-storyboard/SKILL.md)、[歌詞 Skill](../projects/zoe-lyrics-sync/SKILL.md)、[音檔 Skill](../projects/zoe-audio-delivery/SKILL.md)各有一份目前工作流程。Agent／MCP 讀[接口指南](AGENT.md)；開發與回復讀[架構](ARCHITECTURE.md)、[交接](HANDOFF-v0.156.0.md)。授權依 [LICENSE](../LICENSE)／[NOTICE](../NOTICE)，禁止商用；平台收錄不代表創始人核實。
+[歌曲 Skill](../projects/zoe-music-production/SKILL.md)、[分鏡 Skill](../projects/zoe-mv-storyboard/SKILL.md)、[歌詞 Skill](../projects/zoe-lyrics-sync/SKILL.md)、[音檔 Skill](../projects/zoe-audio-delivery/SKILL.md)各有一份目前工作流程。Agent／MCP 讀[接口指南](AGENT.md)；開發與回復讀[架構](ARCHITECTURE.md)、[交接](HANDOFF-v0.157.0.md)。授權依 [LICENSE](../LICENSE)／[NOTICE](../NOTICE)，禁止商用；平台收錄不代表創始人核實。
