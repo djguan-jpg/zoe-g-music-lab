@@ -23,11 +23,11 @@
     return {source:{fps:selected.fps,shots:selected.shots},before:selected.duration,after:endText,seconds:duration,totalFrames:data.totalFrames};
   }
   function compare(value){
-    const selected=snapshot(value);let declared=null,candidate=null,error='';
+    const selected=snapshot(value),empty=!Values.trim(selected.duration);let declared=null,candidate=null,error='';
     try{declared=clock(selected.duration,'作品總長');if(declared<=0||declared>14400)declared=null;}catch(_){}
     try{candidate=proposal(selected);}catch(e){error=e.message;}
-    const status=!candidate?'unavailable':!selected.duration.trim()?'empty':declared===null?'invalid':declared===candidate.seconds?'matches':'differs';
-    return {status,declaredText:!selected.duration.trim()?'尚未宣告':declared===null?'請核對宣告':declared+' 秒',
+    const status=!candidate?'unavailable':empty?'empty':declared===null?'invalid':declared===candidate.seconds?'matches':'differs';
+    return {status,declaredText:empty?'尚未宣告':declared===null?'請核對宣告':declared+' 秒',
       candidateText:candidate?candidate.seconds+' 秒 · '+candidate.totalFrames+' 幀':'尚無可接續鏡尾',
       canAdopt:!!candidate&&status!=='matches',candidate,error};
   }

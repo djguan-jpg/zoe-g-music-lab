@@ -60,3 +60,5 @@ flowchart LR
 校時撤回先核對目前非負時間的來源，再按原數值比較，拒絕整份覆蓋並保留重試；驗證不改寫來源。見[校時撤回契約](LYRICS-TIMING-UNDO.md)。
 
 波形定位候選與原生寫入分開；寫入後核對當前音檔與實際位置，再交付同一快照的view。見[實際定位契約](WAVE-SEEK-ACCEPTANCE.md)。
+
+分鏡總長的空白分類沿共享planning-values，與Python application及原生時間診斷同來源；候選／controller／DOM沿既有分層，原值不修剪。見[原值分類契約](STORYBOARD-DURATION-VALUES.md)。
