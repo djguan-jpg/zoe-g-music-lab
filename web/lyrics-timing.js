@@ -18,7 +18,10 @@
     const byId=new Map(entries.map(e=>[e.id,e.value]));if(byId.size!==entries.length)return false;
     return expected.every(e=>{
       const actual=byId.get(e.id);if(!actual)return false;
-      try{return ['start','end'].every(key=>time.number(actual[key])===time.number(e.value[key]));}
+      try{return ['start','end'].every(key=>{
+        time.normalize(actual[key],'歌詞時間',true);
+        return time.number(actual[key])===time.number(e.value[key]);
+      });}
       catch(_){return false;}
     });
   }

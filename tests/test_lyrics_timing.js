@@ -65,6 +65,32 @@ test('apply and undo preserve later words, row order and exact original time str
   assert.equal(current.entries[0].value.end,'2.000');assert.equal(current.entries[0].value.text,'後來的文字');
   assert.equal(seen.states.at(-1).canUndo,false);
 });
+
+async function appliedZero(){
+ const h=setup(async p=>({cues:p.cues.map(c=>({...c,start:c.start+p.shift_seconds,end:c.end+p.shift_seconds}))}));
+ assert.equal(await h.controller.preview('-1'),true);assert.equal(h.controller.apply(),true);
+ assert.equal(h.current.entries.find(e=>e.id==='a').value.start,'0');return h;
+}
+test('undo refuses negative decimal underflow and preserves every current row and retry record',async()=>{
+ for(const value of ['-1e-999',' -0.01e-999 ','-1e-324','-000.0001E-999','-1e-100000','\u0085-1e-999\u0085']){
+  const h=await appliedZero();h.current.entries.find(e=>e.id==='a').value.start=value;h.controller.invalidate();const before=structuredClone(h.current);
+  assert.equal(h.controller.undo(),false);assert.deepEqual(h.current,before);assert.equal(h.seen.writes,1);assert.equal(h.seen.states.at(-1).canUndo,true);assert.match(h.seen.errors.at(-1),/未撤回/);
+ }
+});
+test('repairing a refused zero clock allows retry while preserving later words order and duration',async()=>{
+ const h=await appliedZero();h.current.entries.find(e=>e.id==='a').value.start='-1e-999';h.controller.invalidate();assert.equal(h.controller.undo(),false);
+ h.current.entries.reverse();h.current.entries[0].value.text='後續原文 🎵';h.current.duration='20';h.current.entries[0].value.start='-0.000E-999';h.controller.invalidate();
+ assert.equal(h.controller.undo(),true);assert.deepEqual(h.current.entries.map(e=>e.id),['a','b']);assert.equal(h.current.entries[0].value.start,'01.000');assert.equal(h.current.entries[0].value.end,'2.000');assert.equal(h.current.entries[0].value.text,'後續原文 🎵');assert.equal(h.current.duration,'20');assert.equal(h.seen.writes,2);assert.equal(h.controller.undo(),false);
+});
+test('valid positive underflow and genuine signed zero remain numerically equal for undo',async()=>{
+ for(const value of ['1e-999','-0e-999','-0.000E-999','-0e+999','\u00850\u0085',-0]){
+  const h=await appliedZero();h.current.entries.find(e=>e.id==='a').value.start=value;h.controller.invalidate();assert.equal(h.controller.undo(),true);assert.equal(h.current.entries.find(e=>e.id==='a').value.start,'01.000');assert.equal(h.seen.writes,2);
+ }
+});
+test('domain validation does not weaken exact numeric comparison to millisecond equality',async()=>{
+ const h=await appliedZero();h.current.entries.find(e=>e.id==='a').value.start='0.0001';h.controller.invalidate();const before=structuredClone(h.current);
+ assert.equal(time.normalize('0.0001','開始',true),0);assert.equal(h.controller.undo(),false);assert.deepEqual(h.current,before);assert.equal(h.seen.writes,1);
+});
 test('one later time edit or row change prevents every undo write',async()=>{
   const {controller,current,seen}=setup();await controller.preview(0.5);controller.apply();
   current.entries[0].value.end='5.5001';let before=structuredClone(current);assert.equal(controller.undo(),false);
