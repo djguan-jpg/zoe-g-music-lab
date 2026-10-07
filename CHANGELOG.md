@@ -1,3 +1,19 @@
+## v0.165.0 新增鏡頭的原值分類
+
+實際Chrome重現最後一鏡結束欄只有BOM時錯誤新增0–6秒，只有NEL時卻拒絕；Node實際app handler亦重現C0空白誤拒絕。入口現在沿既有planning-values.trim分類，再沿同一nonnegativeNumber取有限非負十進位時間。原時間字串不修剪；最後一鏡留白與空清單保持既有0秒起草，仍需人工完成與檢查整份時間。沒有新module、operation、asset、依賴、權限或產品網路。
+
+四項新增實際handler回歸先在原版14項中失敗3項，修正後通過。涵蓋BOM／零寬／非法十進位／負值下溢拒絕、Python欄位空白、合法數字、修正重試與空清單；拒絕不改來源、IDs、刪除紀錄、成果、媒體、dirty或focus。新增保留原列、展開狀態、人物原文與其他集合，只建立一份新列及指定焦點。
+
+完整820 Python（1既有Windows symlink skip、0expected failures）／1951 JS（新增4）、153 JS語法與四Skills通過。首次直接完整Python達原120秒期限，原EOF1與兩worker身份／native terminal保留；相同1046份工作來源以SHA逐份核對，一次性副本compileall quiet2後仍用原兩worker／120秒及Node兩file workers／60秒完整通過，前後原bytes保持且暫存移除。只屬本次接受，不推定速度保證或全部逾時根因。
+
+原v164 exact-source ZIP3169348bytes／SHAb75d7f905c7856d49b6bcd0199402852ca5028565373def42e0ac7676b1884b0完整CRC／1046 raw Git blobs／ledger及原820 Python／1947 JS隔離還原通過。508四scope歷史ZIP／manifest精確bytes保持；29既有schemas、22基本／明確啟庫29工具、Agent1／draft3／template1保持。產品165／明確policy38–165共128、unknown166拒絕，原128項容量沒有增加；後續版本策略需另行審閱。
+
+Chrome正式工作台以本輪合成文字驗證：BOM-only拒絕及全部DOM原值保持；修正成NEL包住24.25後新增24.25–30.25；NEL-only／C0-only保持既有0–6起草；負值下溢拒絕。原列每鏡12欄及123其他欄位核對，只在成功時選列移至新增鏡頭，總長24及原四鏡時間／文字／IDs／展開保持，console0。兩個自有tab關閉、兩個自有server原STOP／EOF0及native terminal／thread joined核對。未選音檔、保存下載、完整視覺／screen reader、實聽或Host接受。
+
+六法律／平台檔、七history與四Skills原bytes保持，PolyForm Noncommercial禁止商用、ZOE. G／djguan-jpg與已授權public保持；四既有投稿仍submitted_unverified，本輪不查寫平台或重送。restore-v0.164.0-before-v0.165.0→bcda5e9bdeeb2dc424d244edbe035a791747d848、codex/iteration-v0.165.0與指定提交封裝／PR／遠端asset核對各依精確收據；沒有成功manifest不能當發布。開始盤點原107份run均terminal；最終outputs／原job audit、嚴格超七天與最新三正式版保護保持，未知／partial／FAILED保留。rolling goal active。
+
+見[新增時間契約](docs/SHOT-ADD-VALUES.md)、[QA](docs/QA-v0.165.0.md)與[交接](docs/HANDOFF-v0.165.0.md)。目前入口只維護操作流程，歷史snapshot保持。
+
 ## v0.164.0 指定程序盤點與完整驗收
 
 指定 --runs-only 只查 1–32 份明確 run1；純來源／同份有界 bytes 與 SHA／原 native-CIM／CLI 分層，全部來源先驗證再觀察 PID。一般 audit／prune／restore、最新三封裝、嚴格超七天與 128 份恢復上限保持。39 份前輪紀錄兩批 3.047 秒全部 terminal；這是該批觀察，不推定全機速度或 RAM。
