@@ -1,6 +1,6 @@
 # ZOE. G Music Lab
 
-把歌曲構想、MV 敘事、歌詞時間與 PCM 音檔規格整理成可編修、可審閱的交付資料。四個原創專案共用本機工作台、CLI、Agent 與 MCP；由 **ZOE. G** 發起，GitHub 帳號 **djguan-jpg**，Codex 協助實作與驗證。
+把歌曲構想、MV 敘事、歌詞時間與 PCM 音檔規格整理成可編修、可審閱的交付資料。四個原創專案共用本機工作台、CLI、Agent 與 MCP；ZOE. G 與 Codex 協作實作及驗證，GitHub 帳號為 **djguan-jpg**。
 
 | 想完成什麼 | 工作台／Skill | 得到的資料 |
 | --- | --- | --- |
@@ -9,11 +9,17 @@
 | 按音檔人工標記歌詞時間 | [波形校時](projects/zoe-lyrics-sync/SKILL.md) | 原文保留的 LRC、SRT、JSON 與獨立預覽 |
 | 在交付前核對 PCM WAV | [交付檢查](projects/zoe-audio-delivery/SKILL.md) | SHA-256、取樣規格、量測與條件報告 |
 
-資料完成仍需創作、實聽及實際畫面驗證。工具不自行呼叫 AI、合成歌曲、辨識唱詞、渲染影片或判定素材權利。
+資料完成仍需創作、實聽及實際畫面驗證。工具不自行呼叫 AI、合成歌曲、辨識唱詞或判定素材權利。瀏覽器可將你提供的音檔、圖片與歌詞錄成 WebM 草稿。
 
 載入校時音檔後，可選「播放速度」慢速聽句尾；標記時間仍是音檔實際秒數。改速度保留時間與成果，無法設定時依播放器目前狀態再試。見[播放速度](docs/PLAYBACK-RATE.md)。
 
 v170可在「要調整的歌詞」選句，按「試聽這一句」從原句首播放；「停止試聽」保留當前位置。先填有效開始與結束，倍率不改音檔秒數。句尾停止可能延後，需實聽核對；原時間與成果保留。工作來源完整驗收已通過，指定提交封裝與發布狀態以成功manifest及遠端release為準。見[單句試聽](docs/CUE-AUDITION.md)與[完整接受](docs/QA-v0.170.0-ACCEPTANCE-3.md)。
+
+## 從音檔直接做 MV 草稿
+
+頁面上方選音檔、貼歌詞、依序選圖片，按「建立試播草稿」。可試播、在波形校時調整句子、下載包含素材的專案並重開，再匯出含音軌的 WebM 影片。均分時間只是起稿，需人工校準。Agent 能讀取同一份專案、修訂歌曲／歌詞／鏡頭並另存新版本，素材沿鏡頭 ID 保留。見[完整操作與 Agent 指令](docs/MV-PROJECT.md)。
+
+影片最多 10 分鐘，原生錄製約需歌曲長度，適合排演；圖片／文字卡與字幕沿同一音檔秒數。提供 A–B 循環、手動 BPM 節拍線、選句拖曳／鍵盤預覽與確認撤回。見[試播與校時](docs/STUDIO-TIMELINE.md)。
 
 ## 先開始一份作品
 
@@ -31,8 +37,8 @@ python -X utf8 music_lab_server.py
 
 ## 保存、版本與授權
 
-草稿下載、成果下載與音檔保存分開。工作台沒有自動保存；離頁警示不能替代保存。要使用本機不可覆寫版本庫，請依開始指南明確指定 `--draft-library`。原檔保留，CLI 預設拒絕覆寫，只有明確 `--overwrite` 才替換指定輸出。
+素材專案可保存四個工作台與音檔、圖片；原純文字草稿／成果與草稿庫仍各自保存。工作台沒有自動保存；離頁警示不能替代保存。要使用本機不可覆寫版本庫，請依開始指南明確指定 `--draft-library`。原檔保留，CLI 預設拒絕覆寫，只有明確 `--overwrite` 才替換指定輸出。
 
 四個專案採 **PolyForm Noncommercial 1.0.0，禁止商用**；保留 [LICENSE](LICENSE)／[NOTICE](NOTICE)。没有另授予 AGPL 或商用許可。AI 協作與發起署名見 [FOUNDER-RECORD.md](FOUNDER-RECORD.md)；既有四份自由工坊投稿仍為作者自行聲明、尚未核實，狀態見 [PLATFORM-STATUS.json](PLATFORM-STATUS.json)。
 
-目前版本 **v0.168.0**；來源完整驗收通過，正式封裝與遠端發佈另依本輪 manifest／收據確認；產品與協定分開管理，以 [projects.json](projects.json) 和 [delivery-versions.json](musiclab/assets/delivery-versions.json) 為準。更新與驗收讀 [CHANGELOG](CHANGELOG.md)／[本輪交接](docs/HANDOFF-v0.168.0.md)，開發讀[分層架構](docs/ARCHITECTURE.md)。舊 README 原文保留在[截至 v0.154 的歷史](README-HISTORY-through-v0.154.0.md)；歷史中的舊版本、舊工具數與舊平台狀態不代表現況。
+此來源版本 **v0.171.0**；來源完整驗收通過，正式封裝與遠端發佈另依本輪 manifest／收據確認；產品與協定分開管理，以 [projects.json](projects.json) 和 [delivery-versions.json](musiclab/assets/delivery-versions.json) 為準。更新與驗收讀 [CHANGELOG](CHANGELOG.md)／[本輪交接](docs/HANDOFF-v0.171.0.md)，開發讀[分層架構](docs/ARCHITECTURE.md)。舊 README 原文保留在[截至 v0.154 的歷史](README-HISTORY-through-v0.154.0.md)；歷史中的舊版本、舊工具數與舊平台狀態不代表現況。

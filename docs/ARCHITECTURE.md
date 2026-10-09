@@ -17,7 +17,7 @@ flowchart LR
 
 播放速度沿純來源／候選模型、注入capture與setRate controller、原生DOM adapter及app分層；只寫本頁播放器playbackRate，回讀後才回報。來源／busy／visible／dispose保護與自有event cleanup保持。資料與Agent不承載播放偏好。見[播放速度契約](PLAYBACK-RATE.md)。
 
-單句試聽候選沿範圍純模型、注入seek／play／pause controller、原生DOM adapter與app分層；pending job／late promise與來源所有權核對，僅停止同份自有片段。時間與Agent wire保持，DOM listener隨pagehide移除。完整接受待驗，見[試聽契約](CUE-AUDITION.md)。
+單句試聽候選沿範圍純模型、注入seek／play／pause controller、原生DOM adapter與app分層；pending job／late promise與來源所有權核對，僅停止同份自有片段。時間與Agent wire保持，DOM listener隨pagehide移除。完整接受見對應 release manifest，見[試聽契約](CUE-AUDITION.md)。
 
 ## 責任與版本
 
@@ -80,3 +80,9 @@ flowchart LR
 指定提交封裝的filesystem adapter在驗ZIP／Git raw blobs後、一次性checkout內準備Python位元碼快取，再呼叫原launcher；準備不改原源檔／ZIP或兩worker／600秒（v170明確批准），失敗仍不建成功manifest。快取隨原temp context回收；其準備不冒充正式測試接受。
 
 失敗驗收由純有界 startup 解析／原 handle 收集與 EOF 診斷／native typed record 觀察分層；缺少身份不補造，集中驗證不取代完整接受。Node 封裝測試明確兩 file workers，v170期限經明確批准為180秒。見[失敗證據契約](PYTHON-TEST-FAILURE.md)。
+
+## 素材專案與原生影片層
+
+`mv-project.js`／`musiclab.mv_project` 是獨立 schema1，重用原 draft3，核對媒體大小、SHA 與 canonical bytes。`scripts/mv_project.py` 是明確路徑的 filesystem adapter，以來源摘要及 exclusive 新檔橋接 Agent，不擴大既有 Agent／HTTP payload 或操作列表。
+
+`mv-render.js` 負責完整影片時間、frame、文字容量、受限 WebM metadata 與注入的錄製 ownership；`mv-workflow-dom.js` 接 File、Blob、DataTransfer、Image、canvas、原生 MediaRecorder，app 只提供 capture／apply／原音檔載入與原工作台。視覺與音軌沿同一 native player；不存在第二個播放時鐘或產品 AI provider。見[MV 專案](MV-PROJECT.md)。
