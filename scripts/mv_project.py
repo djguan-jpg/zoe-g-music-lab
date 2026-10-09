@@ -80,7 +80,7 @@ def main(argv=None):
         sha = hashlib.sha256(raw).hexdigest()
         if args.command == 'inspect':
             plan = {'draft': project['draft'], 'shot_ids': project['shot_ids']}
-            receipt = write(args.plan_out, (json.dumps(plan, ensure_ascii=False, indent=2) + '\n').encode('utf-8'))
+            receipt = write(args.plan_out, (json.dumps(plan, ensure_ascii=False, separators=(',', ':')) + '\n').encode('utf-8'))
             print(json.dumps({'source_sha256': sha, 'plan': receipt, 'audio': project['audio'] and {
                 k: project['audio'][k] for k in ('name', 'size', 'sha256')}, 'images': [{
                 'shot_id': image['shot_id'], **{k: image['asset'][k] for k in ('name', 'size', 'sha256')}}

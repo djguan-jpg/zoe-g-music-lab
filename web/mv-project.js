@@ -60,7 +60,7 @@
     return {project:checked,audio,images};
   }
   function seed(current,text,count,duration,title) {
-    const draft=E.validateDraft(current),length=Math.round(duration*1000);
+    const draft=E.validateDraft(current),length=Math.floor(duration*1000);
     if(typeof text!=='string'||new TextEncoder().encode(text).length>65536||typeof title!=='string'||!V.trim(title))fail('請填作品名稱與 64 KiB 以下的歌詞原文');
     J.assertUnicode(text);J.assertUnicode(title);
     if(!Number.isFinite(duration)||duration<=0||duration>600||!Number.isInteger(count)||count<0||count>limits.images)fail('試播草稿最多 600 秒、64 張圖片');

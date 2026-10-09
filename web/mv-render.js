@@ -20,7 +20,7 @@
   }
   function frame(plan,seconds) {
     if(!Number.isFinite(seconds)||seconds<0||seconds>plan.duration)throw Error('播放位置無效');
-    const t=Math.min(seconds,Math.max(0,plan.duration-.000001));
+    const t=Math.min(seconds,Math.max(0,Math.min(plan.duration,plan.shots.at(-1).end)-.000001));
     return {shot:plan.shots.find(e=>t>=e.start&&t<e.end)||null,
       text:plan.cues.filter(e=>t>=e.start&&t<e.end).map(e=>e.text).join(' ／ ')};
   }

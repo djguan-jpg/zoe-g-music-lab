@@ -55,3 +55,9 @@ test('movie text exceeding canvas capacity is refused before recording rather th
  assert.doesNotThrow(()=>R.checkCanvas(ctx,canvas,textcards,new Map([['s',{}]])));
  assert.throws(()=>R.plan([{id:'s',value:{start:'0',end:'4'}}],[{value:{start:'0',end:'3',text:'a'}},{value:{start:'2',end:'4',text:'b'}}],4));
 });
+
+test('uniform draft never exceeds a media duration with fractional milliseconds and keeps its final frame',()=>{
+ const d=P.seed(draft(),'a',1,4.0016,'title');assert.equal(d.panels.storyboard.shots[0].end,'4.001');
+ const p=R.plan(d.panels.storyboard.shots.map(value=>({id:'s',value})),d.panels.lyrics.cues.map(value=>({id:'c',value})),4.0016);
+ assert.equal(R.frame(p,4.0016).shot.id,'s');assert.equal(R.frame(p,4.0016).text,'a');
+});

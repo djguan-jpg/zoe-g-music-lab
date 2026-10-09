@@ -83,7 +83,7 @@
     }
     on($('mv-project-save'),'click',()=>void guard(save));
     on($('mv-agent-plan'),'click',()=>void guard(async()=>{
-      const s=capture();sender.send({name:'music-video.plan.json',bytes:new TextEncoder().encode(JSON.stringify({draft:s.draft,shot_ids:s.shots.map(e=>e.id)},null,2)+'\n')});
+      const s=capture();sender.send({name:'music-video.plan.json',bytes:new TextEncoder().encode(JSON.stringify({draft:s.draft,shot_ids:s.shots.map(e=>e.id)})+'\n')});
       note('已送出純文字企劃下載。Agent 可修訂四個工作台內容；使用 scripts/mv_project.py revise 核對原專案摘要後另存新版，素材沿鏡頭 ID 保留。');
     }));
     on($('mv-project-open'),'change',()=>{
