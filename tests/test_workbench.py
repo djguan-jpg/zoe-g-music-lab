@@ -203,9 +203,10 @@ class WorkbenchHTTPTests(unittest.TestCase):
             sources.append(attrs['src'])
         self.assertGreater(len(sources), 1)
         self.assertEqual(len(sources), len(set(sources)))
-        dependencies = ['/verification-focus.js', '/backup-verification.js',
+        dependencies = ['/wave-position.js', '/verification-focus.js', '/backup-verification.js',
                         '/backup-verification-controller.js', '/backup-verification-dom.js',
-                        '/backup-download-dom.js', '/app.js']
+                        '/backup-download-dom.js', '/studio-timeline.js',
+                        '/studio-timeline-dom.js', '/mv-project.js', '/mv-render.js', '/mv-workflow-dom.js', '/app.js']
         positions = [sources.index(name) for name in dependencies]
         self.assertEqual(positions, sorted(positions))
         for name in sources:

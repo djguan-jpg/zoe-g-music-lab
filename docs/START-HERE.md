@@ -1,5 +1,7 @@
 # 第一次使用 ZOE. G Music Lab
 
+頁面上方的 [MV 完整流程](MV-PROJECT.md) 可以從自己的音檔、歌詞與圖片建立試播草稿，保存含素材專案、重開、匯出 WebM；Agent 也能修訂同一份企劃並另存。原純文字工作台與下列指令仍可使用。
+
 先選一個工作台，完成一份可審閱的資料，再接續其他方向。工具在本機整理資料，沒有模型服務或生成媒體。
 
 ## 工作台流程
@@ -46,7 +48,7 @@ python -X utf8 music_lab.py storyboard-seed --brief examples/first-light-music.j
 
 CLI 回傳 **0** 表示本次命令完成，**2** 表示診斷／比較已完成且仍有待確認或差異，**1** 表示輸入或 I/O 錯誤；0 也不是創作、媒體或權利接受。
 
-## 草稿、成果與素材各自保存
+## 素材專案與原文字保存
 
 預設工作台不寫草稿庫。使用者明確選定目錄後才啟用保存操作，例如在 Repo 根目錄執行：
 
@@ -54,10 +56,10 @@ CLI 回傳 **0** 表示本次命令完成，**2** 表示診斷／比較已完成
 python -X utf8 music_lab_server.py --draft-library outputs/my-draft-library
 ```
 
-這會使用指定本機目錄，保存新版本而不覆寫舊版本。草稿庫不是可由 Git 重建的測試產物，另行下載或備份；媒體也要另外保留。現代草稿先預覽再明確載入，舊格式需明確轉換。完整來源 Unicode、未知版本、矛盾時間或損壞檔案會拒絕，不自動修復。
+這會使用指定本機目錄，保存新版本而不覆寫舊版本。草稿庫不是可由 Git 重建的測試產物，另行下載或備份。素材可另行保存，或使用上方素材專案一起打包；草稿庫仍只有文字。現代草稿先預覽再明確載入，舊格式需明確轉換。完整來源 Unicode、未知版本、矛盾時間或損壞檔案會拒絕，不自動修復。
 
 送出瀏覽器下載不等於已保存成功。三文字入口可選回檔案核對全部原文；不一致時閱讀 byte 差異附近的目前原文、前後翻段或關閉。備份核對使用 SHA 與大小，不冒充原 ZIP 文字。詳見[原文核對](TEXT-VERIFICATION.md)、[差異閱讀](TEXT-VERIFICATION-PAGE.md)及[草稿保存核對](DRAFT-DOWNLOAD-VERIFICATION.md)。
 
 ## 找到下一步
 
-[歌曲 Skill](../projects/zoe-music-production/SKILL.md)、[分鏡 Skill](../projects/zoe-mv-storyboard/SKILL.md)、[歌詞 Skill](../projects/zoe-lyrics-sync/SKILL.md)、[音檔 Skill](../projects/zoe-audio-delivery/SKILL.md)各有一份目前工作流程。Agent／MCP 讀[接口指南](AGENT.md)；開發與回復讀[架構](ARCHITECTURE.md)、[交接](HANDOFF-v0.168.0.md)。授權依 [LICENSE](../LICENSE)／[NOTICE](../NOTICE)，禁止商用；平台收錄不代表創始人核實。
+[歌曲 Skill](../projects/zoe-music-production/SKILL.md)、[分鏡 Skill](../projects/zoe-mv-storyboard/SKILL.md)、[歌詞 Skill](../projects/zoe-lyrics-sync/SKILL.md)、[音檔 Skill](../projects/zoe-audio-delivery/SKILL.md)各有一份目前工作流程。Agent／MCP 讀[接口指南](AGENT.md)；開發與回復讀[架構](ARCHITECTURE.md)、[交接](HANDOFF-v0.171.0.md)。授權依 [LICENSE](../LICENSE)／[NOTICE](../NOTICE)，禁止商用；平台收錄不代表創始人核實。

@@ -1,5 +1,14 @@
 ## v0.170.0 明確期限批准與完整接受
 
+## v0.171.0 — 完整 MV 草稿流程
+
+- 以同一音檔試播分鏡圖片、歌詞與手動節拍；A–B 段落循環與選句 pointer／keyboard 預覽、明確套用及逐字撤回。
+- 新素材專案 schema1 保存四個工作台、音檔與圖片，完整摘要／解碼預覽後載入並回讀。原 draft3 與 Agent1 保持。
+- 原生 WebM 含音畫、字幕與可讀取的錄製時長；完整時間與文字容量通過前不錄製，取消／來源變動不產生假成果。
+- Agent 可直接 inspect／create／revise 同一份專案，保留媒體且另存新檔；匯入 row ID 防碰撞與次毫秒音檔時長有回歸。
+- 分層 atomic commits、還原 tag、[操作](docs/MV-PROJECT.md)、[接受](docs/QA-v0.171.0.md)與[交接](docs/HANDOFF-v0.171.0.md)。正式發佈依確切提交的成功 manifest 與遠端 assets。
+
+
 使用者已批准Python600／JavaScript180秒。完整823Python（1既有skip、0expected failures）／2013JS、157syntax／四Skills通過；兩worker、原案例／斷言、來源與全部舊版保持。指定提交封裝、PR／main／tag／遠端asset與清理各以本輪成功manifest及最終收據為準；先前候選失敗屬下列歷史紀錄。見[接續接受3](docs/QA-v0.170.0-ACCEPTANCE-3.md)。
 
 ## v0.170.0 接續接受診斷 2

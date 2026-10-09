@@ -9,3 +9,5 @@ outputs/
 *.webm
 .env*
 .dev.vars*
+*.zoemv.json
+*.plan.json

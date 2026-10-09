@@ -65,3 +65,7 @@ python -X utf8 music_lab_agent.py --describe
 `meta.needs_review` 提醒人工審閱；計數零也不能宣稱創作、音畫、保存或權利通過。不要把response、預覽、雜湊或瀏覽器click當實際保存證明。保留原始需求、來源與回應；編修後重建成果，匯入工作台先預覽再明確套用。
 
 資料層以 [projects.json](../projects.json)、[版本policy](../musiclab/assets/delivery-versions.json)及各domain契約為準。起步讀[開始指南](START-HERE.md)，分層讀[架構](ARCHITECTURE.md)。PolyForm Noncommercial1.0.0，禁止商用；不授予AGPL。先前接口與迭代文字原文保留於[截至v0.154歷史](AGENT-HISTORY-through-v0.154.0.md)，舊工具數／狀態不可當現行discovery。
+
+## 帶媒體的 MV 專案
+
+對已保存的 `.zoemv.json` 使用 [MV 專案橋接](MV-PROJECT.md)：`scripts/mv_project.py inspect` 將原企劃與鏡頭 ID 另存文字計畫、只印素材摘要；Agent 修訂後以原 SHA 使用 `revise` 另存新專案。音檔與圖片 bytes 保留，鏡頭依穩定 ID 對應。這是本機終端接點，原 Agent1／MCP schemas 和操作數保持；不把大份媒體 base64 塞入原 Agent wire。
