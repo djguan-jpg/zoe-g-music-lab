@@ -89,8 +89,22 @@ test('browser integration uses shared verifier before the app with no new source
 });
 test('actual editor input handler ignores the verification File input while genuine condition edits still stale reports',()=>{
  const html=fs.readFileSync('web/index.html','utf8'),tag=html.match(/<input id="audio-accept-verify-file"[^>]*>/)[0];assert.match(tag,/data-view-control="verification"/);
- const app=fs.readFileSync('web/app.js','utf8'),start=app.indexOf("document.querySelector('.editor').addEventListener('input'"),end=app.indexOf('\nfunction clearOutput()',start);assert.ok(start>=0&&end>start);
+ const app=fs.readFileSync('web/app.js','utf8'),start=app.indexOf("document.querySelector('main').addEventListener('input'"),end=app.indexOf('\nfunction clearOutput()',start);assert.ok(start>=0&&end>start);
  let handler;const calls=[];vm.runInNewContext(app.slice(start,end),{document:{querySelector:()=>({addEventListener:(name,fn)=>{assert.equal(name,'input');handler=fn;}})},markDirty:scope=>calls.push(scope),refreshShotOverview(){},lyricsImportController:null,tick(){}});
  handler({target:{id:'audio-accept-verify-file',dataset:{viewControl:tag.match(/data-view-control="([^"]*)"/)[1]},closest:()=>({id:'audio'})}});assert.deepEqual(calls,[]);
  handler({target:{id:'audio-accept-rates',dataset:{},closest:()=>({id:'audio'})}});assert.deepEqual(calls,['audio']);
+});
+
+test('actual visible duration and material title edits invalidate only their owning scope outside legacy panels',()=>{
+ const app=fs.readFileSync('web/app.js','utf8'),start=app.indexOf("document.querySelector('main').addEventListener('input'"),end=app.indexOf('\nfunction clearOutput()',start);assert.ok(start>=0&&end>start);
+ let handler,overviews=0,ticks=0,cancels=0;const calls=[];
+ vm.runInNewContext(app.slice(start,end),{document:{querySelector:selector=>{assert.equal(selector,'main');return {addEventListener:(name,fn)=>{assert.equal(name,'input');handler=fn;}};}},
+  markDirty:scope=>calls.push(scope),refreshShotOverview:()=>overviews++,lyricsImportController:{cancel:()=>cancels++},tick:()=>ticks++});
+ const duration={id:'lyrics-duration',dataset:{},value:'206.880',closest:()=>null};handler({target:duration});
+ assert.deepEqual(calls,['lyrics']);assert.equal(duration.value,'206.880');assert.equal(overviews,0);
+ const title={id:'mv-title',dataset:{},value:'  New project 🎵  ',closest:()=>null};handler({target:title});
+ assert.deepEqual(calls,['lyrics','storyboard']);assert.equal(title.value,'  New project 🎵  ');assert.equal(overviews,1);
+ for(const target of [{id:'lyrics-file',dataset:{},closest:()=>null},{id:'mv-project-open',dataset:{viewControl:'project'},closest:()=>null},
+  {id:'unrelated-delivery-input',dataset:{},closest:()=>null}])handler({target});
+ assert.deepEqual(calls,['lyrics','storyboard']);assert.equal(overviews,1);assert.equal(ticks,0);assert.equal(cancels,0);
 });

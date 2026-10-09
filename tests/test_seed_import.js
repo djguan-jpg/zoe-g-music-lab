@@ -71,7 +71,7 @@ test('actual common run can guard storyboard while music edits are retained',asy
   let reject;const failure=new Promise((r,j)=>reject=j);const late=context.run(button,()=>failure,'storyboard');state.revisions.storyboard++;reject(Error('old target error'));await late;assert.ok(!notices.includes('old target error'));
 });
 test('actual output marks imports independent while generation still becomes dirty',()=>{
-  const source=fs.readFileSync(path.join(root,'web/app.js'),'utf8'),a=source.indexOf('function markDirty('),b=source.indexOf("document.querySelector('.editor')",a);
+  const source=fs.readFileSync(path.join(root,'web/app.js'),'utf8'),a=source.indexOf('function markDirty('),b=source.indexOf("document.querySelector('main')",a);
   const state={tab:'music',revisions:{},bundles:{music:{note:'file',dirty:false,inputIndependent:true}}},nodes={download:{disabled:false},'output-note':{textContent:'file'}};
   const retentionDraft={panels:{music:{fields:{title:'unchanged'}}}},retentionScopes=[];
   const draftRetention=require('../web/draft-retention.js').createGuard({capture:()=>retentionDraft,
