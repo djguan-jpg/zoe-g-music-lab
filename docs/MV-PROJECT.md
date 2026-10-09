@@ -50,7 +50,7 @@ python -X utf8 scripts/mv_project.py create --draft outputs/new-draft.json --aud
 
 音檔需可定位、有限且最多 600 秒；分鏡依序從 0 秒接到結尾，允許最多 1 ms 的媒體時長取整差異。歌詞時間不可留白、超出範圍、逆序或重疊；無歌詞可輸出。過長歌詞與文字卡會在錄製前拒絕，避免截掉內容。
 
-Chrome／Edge 需支援原生 `captureStream`、canvas 與 MediaRecorder WebM 編碼。使用同一音檔、原速、960×540／540×960／720×720 畫面及目標 30 FPS。錄製依原生事件與播放器秒數，耗時約等於歌曲長度，最多 128 MiB；這是排演草稿，沒有 MP4、精準裁切、音訊混音、轉場或生圖能力。保持頁面可見；換來源、編修企劃／圖片、離開工作台、定位或暫停會取消，自有 frame、track、timer 與 listener 會清理。
+Chrome／Edge 需支援 Web Audio、canvas `captureStream` 與 MediaRecorder WebM 編碼。使用同一音檔、原速、960×540／540×960／720×720 畫面及目標 30 FPS。錄製依原生事件與播放器秒數，耗時約等於歌曲長度，最多 128 MiB；這是排演草稿，沒有 MP4、精準裁切、音訊混音、轉場或生圖能力。保持頁面可見；換來源、編修企劃／圖片、離開工作台、定位或暫停會取消，自有 frame、錄製 track、timer 與 listener 會清理。第一次匯出才為同一播放器建立一個 Web Audio 路由，保留揚聲器輸出並供後續匯出重用；離頁會斷開並關閉 context。每次錄製只持有音軌副本，播放器歸零完成後才開始。
 
 原生 streaming WebM 缺少 Duration 時，只對無 SeekHead／Cues 索引的受支援容器補入實際錄製經過時長。音畫 codec payload 保持，遇到未知結構拒絕；錄製事件與編碼延遲可能讓影片略長於音檔。機械核對與草稿匯出不代替實聽、視覺或素材權利接受。
 
