@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 'use strict';
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else root.MusicDeliveryNavigation=api;})(typeof globalThis!=='undefined'?globalThis:this,()=>{
-  const labels={music:'歌曲設計',storyboard:'母題分鏡',lyrics:'波形校時',audio:'交付檢查'};
+  const labels={music:'素材交接',storyboard:'素材交接',lyrics:'字幕交付',audio:'音檔核對'};
   function describe(source){
     if(!source||!Object.hasOwn(labels,source.scope)||!Array.isArray(source.names)||source.names.length>32||source.names.some(n=>typeof n!=='string'||!n)||typeof source.busy!=='boolean'||typeof source.dirty!=='boolean'||typeof source.error!=='boolean'||typeof source.message!=='string')throw Error('成果導覽狀態無效');
     const count=source.names.length;

@@ -39,7 +39,7 @@ test('failed output focus does not issue a false return target and cleared resul
 function dom(){
   const ids={},events=[],s=source();
   for(const id of ['output-region','output-heading','delivery-back','music-build','mv-build','lyrics-build','audio-build',...['music','storyboard','lyrics','audio'].flatMap(k=>[k+'-delivery-view',k+'-delivery-status'])])ids[id]={id,disabled:false,textContent:'',scrollTop:99,classList:{toggle:(_key,value)=>ids[id].error=value},scrollIntoView:config=>events.push({action:'scroll',id,config}),focus:config=>events.push({action:'focus',id,config})};
-  const c=D.createAdapter({getElementById:id=>ids[id]},()=>s);return {c,ids,events,s};
+  const document={getElementById:id=>ids[id]},c=D.createAdapter(document,()=>s);return {c,ids,events,s,document};
 }
 test('DOM adapter exposes one active shortcut and explicit navigation focuses the heading then original shortcut',()=>{
   const h=dom();assert.equal(h.ids['music-delivery-view'].disabled,false);assert.equal(h.ids['lyrics-delivery-view'].disabled,true);assert.deepEqual(h.events,[]);
@@ -48,9 +48,16 @@ test('DOM adapter exposes one active shortcut and explicit navigation focuses th
 });
 test('DOM rendering treats error text as literal text and switching panels cannot return to a hidden button',()=>{
   const h=dom();h.s.message='<img onerror=bad>';h.s.error=true;h.c.refresh();assert.match(h.ids['music-delivery-status'].textContent,/<img onerror=bad>/);assert.equal(h.ids['music-delivery-status'].error,true);
-  h.ids['music-delivery-view'].onclick();h.s.scope='audio';h.c.refresh();assert.equal(h.ids['delivery-back'].disabled,true);assert.equal(h.ids['music-delivery-view'].disabled,true);assert.match(h.ids['delivery-back'].textContent,/交付檢查/);
+  h.ids['music-delivery-view'].onclick();h.s.scope='audio';h.c.refresh();assert.equal(h.ids['delivery-back'].disabled,true);assert.equal(h.ids['music-delivery-view'].disabled,true);assert.match(h.ids['delivery-back'].textContent,/音檔核對/);
 });
 test('clearing a bundle keeps return usable by focusing the enabled build control instead of a disabled shortcut',()=>{
   const h=dom();h.ids['music-delivery-view'].onclick();h.s.names=[];h.c.refresh();assert.equal(h.ids['music-delivery-view'].disabled,true);assert.equal(h.ids['delivery-back'].disabled,false);
   h.ids['delivery-back'].onclick();assert.equal(h.events.at(-1).id,'music-build');assert.equal(h.events.at(-1).action,'focus');assert.deepEqual(h.s.names,[]);
+});
+test('delivery center returns focus to the visible import panel without revealing a hidden editor shortcut',()=>{
+  for(const scope of ['lyrics','audio','storyboard','music']){
+    const h=dom(),panel={id:'delivery-'+(scope==='music'?'storyboard':scope),scrollIntoView:()=>h.events.push({action:'scroll',id:'panel'}),focus:()=>h.events.push({action:'focus',id:'panel'})};
+    h.s.scope=scope;h.c.refresh();h.document.querySelector=selector=>{assert.equal(selector,'[data-delivery-panel="'+(scope==='music'?'storyboard':scope)+'"]');return panel;};
+    h.ids[scope+'-delivery-view'].onclick();h.ids['delivery-back'].onclick();assert.equal(h.events.at(-1).id,'panel');assert.equal(h.events.at(-1).action,'focus');
+  }
 });

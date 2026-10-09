@@ -36,7 +36,7 @@
     const on=(el,type,fn)=>{el.addEventListener(type,fn);listeners.push([el,type,fn]);};
     const sender=root.MusicTextDownloadDom.createByteSender(document,{events});
     const captureAudio=createAudioCapture(player);
-    let disposed=false,pending=false,revision=0,proposal=null,videoURL=null;
+    let disposed=false,pending=false,revision=0,proposal=null,videoURL=null,quick=null;
     const note=text=>{$('mv-project-note').textContent=text;};
     function key(s) {
       const draft={...s.draft,saved_at:'',tab:'storyboard'};
@@ -45,8 +45,13 @@
     }
     function controls() {
       const active=recorder.state().phase,recording=['preparing','recording'].includes(active);
-      for(const id of ['mv-project-save','mv-project-open','mv-project-apply','mv-agent-plan','mv-video-start','mv-quick-create'])$(id).disabled=disposed||pending||recording||!capture().allowed;
+      const preparing=quick?.state().pending;
+      for(const id of ['mv-project-save','mv-project-open','mv-project-apply','mv-agent-plan','mv-video-start','mv-quick-create','mv-quick-apply'])$(id).disabled=disposed||pending||preparing||recording||!capture().allowed;
       $('mv-project-apply').disabled ||= !proposal;
+      $('mv-quick-apply').disabled ||= quick?.state().phase!=='preview';
+      $('mv-quick-images').disabled=$('mv-quick-textcard').checked;
+      const selected=$('mv-quick-images').files.length,attached=capture().images.length;
+      $('mv-quick-images-note').textContent=$('mv-quick-textcard').checked?'本次起稿只使用文字卡；確認後移除目前鏡頭圖片。':selected?`本次使用新選的 ${selected} 張圖片。`:attached?`未重新選圖時沿用目前 ${attached} 張圖片；仍會重新建立鏡頭時間與創作欄位。`:'最多 64 張；沒有圖片時使用文字卡。';
       $('mv-video-cancel').disabled=!recording;
     }
     function clearVideo() {const video=$('mv-video-playback');video.pause();video.removeAttribute('src');video.load();video.hidden=true;if(videoURL)URL.revokeObjectURL(videoURL);videoURL=null;$('mv-video-download').hidden=true;}
@@ -68,33 +73,85 @@
       if($('lyrics-audio').files.length!==1||$('lyrics-audio').files[0]!==transfer.files[0])throw Error('音檔選擇未通過回讀');
     }
     async function guard(task) {
-      if(pending||disposed||!capture().allowed||['preparing','recording'].includes(recorder.state().phase))return;
+      if(pending||quick?.state().pending||disposed||!capture().allowed||['preparing','recording'].includes(recorder.state().phase))return;
       pending=true;controls();const epoch=++revision;
       try{await task(epoch);}catch(error){if(!disposed){note(error.message);onError(error);}}
       finally{pending=false;if(!disposed)controls();}
     }
     for(const [id,tab] of [['mv-open-board','storyboard'],['mv-open-cues','lyrics']])on($(id),'click',()=>document.querySelector('[data-tab="'+tab+'"]').click());
     const current=(epoch,baseline)=>!disposed&&epoch===revision&&capture().allowed&&key(capture())===baseline;
-    on($('mv-quick-create'),'click',()=>void guard(async epoch=>{
-      const s=capture(),baseline=key(s),files=[...$('mv-quick-images').files];
-      if(!s.audio||!s.media.ready||s.media.error)throw Error('請先選擇可播放音檔');
-      if(files.length>P.limits.images||files.reduce((sum,f)=>sum+f.size,s.audio.size)>P.limits.media)throw Error('音檔與圖片合計最多 64 MiB、64 張圖片');
-      const draft=P.seed(s.draft,$('mv-quick-lyrics').value,files.length,s.media.duration,$('mv-quick-title').value);
-      let pixels=0;
-      for(const file of files) {
-        if(!/^image\/(png|jpeg|webp)$/.test(file.type)||file.size<1||file.size>P.limits.image)throw Error('請選擇 12 MiB 以下的 PNG、JPEG 或 WebP');
-        const url=URL.createObjectURL(file);
-        try{const art=await image(url);pixels+=art.naturalWidth*art.naturalHeight;if(pixels>40000000)throw Error('圖片合計最多四千萬像素');}
-        finally{URL.revokeObjectURL(url);}
-      }
-      if(!current(epoch,baseline))throw Error('準備期间來源已改變；請重新建立');
-      const ids=draft.panels.storyboard.shots.map(()=> 'shot-'+crypto.randomUUID());
-      files.forEach((file,i)=>draft.panels.storyboard.shots[i].visual=file.name);
-      studio.stop();apply(draft,ids);assignAudio(s.audio);await loadAudio($('lyrics-audio').files[0]);
-      for(let i=0;i<files.length;i++)if(!await studio.selectImage(ids[i],files[i]))throw Error('圖片未完成載入，請核對工作台');
-      note('已建立均分時間的試播草稿；時間由音檔總長平均分配，請在波形校時修正。這份草稿可包含素材保存，也可匯出 WebM 影片。');
-      $('studio-loop-start').value='0';$('studio-loop-end').value=String(s.media.duration);studio.refresh();
-    }));
+    function quickCapture() {
+      const s=capture(),selected=[...$('mv-quick-images').files],textcard=$('mv-quick-textcard').checked;
+      return {source:s,key:JSON.stringify([key(s),s.media.ready,!!s.media.error,s.media.current_source]),audio:s.audio,title:$('mv-quick-title').value,text:$('mv-quick-lyrics').value,textcard,
+        files:textcard?[]:selected.length?selected:s.images.map(e=>e.file),
+        imageMode:textcard?'textcard':selected.length?'selected':'current',
+        allowed:s.allowed&&!pending&&!['preparing','recording'].includes(recorder.state().phase)};
+    }
+    async function fileHash(file) {
+      if(!file||!Number.isSafeInteger(file.size)||file.size<1||file.size>P.limits.media)throw Error('素材大小無效');
+      const raw=await file.arrayBuffer();if(raw.byteLength!==file.size)throw Error('素材讀取大小不同');return P.hash(raw);
+    }
+    function targetMatches(s,draft,ids) {
+      return root.MusicJsonDocument.sameValue({...s.draft,saved_at:'',tab:'storyboard'},{...draft,saved_at:'',tab:'storyboard'})&&
+        JSON.stringify(s.shots.map(e=>e.id))===JSON.stringify(ids);
+    }
+    quick=root.MusicMVSeed.create({
+      capture:quickCapture,
+      prepare:async snapshot=>{
+        const s=snapshot.source,files=snapshot.files;
+        if(!s.audio||!s.media.ready||s.media.error||s.media.source!==s.media.current_source)throw Error('請先選擇可播放音檔');
+        if(files.length>P.limits.images||files.reduce((sum,f)=>sum+f.size,s.audio.size)>P.limits.media)throw Error('音檔與圖片合計最多 64 MiB、64 張圖片');
+        const draft=P.seed(s.draft,snapshot.text,files.length,s.media.duration,snapshot.title),audioSha=await fileHash(s.audio),hashes=[];
+        let pixels=0;
+        for(const file of files) {
+          if(!/^image\/(png|jpeg|webp)$/.test(file.type)||file.size<1||file.size>P.limits.image)throw Error('請選擇 12 MiB 以下的 PNG、JPEG 或 WebP');
+          const url=URL.createObjectURL(file);
+          try{const art=await image(url);pixels+=art.naturalWidth*art.naturalHeight;if(pixels>40000000)throw Error('圖片合計最多四千萬像素');}
+          finally{URL.revokeObjectURL(url);}
+          hashes.push(await fileHash(file));
+        }
+        files.forEach((file,i)=>draft.panels.storyboard.shots[i].visual=file.name);
+        return {draft,files:[...files],audio:s.audio,audioSha,hashes,duration:s.media.duration,imageMode:snapshot.imageMode,
+          before:{cues:s.cues.length,shots:s.shots.length,images:s.images.length}};
+      },
+      replace:async(candidate,valid)=>{
+        if(!valid())return false;
+        const ids=candidate.draft.panels.storyboard.shots.map(()=> 'shot-'+crypto.randomUUID());
+        studio.stop();apply(candidate.draft,ids);assignAudio(candidate.audio);await loadAudio($('lyrics-audio').files[0]);
+        for(let i=0;i<candidate.files.length;i++) {
+          if(!valid()||!targetMatches(capture(),candidate.draft,ids))throw Error('起稿期間工作台已改變；請核對目前內容');
+          if(!await studio.selectImage(ids[i],candidate.files[i]))throw Error('圖片未完成載入，請核對工作台');
+        }
+        return {ids};
+      },
+      accept:async(candidate,receipt,valid)=>{
+        const loaded=capture(),baseline=key(loaded);
+        if(!receipt||!targetMatches(loaded,candidate.draft,receipt.ids)||loaded.images.length!==candidate.files.length||
+          !loaded.media.ready||loaded.media.error||loaded.media.source!==loaded.media.current_source||Math.abs(loaded.media.duration-candidate.duration)>.001)return false;
+        if(await fileHash(loaded.audio)!==candidate.audioSha)return false;
+        for(let i=0;i<candidate.files.length;i++) {
+          const attached=loaded.images.find(e=>e.shot_id===receipt.ids[i]);
+          if(!attached||await fileHash(attached.file)!==candidate.hashes[i])return false;
+        }
+        if(!valid()||key(capture())!==baseline)return false;
+        $('studio-loop-start').value='0';$('studio-loop-end').value=String(candidate.duration);studio.refresh();return true;
+      },
+      onView:view=>{
+        $('mv-quick-review').hidden=view.phase!=='preview';
+        if(view.phase==='preparing')note('正在準備起稿預覽；目前工作台與素材保留…');
+        if(view.phase==='preview') {
+          const c=view.proposal,images=c.imageMode==='selected'?`使用新選的 ${c.files.length} 張圖片`:c.imageMode==='textcard'?'改用文字卡':`沿用目前 ${c.files.length} 張圖片`;
+          $('mv-quick-review-note').textContent=`「${c.draft.panels.lyrics.fields['lyrics-title']}」：${c.before.cues} 句 → ${c.draft.panels.lyrics.cues.length} 句，${c.before.shots} 鏡 → ${c.draft.panels.storyboard.shots.length} 鏡；${images}。以歌詞原文重新建立句子並均分 ${c.duration} 秒；目前逐句修訂、校時、母題及鏡頭創作會被替換，本輪成果需重新建立。其餘歌曲企劃與交付條件保留。`;
+          note('起稿預覽已準備；確認建立後才替換目前內容。');
+        }
+        if(view.phase==='applying')note('正在建立並回讀核對試播草稿…');
+        if(view.accepted)note('已建立並回讀核對均分時間的試播草稿、原音檔與圖片；請在波形校時修正實際起點。可保存素材專案或匯出 WebM。');
+        controls();
+      },onError:error=>{note(error.message);onError(error);}
+    });
+    on($('mv-quick-create'),'click',()=>void quick.preview());
+    on($('mv-quick-apply'),'click',()=>void quick.apply());
+    on($('mv-quick-cancel'),'click',()=>{quick.cancel();note('已取消起稿預覽；目前工作台與素材保留。');});
     async function save(epoch) {
       const s=capture(),baseline=key(s),attachments=s.images;
       if(!s.audio)throw Error('請先選擇音檔；素材專案會包含這份音檔');
@@ -133,7 +190,7 @@
           images.push({shot_id:entry.shot_id,file:selected});
         }
         if(!current(epoch,baseline))throw Error('讀取期間工作台已改變；請重新選擇專案');
-        proposal={project:decoded.project,audio,images,baseline};
+        proposal={project:{...decoded.project,draft:{...decoded.project.draft,tool_version:capture().draft.tool_version}},audio,images,baseline};
         $('mv-project-review').hidden=false;$('mv-project-review-note').textContent=`${file.name}：${decoded.project.shot_ids.length} 鏡、${decoded.project.draft.panels.lyrics.cues.length} 句、${audio?'1 份音檔':'無音檔'}、${images.length} 張圖片。確認後替換四個工作台與素材。`;
         note('專案與全部素材核對通過；確認載入後才替換。');
         $('mv-project-receipt').textContent='匯入專案 SHA-256：'+await P.hash(bytes);
@@ -153,7 +210,8 @@
         if(await P.hash(await loaded.audio.arrayBuffer())!==selected.project.audio.sha256)throw Error('載入音檔回讀不符');
       }
       for(const entry of loaded.images)if(await P.hash(await entry.file.arrayBuffer())!==selected.project.images.find(e=>e.shot_id===entry.shot_id)?.asset.sha256)throw Error('載入圖片回讀不符');
-      note(`已載入並回讀核對四個工作台、${selected.audio?'音檔及':''}${selected.images.length} 張圖片。可試播、修訂或匯出影片。`);
+      document.querySelector('[data-tab="storyboard"]').click();
+      note(`已載入並回讀核對原企劃、${selected.audio?'音檔及':''}${selected.images.length} 張圖片。可保存素材專案或下載 Agent 企劃。`);
       studio.refresh();
     }));
     function nativeStart(prepared,valid,refresh) {
@@ -212,7 +270,7 @@
       });
     }
     const recorder=R.createRecorder({
-      capture:()=>{const s=capture();return {key:key(s),allowed:s.allowed&&!pending&&['lyrics','storyboard'].includes(s.draft.tab)&&s.media.ready&&!s.media.error&&s.media.source===s.media.current_source};},
+      capture:()=>{const s=capture();return {key:key(s),allowed:s.allowed&&!pending&&!quick.state().pending&&['lyrics','storyboard'].includes(s.draft.tab)&&s.media.ready&&!s.media.error&&s.media.source===s.media.current_source};},
       prepare:async()=>{
         clearVideo();const s=capture(),plan=R.plan(s.shots,s.cues,s.media.duration),images=new Map();
         if(typeof MediaRecorder==='undefined'||typeof (root.AudioContext||root.webkitAudioContext)!=='function'||typeof HTMLCanvasElement.prototype.captureStream!=='function')throw Error('此瀏覽器未支援含音軌的 WebM 匯出；請使用 Chrome 或 Edge');
@@ -237,11 +295,12 @@
     });
     on($('mv-video-start'),'click',()=>{if(!pending)void recorder.begin();});
     on($('mv-video-cancel'),'click',()=>recorder.cancel());
-    on(document,'input',()=>{recorder.refresh();controls();});on(document,'change',()=>{recorder.refresh();controls();});
+    on(document,'input',()=>{quick.refresh();recorder.refresh();controls();});on(document,'change',()=>{quick.refresh();recorder.refresh();controls();});
     on(document,'visibilitychange',()=>recorder.refresh());
-    function dispose(){if(disposed)return;disposed=true;revision++;proposal=null;recorder.dispose();captureAudio.dispose();sender.dispose();clearVideo();for(const [el,type,fn] of listeners)el.removeEventListener(type,fn);}
+    function projectLoaded(draft){if(disposed)return;if(quick.state().phase!=='applying')quick.cancel();$('mv-quick-title').value=draft.panels.lyrics.fields['lyrics-title'];$('mv-quick-lyrics').value=draft.panels.lyrics.fields['lyrics-source'];$('mv-quick-images').value='';$('mv-quick-textcard').checked=false;controls();}
+    function dispose(){if(disposed)return;disposed=true;revision++;proposal=null;quick.dispose();recorder.dispose();captureAudio.dispose();sender.dispose();clearVideo();for(const [el,type,fn] of listeners)el.removeEventListener(type,fn);}
     on(events,'pagehide',dispose);controls();
-    return {refresh:()=>{recorder.refresh();controls();},dispose};
+    return {refresh:()=>{quick.refresh();recorder.refresh();controls();},projectLoaded,dispose};
   }
   const api=Object.freeze({bind,rewind,createAudioCapture});
   if(typeof module==='object'&&module.exports)module.exports=api;
