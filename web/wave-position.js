@@ -23,7 +23,7 @@
   function keyboard(value,key,modifiers={shift:false,alt:false,control:false,meta:false}){
     if(!exact(modifiers,['shift','alt','control','meta'])||!Object.values(modifiers).every(v=>typeof v==='boolean'))throw Error('定位按鍵來源不完整');
     const view=present(value);if(!view.available||modifiers.alt||modifiers.control||modifiers.meta)return null;
-    const step=modifiers.shift?.05:.5;
+    const step=modifiers.shift ? 0.05 : 0.5;
     const target=key==='Home'?0:key==='End'?view.maximum:['ArrowRight','ArrowUp'].includes(key)?view.value+step:
       ['ArrowLeft','ArrowDown'].includes(key)?view.value-step:null;
     return target===null?null:Math.max(0,Math.min(view.maximum,target));

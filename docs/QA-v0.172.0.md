@@ -28,13 +28,13 @@
 
 第三份完整工作來源接受：830 Python（1 既有 Windows symlink skip、0 expected failures）／2067 JS（156 檔）、163 語法與四 Skills 通過，1097 份來源前後 SHA 相同，一次性副本移除。後續只有文件記錄與 metadata 換行回復原風格；確切 Git 提交仍由封裝全套另行核對。
 
-## 指定資安掃描仍未執行
+## 指定資安掃描已執行，涵蓋仍未完整
 
-使用者指定 [AI Security Scanner](https://teddashh.github.io/ai-security-scanner/)。前次在 PATH、已知安裝位置及 Windows 解除安裝登錄未找到 app／CLI；之後使用者回覆已經安裝，並明確延後此次掃描。安裝狀態來自使用者回覆，尚未獨立核對；`doctor`、掃描與報告仍未執行。官方 v0.5.0 Windows 安裝檔 42178527 bytes／SHA-256 `7b2d6d4bf89a9d24ad8b77c79957074ca062461722ac5a27f890774f51749bb3` 已與同 release `SHA256SUMS.txt` 核對。沒有執行安裝、啟動 app、改 WSL／系統權限、傳送程式或使用其他 scanner 冒充。
+使用者明確恢復 [AI Security Scanner](https://teddashh.github.io/ai-security-scanner/) 並回覆已從桌面開始。已核對既有 v0.5.0 CLI、doctor、精確 d1858cc raw Git 隔離來源與實際 terminal run；沒有重新安裝、改 WSL／權限、用其他工具或 plan 冒充。101 筆原結果（19 high／82 medium）逐筆來源與 run ID 核對；66 誤報、35 已有保護或合理用途，沒有確認到可利用漏洞。原 scanner 分級與人的處置狀態未改。
 
-[官方 SKILL.md](https://github.com/teddashh/ai-security-scanner/blob/main/.codex/skills/ai-security-scanner/SKILL.md) 說明 `You cannot start a scan.`，開始／暫停／接續須由桌面控制，CLI 計畫不執行掃描。本版需完成這項掃描、審閱結果後才合併或建立正式 release；暫以分支／Draft PR／候選封裝交付。收到使用者明確恢復前，不再次安裝或啟動 app、不執行 `doctor` 或掃描。恢復後先定位已安裝 CLI、核對 readiness，再以精確候選來源作本機 source scan。未取得實際 case／run／engine outcomes／報告前，狀態保持 `deferred_by_user_not_executed`。
+[官方 SKILL.md](https://github.com/teddashh/ai-security-scanner/blob/main/.codex/skills/ai-security-scanner/SKILL.md) 說明 `You cannot start a scan.`，開始／暫停／接續須由人從桌面控制。七引擎完成，Semgrep 仍部分完成；核對原 artifact SHA 後找到唯一原始 PartialParsing，在 wave-position.js:26。只把縮寫三元條件改為明確 `? 0.05 : 0.5`，沒有改变原定位步長。原／新 Node syntax 與 31 既有定位測試通過，尚未取得新來源的 Semgrep 完整成功。舊來源的 40 JS／27 Python、實際 renderer seam 的 32 fragments／30 數值拒絕通過，不取代新的掃描或全套。詳見[逐筆審閱與限制](SECURITY-REVIEW-v0.172.0.md)。PR #171 保持 Draft，沒有正式 v172 release。
 
-接續的三份文件修正只同步使用者延期決定；完整測試與成功封裝仍固定在 `b295f09cf88644da7d55babf7952e312f573c7d7`。新的文件提交只驗差異範圍與精確來源 checkpoint；非文件來源與原接受提交逐份相同，不把舊全套收據當作新的全套執行。原成功 ZIP／manifest、失敗紀錄與程序收據保留。
+原延期交接的完整測試與成功封裝仍固定在 `b295f09cf88644da7d55babf7952e312f573c7d7`。本次只新增資安審閱文件、更新三份交接／施工文件與上述一行解析相容寫法；原完整 runner、期限、測試与其他來源保持。新的提交需另核對精確 checkpoint，不能把舊全套收據或 d1858cc 的 run 套用成新提交全套／掃描成功。原成功 ZIP／manifest、失敗紀錄與程序收據保留。
 
 ## 限制
 
