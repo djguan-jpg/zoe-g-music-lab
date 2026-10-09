@@ -48,7 +48,8 @@
   // Chrome's native streaming WebM omits Duration. Add the elapsed recording duration
   // only to a layout without SeekHead/Cues offsets; no codec payload is rewritten.
   function withDuration(raw,milliseconds) {
-    if(!(raw instanceof Uint8Array)||raw.length<16||raw.length>128*1024*1024||!Number.isFinite(milliseconds)||milliseconds<=0||milliseconds>615000)throw Error('WebM 原始資料或錄製時長無效');
+    if(!(raw instanceof Uint8Array)||raw.length<16||raw.length>128*1024*1024)throw Error('瀏覽器未產生有效的 WebM 錄製資料；請重新匯出');
+    if(!Number.isFinite(milliseconds)||milliseconds<=0||milliseconds>615000)throw Error('影片錄製時長無效；請重新匯出');
     const width=byte=>{for(let n=1;n<=8;n++)if(byte&(1<<(8-n)))return n;throw Error('WebM EBML 長度無效');};
     function element(offset,bound=raw.length) {
       if(offset>=bound)throw Error('WebM 元素缺漏');

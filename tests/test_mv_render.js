@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 'use strict';
 const {test}=require('node:test'),assert=require('node:assert/strict'),P=require('../web/mv-project.js'),R=require('../web/mv-render.js'),C=require('../contracts/draft-v3.json');
+const W=require('../web/mv-workflow-dom.js');
 function draft() {
   const panels=Object.fromEntries(Object.entries(C.fields).map(([p,fields])=>[p,{fields:Object.fromEntries(fields.map(f=>[f,'']))}]));
   for(const [p,row] of Object.entries(C.rows))panels[p][row.key]=[];
@@ -60,4 +61,33 @@ test('uniform draft never exceeds a media duration with fractional milliseconds 
  const d=P.seed(draft(),'a',1,4.0016,'title');assert.equal(d.panels.storyboard.shots[0].end,'4.001');
  const p=R.plan(d.panels.storyboard.shots.map(value=>({id:'s',value})),d.panels.lyrics.cues.map(value=>({id:'c',value})),4.0016);
  assert.equal(R.frame(p,4.0016).shot.id,'s');assert.equal(R.frame(p,4.0016).text,'a');
+});
+
+test('native rewind waits for seek completion before a new capture and removes owned listeners',async()=>{
+  class Player extends EventTarget {
+    constructor(){super();this.position=4;this.seeking=false;this.listeners=0;}
+    get currentTime(){return this.position;}
+    set currentTime(value){this.position=value;this.seeking=true;}
+    addEventListener(...args){this.listeners++;super.addEventListener(...args);}
+    removeEventListener(...args){this.listeners--;super.removeEventListener(...args);}
+  }
+  const p=new Player();let ready=false;const work=W.rewind(p,()=>true).then(()=>ready=true);
+  await Promise.resolve();assert.equal(p.currentTime,0);assert.equal(ready,false);
+  p.dispatchEvent(new Event('seeked'));await Promise.resolve();assert.equal(ready,false);
+  p.seeking=false;p.dispatchEvent(new Event('seeked'));await work;assert.equal(ready,true);assert.equal(p.listeners,0);
+  const other=new Player();let allowed=true;const rejected=W.rewind(other,()=>allowed);allowed=false;other.seeking=false;other.dispatchEvent(new Event('seeked'));await assert.rejects(rejected);assert.equal(other.listeners,0);
+  const wrong=new Player(),bad=W.rewind(wrong,()=>true);wrong.position=1;wrong.seeking=false;wrong.dispatchEvent(new Event('seeked'));await assert.rejects(bad);assert.equal(wrong.listeners,0);
+});
+
+test('repeat recordings use one media element audio route and disposal releases its owned context',async()=>{
+  const calls=[],player={currentSrc:'first'},stream={getTracks:()=>[{stop:()=>calls.push('track-stop')}]};let count=0;
+  class Context {
+    constructor(){count++;this.state='suspended';this.destination={speaker:true};}
+    createMediaElementSource(element){assert.equal(element,player);return {connect:target=>calls.push(target===this.destination?'speaker':'recorder'),disconnect:()=>calls.push('disconnect')};}
+    createMediaStreamDestination(){return {stream};}
+    async resume(){this.state='running';}
+    async close(){this.state='closed';calls.push('close');}
+  }
+  const owned=W.createAudioCapture(player,Context);assert.equal(await owned.get(),stream);player.currentSrc='second';assert.equal(await owned.get(),stream);assert.equal(count,1);assert.deepEqual(calls,['speaker','recorder']);
+  owned.dispose();owned.dispose();assert.deepEqual(calls,['speaker','recorder','disconnect','track-stop','close']);await assert.rejects(owned.get());
 });

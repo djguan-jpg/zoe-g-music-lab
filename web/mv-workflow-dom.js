@@ -1,11 +1,41 @@
 // SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 'use strict';
 (function(root) {
+  // Native seeking is asynchronous even after currentTime reads back as zero.
+  function rewind(player,valid) {
+    return new Promise((resolve,reject)=>{
+      let timer=null,finished=false;
+      function cleanup(){clearTimeout(timer);player.removeEventListener('seeked',check);player.removeEventListener('error',failed);}
+      function failed(){if(finished)return;finished=true;cleanup();reject(Error('播放器無法完成回到起點'));}
+      function check(){if(finished)return;if(!valid()||player.error||Math.abs(player.currentTime)>.001){failed();return;}if(player.seeking)return;finished=true;cleanup();resolve();}
+      player.addEventListener('seeked',check);player.addEventListener('error',failed);
+      timer=setTimeout(failed,10000);
+      try{player.currentTime=0;check();}catch{failed();}
+    });
+  }
+  function createAudioCapture(player,Context=root.AudioContext||root.webkitAudioContext) {
+    let owned=null,disposed=false;
+    return Object.freeze({
+      async get(){
+        if(disposed||!player.currentSrc||typeof Context!=='function')throw Error('音檔不可錄製');
+        if(!owned){
+          const context=new Context();owned={context,source:null,destination:null};
+          owned.source=context.createMediaElementSource(player);owned.destination=context.createMediaStreamDestination();
+          owned.source.connect(context.destination);owned.source.connect(owned.destination);
+        }
+        await owned.context.resume();
+        if(disposed||owned.context.state!=='running'||!owned.destination)throw Error('音軌啟動未通過確認');
+        return owned.destination.stream;
+      },
+      dispose(){if(disposed)return;disposed=true;if(owned){owned.source?.disconnect();owned.destination?.stream.getTracks().forEach(t=>t.stop());void owned.context.close().catch(()=>{});}}
+    });
+  }
   const P=root.MusicMVProject,R=root.MusicMVRender;
   function bind({document,events,player,studio,capture,apply,loadAudio,onError=()=>{}}) {
     const $=id=>document.getElementById(id),listeners=[];
     const on=(el,type,fn)=>{el.addEventListener(type,fn);listeners.push([el,type,fn]);};
     const sender=root.MusicTextDownloadDom.createByteSender(document,{events});
+    const captureAudio=createAudioCapture(player);
     let disposed=false,pending=false,revision=0,proposal=null,videoURL=null;
     const note=text=>{$('mv-project-note').textContent=text;};
     function key(s) {
@@ -137,7 +167,7 @@
           if(raf!==null)cancelAnimationFrame(raf);clearTimeout(timeout);
           player.removeEventListener('ended',ended);
           for(const type of ['seeking','pause','ratechange'])player.removeEventListener(type,changed);
-          stream?.getTracks().forEach(t=>t.stop());audioStream?.getTracks().forEach(t=>t.stop());
+          stream?.getTracks().forEach(t=>t.stop());
           if(player.currentSrc===source){player.pause();if(player.playbackRate===1)player.playbackRate=rate;}
         }
         async function finish(error) {
@@ -151,7 +181,7 @@
           }catch(error){doneReject(error);}
         }
         function stop(ok) {if(requested)return;requested=true;success=ok;elapsed=started===null?null:performance.now()-started;if(recorder&&recorder.state!=='inactive')recorder.stop();else void finish();}
-        function ended(){stop(valid());}
+        function ended(){if(active&&player.ended&&Math.abs(player.currentTime-prepared.plan.duration)<=.001)stop(valid());}
         function changed(){if(active&&(player.currentSrc!==source||player.seeking||(player.paused&&!player.ended)||player.playbackRate!==1))stop(false);}
         function paint() {
           if(requested)return;
@@ -162,10 +192,10 @@
         }
         try {
           if(!valid())throw Error('音檔或企劃已改變');
-          studio.stop();player.pause();player.playbackRate=1;player.currentTime=0;
+          studio.stop();player.pause();player.playbackRate=1;await rewind(player,valid);
           if(player.playbackRate!==1||Math.abs(player.currentTime)>.001)throw Error('播放器無法回到原速與起點');
           R.draw(prepared.context,prepared.canvas,prepared.plan,0,prepared.images);
-          audioStream=player.captureStream();
+          audioStream=await captureAudio.get();if(!valid())throw Error('音檔或企劃已改變');
           const tracks=audioStream.getAudioTracks();if(tracks.length!==1||tracks[0].readyState!=='live')throw Error('瀏覽器未提供可錄製音軌；未匯出無聲影片');
           stream=new MediaStream([...prepared.canvas.captureStream(30).getVideoTracks(),tracks[0].clone()]);
           if(stream.getVideoTracks().length!==1)throw Error('瀏覽器未提供畫面串流');
@@ -185,7 +215,7 @@
       capture:()=>{const s=capture();return {key:key(s),allowed:s.allowed&&!pending&&['lyrics','storyboard'].includes(s.draft.tab)&&s.media.ready&&!s.media.error&&s.media.source===s.media.current_source};},
       prepare:async()=>{
         clearVideo();const s=capture(),plan=R.plan(s.shots,s.cues,s.media.duration),images=new Map();
-        if(typeof MediaRecorder==='undefined'||typeof player.captureStream!=='function'||typeof HTMLCanvasElement.prototype.captureStream!=='function')throw Error('此瀏覽器未支援含音軌的 WebM 匯出；請使用 Chrome 或 Edge');
+        if(typeof MediaRecorder==='undefined'||typeof (root.AudioContext||root.webkitAudioContext)!=='function'||typeof HTMLCanvasElement.prototype.captureStream!=='function')throw Error('此瀏覽器未支援含音軌的 WebM 匯出；請使用 Chrome 或 Edge');
         const mime=['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus'].find(t=>MediaRecorder.isTypeSupported(t));if(!mime)throw Error('瀏覽器沒有可用的 WebM 編碼器');
         if(s.images.length>P.limits.images||s.images.reduce((total,e)=>total+e.file.size,s.audio?.size||0)>P.limits.media)throw Error('影片素材合計最多 64 MiB、64 張圖片');
         let pixels=0;
@@ -209,9 +239,11 @@
     on($('mv-video-cancel'),'click',()=>recorder.cancel());
     on(document,'input',()=>{recorder.refresh();controls();});on(document,'change',()=>{recorder.refresh();controls();});
     on(document,'visibilitychange',()=>recorder.refresh());
-    function dispose(){if(disposed)return;disposed=true;revision++;proposal=null;recorder.dispose();sender.dispose();clearVideo();for(const [el,type,fn] of listeners)el.removeEventListener(type,fn);}
+    function dispose(){if(disposed)return;disposed=true;revision++;proposal=null;recorder.dispose();captureAudio.dispose();sender.dispose();clearVideo();for(const [el,type,fn] of listeners)el.removeEventListener(type,fn);}
     on(events,'pagehide',dispose);controls();
     return {refresh:()=>{recorder.refresh();controls();},dispose};
   }
-  root.MusicMVWorkflowDOM=Object.freeze({bind});
+  const api=Object.freeze({bind,rewind,createAudioCapture});
+  if(typeof module==='object'&&module.exports)module.exports=api;
+  else root.MusicMVWorkflowDOM=api;
 })(typeof globalThis==='object'?globalThis:this);
