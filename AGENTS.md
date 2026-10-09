@@ -1,6 +1,6 @@
 ## v0.171.0 完整 MV 草稿流程
 
-本輪以已發布 v170 接續，restore-v0.170.0-before-v0.171.0 與 codex/iteration-v0.171.0 保留分層 atomic commits。提供同一音檔的試播、選句區域、手動 BPM、A–B，以及包含素材的專案重開、原生 WebM 和 Agent 明確路徑另存修訂。工作來源完整 830 Python／2046 JS 通過；後續分層及三個邊界回歸已集中通過，最終830／2049、162語法與四Skills、指定source封裝／遠端狀態以成功manifest為準。
+本輪以已發布 v170 接續，restore-v0.170.0-before-v0.171.0 與 codex/iteration-v0.171.0 保留分層 atomic commits。提供同一音檔的試播、選句區域、手動 BPM、A–B，以及包含素材的專案重開、原生 WebM 和 Agent 明確路徑另存修訂。工作來源完整 830 Python／2046 JS 通過；原b81候選830／2049封裝通過但重複錄製失敗，未發佈。可重用Web Audio路由修正後連續匯出及取消重啟已驗，兩個回歸使最終830／2051、162語法與四Skills；指定source封裝／遠端狀態以成功manifest為準。
 
 原音檔、圖片、歌詞與磁碟舊專案保持；完整流程已用本輪合成素材實際保存、重開、Agent修訂及影片落盤核對。沒有內建生成式模型、實聽／完整藝術視覺／Host或平台身分核實；自己四份投稿需沿原記錄更新，不認領原文件作者。原法律、4 Skills、原wire與256／8192保持。未知／partial／FAILED與最新三正式版保護，rolling goal仍active。見[QA](docs/QA-v0.171.0.md)、[交接](docs/HANDOFF-v0.171.0.md)。
 
