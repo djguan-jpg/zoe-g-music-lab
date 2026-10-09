@@ -1,6 +1,6 @@
 ## v0.172.0 實用性取捨與隱藏編輯器
 
-使用者新增指定 AI Security Scanner；本機 app／CLI 未找到，掃描 `not_executed`。可保存完整接受的候選分支／Draft PR／封裝，但必須完成指定 app 的實際掃描並審閱結果後才合併或 release。官方 SKILL 限定 desktop Start，CLI plan 不執行。見[QA](docs/QA-v0.172.0.md)與[交接](docs/HANDOFF-v0.172.0.md)。
+使用者指定 AI Security Scanner，最新回覆是「已經安裝了，但這個等等再做，有別的專案要先做」。前次未找到 app／CLI 是較早的觀察；目前安裝狀態尚未獨立核對，掃描為 `deferred_by_user_not_executed`。收到使用者明確恢復此次掃描前，不重複安裝或啟動 app、不執行 doctor／掃描。恢復後先定位既有 CLI 與核對 readiness。候選分支／Draft PR／封裝保留，必須完成指定 app 的實際掃描並審閱結果後才合併或 release。官方 SKILL 限定 desktop Start，CLI plan 不執行。見[QA](docs/QA-v0.172.0.md)與[交接](docs/HANDOFF-v0.172.0.md)。
 
 使用者明確指出現有工具已更強，未採用的編輯器應直接隱藏。一般 UI 保留字幕交付、音檔核對、素材交接；歌曲／分鏡／人工校時／簡易 MV 編輯 DOM 在 legacy-top／legacy-editors 隱藏，初始化不填入示範，內部載入不能揭露。成熟工具做編輯，本專案的交接與核對價值仍待真實作品驗證；不得用版本數、模組數或測試數代替實用性。後續先遵循 docs/PRODUCT-UTILITY.md 的使用情境與成效門檻，不自行恢復通用編輯產品方向。
 

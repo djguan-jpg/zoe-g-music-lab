@@ -30,9 +30,11 @@
 
 ## 指定資安掃描仍未執行
 
-使用者指定 [AI Security Scanner](https://teddashh.github.io/ai-security-scanner/)。本輪在 PATH、其已知安裝位置及 Windows 解除安裝登錄找不到 app／CLI；`doctor`、掃描與報告尚未執行。官方 v0.5.0 Windows 安裝檔正在本機忽略 QA 準備，只有逐 bytes 與同 release `SHA256SUMS.txt` 核對後才可使用。沒有安裝、啟動、改 WSL／系統權限、傳送程式或使用其他 scanner 冒充。
+使用者指定 [AI Security Scanner](https://teddashh.github.io/ai-security-scanner/)。前次在 PATH、已知安裝位置及 Windows 解除安裝登錄未找到 app／CLI；之後使用者回覆已經安裝，並明確延後此次掃描。安裝狀態來自使用者回覆，尚未獨立核對；`doctor`、掃描與報告仍未執行。官方 v0.5.0 Windows 安裝檔 42178527 bytes／SHA-256 `7b2d6d4bf89a9d24ad8b77c79957074ca062461722ac5a27f890774f51749bb3` 已與同 release `SHA256SUMS.txt` 核對。沒有執行安裝、啟動 app、改 WSL／系統權限、傳送程式或使用其他 scanner 冒充。
 
-[官方 SKILL.md](https://github.com/teddashh/ai-security-scanner/blob/main/.codex/skills/ai-security-scanner/SKILL.md) 說明 `You cannot start a scan.`，開始／暫停／接續須由桌面控制，CLI 計畫不執行掃描。本版需完成這項掃描、審閱結果後才合併或建立正式 release；暫以分支／Draft PR／候選封裝交付。下一步是安裝官方 app、`doctor` readiness，再以本輪精確來源作本機 source scan。未取得實際 case／run／engine outcomes／報告前，資安狀態保持 `not_executed`。
+[官方 SKILL.md](https://github.com/teddashh/ai-security-scanner/blob/main/.codex/skills/ai-security-scanner/SKILL.md) 說明 `You cannot start a scan.`，開始／暫停／接續須由桌面控制，CLI 計畫不執行掃描。本版需完成這項掃描、審閱結果後才合併或建立正式 release；暫以分支／Draft PR／候選封裝交付。收到使用者明確恢復前，不再次安裝或啟動 app、不執行 `doctor` 或掃描。恢復後先定位已安裝 CLI、核對 readiness，再以精確候選來源作本機 source scan。未取得實際 case／run／engine outcomes／報告前，狀態保持 `deferred_by_user_not_executed`。
+
+接續的三份文件修正只同步使用者延期決定；完整測試與成功封裝仍固定在 `b295f09cf88644da7d55babf7952e312f573c7d7`。新的文件提交只驗差異範圍與精確來源 checkpoint；非文件來源與原接受提交逐份相同，不把舊全套收據當作新的全套執行。原成功 ZIP／manifest、失敗紀錄與程序收據保留。
 
 ## 限制
 
