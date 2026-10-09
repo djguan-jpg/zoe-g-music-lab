@@ -171,7 +171,7 @@ class Synthetic(unittest.TestCase):
 
     def test_default_text_discloses_skips_without_breaking_legacy_count_line(self):
         p=self.command();self.assertEqual(p.returncode,0,p.stderr[-1000:]);self.assertIn('Ran 4 tests',p.stdout)
-        self.assertIn('Skipped 2; expected failures 1',p.stdout);self.assertIn('OK (two isolated workers; 120 second overall deadline)',p.stdout)
+        self.assertIn('Skipped 2; expected failures 1',p.stdout);self.assertIn('OK (two isolated workers; 600 second overall deadline)',p.stdout)
 
     def test_failed_tests_cannot_emit_success_summary(self):
         (self.root/'tests/test_synthetic.py').write_text(self.source.replace('self.assertEqual(1+1,2)','self.assertEqual(1+1,3)'),encoding='utf-8')
@@ -189,9 +189,12 @@ class Synthetic(unittest.TestCase):
         p=self.command('--group','0','--report-json');self.assertEqual(p.returncode,2);self.assertNotIn('"phase"',p.stdout)
 
     def test_actual_deadline_collects_owned_worker_and_refuses_success(self):
-        target=self.root/'scripts/check_python_tests.py';target.write_text(target.read_text().replace('DEADLINE_SECONDS = 120','DEADLINE_SECONDS = 1.2'),encoding='utf-8')
+        target=self.root/'scripts/check_python_tests.py';source=target.read_text()
+        self.assertEqual(source.count('DEADLINE_SECONDS = 600'),1)
+        target.write_text(source.replace('DEADLINE_SECONDS = 600','DEADLINE_SECONDS = 1.2'),encoding='utf-8')
         (self.root/'tests/test_synthetic.py').write_text('import unittest,time\nclass Slow(unittest.TestCase):\n def test_slow(self):time.sleep(3)\n',encoding='utf-8')
         p=self.command('--report-json');self.assertEqual(p.returncode,1);self.assertNotIn('"format":"zoe-python-test-run"',p.stdout)
+        self.assertIn('1.2 second overall deadline',p.stderr)
         starts=[]
         for line in p.stderr.splitlines():
             try:value=json.loads(line)

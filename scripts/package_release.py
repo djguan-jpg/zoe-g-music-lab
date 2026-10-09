@@ -121,14 +121,14 @@ def package(ref):
                     raise ValueError("Verified Python source could not be prepared")
                 # The full suite includes real Git/Windows process fixtures; use a
                 # bounded execution deadline separately from each caller's wait.
-                # The runner owns a 120-second budget; allow it to collect and
+                # The runner owns the approved 600-second budget; allow it to collect and
                 # close both workers before this outer process can time out.
-                python_summary = decode_summary(command([sys.executable, "-X", "utf8", "scripts/check_python_tests.py", "--report-json"], checkout, timeout=150))
+                python_summary = decode_summary(command([sys.executable, "-X", "utf8", "scripts/check_python_tests.py", "--report-json"], checkout, timeout=630))
                 command(["node", "--check", "web/app.js"], checkout)
                 javascript_tests = sorted(file.relative_to(checkout).as_posix() for file in (checkout / "tests").glob("test_*.js"))
                 if not javascript_tests:
                     raise ValueError("No packaged JavaScript tests found")
-                command(["node", "--test", f"--test-concurrency={WORKERS}", *javascript_tests], checkout)
+                command(["node", "--test", f"--test-concurrency={WORKERS}", *javascript_tests], checkout, timeout=180)
                 if "web/planning-import.js" in hashes:
                     command(["node", "--check", "web/planning-import.js"], checkout)
                 capabilities = json.loads(command([sys.executable, "music_lab_agent.py", "--describe"], checkout))

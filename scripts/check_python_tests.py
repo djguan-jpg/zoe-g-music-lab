@@ -15,7 +15,7 @@ sys.path.insert(0, str(ROOT))
 from musiclab.test_run_summary import summarize, worker_startup
 from musiclab.test_schedule import partition
 from musiclab.run_identity import record_current_run
-DEADLINE_SECONDS = 120
+DEADLINE_SECONDS = 600
 WORKERS = 2
 
 
@@ -86,7 +86,7 @@ def main():
         try: return process.communicate(timeout=max(0.01, DEADLINE_SECONDS-(time.monotonic()-started)))
         except subprocess.TimeoutExpired:
             process.kill(); output, error = process.communicate()
-            return output, error+b'\nPython test execution reached the 120 second overall deadline.'
+            return output, error+f'\nPython test execution reached the {DEADLINE_SECONDS:g} second overall deadline.'.encode('ascii')
     with ThreadPoolExecutor(max_workers=WORKERS) as pool:
         replies = list(pool.map(collect, processes))
     if any(process.returncode or len(reply[0]) > 1024*1024
@@ -104,7 +104,7 @@ def main():
         disclose_failure(processes, replies)
         print(str(error),file=sys.stderr);return 1
     if args.report_json:print(json.dumps(report,ensure_ascii=False,separators=(',',':')))
-    else:print(f"Ran {report['tests']} tests in {time.monotonic()-started:.3f}s\nSkipped {report['skipped']}; expected failures {report['expected_failures']}\n\nOK (two isolated workers; 120 second overall deadline)")
+    else:print(f"Ran {report['tests']} tests in {time.monotonic()-started:.3f}s\nSkipped {report['skipped']}; expected failures {report['expected_failures']}\n\nOK (two isolated workers; {DEADLINE_SECONDS:g} second overall deadline)")
     return 0
 
 

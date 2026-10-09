@@ -13,7 +13,7 @@ musiclab/test_run_summary.py是純模型，無discovery／filesystem／process�
 
 worker在discovery前對自己的PID登記既有run1：Windows原生creation ticks／image basename，固定python-tests-0或1；原身份reader沒有新增權限。非Windows明確run=null與worker_identities_verified=false，不假造Windows證據。parent只控制自己啟動的Popen objects，communicate收集並確認兩者returncode及poll後才把eof傳給純模型；任意外部stdout、bare PID或worker聲稱pass不能取代原handle完成。
 
-runner仍兩worker、120秒總執行deadline；分組按原module規則，不加並行或記憶體cap。timeout只沿原Popen handle kill及communicate；parent啟動失敗亦只處理已啟動的自有handles。這不是全域程序／descendant／外部工作清理能力；上輪未取得的失敗child handles不回填為已驗證。1MiB檢查在communicate讀完之後，不宣稱stream硬限制或程序sandbox。
+依2026-10-09明確批准，v170 runner仍兩worker、600秒總執行deadline；分組按原module規則，不加並行或記憶體cap。timeout只沿原Popen handle kill及communicate；parent啟動失敗亦只處理已啟動的自有handles。這不是全域程序／descendant／外部工作清理能力；上輪未取得的失敗child handles不回填為已驗證。1MiB檢查在communicate讀完之後，不宣稱stream硬限制或程序sandbox。
 
 ## 摘要與封裝
 
@@ -21,6 +21,6 @@ runner仍兩worker、120秒總執行deadline；分組按原module規則，不加
 
 scripts/package_release.py沿原immutable source extraction執行同一runner的--report-json，再以decode_summary核對。合法摘要保存在原release manifest1的checks.python_run，原六個passed欄位與root shape保持，ZIP／manifest仍只有兩個release files。錯誤／不完整／未知summary即使子程序exit0也會停止後續檢查並只留FAILED.txt，不能發成功manifest。舊manifest無python_run只能明示未提供，不推論worker身份或skip數、不靜默遷移。
 
-外層150秒給原120秒runner結束與清理時間，兩個上限都保持。JSON摘要證明本次自有direct worker與測試coverage，不證明作者／版權、平台founder、Host安裝、全機殭屍程序不存在、真媒體實聽或完整browser視覺接受。跨輪維護仍沿same-host typed record、原handle及既有strict>7days／latest3／exact tag／Git archive政策。
+外層630秒給600秒runner結束與清理時間；封裝Node完整151檔仍兩file workers，期限180秒。其他固定命令保持既有60秒上限。先前版本來源與原120／60秒失敗收據保留，沒有改寫舊launcher或原測試分組。JSON摘要證明本次自有direct worker與測試coverage，不證明作者／版權、平台founder、Host安裝、全機殭屍程序不存在、真媒體實聽或完整browser視覺接受。跨輪維護仍沿same-host typed record、原handle及既有strict>7days／latest3／exact tag／Git archive政策。
 
 失敗時保留兩個原 handle 的 EOF 與實際可用的 startup；最多4096bytes的純解析與未取得身份的限制見[失敗診斷契約](PYTHON-TEST-FAILURE.md)。成功摘要與上述完整接受條件保持。
