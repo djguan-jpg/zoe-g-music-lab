@@ -31,7 +31,7 @@ flowchart LR
 | DOM | literal文字、事件、原生File／Blob、有限render與manual焦點 | 各`*-dom.js`及`web/app.js` |
 | 明確filesystem | 來源副本、排他輸出、不可覆寫版本、備份及release audit | `musiclab/` I/O adapters、`scripts/` |
 
-完整Python測試的纯分配模型依实測更新成本提示，再由原兩worker／120秒launcher核對獨立discovery與完整ID／EOF；成本不授予跳過案例、增加期限或程序權限。驗證與診斷分開，見[來源與測試分配契約](RELEASE-GIT-CAPTURE.md)。
+完整Python測試的纯分配模型依实測更新成本提示，再由兩worker／600秒launcher（v170明確批准）核對獨立discovery與完整ID／EOF；成本不授予跳過案例、增加期限或程序權限。驗證與診斷分開，見[來源與測試分配契約](RELEASE-GIT-CAPTURE.md)。
 
 產品版本與交付支援表唯一執行期來源是 [delivery-versions.json](../musiclab/assets/delivery-versions.json)。Agent1、draft3、MCP2025-11-25與各獨立domain schemas不是產品minor版本；未知版本拒絕，不默認遷移。完整input/output schemas由discovery取得。目前22基本／明確選庫29操作，沒有跨schema隱藏寫入。
 
@@ -55,7 +55,7 @@ flowchart LR
 
 原始碼封裝先以純release_capture／release_git_fs取得有限固定Git tree與收束原child／兩reader，再以純release_zip／release_zip_fs容量gate讀ZIP。producer與maintenance共用，完整blob／CRC／ledger維持後續層；manifest2 raw profile與legacy1原bytes保持。見[來源契約](RELEASE-ARCHIVE.md)、[ZIP容量](RELEASE-ZIP-BUDGET.md)與[Git串流](RELEASE-GIT-CAPTURE.md)。
 
-測試排程由純test_schedule驗證完整唯一ID及近似positive integer成本，將昂貴方法分配後恢復每組discovery原順序。launcher與parent獨立discovery、完整coverage與原handle EOF核對保持；仍兩worker／120秒，class fixtures各程序自行建立／收束，成本提示不保證速度或全域RAM。細節見[Git串流與測試交接](RELEASE-GIT-CAPTURE.md)。
+測試排程由純test_schedule驗證完整唯一ID及近似positive integer成本，將昂貴方法分配後恢復每組discovery原順序。launcher與parent獨立discovery、完整coverage與原handle EOF核對保持；仍兩worker／600秒（v170明確批准），class fixtures各程序自行建立／收束，成本提示不保證速度或全域RAM。細節見[Git串流與測試交接](RELEASE-GIT-CAPTURE.md)。
 
 ## 目前指南與歷史
 
@@ -77,6 +77,6 @@ flowchart LR
 
 分鏡總長撤回由純controller核對pending身份／原时间來源、注入寫入器與實際post快照，再發布同一已核對view；DOM及app保持既有限定寫入。拒絕不清除仍存在的紀錄、不自動回滾／重試。見[撤回接受契約](STORYBOARD-DURATION-UNDO.md)。
 
-指定提交封裝的filesystem adapter在驗ZIP／Git raw blobs後、一次性checkout內準備Python位元碼快取，再呼叫原launcher；準備不改原源檔／ZIP或兩worker／120秒，失敗仍不建成功manifest。快取隨原temp context回收；其準備不冒充正式測試接受。
+指定提交封裝的filesystem adapter在驗ZIP／Git raw blobs後、一次性checkout內準備Python位元碼快取，再呼叫原launcher；準備不改原源檔／ZIP或兩worker／600秒（v170明確批准），失敗仍不建成功manifest。快取隨原temp context回收；其準備不冒充正式測試接受。
 
-失敗驗收由純有界 startup 解析／原 handle 收集與 EOF 診斷／native typed record 觀察分層；缺少身份不補造，集中驗證不取代完整接受。Node 封裝測試明確兩 file workers，原期限保持。見[失敗證據契約](PYTHON-TEST-FAILURE.md)。
+失敗驗收由純有界 startup 解析／原 handle 收集與 EOF 診斷／native typed record 觀察分層；缺少身份不補造，集中驗證不取代完整接受。Node 封裝測試明確兩 file workers，v170期限經明確批准為180秒。見[失敗證據契約](PYTHON-TEST-FAILURE.md)。

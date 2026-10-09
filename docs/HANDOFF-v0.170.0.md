@@ -1,3 +1,7 @@
+## v0.170.0 明確期限批准與完整接受
+
+使用者已批准Python600／JavaScript180秒。完整823Python（1既有skip、0expected failures）／2013JS、157syntax／四Skills通過；兩worker、原案例／斷言、來源與全部舊版保持。指定提交封裝、PR／main／tag／遠端asset與清理各以本輪成功manifest及最終收據為準；先前候選失敗屬下列歷史紀錄。見[接續接受3](QA-v0.170.0-ACCEPTANCE-3.md)。
+
 # v0.170.0 接續交接 2
 
 先讀[接受診斷2](QA-v0.170.0-ACCEPTANCE-2.md)，接續同一候選及本次原還原點。下一步取決於必要期限決策或本機狀況改善；v170仍未發布。以下原交接完整保留。
