@@ -25,7 +25,11 @@ let editorCopy=null;
 let editorOrder=null;
 let editorPosition=null;
 let rowSequence=0;
-const rowIds=(items,ids)=>ids||items.map(()=>`row-${++rowSequence}`);
+const rowIds=(items,ids)=>{
+  if(ids)return ids;
+  const used=new Set(Object.keys(collections).flatMap(key=>[...($(key)?.children||[])].map(e=>e.dataset?.historyId).filter(Boolean)));
+  return items.map(()=>{let id;do{rowSequence=rowSequence>=1000000000?1:rowSequence+1;id=`row-${rowSequence}`;}while(used.has(id));used.add(id);return id;});
+};
 const collections={
   arrangement:{scope:'music',label:'段落',limit:MusicEditor.draftRows.music.limit,add:'section-add',remove:'[data-remove-section]'},
   'music-avoid':{scope:'music',label:'避免事項',limit:100,add:'avoid-add',remove:'button'},
@@ -881,7 +885,6 @@ function captureDraft(){
   return {format:'zoe-music-lab-draft',schema_version:3,tool_version:MusicDeliveryVersions.current,saved_at:new Date().toISOString(),tab:state.tab,panels};
 }
 function applyDraft(draft,shotIds){state.studio?.clearImages();
-  for(const id of shotIds||[]){const match=/^row-([0-9]+)$/.exec(id);if(match&&Number.isSafeInteger(Number(match[1]))&&Number(match[1])<Number.MAX_SAFE_INTEGER)rowSequence=Math.max(rowSequence,Number(match[1]));}
   storyboardDurationController?.clear();
   storyboardReadyController?.clear();
   if(seedController)seedController.cancel();

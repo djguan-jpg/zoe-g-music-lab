@@ -40,3 +40,13 @@ test('uniform draft uses shared field-whitespace rules while keeping the entire 
  const text='\u0085\n\u001c\n\ufeff\n  歌詞  ';
  const d=P.seed(draft(),text,0,4,'title');assert.equal(d.panels.lyrics.fields['lyrics-source'],text);assert.deepEqual(d.panels.lyrics.cues.map(e=>e.text),['\ufeff','  歌詞  ']);
 });
+
+test('actual app row allocator skips imported live IDs and remains finite at the numeric boundary',()=>{
+ const fs=require('node:fs'),vm=require('node:vm'),source=fs.readFileSync(require.resolve('../web/app.js'),'utf8');
+ const code=source.slice(source.indexOf('let rowSequence=0;'),source.indexOf('const collections='));
+ const shots={children:[{dataset:{historyId:'row-1'}},{dataset:{historyId:'row-9007199254740990'}}]},ctx=vm.createContext({collections:{shots:{}},$:()=>shots});
+ vm.runInContext(code,ctx);assert.deepEqual(Array.from(vm.runInContext('rowIds([{},{}])',ctx)),['row-2','row-3']);
+ shots.children.push({dataset:{historyId:'row-4'}});assert.deepEqual(Array.from(vm.runInContext('rowIds([{}])',ctx)),['row-5']);
+ vm.runInContext('rowSequence=1000000000',ctx);assert.deepEqual(Array.from(vm.runInContext('rowIds([{}])',ctx)),['row-2']);
+ assert.deepEqual(Array.from(vm.runInContext("rowIds([{}],['external-id'])",ctx)),['external-id']);
+});
