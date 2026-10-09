@@ -2,7 +2,7 @@
 'use strict';
 const {test}=require('node:test'),assert=require('node:assert/strict'),S=require('../web/mv-seed.js');
 function fixture(overrides={}) {
-  const source={key:'original',allowed:true,title:'原文',text:'  歌詞 🎵  ',textcard:false,files:[{}]},calls=[],errors=[],views=[];
+  const source={key:'original',audio:{},allowed:true,title:'原文',text:'  歌詞 🎵  ',textcard:false,files:[{}]},calls=[],errors=[],views=[];
   const c=S.create({capture:()=>({...source}),prepare:async s=>({title:s.title}),replace:async(...args)=>{calls.push(args);return {written:true};},accept:async()=>true,onView:v=>views.push(v),onError:e=>errors.push(e.message),...overrides});
   return {c,source,calls,errors,views};
 }
@@ -10,7 +10,7 @@ test('seed preview makes no writes and requires an explicit accepted replacement
   const a=fixture();assert.equal(await a.c.apply(),false);assert.equal(await a.c.preview(),true);assert.deepEqual(a.calls,[]);assert.equal(a.c.state().phase,'preview');assert.equal(await a.c.apply(),true);assert.equal(a.calls.length,1);assert.equal(a.c.state().pending,false);assert.equal(a.views.filter(v=>v.accepted).length,1);
 });
 test('every original source input and exact picked file identity invalidate a stale seed preview',async()=>{
-  for(const mutate of [s=>s.key='edited',s=>s.title='new',s=>s.text='changed',s=>s.textcard=true,s=>s.files=[{}],s=>s.allowed=false]) {
+  for(const mutate of [s=>s.key='edited',s=>s.audio={},s=>s.title='new',s=>s.text='changed',s=>s.textcard=true,s=>s.files=[{}],s=>s.allowed=false]) {
     const a=fixture();await a.c.preview();mutate(a.source);assert.equal(await a.c.apply(),false);assert.equal(a.calls.length,0);assert.equal(a.c.state().phase,'idle');assert.equal(a.errors.length,1);
   }
 });

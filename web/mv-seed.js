@@ -2,7 +2,7 @@
 'use strict';
 (function(root) {
   function same(a,b) {
-    return !!a&&!!b&&b.allowed&&a.key===b.key&&a.title===b.title&&a.text===b.text&&a.textcard===b.textcard&&
+    return !!a&&!!b&&b.allowed&&a.key===b.key&&a.audio===b.audio&&a.title===b.title&&a.text===b.text&&a.textcard===b.textcard&&
       Array.isArray(a.files)&&Array.isArray(b.files)&&a.files.length===b.files.length&&a.files.every((file,i)=>file===b.files[i]);
   }
   function create({capture,prepare,replace,accept,onView=()=>{},onError=()=>{}}) {
