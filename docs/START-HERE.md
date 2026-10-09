@@ -1,6 +1,6 @@
 # 第一次使用 ZOE. G Music Lab
 
-v0.172.0 候選介面只有字幕交付、音檔核對與素材交接。人工校時、歌曲／分鏡與簡易 MV 編輯器已隱藏；請在原剪輯或聲音工具完成編輯，再接續檔案。見[實用性與取捨](PRODUCT-UTILITY.md)。
+v0.173.0 候選介面只有字幕交付、音檔核對與素材交接。人工校時、歌曲／分鏡與簡易 MV 編輯器保持隱藏；請在原剪輯或聲音工具完成編輯，再接續檔案。見[實用性與取捨](PRODUCT-UTILITY.md)。
 
 工具在本機核對與整理資料，沒有模型服務或生成媒體；以下 CLI 與 Agent 接口仍可使用。
 
@@ -8,9 +8,9 @@ v0.172.0 候選介面只有字幕交付、音檔核對與素材交接。人工�
 
 於 Repo 根目錄執行 `python -X utf8 music_lab_server.py`，開啟 <http://127.0.0.1:8875/>。
 
-1. **字幕交付**：匯入已校時的 SRT、LRC 或本工具歌詞 JSON，先閱讀原文與時間預覽，明確套用後建立字幕包。改字與重新校時請回原工具處理。
+1. **字幕交付**：有已知作品總長時先填秒數，再匯入已校時的 SRT、LRC 或本工具歌詞 JSON，閱讀原文與時間預覽，明確套用後建立字幕包。LRC 只有句首；總長可供末句結束使用，留白仍沿原估算。修改總長後要重新匯入、套用及建立成果，不會自動改寫原句。改字與重新校時請回原工具處理。
 2. **音檔核對**：選整數 PCM WAV，核對取樣率、位深與聲道條件後分析。保留來源音檔；報告是量測證據，音質與內容仍需實聽。
-3. **素材交接**：開啟本工具的 `.zoemv.json`，核對全部素材摘要與原生解碼後確認載入，再下載素材專案或 Agent 企劃。這個格式不能直接重開其他剪輯軟體的原生專案。
+3. **素材交接**：新作品先完成字幕交付，再填素材專案名稱、選原音檔並按「下載素材專案」。這會保存目前文字與原音檔，沒有自動加入分鏡或生成影片。也可開啟本工具 `.zoemv.json`，核對素材摘要與原生解碼後確認載入，再保存或下載 Agent 企劃。這個格式不能直接重開其他剪輯軟體的原生專案；含音檔的 JSON 會比原素材大。
 
 載入檔案與成果 ZIP 前先檢查預覽，明確套用才替換指定內容。重新匯入可能使舊成果失效，重新建立再下載；取消等待會保留內容，後端或原讀取仍可能完成。
 
@@ -47,4 +47,4 @@ python -X utf8 music_lab_server.py --draft-library outputs/my-draft-library
 
 ## 找到下一步
 
-[歌曲 Skill](../projects/zoe-music-production/SKILL.md)、[分鏡 Skill](../projects/zoe-mv-storyboard/SKILL.md)、[歌詞 Skill](../projects/zoe-lyrics-sync/SKILL.md)、[音檔 Skill](../projects/zoe-audio-delivery/SKILL.md)保留原 CLI 流程。Agent／MCP 讀[接口指南](AGENT.md)；開發與回復讀[架構](ARCHITECTURE.md)、[交接](HANDOFF-v0.172.0.md)。授權依 [LICENSE](../LICENSE)／[NOTICE](../NOTICE)，禁止商用；平台收錄不代表創始人核實。
+[歌曲 Skill](../projects/zoe-music-production/SKILL.md)、[分鏡 Skill](../projects/zoe-mv-storyboard/SKILL.md)、[歌詞 Skill](../projects/zoe-lyrics-sync/SKILL.md)、[音檔 Skill](../projects/zoe-audio-delivery/SKILL.md)保留原 CLI 流程。Agent／MCP 讀[接口指南](AGENT.md)；開發與回復讀[架構](ARCHITECTURE.md)、[交接](HANDOFF-v0.173.0.md)。授權依 [LICENSE](../LICENSE)／[NOTICE](../NOTICE)，禁止商用；平台收錄不代表創始人核實。
