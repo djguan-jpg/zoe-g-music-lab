@@ -14,7 +14,7 @@
     const types=['timeupdate','seeked','pause','playing','loadedmetadata','loadstart','emptied','durationchange','error'];
     function dispose(){if(disposed)return true;const confirmed=controller.dispose();disposed=true;start.disabled=stop.disabled=true;start.removeEventListener('click',begin);stop.removeEventListener('click',end);selection.removeEventListener('change',refresh);for(const type of ['input','focusin'])container.removeEventListener(type,refresh);for(const type of types)player.removeEventListener(type,refresh);events?.removeEventListener('pagehide',dispose);return confirmed;}
     start.addEventListener('click',begin);stop.addEventListener('click',end);selection.addEventListener('change',refresh);for(const type of ['input','focusin'])container.addEventListener(type,refresh);for(const type of types)player.addEventListener(type,refresh);events?.addEventListener('pagehide',dispose);refresh();
-    return {refresh,dispose};
+    return {refresh,dispose,stop:()=>{const result=controller.stop();refresh();return result;}};
   }
   const api=Object.freeze({bind});if(typeof module==='object'&&module.exports)module.exports=api;else root.MusicCueAuditionDOM=api;
 })(typeof globalThis==='object'?globalThis:this);
