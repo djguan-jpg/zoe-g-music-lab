@@ -15,7 +15,7 @@
         back.disabled=!model.canReturn;back.textContent=model.returnLabel;
       },
       goOutput:()=>{output.scrollTop=0;return move(heading,'start');},
-      goEditor:scope=>move(controls[scope].disabled?document.getElementById(buildIds[scope]):controls[scope],'center')
+      goEditor:scope=>move(document.querySelector?.('[data-delivery-panel="'+(scope==='music'?'storyboard':scope)+'"]')||(controls[scope].disabled?document.getElementById(buildIds[scope]):controls[scope]),'center')
     });
     for(const [scope,button] of Object.entries(controls))button.onclick=()=>controller.show(scope);
     back.onclick=()=>controller.back();controller.refresh();return controller;
