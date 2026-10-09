@@ -184,7 +184,9 @@
         clearVideo();const s=capture(),plan=R.plan(s.shots,s.cues,s.media.duration),images=new Map();
         if(typeof MediaRecorder==='undefined'||typeof player.captureStream!=='function'||typeof HTMLCanvasElement.prototype.captureStream!=='function')throw Error('此瀏覽器未支援含音軌的 WebM 匯出；請使用 Chrome 或 Edge');
         const mime=['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus'].find(t=>MediaRecorder.isTypeSupported(t));if(!mime)throw Error('瀏覽器沒有可用的 WebM 編碼器');
-        for(const e of s.images)images.set(e.shot_id,await image(e.url));
+        if(s.images.length>P.limits.images||s.images.reduce((total,e)=>total+e.file.size,s.audio?.size||0)>P.limits.media)throw Error('影片素材合計最多 64 MiB、64 張圖片');
+        let pixels=0;
+        for(const e of s.images){const art=await image(e.url);pixels+=art.naturalWidth*art.naturalHeight;if(pixels>40000000)throw Error('影片圖片合計最多四千萬像素');images.set(e.shot_id,art);}
         const canvas=document.createElement('canvas'),size=R.dimensions(s.draft.panels.storyboard.fields['mv-ratio']);canvas.width=size.width;canvas.height=size.height;
         const context=canvas.getContext('2d');if(!context)throw Error('無法建立影片畫面');
         R.checkCanvas(context,canvas,plan,images);

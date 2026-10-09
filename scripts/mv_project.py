@@ -22,7 +22,7 @@ def check_path(path):
         info = parent.lstat()
         if stat.S_ISLNK(info.st_mode) or getattr(info, 'st_file_attributes', 0) & 0x400:
             raise ValueError('不接受 symlink 或 reparse 路徑')
-    if path.name.lower() in ('.env', '.dev.vars') or path.name.lower().startswith('.env.'):
+    if path.name.lower().startswith(('.env', '.dev.vars')):
         raise ValueError('不接受秘密設定檔作為素材')
     return path
 
