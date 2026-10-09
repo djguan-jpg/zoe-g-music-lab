@@ -10,6 +10,7 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from musiclab import mv_project as P
+from musiclab import mv_handoff as H
 from musiclab.draft_contract import MAX_DRAFT_BYTES, validate_draft
 from musiclab.json_document import decode_json
 
@@ -73,7 +74,23 @@ def main(argv=None):
     create.add_argument('--audio')
     create.add_argument('--image', action='append', default=[], help='shot-1=明確圖片路徑；最多64張')
     create.add_argument('--out', required=True)
+    handoff = commands.add_parser('handoff', help='另存標準 SRT、原媒體與 Agent 企劃 ZIP')
+    handoff.add_argument('--input', required=True)
+    handoff.add_argument('--expect-sha256', required=True)
+    handoff.add_argument('--out', required=True)
     args = parser.parse_args(argv)
+    if args.command == 'handoff':
+        if Path(args.out).suffix.lower() != '.zip':
+            raise ValueError('剪輯交接輸出需為新 .zip 檔案')
+        raw = read(args.input, P.MAX_JSON)
+        sha = hashlib.sha256(raw).hexdigest()
+        if args.expect_sha256 != sha:
+            raise ValueError('專案來源 SHA-256 已改變；沒有建立交接包')
+        archive, manifest = H.prepare(P.decode(raw))
+        receipt = write(args.out, archive)
+        print(json.dumps({'saved': True, 'source_sha256': sha, **receipt,
+                          'listed_files': manifest['listed_file_count'], 'media_transcoded': False}))
+        return
     if args.command in ('inspect', 'revise'):
         raw = read(args.input, P.MAX_JSON)
         project = P.decode(raw)
