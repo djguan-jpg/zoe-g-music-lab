@@ -19,7 +19,7 @@
       $('mv-project-apply').disabled ||= !proposal;
       $('mv-video-cancel').disabled=!recording;
     }
-    function clearVideo() {if(videoURL)URL.revokeObjectURL(videoURL);videoURL=null;$('mv-video-download').hidden=true;$('mv-video-playback').removeAttribute('src');$('mv-video-playback').hidden=true;}
+    function clearVideo() {const video=$('mv-video-playback');video.pause();video.removeAttribute('src');video.load();video.hidden=true;if(videoURL)URL.revokeObjectURL(videoURL);videoURL=null;$('mv-video-download').hidden=true;}
     const image=url=>new Promise((resolve,reject)=>{const art=new Image();art.onload=()=>resolve(art);art.onerror=()=>reject(Error('圖片無法解碼'));art.src=url;});
     async function audioCheck(file) {
       const url=URL.createObjectURL(file),audio=document.createElement('audio');
@@ -129,13 +129,14 @@
     function nativeStart(prepared,valid,refresh) {
       return new Promise(async(resolve,reject)=>{
         let recorder=null,stream=null,audioStream=null,raf=null,timeout=null,complete=false,requested=false,success=false,size=0;
-        const chunks=[],rate=player.playbackRate,source=player.currentSrc;let doneResolve,doneReject,started=null,elapsed=null;
+        const chunks=[],rate=player.playbackRate,source=player.currentSrc;let doneResolve,doneReject,started=null,elapsed=null,active=false;
         const done=new Promise((yes,no)=>{doneResolve=yes;doneReject=no;});
         // A late native error is observed even when startup rejects before handing ownership over.
         done.catch(()=>{});
         function cleanup() {
           if(raf!==null)cancelAnimationFrame(raf);clearTimeout(timeout);
           player.removeEventListener('ended',ended);
+          for(const type of ['seeking','pause','ratechange'])player.removeEventListener(type,changed);
           stream?.getTracks().forEach(t=>t.stop());audioStream?.getTracks().forEach(t=>t.stop());
           if(player.currentSrc===source){player.pause();if(player.playbackRate===1)player.playbackRate=rate;}
         }
@@ -151,6 +152,7 @@
         }
         function stop(ok) {if(requested)return;requested=true;success=ok;elapsed=started===null?null:performance.now()-started;if(recorder&&recorder.state!=='inactive')recorder.stop();else void finish();}
         function ended(){stop(valid());}
+        function changed(){if(active&&(player.currentSrc!==source||player.seeking||(player.paused&&!player.ended)||player.playbackRate!==1))stop(false);}
         function paint() {
           if(requested)return;
           if(!valid()||player.currentSrc!==source||player.error||player.playbackRate!==1||player.seeking||(player.paused&&!player.ended)||document.hidden){stop(false);return;}
@@ -171,10 +173,11 @@
           recorder.ondataavailable=e=>{if(!e.data.size)return;size+=e.data.size;if(size>128*1024*1024){success=false;chunks.length=0;stop(false);return;}chunks.push(e.data);};
           recorder.onerror=()=>{success=false;finish(Error('原生錄製失敗，未建立影片'));};
           recorder.onstop=()=>finish();player.addEventListener('ended',ended);
+          for(const type of ['seeking','pause','ratechange'])player.addEventListener(type,changed);
           timeout=setTimeout(()=>stop(false),(prepared.plan.duration+15)*1000);
           started=performance.now();recorder.start(1000);await player.play();
           if(!valid()||player.paused||player.currentSrc!==source)throw Error('播放器啟動未通過確認');
-          paint();resolve({done,stop});
+          active=true;paint();resolve({done,stop});
         }catch(error){success=false;if(recorder?.state!=='inactive')try{recorder?.stop();}catch{}finish(error);reject(error);}
       });
     }
