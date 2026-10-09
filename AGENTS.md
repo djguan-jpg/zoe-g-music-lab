@@ -1,3 +1,11 @@
+## v0.174.0 標準剪輯交接候選
+
+新增純 JS／Python 原素材 ZIP、原生 DOM 下載與明確本機 handoff CLI。固定平面檔名、最多 64 MiB 原素材／4 MiB 文字、標準 SRT、Agent 企劃與逐檔 SHA；原音檔／圖片 bytes 保留，沒有轉檔、原生剪輯專案或自動時間軸。Agent1／draft3／原 schemas、operation、授權與平台狀態保持。
+
+含 PNG 合成專案重現空白作品時長被 metadata 自動填入，造成完整載入回讀拒絕；明確保留選項只用於素材專案重開，一般選音檔接續保持。57 集中 JS、4 新 Python、164 語法與四 Skills 通過；真實 44 句 SRT 外部解析、206.88 秒原 WAV、Agent 修訂交接與合成圖片已核對。完整接受以指定 source commit 的成功 manifest 為準，修改後 AI Security Scanner 必須另建範圍並由人啟動；v173 掃描不能替代本版。
+
+私密實際素材僅在使用者授權目錄唯讀使用，原三檔 SHA／大小／mtime 保持；不公開歌名、歌詞、來源路徑或 QA 媒體。舊編輯器維持隱藏。失敗 QA／終止收據保留，不以通過樣本推定速度保證。四投稿仍 submitted_unverified，禁止商用。见[交接契約](docs/MV-HANDOFF.md)、[QA](docs/QA-v0.174.0.md)與[接續](docs/HANDOFF-v0.174.0.md)。以下歷史保持。
+
 ## v0.173.0 真實作品的必要設定
 
 從已發布 v172 接續，只補字幕總長及新素材專案的名稱／原音檔選擇，舊編輯器維持隱藏。使用者指定資料夾明確允許使用但禁止覆寫；一件作品的三原檔 SHA／大小／mtime 前後保持，私密音檔、歌詞、專案與 QA 在 Git 外，不把名稱／來源路徑寫入公開文件。

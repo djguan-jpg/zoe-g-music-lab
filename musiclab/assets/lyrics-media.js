@@ -28,9 +28,10 @@
     }
     function publish(){const value=view();onState(value);return value;}
     function refresh({protect=true}={}){if(protect){revision++;notice='';}return publish();}
-    function select(source){
+    function select(source,{preserveDeclaration=false}={}){
       if(typeof source!=='string'||!source)throw Error('選定音檔來源無效');
-      selected={source,phase:'loading',seconds:null,before:current(),revision};record=null;notice='';return publish();
+      if(typeof preserveDeclaration!=='boolean')throw Error('作品宣告保留設定無效');
+      selected={source,phase:'loading',seconds:null,before:current(),revision,preserveDeclaration};record=null;notice='';return publish();
     }
     function change(value,message){
       const before=current(),source=selected.source;apply(value);
@@ -40,7 +41,7 @@
     function loaded(source,seconds){
       if(!selected||selected.source!==source)return false;
       const value=mediaTime(seconds);selected.phase=value===null?'unavailable':'ready';selected.seconds=value;
-      if(value!==null&&!Time.trim(selected.before)&&current()===selected.before&&revision===selected.revision){
+      if(!selected.preserveDeclaration&&value!==null&&!Time.trim(selected.before)&&current()===selected.before&&revision===selected.revision){
         change(value.toFixed(3),'已接續原本空白的作品時長；歌詞與實際聲音仍需核對。');
       }else publish();
       return true;

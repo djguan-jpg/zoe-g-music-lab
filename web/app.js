@@ -770,13 +770,13 @@ function resetAudio(){
   if(state.audioContext){state.audioContext.close().catch(()=>{});state.audioContext=null;}
   $('lyrics-audio').value='';$('wave-note').textContent='音檔需另行選擇；草稿不包含音訊。';drawWave();
 }
-async function loadLyricAudio(file){
+async function loadLyricAudio(file,{preserveDuration=false}={}){
   if(!file)return;
   const token=waveTask.begin(),player=$('lyrics-player');player.pause();
   if(state.audioUrl)URL.revokeObjectURL(state.audioUrl);
   if(state.audioContext)state.audioContext.close().catch(()=>{});
   state.audioContext=null;state.waveform=null;state.audioUrl=URL.createObjectURL(file);
-  player.src=state.audioUrl;player.hidden=false;markDirty('lyrics');lyricsMediaController.select(state.audioUrl);drawWave();
+  player.src=state.audioUrl;player.hidden=false;markDirty('lyrics');lyricsMediaController.select(state.audioUrl,{preserveDeclaration:preserveDuration});drawWave();
   $('wave-note').textContent='正在讀取波形…';
   let context=null;
   try{

@@ -39,6 +39,37 @@ test('unchanged empty declaration receives first native duration and can be undo
   assert.equal(h.value.duration,'4.001');assert.equal(h.c.view().canUndo,true);h.c.undo();assert.equal(h.value.duration,'');
   assert.equal(h.c.view().canUndo,false);assert.equal(h.c.view().status,'empty');
 });
+test('restored declarations preserve original blank whitespace and remain explicitly adoptable',()=>{
+  for(const original of ['', '  ', '\u0085']){
+    const h=harness(original),before=structuredClone(h.value);
+    h.c.select('blob:restored',{preserveDeclaration:true});h.c.loaded('blob:restored',4);
+    h.c.loaded('blob:restored',4);assert.deepEqual(h.value,before);assert.deepEqual(h.writes,[]);
+    assert.equal(h.c.view().canAdopt,true);h.c.adopt();assert.equal(h.value.duration,'4.000');
+    h.c.undo();assert.deepEqual(h.value,before);h.c.loaded('blob:restored',4);assert.deepEqual(h.value,before);
+    h.c.select('blob:new');h.c.loaded('blob:new',6);assert.equal(h.value.duration,'6.000');
+  }
+});
+test('invalid preservation option cannot replace the selected source',()=>{
+  const h=harness('');h.c.select('blob:original',{preserveDeclaration:true});const before=h.c.view();
+  assert.throws(()=>h.c.select('blob:other',{preserveDeclaration:'true'}),/設定無效/);
+  assert.deepEqual(h.c.view(),before);assert.equal(h.c.loaded('blob:other',4),false);
+  h.c.loaded('blob:original',4);assert.equal(h.value.duration,'');
+});
+test('actual app audio loader preserves restored duration while normal file selection still fills it',async()=>{
+  const source=fs.readFileSync(path.join(root,'web/app.js'),'utf8'),start=source.indexOf('async function loadLyricAudio('),end=source.indexOf("\n$('lyrics-audio').onchange=",start);
+  for(const preserve of [false,true]){
+    const h=harness(''),player={pause(){},src:null,hidden:true},note={textContent:''},state={audioUrl:null,audioContext:null,waveform:null};
+    const context={$:id=>id==='lyrics-player'?player:note,state,lyricsMediaController:h.c,
+      waveTask:{begin:()=>1,isCurrent:token=>token===1},URL:{createObjectURL:()=> 'blob:loaded',revokeObjectURL(){}},
+      markDirty:()=>h.c.refresh(),drawWave(){},AudioContext:class{constructor(){this.state='running';}async decodeAudioData(){return {length:1,getChannelData:()=>[0]};}async close(){this.state='closed';}}};
+    vm.createContext(context);vm.runInContext(source.slice(start,end),context);
+    const audio={size:1,arrayBuffer:async()=>new ArrayBuffer(1)};
+    if(preserve)await context.loadLyricAudio(audio,{preserveDuration:true});else await context.loadLyricAudio(audio);
+    h.c.loaded(player.src,4);assert.equal(h.value.duration,preserve?'':'4.000');
+    assert.equal(state.audioContext,null);assert.equal(player.hidden,false);
+    assert.equal(h.c.view().canAdopt,preserve);assert.equal(h.value.cues[0].text,'  保留原文  ');
+  }
+});
 test('manual edit or intentional clear during metadata loading defeats automatic fill',()=>{
   for(const target of ['10','']){
     const h=harness('');h.c.select('blob:a');h.edit('12');h.edit(target);h.c.loaded('blob:a',4);

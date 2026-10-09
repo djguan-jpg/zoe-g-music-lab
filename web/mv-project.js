@@ -76,6 +76,6 @@
     draft.panels.music.fields['music-title']=title;draft.panels.music.fields['music-lyrics']=text;draft.tab='storyboard';
     return E.validateDraft(draft);
   }
-  const api=Object.freeze({limits,validate,parse,pack,materialize,hash,encode,decode,seed});
+  const api=Object.freeze({limits,name,validate,parse,pack,materialize,hash,encode,decode,seed});
   if(node)module.exports=api;else root.MusicMVProject=api;
 })(typeof globalThis==='object'?globalThis:this);

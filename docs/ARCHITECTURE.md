@@ -86,3 +86,10 @@ flowchart LR
 `mv-project.js`／`musiclab.mv_project` 是獨立 schema1，重用原 draft3，核對媒體大小、SHA 與 canonical bytes。`scripts/mv_project.py` 是明確路徑的 filesystem adapter，以來源摘要及 exclusive 新檔橋接 Agent，不擴大既有 Agent／HTTP payload 或操作列表。
 
 `mv-render.js` 負責完整影片時間、frame、文字容量、受限 WebM metadata 與注入的錄製 ownership；`mv-workflow-dom.js` 接 File、Blob、DataTransfer、Image、canvas、原生 MediaRecorder，app 只提供 capture／apply／原音檔載入與原工作台。視覺與音軌沿同一 native player；不存在第二個播放時鐘或產品 AI provider。見[MV 專案](MV-PROJECT.md)。
+
+
+## 原素材與標準字幕交接
+
+`web/mv-handoff.js` 和 `musiclab/mv_handoff.py` 以已有 project／時間驗證產生標準 ZIP；純層不讀路徑或發送網路。原生 DOM adapter 選定 File、先核對容量、取得自有 bytes，並在派生後重查內容、File 身份、來源、可見範圍與 epoch。只有核對後才交給既有 download sender。Python CLI 沿既有明確來源 SHA、reparse／秘密路徑拒絕與排他輸出 adapter。
+
+專案重新載入明確傳遞「保留作品時長」給原音檔時長 controller，包含空白字串；一般新選音檔的預設接續保持。沒有放寬整份載入後回讀。交接新增一個固定 GET JS 資產及本機 `handoff` CLI 子命令，Agent1／draft3／29 組 schemas 與原 operation 集合保持。見[剪輯交接契約](MV-HANDOFF.md)。
