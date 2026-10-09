@@ -31,7 +31,7 @@
       if(disposed)return;const s=capture();$('studio-clock').hidden=!s.visible;playback.refresh(ended);cue.refresh();
       $('studio-position').textContent=s.media.ready&&Number.isFinite(s.media.duration)?`${s.media.position.toFixed(3)} ／ ${s.media.duration.toFixed(3)} 秒`:'先在波形校時載入音檔';
       const seek=$('studio-seek');seek.disabled=s.busy||!s.visible||!s.media.ready||!Number.isFinite(s.media.duration);if(!seek.disabled){seek.max=String(s.media.duration);seek.value=String(s.media.position);}
-      renderRows(s);for(const control of $('studio-images').querySelectorAll('input,button'))control.disabled=s.busy;
+      renderRows(s);for(const control of $('studio-images').querySelectorAll('input,button'))control.disabled=s.busy||!s.visible;
       const duration=s.media.duration,shots=S.active(s.shots,s.media.position,duration),lyrics=S.active(s.entries,s.media.position,duration),image=$('studio-image');
       const shot=shots.matches.length===1?shots.matches[0]:null,art=shot&&images.get(shot.id);image.hidden=!art;if(art){if(image.getAttribute('src')!==art.url)image.src=art.url;image.alt=`鏡頭 ${shot.index+1}：${shot.value.visual||shot.value.section||'分鏡圖片'}`;}else image.removeAttribute('src');
       $('studio-shot').textContent=!s.media.ready?'先載入音檔，再按播放。':shots.status==='overlap'?`鏡頭重疊：${shots.matches.map(e=>e.index+1).join('、')}；請修正時間。`:shot?`鏡頭 ${shot.index+1} · ${shot.value.section||'未命名段落'}`:'此時間沒有鏡頭；請補齊或保留空隙。';
@@ -60,7 +60,7 @@
     on($('cue-audition-start'),'click',()=>playback.release());on(document,'visibilitychange',()=>refresh());
     function dispose(){if(disposed)return;playback.dispose();cue.dispose();images.dispose();disposed=true;for(const [el,type,fn] of listeners)el.removeEventListener(type,fn);}
     on(events,'pagehide',dispose);refresh();
-    return {refresh,dispose,beats:()=>S.beats($('studio-bpm').value,$('studio-beat-offset').value,capture().media.duration),range:()=>{try{return cue.refresh().proposal||S.span(capture().row.start,capture().row.end,capture().media.duration);}catch{return null;}},clearImages:()=>{imageRevision++;images.retain([]);rowsKey='';refresh();}};
+    return {refresh,dispose,beats:()=>S.beats($('studio-bpm').value,$('studio-beat-offset').value,capture().media.duration),range:()=>{try{return cue.refresh().proposal||S.span(capture().row.start,capture().row.end,capture().media.duration);}catch{return null;}},attachments:()=>capture().shots.flatMap(e=>{const image=images.get(e.id);return image?[{shot_id:e.id,file:image.file,url:image.url}]:[];}),selectImage:async(id,file)=>{const revision=imageRevision;const accepted=await images.select(id,file,()=>!disposed&&revision===imageRevision&&!capture().busy&&capture().shots.some(e=>e.id===id));rowsKey='';refresh();return accepted;},stop:()=>{playback.stop();refresh();},clearImages:()=>{imageRevision++;images.retain([]);rowsKey='';refresh();}};
   }
   const api=Object.freeze({bind});if(typeof module==='object'&&module.exports)module.exports=api;else root.MusicStudioTimelineDOM=api;
 })(typeof globalThis==='object'?globalThis:this);
