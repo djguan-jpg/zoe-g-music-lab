@@ -2,13 +2,13 @@
 
 接續現成剪輯工具的字幕與素材，做本機核對、保存與交接。署名 ZOE. G；GitHub djguan-jpg。採 PolyForm Noncommercial 1.0.0，禁止商用。
 
-v0.173.0 候選沿用隱藏編輯器的三條流程，補回公開或合成案例驗證發現的必要設定：
+v0.174.0 候選接續三條交付流程，新增標準剪輯交接包：
 
 - **字幕交付**：先填已知作品總長（可留白），匯入已校時 SRT／LRC／歌詞 JSON，確認後建立標準字幕與格式報告。LRC 的末句結束可由明確總長推得，仍需人工核對。
 - **音檔核對**：分析 PCM WAV 的規格、音量與削波風險，建立原檔報告。
-- **素材交接**：填專案名稱、選原音檔，將目前字幕保存為新素材專案；或重開本工具 `.zoemv.json`，核對素材後保存或下載 Agent 企劃。
+- **素材交接**：填專案名稱、選原音檔，將目前字幕保存為新素材專案；或重開本工具 `.zoemv.json`，核對素材後下載剪輯交接 ZIP，包含 SRT、原音檔、已有圖片、Agent 企劃與 SHA 清單；素材專案另供本工具重開。
 
-編輯元件保留在隱藏容器；頁面不自動填入示範企劃。公開驗證只列本專案合成案例與程式檢查；第三方工具接受及使用成效仍待驗證。見[實用性與取捨](docs/PRODUCT-UTILITY.md)、[本版 QA](docs/QA-v0.173.0.md)、[交接](docs/HANDOFF-v0.173.0.md)。
+編輯元件保留在隱藏容器；頁面不自動填入示範企劃。公開驗證只列本專案合成案例與程式檢查；第三方工具接受及使用成效仍待驗證。見[實用性與取捨](docs/PRODUCT-UTILITY.md)、[本版 QA](docs/QA-v0.174.0.md)、[交接](docs/HANDOFF-v0.174.0.md)。
 
 ## 先開始一份作品
 
@@ -28,6 +28,10 @@ python -X utf8 music_lab_server.py
 
 素材專案保留原企劃、音檔與圖片；沒有自動保存，離頁警示不能替代主動保存。原純文字草稿／成果與草稿庫接口仍保留供 CLI 使用。要使用本機不可覆寫版本庫，請依開始指南明確指定 `--draft-library`。原檔保留，CLI 預設拒絕覆寫，只有明確 `--overwrite` 才替換指定輸出。
 
-四個專案採 **PolyForm Noncommercial 1.0.0，禁止商用**；保留 [LICENSE](LICENSE)／[NOTICE](NOTICE)。没有另授予 AGPL 或商用許可。AI 協作與發起署名見 [FOUNDER-RECORD.md](FOUNDER-RECORD.md)；既有四份自由工坊投稿仍為作者自行聲明、尚未核實，狀態見 [PLATFORM-STATUS.json](PLATFORM-STATUS.json)。
+本 Repo 採 **PolyForm Noncommercial 1.0.0，禁止商用**；保留 [LICENSE](LICENSE)／[NOTICE](NOTICE)。沒有另授予 AGPL 或商用許可。既有四份自由工坊分享已撤下、內容保留本人編輯；作者身分仍未核實，狀態見 [PLATFORM-STATUS.md](PLATFORM-STATUS.md)。
 
-目前已發布 **v0.172.0**；此候選來源版本 **v0.173.0**，正式發佈需完整接受、精確封裝及修改後指定資安掃描，狀態見[本版 QA](docs/QA-v0.173.0.md)。產品與協定分開管理，以 [projects.json](projects.json) 和 [delivery-versions.json](musiclab/assets/delivery-versions.json) 為準。更新與驗收讀 [CHANGELOG](CHANGELOG.md)／[本輪交接](docs/HANDOFF-v0.173.0.md)，開發讀[分層架構](docs/ARCHITECTURE.md)。舊 README 原文保留在[截至 v0.154 的歷史](README-HISTORY-through-v0.154.0.md)；歷史中的舊版本、舊工具數或舊平台狀態不代表現況。
+## 提出問題與參與修改
+
+先記實際使用問題與驗收方式的 Issue，需要修改時沿同一個 PR 接續分層提交；同一候選的小修不另升版或重新投稿。見[工作流程](docs/WORKFLOW.md)。
+
+目前已發布 **v0.173.0 預覽版**；此候選來源版本 **v0.174.0**，正式發佈需完整接受、精確封裝及修改後指定資安掃描，狀態見[本版 QA](docs/QA-v0.174.0.md)。產品與協定分開管理，以 [projects.json](projects.json) 和 [delivery-versions.json](musiclab/assets/delivery-versions.json) 為準。更新與驗收讀 [CHANGELOG](CHANGELOG.md)／[本輪交接](docs/HANDOFF-v0.174.0.md)，開發讀[分層架構](docs/ARCHITECTURE.md)。舊 README 原文保留在[截至 v0.154 的歷史](README-HISTORY-through-v0.154.0.md)；歷史中的舊版本、舊工具數或舊平台狀態不代表現況。

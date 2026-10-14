@@ -1,38 +1,46 @@
 {
-  "observed_at": "2026-10-06T07:55:34.535Z",
+  "observed_at": "2026-10-15",
+  "observation_precision": "date",
+  "previous_observed_at": "2026-10-06T07:55:34.535Z",
   "founder": "ZOE. G",
   "github_account": "djguan-jpg",
   "repository_url": "https://github.com/djguan-jpg/zoe-g-music-lab",
   "repository_visibility": "public",
   "license": "PolyForm-Noncommercial-1.0.0",
   "submitted_count": 4,
+  "submitted_count_scope": "Historical submissions; not current public shares",
+  "published_count": 0,
+  "withdrawn_count": 4,
+  "current_source_version": 4,
+  "current_visibility": "owner_only",
+  "current_display_title": "ZOE. G｜歌曲記憶點與段落設計",
   "relationship": "author_self_declared",
-  "formal_inclusion": "awaiting_platform_review",
+  "formal_inclusion": "withdrawn_unverified",
   "founder_verified": false,
   "entries": [
     {
       "project": "zoe-music-production",
       "title": "ZOE. G｜歌曲記憶點與段落設計",
       "url": "https://freetwai.com/development/submissions/486c436d-1145-4314-96b9-cb81e9c27581",
-      "status": "submitted_public_page_created"
+      "status": "withdrawn_private_content_retained"
     },
     {
       "project": "zoe-mv-storyboard",
       "title": "ZOE. G｜母題變化與 MV 分鏡",
       "url": "https://freetwai.com/development/submissions/3328607d-2f2a-431f-b275-5594ea60ac6f",
-      "status": "submitted_public_page_created"
+      "status": "withdrawn_private_content_retained"
     },
     {
       "project": "zoe-lyrics-sync",
       "title": "ZOE. G｜原文保留歌詞與波形校時",
       "url": "https://freetwai.com/development/submissions/eb499312-d0dd-479d-8d1b-0e68a6760803",
-      "status": "submitted_public_page_created"
+      "status": "withdrawn_private_content_retained"
     },
     {
       "project": "zoe-audio-delivery",
       "title": "ZOE. G｜PCM 音檔交付證據",
       "url": "https://freetwai.com/development/submissions/dee541c2-0b57-4e5b-bd04-68535ae7db6a",
-      "status": "submitted_public_page_created"
+      "status": "withdrawn_private_content_retained"
     }
   ],
   "format": "zoe-platform-status",
@@ -41,9 +49,15 @@
   "repository_visibility_verified_at": "2026-10-06T07:45:47.795952+00:00",
   "repository_anonymous_http_status": 200,
   "product_version": "0.121.0",
+  "product_version_scope": "Historical version at original submission; not a current product release claim",
   "submitted_repository_commit": "3abb8ab79e17f46f2674a4007fa46a68eb94786a",
   "release_source_commit": "a2a5e0352fe6421a5dd7ebb4af1f8ac0408aa9ec",
   "platform_detected_license": "NOASSERTION",
   "license_notice": "LICENSE and NOTICE remain PolyForm Noncommercial 1.0.0; public descriptions explicitly prohibit commercial use",
-  "platform_notice": "Author relationship is self-declared and unverified; inclusion is not official adoption"
+  "platform_notice": "Author relationship remains self-declared and unverified; four share versions withdrawn and retained for owner editing on 2026-10-15",
+  "withdrawal_reason": "Same project and duplicate current titles; descriptions still advertised the hidden v0.171.0 editing workflow",
+  "withdrawal_scope": "All share versions of the same project; no individual-version withdrawal control observed",
+  "recovery": "Owner content retained; preview and consent required before republication",
+  "readback": "Four entries: 已撤銷 / 僅本人可見 / source version 4; no public view links",
+  "republication_submitted": false
 }

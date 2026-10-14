@@ -46,7 +46,7 @@
     function controls() {
       const active=recorder.state().phase,recording=['preparing','recording'].includes(active);
       const preparing=quick?.state().pending;
-      for(const id of ['mv-project-save','mv-project-open','mv-project-apply','mv-agent-plan','mv-video-start','mv-quick-create','mv-quick-apply'])$(id).disabled=disposed||pending||preparing||recording||!capture().allowed;
+      for(const id of ['mv-project-save','mv-handoff-download','mv-project-open','mv-project-apply','mv-agent-plan','mv-video-start','mv-quick-create','mv-quick-apply'])$(id).disabled=disposed||pending||preparing||recording||!capture().allowed;
       $('mv-project-apply').disabled ||= !proposal;
       $('mv-quick-apply').disabled ||= quick?.state().phase!=='preview';
       $('mv-quick-images').disabled=$('mv-quick-textcard').checked;
@@ -169,6 +169,28 @@
       $('mv-project-receipt').textContent='專案 SHA-256：'+await P.hash(bytes);
     }
     on($('mv-project-save'),'click',()=>void guard(save));
+    on($('mv-handoff-download'),'click',()=>void guard(async epoch=>{
+      const s=capture(),baseline=key(s),attachments=[...s.images];
+      const valid=()=>current(epoch,baseline)&&capture().draft.tab==='storyboard'&&capture().audio===s.audio&&capture().media.ready&&!capture().media.error&&capture().media.source===capture().media.current_source&&
+        capture().images.length===attachments.length&&attachments.every(e=>capture().images.some(now=>now.shot_id===e.shot_id&&now.file===e.file));
+      if(!s.audio||!s.media.ready||s.media.error||s.media.source!==s.media.current_source)throw Error('請先選擇可播放的原音檔');
+      if(attachments.length>P.limits.images||attachments.reduce((n,e)=>n+e.file.size,s.audio.size)>P.limits.media)throw Error('音檔與圖片合計最多 64 MiB、64 張圖片');
+      note('正在核對原音檔、字幕與圖片，建立剪輯交接包…');
+      async function read(file,type,image=false) {
+        if(!Number.isSafeInteger(file.size)||file.size<1||file.size>(image?P.limits.image:P.limits.media))throw Error('素材大小無效');
+        const raw=await file.arrayBuffer();if(raw.byteLength!==file.size)throw Error('選檔與讀取大小不同');
+        if(!valid())throw Error('封裝期間內容或素材已改變；請重新下載交接包');
+        return {name:file.name,type,bytes:new Uint8Array(raw)};
+      }
+      const type=s.audio.type||({wav:'audio/wav',mp3:'audio/mpeg',m4a:'audio/mp4',flac:'audio/flac',ogg:'audio/ogg',aac:'audio/aac',webm:'audio/webm'}[s.audio.name.split('.').at(-1).toLowerCase()]||'');
+      const audio=await read(s.audio,type),images=[];
+      for(const entry of attachments)images.push({shot_id:entry.shot_id,asset:await read(entry.file,entry.file.type,true)});
+      const prepared=await root.MusicMVHandoff.prepare({draft:s.draft,shot_ids:s.shots.map(e=>e.id),audio,images});
+      if(!valid())throw Error('封裝期間內容或素材已改變；請重新下載交接包');
+      if(sender.send(prepared)!==true)throw Error('交接包下載未送出；請核對後再試');
+      note(`已送出剪輯交接包下載：${prepared.manifest.subtitle_cue_count} 句字幕、1 份原音檔、${images.length} 張圖片。解開 ZIP 後，在原剪輯工具分別匯入素材與 subtitles.srt。`);
+      $('mv-project-receipt').textContent='交接包 SHA-256：'+prepared.sha256;
+    }));
     on($('mv-agent-plan'),'click',()=>void guard(async()=>{
       const s=capture();sender.send({name:'music-video.plan.json',bytes:new TextEncoder().encode(JSON.stringify({draft:s.draft,shot_ids:s.shots.map(e=>e.id)})+'\n')});
       note('已送出純文字企劃下載。Agent 可修訂四個工作台內容；使用 scripts/mv_project.py revise 核對原專案摘要後另存新版，素材沿鏡頭 ID 保留。');
@@ -201,7 +223,7 @@
       const selected=proposal;if(!selected||key(capture())!==selected.baseline)throw Error('目前企劃或素材已改變；請重新選擇專案');
       proposal=null;$('mv-project-review').hidden=true;studio.stop();
       apply(selected.project.draft,selected.project.shot_ids);
-      if(selected.audio){assignAudio(selected.audio);await loadAudio($('lyrics-audio').files[0]);}
+      if(selected.audio){assignAudio(selected.audio);await loadAudio($('lyrics-audio').files[0],{preserveDuration:true});}
       for(const entry of selected.images)if(!await studio.selectImage(entry.shot_id,entry.file))throw Error('圖片未完成載入；請核對目前工作台');
       const loaded=capture(),expected={...selected.project.draft,saved_at:'',tab:'storyboard'},actual={...loaded.draft,saved_at:'',tab:'storyboard'};
       if(!root.MusicJsonDocument.sameValue(actual,expected)||JSON.stringify(loaded.shots.map(e=>e.id))!==JSON.stringify(selected.project.shot_ids)||loaded.images.length!==selected.images.length)throw Error('載入回讀不符；請核對目前工作台');
