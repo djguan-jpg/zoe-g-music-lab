@@ -1,8 +1,12 @@
-## v0.173.0 真實作品的必要設定
+## 公開內容的隱私邊界
 
-從已發布 v172 接續，只補字幕總長及新素材專案的名稱／原音檔選擇，舊編輯器維持隱藏。使用者指定資料夾明確允許使用但禁止覆寫；一件作品的三原檔 SHA／大小／mtime 前後保持，私密音檔、歌詞、專案與 QA 在 Git 外，不把名稱／來源路徑寫入公開文件。
+公開文件、Issue、PR 與發佈說明只使用通用產品情境及本專案自有合成資料。私人測試權限不代表公開權限；不得公開個人作法、工具偏好、素材、原文、來源資訊或私人測試過程與指標。
 
-移出後實際重現 input 沒抵達舊 editor listener，改總長仍可下載旧成果、改名稱不更新草稿；改由 main 接收並只為兩固定文字欄對應原 scope，其餘 panel 與排除保持。集中 33 JS 及原生 dirty／保存警示核對通過。實際字幕下載、整首 WAV 保存報告、原 bytes 音檔的專案保存／重開及 Agent 企劃下載均有落盤證據；原分析 QA 逾時與不存在 selector 的 EOF 1 保留，另核對已保存報告，不冒稱全套音檔 harness 成功或實聽接受。
+## v0.173.0 字幕與素材的必要設定
+
+從已發布 v172 接續，只補字幕總長及新素材專案的名稱／原音檔選擇，舊編輯器維持隱藏。
+
+移出後實際重現 input 沒抵達舊 editor listener，改總長仍可下載旧成果、改名稱不更新草稿；改由 main 接收並只為兩固定文字欄對應原 scope，其餘 panel 與排除保持。集中 33 JS 及原生 dirty／保存警示核對通過。
 
 沒有新依賴、模型、schema、Agent operation、POST、產品外網、auth 或權限。全部舊版、256／8192、法律禁止商用、四 Skills、七歷史和平台 submitted_unverified 保持。還原 restore-v0.172.0-before-v0.173.0 → 58a6e8eed4c03a03ff05d8630369eac4261b2963，codex/iteration-v0.173.0 保存分層差異。完整接受與精確 package 依本輪成功 manifest；修改後 source 必須另作指定 Scanner 的實際 desktop run，舊 v172 run 不能冒用。未完成新 run／逐筆審閱前維持 Draft，不合併／tag／release。自有程序、嚴格超七天與最新三正式版／未知／partial／FAILED 保護保持。
 
@@ -12,7 +16,7 @@
 
 使用者已明確恢復資安並從桌面開始。指定 AI Security Scanner v0.5.0 與 doctor 已核對；d1858cc 的 1097 份 raw Git 來源完成實際 run，101 筆（19 high／82 medium）逐筆審閱為 66 誤報、35 已有保護或合理用途，未確認這些結果有可利用漏洞。七引擎完成，Semgrep 部分完成；原 raw SHA 核對後證實 wave-position.js:26 的縮寫三元條件造成 PartialParsing。只把這一行改為明確 0.05／0.5，原／新 Node syntax 與 31 定位測試通過；新來源須另作實際桌面 run，不能冒用舊 run、清除原 101 筆或宣稱全面通過。官方 SKILL 限定人從 desktop Start，CLI plan 不執行；不自行重跑或改 scanner。Draft PR #171 與原封裝保留，正式版 v171 不變。見[資安審閱](docs/SECURITY-REVIEW-v0.172.0.md)、[QA](docs/QA-v0.172.0.md)與[交接](docs/HANDOFF-v0.172.0.md)。
 
-使用者明確指出現有工具已更強，未採用的編輯器應直接隱藏。一般 UI 保留字幕交付、音檔核對、素材交接；歌曲／分鏡／人工校時／簡易 MV 編輯 DOM 在 legacy-top／legacy-editors 隱藏，初始化不填入示範，內部載入不能揭露。成熟工具做編輯，本專案的交接與核對價值仍待真實作品驗證；不得用版本數、模組數或測試數代替實用性。後續先遵循 docs/PRODUCT-UTILITY.md 的使用情境與成效門檻，不自行恢復通用編輯產品方向。
+依產品定位，未採用的編輯器保持隱藏。一般 UI 保留字幕交付、音檔核對、素材交接；歌曲／分鏡／人工校時／簡易 MV 編輯 DOM 在 legacy-top／legacy-editors 隱藏，初始化不填入示範，內部載入不能揭露。成熟工具做編輯，本專案的交接與核對價值仍待公開或合成案例驗證；不得用版本數、模組數或測試數代替實用性。後續先遵循 docs/PRODUCT-UTILITY.md 的使用情境與成效門檻，不自行恢復通用編輯產品方向。
 
 原起稿覆蓋修正以純 mv-seed → 原生 DOM → app 同步分層保存，來源／原 File 身份固定、預覽不寫入、明確確認後回讀稿件／ID／媒體 SHA；失敗不自動回滾或重試，但編輯操作同樣不在一般 UI 顯示。沒有新依賴、模型、Agent operation、POST、產品外網或權限。
 

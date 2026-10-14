@@ -2,7 +2,7 @@
 
 ## 目的與範圍
 
-依使用者最新指示，成熟工具已有更強編輯能力；一般介面隱藏歌曲、分鏡、人工校時及簡易 MV 編輯器，改為字幕交付、音檔核對、素材交接。原 DOM／契約保留，沒有重新啟用按鈕；初始化不填入示範企劃。這是取捨與修正，不宣稱已有市場競爭力。
+依產品定位與成熟工具分工，一般介面隱藏歌曲、分鏡、人工校時及簡易 MV 編輯器，改為字幕交付、音檔核對、素材交接。原 DOM／契約保留，沒有重新啟用按鈕；初始化不填入示範企劃。這是取捨與修正，不宣稱已有市場競爭力。
 
 原本素材專案載入後再起稿會清掉修改與圖片的問題，已以分層純控制器／DOM／app 修正，但編輯功能同樣隱藏。見[契約](MV-SEED.md)。
 
@@ -30,7 +30,7 @@
 
 ## 指定資安掃描已執行，涵蓋仍未完整
 
-使用者明確恢復 [AI Security Scanner](https://teddashh.github.io/ai-security-scanner/) 並回覆已從桌面開始。已核對既有 v0.5.0 CLI、doctor、精確 d1858cc raw Git 隔離來源與實際 terminal run；沒有重新安裝、改 WSL／權限、用其他工具或 plan 冒充。101 筆原結果（19 high／82 medium）逐筆來源與 run ID 核對；66 誤報、35 已有保護或合理用途，沒有確認到可利用漏洞。原 scanner 分級與人的處置狀態未改。
+指定 [AI Security Scanner](https://teddashh.github.io/ai-security-scanner/) 並回覆已從桌面開始。已核對既有 v0.5.0 CLI、doctor、精確 d1858cc raw Git 隔離來源與實際 terminal run；沒有重新安裝、改 WSL／權限、用其他工具或 plan 冒充。101 筆原結果（19 high／82 medium）逐筆來源與 run ID 核對；66 誤報、35 已有保護或合理用途，沒有確認到可利用漏洞。原 scanner 分級與人的處置狀態未改。
 
 [官方 SKILL.md](https://github.com/teddashh/ai-security-scanner/blob/main/.codex/skills/ai-security-scanner/SKILL.md) 說明 `You cannot start a scan.`，開始／暫停／接續須由人從桌面控制。七引擎完成，Semgrep 仍部分完成；核對原 artifact SHA 後找到唯一原始 PartialParsing，在 wave-position.js:26。只把縮寫三元條件改為明確 `? 0.05 : 0.5`，沒有改变原定位步長。原／新 Node syntax 與 31 既有定位測試通過，尚未取得新來源的 Semgrep 完整成功。舊來源的 40 JS／27 Python、實際 renderer seam 的 32 fragments／30 數值拒絕通過，不取代新的掃描或全套。詳見[逐筆審閱與限制](SECURITY-REVIEW-v0.172.0.md)。PR #171 保持 Draft，沒有正式 v172 release。
 
@@ -38,6 +38,6 @@
 
 ## 限制
 
-只驗自有合成檔案；沒有實際安裝或操作 CapCut、Kdenlive、Audacity，沒有真實作品成效、實聽、完整 screen reader 或 Host 接受。市場文件只證明已有成熟能力。平台四投稿仍未核實，這輪不重送或更改作者聲明。
+只驗自有合成檔案；沒有實際安裝或操作 CapCut、Kdenlive、Audacity，沒有公開或合成案例成效、實聽、完整 screen reader 或 Host 接受。市場文件只證明已有成熟能力。平台四投稿仍未核實，這輪不重送或更改作者聲明。
 
 版本 0.172.0、明確歷史清單 38–172 共 135 項，未知 173 拒絕；清單容量 256／契約 8192 bytes、舊版本、Agent 1、draft 3、template 1、29 schemas／22 基本／明確啟庫 29 操作保持。PolyForm Noncommercial、ZOE. G／djguan-jpg、既有 public 授權與原法律／平台紀錄保持。
