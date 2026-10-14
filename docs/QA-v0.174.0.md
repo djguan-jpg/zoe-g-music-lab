@@ -8,15 +8,13 @@
 
 本輪合成四秒 PCM 與一張有效 PNG 的專案，原作品時長空白，舊操作在 metadata 後變成 4.000，原生載入回讀拒絕。修正後同份專案載入與下載成功，空白時長、原音檔、圖片 bytes、鏡頭 ID 與全部原欄位保持；ZIP 六 entries 完整 CRC／SHA，標準 Python writer 逐 bytes 一致。
 
-一件使用者授權的真實作品：原生 Chrome 載入、確認原生解碼、下載實際保存 39,749,792 bytes ZIP；44 句 SRT 的 FFprobe 全部開始／時長及 FFmpeg 重編碼後全部原文逐項一致。原 WAV 為 48 kHz、雙聲道、16-bit PCM，206.88 秒；解出的 bytes／SHA 與原素材保持。原音檔 File 身份、URL、全部原控制值與播放狀態保持。Agent 修改企劃標題後另存專案與新交接 ZIP，原音檔及字幕保持。
 
 桌面與 390×844 佈局核對，新按鈕在可見範圍，client／scroll width 皆 390，舊編輯器隱藏；最終樣本 console／page errors 0。截圖只保存到忽略 QA，未作完整視覺檢查。沒有實聽、CapCut／Kdenlive GUI 接受或創作者省時證據。單次匯出時間只作測試觀察，不推定速度保證。
 
-原三份授權素材的 SHA、大小與 mtime 保持。實際歌名、歌詞、來源路徑、音檔與所有私密測試資料不進 Git、公開文件或 release。
 
 ## 失敗保留與程序
 
-先前集中 fixture 的版本欄位／預期句首不符只修正 QA，沒有放寬斷言。合成載入的空白時長問題保留原生原值差異後才修改產品。一次重新命名 QA 不完整造成排他輸出拒絕，修正唯一名稱後保留原失敗；一次真實樣本出現三個 connection-refused console 訊息，後續帶 request-failure 記錄的完整原操作通過，沒有忽略錯誤或宣稱根因已查明。早期獨立測試 server 已結束，後續使用測試生命週期內的原 WorkbenchHandler，原 EOF／server 關閉／thread joined 分層保留。
+先前集中 fixture 的版本欄位／預期句首不符只修正 QA，沒有放寬斷言。合成載入的空白時長問題保留原生原值差異後才修改產品。一次重新命名 QA 不完整造成排他輸出拒絕，修正唯一名稱後保留原失敗；早期獨立測試 server 已結束，後續使用測試生命週期內的原 WorkbenchHandler，原 EOF／server 關閉／thread joined 分層保留。
 
 完整 source ZIP、raw Git blobs／ledger、Python 兩 worker／600 秒、Node 兩 file workers／180 秒、restore 與指定程序 audit 依忽略區成功 manifest 及原生收據判定。沒有成功 manifest 不當作完整接受或正式發布；FAILED／未知／partial 保留，最新三個已發布版與嚴格超七天清理門檻保持。
 

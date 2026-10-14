@@ -1,6 +1,10 @@
+## 公開內容的隱私邊界
+
+公開文件、Issue、PR 與發佈說明只使用通用產品情境及本專案自有合成資料。私人測試權限不代表公開權限；不得公開個人作法、工具偏好、素材、原文、來源資訊或私人測試過程與指標。
+
 ## 目前協作流程（2026-10-15）
 
-依使用者要求收斂提交：先以 Issue 記錄實際使用問題、成熟工具基線與驗收方式；需要修改時沿同一個 PR 做分層 commit。同一候選的修正不另升版或重送投稿，文件更新不觸發整套產品測試／封裝。正式產品來源的完整測試、指定桌面 Scanner 與確切 source 發版要求保持；作者自測、獨立審閱、創作者接受分別記錄。先驗證省事才擴張功能，舊編輯器維持隱藏。
+協作流程採用：先以 Issue 記錄實際使用問題、成熟工具基線與驗收方式；需要修改時沿同一個 PR 做分層 commit。同一候選的修正不另升版或重送投稿，文件更新不觸發整套產品測試／封裝。正式產品來源的完整測試、指定桌面 Scanner 與確切 source 發版要求保持；作者自測、獨立審閱、創作者接受分別記錄。先驗證省事才擴張功能，舊編輯器維持隱藏。
 
 四份平台分享已撤下，內容保留本人編輯；不得沿下列歷史紀錄推定仍公開。doctor 的固定 prerequisite 說明與執行狀態分別核對，不直接推定 WSL 故障。本輪文件追加不代表舊 f546a6c 封裝已驗證新的 head。見[流程](docs/WORKFLOW.md)與[平台現況](PLATFORM-STATUS.md)。以下版本段落為歷史紀錄。
 
@@ -8,15 +12,15 @@
 
 新增純 JS／Python 原素材 ZIP、原生 DOM 下載與明確本機 handoff CLI。固定平面檔名、最多 64 MiB 原素材／4 MiB 文字、標準 SRT、Agent 企劃與逐檔 SHA；原音檔／圖片 bytes 保留，沒有轉檔、原生剪輯專案或自動時間軸。Agent1／draft3／原 schemas、operation、授權與平台狀態保持。
 
-含 PNG 合成專案重現空白作品時長被 metadata 自動填入，造成完整載入回讀拒絕；明確保留選項只用於素材專案重開，一般選音檔接續保持。57 集中 JS、4 新 Python、164 語法與四 Skills 通過；真實 44 句 SRT 外部解析、206.88 秒原 WAV、Agent 修訂交接與合成圖片已核對。完整接受以指定 source commit 的成功 manifest 為準，修改後 AI Security Scanner 必須另建範圍並由人啟動；v173 掃描不能替代本版。
+含 PNG 合成專案重現空白作品時長被 metadata 自動填入，造成完整載入回讀拒絕；明確保留選項只用於素材專案重開，一般選音檔接續保持。57 集中 JS、4 新 Python、164 語法與四 Skills 通過；合成素材交接已核對。完整接受以指定 source commit 的成功 manifest 為準，修改後 AI Security Scanner 必須另建範圍並由人啟動；v173 掃描不能替代本版。
 
-私密實際素材僅在使用者授權目錄唯讀使用，原三檔 SHA／大小／mtime 保持；不公開歌名、歌詞、來源路徑或 QA 媒體。舊編輯器維持隱藏。失敗 QA／終止收據保留，不以通過樣本推定速度保證。四投稿仍 submitted_unverified，禁止商用。见[交接契約](docs/MV-HANDOFF.md)、[QA](docs/QA-v0.174.0.md)與[接續](docs/HANDOFF-v0.174.0.md)。以下歷史保持。
+私密實際素材僅在使用者授權目錄唯讀使用，不公開歌名、歌詞、來源路徑或 QA 媒體。舊編輯器維持隱藏。失敗 QA／終止收據保留，不以通過樣本推定速度保證。四投稿仍 submitted_unverified，禁止商用。见[交接契約](docs/MV-HANDOFF.md)、[QA](docs/QA-v0.174.0.md)與[接續](docs/HANDOFF-v0.174.0.md)。以下歷史保持。
 
-## v0.173.0 真實作品的必要設定
+## v0.173.0 字幕與素材的必要設定
 
-從已發布 v172 接續，只補字幕總長及新素材專案的名稱／原音檔選擇，舊編輯器維持隱藏。使用者指定資料夾明確允許使用但禁止覆寫；一件作品的三原檔 SHA／大小／mtime 前後保持，私密音檔、歌詞、專案與 QA 在 Git 外，不把名稱／來源路徑寫入公開文件。
+從已發布 v172 接續，只補字幕總長及新素材專案的名稱／原音檔選擇，舊編輯器維持隱藏。
 
-移出後實際重現 input 沒抵達舊 editor listener，改總長仍可下載旧成果、改名稱不更新草稿；改由 main 接收並只為兩固定文字欄對應原 scope，其餘 panel 與排除保持。集中 33 JS 及原生 dirty／保存警示核對通過。實際字幕下載、整首 WAV 保存報告、原 bytes 音檔的專案保存／重開及 Agent 企劃下載均有落盤證據；原分析 QA 逾時與不存在 selector 的 EOF 1 保留，另核對已保存報告，不冒稱全套音檔 harness 成功或實聽接受。
+移出後實際重現 input 沒抵達舊 editor listener，改總長仍可下載旧成果、改名稱不更新草稿；改由 main 接收並只為兩固定文字欄對應原 scope，其餘 panel 與排除保持。集中 33 JS 及原生 dirty／保存警示核對通過。
 
 沒有新依賴、模型、schema、Agent operation、POST、產品外網、auth 或權限。全部舊版、256／8192、法律禁止商用、四 Skills、七歷史和平台 submitted_unverified 保持。還原 restore-v0.172.0-before-v0.173.0 → 58a6e8eed4c03a03ff05d8630369eac4261b2963，codex/iteration-v0.173.0 保存分層差異。完整接受與精確 package 依本輪成功 manifest；修改後 source 必須另作指定 Scanner 的實際 desktop run，舊 v172 run 不能冒用。未完成新 run／逐筆審閱前維持 Draft，不合併／tag／release。自有程序、嚴格超七天與最新三正式版／未知／partial／FAILED 保護保持。
 
@@ -26,7 +30,7 @@
 
 使用者已明確恢復資安並從桌面開始。指定 AI Security Scanner v0.5.0 與 doctor 已核對；d1858cc 的 1097 份 raw Git 來源完成實際 run，101 筆（19 high／82 medium）逐筆審閱為 66 誤報、35 已有保護或合理用途，未確認這些結果有可利用漏洞。七引擎完成，Semgrep 部分完成；原 raw SHA 核對後證實 wave-position.js:26 的縮寫三元條件造成 PartialParsing。只把這一行改為明確 0.05／0.5，原／新 Node syntax 與 31 定位測試通過；新來源須另作實際桌面 run，不能冒用舊 run、清除原 101 筆或宣稱全面通過。官方 SKILL 限定人從 desktop Start，CLI plan 不執行；不自行重跑或改 scanner。Draft PR #171 與原封裝保留，正式版 v171 不變。見[資安審閱](docs/SECURITY-REVIEW-v0.172.0.md)、[QA](docs/QA-v0.172.0.md)與[交接](docs/HANDOFF-v0.172.0.md)。
 
-使用者明確指出現有工具已更強，未採用的編輯器應直接隱藏。一般 UI 保留字幕交付、音檔核對、素材交接；歌曲／分鏡／人工校時／簡易 MV 編輯 DOM 在 legacy-top／legacy-editors 隱藏，初始化不填入示範，內部載入不能揭露。成熟工具做編輯，本專案的交接與核對價值仍待真實作品驗證；不得用版本數、模組數或測試數代替實用性。後續先遵循 docs/PRODUCT-UTILITY.md 的使用情境與成效門檻，不自行恢復通用編輯產品方向。
+依產品定位，未採用的編輯器保持隱藏。一般 UI 保留字幕交付、音檔核對、素材交接；歌曲／分鏡／人工校時／簡易 MV 編輯 DOM 在 legacy-top／legacy-editors 隱藏，初始化不填入示範，內部載入不能揭露。成熟工具做編輯，本專案的交接與核對價值仍待公開或合成案例驗證；不得用版本數、模組數或測試數代替實用性。後續先遵循 docs/PRODUCT-UTILITY.md 的使用情境與成效門檻，不自行恢復通用編輯產品方向。
 
 原起稿覆蓋修正以純 mv-seed → 原生 DOM → app 同步分層保存，來源／原 File 身份固定、預覽不寫入、明確確認後回讀稿件／ID／媒體 SHA；失敗不自動回滾或重試，但編輯操作同樣不在一般 UI 顯示。沒有新依賴、模型、Agent operation、POST、產品外網或權限。
 
